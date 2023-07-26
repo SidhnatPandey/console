@@ -1,5 +1,7 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
+import { useRouter } from 'next/router';
+
 
 // ** Next Imports
 import Link from 'next/link'
@@ -105,6 +107,8 @@ const LoginPage = () => {
   const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const router = useRouter();
+
 
   // ** Vars
   const { skin } = settings
@@ -121,13 +125,29 @@ const LoginPage = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
+    console.log(data); // Log the data object to the console
+
+    const { email, password } = data;
+    const payload = {
+      email: email,
+      password
+    };
+
+    // Log the payload in JSON format to the console
+    console.log(JSON.stringify(payload));
+
+    const loginSuccess:any = auth.login({ email, password, rememberMe }, () => {
       setError('email', {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
     })
+    if (loginSuccess) {
+      // Redirect to the next page after successful login
+      router.push('/dashboard'); // Replace '/dashboard' with the desired URL of the next page
+    } else {
+      // Handle login error, e.g., show an error message
+    }
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
