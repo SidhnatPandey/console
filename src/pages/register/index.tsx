@@ -1,14 +1,7 @@
-// ** React Imports
-import { ReactNode, useState } from "react";
-
-//**the useRouter hook */
-import { useRouter } from "next/router";
-
-// ** Next Import
-import Link from "next/link";
-
-// ** MUI Components
-import Button from "@mui/material/Button";
+import { ReactNode, useState } from "react"; // ** React Imports
+import { useRouter } from "next/router"; //**the useRouter hook */
+import Link from "next/link"; // ** Next Import
+import Button from "@mui/material/Button"; // ** MUI Components
 import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
@@ -20,24 +13,14 @@ import InputAdornment from "@mui/material/InputAdornment";
 import MuiFormControlLabel, {
   FormControlLabelProps,
 } from "@mui/material/FormControlLabel";
-
-// ** Custom Component Import
-import CustomTextField from "src/@core/components/mui/text-field";
-
-// ** Icon Imports
-import Icon from "src/@core/components/icon";
-
-// ** Layout Import
-import BlankLayout from "src/@core/layouts/BlankLayout";
-
-// ** Hooks
-import { useSettings } from "src/@core/hooks/useSettings";
-
-// ** Demo Imports
-import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2";
-
-// ** Styled Components
+import { FormControl } from "@mui/material";
+import CustomTextField from "src/@core/components/mui/text-field"; // ** Custom Component Import
+import Icon from "src/@core/components/icon"; // ** Icon Imports
+import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
+import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
+import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 const RegisterIllustration = styled("img")(({ theme }) => ({
+  // ** Styled Components
   zIndex: 2,
   maxHeight: 600,
   marginTop: theme.spacing(12),
@@ -79,16 +62,12 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(
 );
 
 const Register = () => {
-  // ** States
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  // ** Hooks
-  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState<boolean>(false); // ** States
+  const [error, setError] = useState<string | null>(null);
+  const theme = useTheme(); // ** Hooks
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
-
-  // ** Vars
-  const { skin } = settings;
+  const { skin } = settings; // ** Vars
 
   const imageSource =
     skin === "bordered"
@@ -98,33 +77,60 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
-    organization: "",
+    org: "",
     agreeToTerms: false,
   });
-
-  // ** Router instance
-  const router = useRouter();
+  const router = useRouter(); // ** Router instance
+  // Helper function to validate email
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Use a regular expression or any other email validation logic
+    return emailRegex.test(email);
+  };
+  const [touched, setTouched] = useState({
+    username: false,
+    email: false,
+    password: false,
+    org: false,
+  });
+  const [submit, setSubmit] = useState(false);
+  const MIN_PASSWORD_LENGTH = 5;
+  const MAX_PASSWORD_LENGTH = 20;
 
   // ** Handle form submission
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Perform form validation
+    // debugger;
+    setSubmit(true);
+    // ** Form validation
     if (
       formData.username.trim() === "" ||
       formData.email.trim() === "" ||
       formData.password.trim() === "" ||
-      formData.organization.trim() === "" ||
-      !formData.agreeToTerms
+      formData.org.trim() === "" ||
+      !isValidEmail(formData.email)
     ) {
-      alert(
-        "Please fill in all the fields and agree to the Terms and Conditions."
-      );
+      setError("Please fill in all the fields.");
       return; // Exit early if the form is not valid
     }
+    // Validate password length
+    if (
+      formData.password.length < MIN_PASSWORD_LENGTH ||
+      formData.password.length > MAX_PASSWORD_LENGTH
+    ) {
+      setError(
+        `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
+      );
+      return; // Exit early if password length is not valid
+    }
+    // Validate "agree to terms" checkbox
+    if (!formData.agreeToTerms) {
+      alert("Please agree to the Terms and Conditions.");
+      return; // Exit early if "agree to terms" checkbox is not checked
+    }
 
+    setError(null);
     console.log("Form Data:", formData); //  Console the form data
-    //  Redirect to login page
-    router.push("/login");
+    router.push("/login"); //  Redirect to login page
   };
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
@@ -179,6 +185,16 @@ const Register = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, username: e.target.value })
                 }
+                onBlur={() => setTouched({ ...touched, username: true })}
+                error={
+                  (touched.username || submit) &&
+                  formData.username.trim() === ""
+                }
+                helperText={
+                  touched.username && formData.username.trim() === ""
+                    ? "Username cannot be empty."
+                    : ""
+                }
               />
               <CustomTextField
                 fullWidth
@@ -188,6 +204,20 @@ const Register = () => {
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
+                }
+                onBlur={() => setTouched({ ...touched, email: true })}
+                error={
+                  (touched.email || submit) &&
+                  (formData.email.trim() === "" ||
+                    !isValidEmail(formData.email))
+                }
+                helperText={
+                  (touched.email || submit) &&
+                  (formData.email.trim() === ""
+                    ? "Email cannot be empty."
+                    : !isValidEmail(formData.email)
+                    ? "Please enter a valid email address."
+                    : "")
                 }
               />
               <CustomTextField
@@ -216,58 +246,83 @@ const Register = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
+                onBlur={() => setTouched({ ...touched, password: true })}
+                error={
+                  (touched.password || submit) &&
+                  (formData.password.trim() === "" ||
+                    formData.password.length < MIN_PASSWORD_LENGTH ||
+                    formData.password.length > MAX_PASSWORD_LENGTH)
+                }
+                helperText={
+                  (touched.password || submit) &&
+                  (formData.password.trim() === ""
+                    ? "Password cannot be empty."
+                    : formData.password.length < MIN_PASSWORD_LENGTH ||
+                      formData.password.length > MAX_PASSWORD_LENGTH
+                    ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
+                    : "")
+                }
               />
               <CustomTextField
                 fullWidth
                 label="Organization"
                 placeholder="Initializ Inc."
-                value={formData.organization}
+                value={formData.org}
                 onChange={(e) =>
-                  setFormData({ ...formData, organization: e.target.value })
+                  setFormData({ ...formData, org: e.target.value })
+                }
+                onBlur={() => setTouched({ ...touched, org: true })}
+                error={(touched.org || submit) && formData.org.trim() === ""}
+                helperText={
+                  (touched.org || submit) && formData.org.trim() === ""
+                    ? "Organization cannot be empty."
+                    : ""
                 }
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={formData.agreeToTerms}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        agreeToTerms: e.target.checked,
-                      })
-                    }
-                  />
-                }
-                sx={{
-                  mb: 4,
-                  mt: 1.5,
-                  "& .MuiFormControlLabel-label": {
-                    fontSize: theme.typography.body2.fontSize,
-                  },
-                }}
-                label={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Typography sx={{ color: "text.secondary" }}>
-                      I agree to
-                    </Typography>
-                    <Typography
-                      component={LinkStyled}
-                      href="/"
-                      onClick={(e) => e.preventDefault()}
-                      sx={{ ml: 1 }}
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.agreeToTerms}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          agreeToTerms: e.target.checked,
+                        })
+                      }
+                    />
+                  }
+                  sx={{
+                    mb: 4,
+                    mt: 1.5,
+                    "& .MuiFormControlLabel-label": {
+                      fontSize: theme.typography.body2.fontSize,
+                    },
+                  }}
+                  label={
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                      }}
                     >
-                      privacy policy & terms
-                    </Typography>
-                  </Box>
-                }
-              />
+                      <Typography sx={{ color: "text.secondary" }}>
+                        I agree to
+                      </Typography>
+                      <Typography
+                        component={LinkStyled}
+                        href="/"
+                        onClick={(e) => e.preventDefault()}
+                        sx={{ ml: 1 }}
+                      >
+                        privacy policy & terms
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </FormControl>
               <Button
                 fullWidth
                 type="submit"
