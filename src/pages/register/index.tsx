@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react"; // ** React Imports
 import { useRouter } from "next/router"; //**the useRouter hook */
 import Link from "next/link"; // ** Next Import
 import Button from "@mui/material/Button"; // ** MUI Components
-import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -19,8 +18,8 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
+import { signUp, checkUsername } from "src/services/authService";
 const RegisterIllustration = styled("img")(({ theme }) => ({
-  // ** Styled Components
   zIndex: 2,
   maxHeight: 600,
   marginTop: theme.spacing(12),
@@ -64,6 +63,22 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(
 const Register = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false); // ** States
   const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    org: "",
+    agreeToTerms: false,
+  });
+  const [touched, setTouched] = useState({
+    username: false,
+    email: false,
+    password: false,
+    org: false,
+  });
+  const [submit, setSubmit] = useState(false);
+  const [userNameExist, setUserNameExist] = useState(false);
+
   const theme = useTheme(); // ** Hooks
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
@@ -73,26 +88,14 @@ const Register = () => {
     skin === "bordered"
       ? "auth-v2-register-illustration-bordered"
       : "auth-v2-register-illustration";
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    org: "",
-    agreeToTerms: false,
-  });
+
   const router = useRouter(); // ** Router instance
   // Helper function to validate email
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Use a regular expression or any other email validation logic
     return emailRegex.test(email);
   };
-  const [touched, setTouched] = useState({
-    username: false,
-    email: false,
-    password: false,
-    org: false,
-  });
-  const [submit, setSubmit] = useState(false);
+
   const MIN_PASSWORD_LENGTH = 5;
   const MAX_PASSWORD_LENGTH = 20;
 
@@ -127,11 +130,42 @@ const Register = () => {
       alert("Please agree to the Terms and Conditions.");
       return; // Exit early if "agree to terms" checkbox is not checked
     }
+    const user = {
+      type: "organisation",
+      role: "Admin",
+      org: formData.org,
+      email: formData.email,
+      password: formData.password,
+      username: formData.username
+    }
 
     setError(null);
-    console.log("Form Data:", formData); //  Console the form data
-    router.push("/login"); //  Redirect to login page
+    console.log("User Info:", user);
+    signUp(user)
+      .then((response) => {
+        console.log(response);
+        router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+        throw error;
+      })
   };
+
+  const checkUserExists = (username: string) => {
+    if (username) {
+      checkUsername(username).then((response) => {
+        console.log(response);
+        setUserNameExist(false);
+      }).catch((error) => {
+        if (error.response.status === 302) {
+          setUserNameExist(true);
+        }
+        console.log(error);
+        throw error;
+      })
+    }
+  }
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
       {!hidden ? (
@@ -185,15 +219,15 @@ const Register = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, username: e.target.value })
                 }
-                onBlur={() => setTouched({ ...touched, username: true })}
+                onBlur={() => { setTouched({ ...touched, username: true }); checkUserExists(formData.username) }}
                 error={
                   (touched.username || submit) &&
-                  formData.username.trim() === ""
+                  (formData.username.trim() === "" || userNameExist)
                 }
                 helperText={
-                  touched.username && formData.username.trim() === ""
+                  (touched.username || submit) && formData.username.trim() === ""
                     ? "Username cannot be empty."
-                    : ""
+                    : (userNameExist ? 'Username Already exists' : '')
                 }
               />
               <CustomTextField
@@ -216,8 +250,8 @@ const Register = () => {
                   (formData.email.trim() === ""
                     ? "Email cannot be empty."
                     : !isValidEmail(formData.email)
-                    ? "Please enter a valid email address."
-                    : "")
+                      ? "Please enter a valid email address."
+                      : "")
                 }
               />
               <CustomTextField
@@ -259,8 +293,8 @@ const Register = () => {
                     ? "Password cannot be empty."
                     : formData.password.length < MIN_PASSWORD_LENGTH ||
                       formData.password.length > MAX_PASSWORD_LENGTH
-                    ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
-                    : "")
+                      ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
+                      : "")
                 }
               />
               <CustomTextField

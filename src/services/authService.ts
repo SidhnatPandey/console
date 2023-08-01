@@ -1,9 +1,13 @@
 import { get, post } from './masterServices';
 
 export const signUp = (user: any) => {
-    return post("/auth/register", user).then((response) => response.data);
+    return post("/initializ/v1/registerUser", user).then((response) => response.data);
 };
 
 export const login = (loginDetail: any) => {
-    return post("/auth/login", loginDetail).then((response) => response.data);
+    return post("/login", loginDetail).then((response) => response.data);
+};
+
+export const checkUsername = (username: string) => {
+    return get(`/checkUser/${username}`).then((response) => response.data);
 };
