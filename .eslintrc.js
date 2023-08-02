@@ -28,8 +28,15 @@ module.exports = {
     },
     "plugins": [
         "@typescript-eslint",
-        "react"
+        "react",
+        "react-hooks"
     ],
     "rules": {
+        "react/react-in-jsx-scope": "off",
+        "@typescript-eslint/no-explicit-any": ["off"],
+        "@typescript-eslint/ban-ts-comment": "off",
+        "react/no-unescaped-entities": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "react/prop-types": "off"
     }
 }
