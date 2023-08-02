@@ -75,6 +75,7 @@ export const formatCreditCardNumber = (value: string, Payment: PaymentTypes) => 
 }
 
 // Format expiration date in any credit card
+/* eslint-disable no-useless-escape */
 export const formatExpirationDate = (value: string) => {
   const finalValue = value
     .replace(/^([1-9]\/|[2-9])$/g, '0$1/') // 3 > 03/
