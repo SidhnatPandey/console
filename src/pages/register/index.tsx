@@ -18,7 +18,7 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
-import { signUp, checkUsername } from "src/services/authService";
+import { signUp, checkUsername, checkEmail } from "src/services/authService";
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -78,6 +78,8 @@ const Register = () => {
   });
   const [submit, setSubmit] = useState(false);
   const [userNameExist, setUserNameExist] = useState(false);
+  const [emailExist, setEmailExist] = useState(false);
+
 
   const theme = useTheme(); // ** Hooks
   const { settings } = useSettings();
@@ -165,7 +167,22 @@ const Register = () => {
         throw error;
       })
     }
-  }
+  };
+
+  const checkEmailExists = (email: string) => {
+    if (email) {
+      checkEmail(email).then((response) => {
+        console.log(response);
+        setEmailExist(false);
+      }).catch((error) => {
+        if (error.response.status === 302) {
+          setEmailExist(true);
+        }
+        console.log(error);
+        throw error;
+      })
+    }
+  };
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
       {!hidden ? (
@@ -239,19 +256,19 @@ const Register = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                onBlur={() => setTouched({ ...touched, email: true })}
+                onBlur={() => {setTouched({ ...touched, email: true }); checkEmailExists(formData.email)}}
                 error={
                   (touched.email || submit) &&
-                  (formData.email.trim() === "" ||
-                    !isValidEmail(formData.email))
+                  (formData.email.trim() === "" ||  
+                    !isValidEmail(formData.email) || emailExist ) 
                 }
                 helperText={
                   (touched.email || submit) &&
                   (formData.email.trim() === ""
                     ? "Email cannot be empty."
-                    : !isValidEmail(formData.email)
+                    : !isValidEmail(formData.email))
                       ? "Please enter a valid email address."
-                      : "")
+                      : (emailExist ? 'Email Already exists' : '')
                 }
               />
               <CustomTextField
