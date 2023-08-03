@@ -25,6 +25,6 @@ export const post = async (partialUrl: string, data: any, params = {}) => {
   }
 };
 
-let constructUrl = (url: string) => {
+const constructUrl = (url: string) => {
   return BASE_URL + url;
 }

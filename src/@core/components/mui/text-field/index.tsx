@@ -5,6 +5,7 @@ import { forwardRef } from 'react'
 import { styled } from '@mui/material/styles'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
 
+/* eslint-disable react/display-name */
 const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   alignItems: 'flex-start',
   '& .MuiInputLabel-root': {
