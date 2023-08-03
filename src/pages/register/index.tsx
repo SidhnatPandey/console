@@ -335,7 +335,7 @@ const Register = () => {
                   ),
                 }}
                 value={formData.password}
-                onChange={(e) => { setFormData({ ...formData, password: e.target.value }); validatePassword(formData.password) }
+                onChange={(e) => { setFormData({ ...formData, password: e.target.value }); validatePassword(e.target.value) }
                 }
                 onBlur={() => setTouched({ ...touched, password: true })}
                 error={
