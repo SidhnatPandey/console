@@ -38,7 +38,7 @@ jobs:
     # Step 4: Build the Next.js application
     - name: Build Next.js application
       run: yarn build
-
+      
     # Step 5: Code Quality Scan with ESLint
     - name: Code Quality Scan with ESLint
       run: yarn lint
