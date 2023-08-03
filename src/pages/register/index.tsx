@@ -19,6 +19,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp, checkUsername } from "src/services/authService";
+
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -60,6 +61,30 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(
   })
 );
 
+const validationRules = [
+  {
+    regex: /^(?=.*[A-Z])/,
+    message: 'At least one uppercase letter',
+  },
+  {
+    regex: /^(?=.*[a-z])/,
+    message: 'At least one lowercase letter',
+  },
+  {
+    regex: /^(?=.*\d)/,
+    message: 'At least one number',
+  },
+  {
+    regex: /^(?=.*[@$!%*?&])/,
+    message: 'At least one special character (@, $, !, %, *, ?, or &)',
+  },
+  {
+    regex: /^.{8,}$/,
+    message: 'Minimum length of 8 characters',
+  },
+];
+
+
 const Register = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false); // ** States
   const [error, setError] = useState<string | null>(null);
@@ -78,6 +103,7 @@ const Register = () => {
   });
   const [submit, setSubmit] = useState(false);
   const [userNameExist, setUserNameExist] = useState(false);
+  const [isValidPassword, setIsValidPassword] = useState(false);
 
   const theme = useTheme(); // ** Hooks
   const { settings } = useSettings();
@@ -166,6 +192,23 @@ const Register = () => {
       })
     }
   }
+
+  const validatePassword = (password: string) => {
+    const isValid = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g.test(password);
+    setIsValidPassword(isValid);
+  }
+
+  const renderChecklistItems = () => {
+    return validationRules.map((rule, index) => {
+      const isValid = rule.regex.test(formData.password);
+      return (
+        <li key={index} className={isValid ? 'valid' : 'invalid'}>
+          {rule.message}
+        </li>
+      );
+    });
+  };
+
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
       {!hidden ? (
@@ -277,26 +320,26 @@ const Register = () => {
                   ),
                 }}
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
+                onChange={(e) => { setFormData({ ...formData, password: e.target.value }); validatePassword(formData.password) }
                 }
                 onBlur={() => setTouched({ ...touched, password: true })}
                 error={
                   (touched.password || submit) &&
-                  (formData.password.trim() === "" ||
-                    formData.password.length < MIN_PASSWORD_LENGTH ||
-                    formData.password.length > MAX_PASSWORD_LENGTH)
+                  !isValidPassword
                 }
-                helperText={
-                  (touched.password || submit) &&
-                  (formData.password.trim() === ""
-                    ? "Password cannot be empty."
-                    : formData.password.length < MIN_PASSWORD_LENGTH ||
-                      formData.password.length > MAX_PASSWORD_LENGTH
-                      ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
-                      : "")
-                }
+              /* helperText={
+                (touched.password || submit) &&
+                (formData.password.trim() === ""
+                  ? "Password cannot be empty."
+                  : formData.password.length < MIN_PASSWORD_LENGTH ||
+                    formData.password.length > MAX_PASSWORD_LENGTH
+                    ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
+                    : "")
+              } */
               />
+              <ul className="password-checklist">
+                {renderChecklistItems()}
+              </ul>
               <CustomTextField
                 fullWidth
                 label="Organization"
