@@ -1,5 +1,7 @@
 import { ReactNode, useState } from "react"; // ** React Imports
 import { useRouter } from "next/router"; //**the useRouter hook */
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link"; // ** Next Import
 import Button from "@mui/material/Button"; // ** MUI Components
 import Checkbox from "@mui/material/Checkbox";
@@ -18,7 +20,7 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
-import { signUp, checkUsername } from "src/services/authService";
+import { signUp, checkUsername, checkEmail } from "src/services/authService";
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -60,8 +62,33 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(
   })
 );
 
+const validationRules = [
+  {
+    regex: /^(?=.*[A-Z])/,
+    message: 'At least one uppercase letter',
+  },
+  {
+    regex: /^(?=.*[a-z])/,
+    message: 'At least one lowercase letter',
+  },
+  {
+    regex: /^(?=.*\d)/,
+    message: 'At least one number',
+  },
+  {
+    regex: /^(?=.*[@$!%*?&])/,
+    message: 'At least one special character (@, $, !, %, *, ?, or &)',
+  },
+  {
+    regex: /^.{8,}$/,
+    message: 'Minimum length of 8 characters',
+  },
+];
+
+
 const Register = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false); // ** States
+  const [showToast, setShowToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     username: "",
@@ -78,6 +105,11 @@ const Register = () => {
   });
   const [submit, setSubmit] = useState(false);
   const [userNameExist, setUserNameExist] = useState(false);
+  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [emailExist, setEmailExist] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
+
 
   const theme = useTheme(); // ** Hooks
   const { settings } = useSettings();
@@ -95,15 +127,13 @@ const Register = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Use a regular expression or any other email validation logic
     return emailRegex.test(email);
   };
-
-  const MIN_PASSWORD_LENGTH = 5;
-  const MAX_PASSWORD_LENGTH = 20;
-
+  
   // ** Handle form submission
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // debugger;
     setSubmit(true);
+    
     // ** Form validation
     if (
       formData.username.trim() === "" ||
@@ -115,16 +145,8 @@ const Register = () => {
       setError("Please fill in all the fields.");
       return; // Exit early if the form is not valid
     }
-    // Validate password length
-    if (
-      formData.password.length < MIN_PASSWORD_LENGTH ||
-      formData.password.length > MAX_PASSWORD_LENGTH
-    ) {
-      setError(
-        `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
-      );
-      return; // Exit early if password length is not valid
-    }
+    
+    
     // Validate "agree to terms" checkbox
     if (!formData.agreeToTerms) {
       alert("Please agree to the Terms and Conditions.");
@@ -144,11 +166,15 @@ const Register = () => {
     signUp(user)
       .then((response) => {
         console.log(response);
+        const notify = () => {
+          toast.success("Registration Successful!");
+        };
+        notify();
         router.push("/login");
       })
       .catch((error) => {
         console.log(error);
-        throw error;
+         throw error;
       })
   };
 
@@ -165,7 +191,52 @@ const Register = () => {
         throw error;
       })
     }
+  };
+  const handleChange = (e: { target: { value: any; }; }) => {
+    const inputUsername = e.target.value;
+    const truncatedUsername = inputUsername.slice(0, 15); // Truncate the input to a maximum length of 15 characters
+  
+    setFormData({ ...formData, username: truncatedUsername });
+    setTouched({ ...touched, username: true });
+    checkUserExists(truncatedUsername);
+  
+    if (truncatedUsername.length < 3 || truncatedUsername.length > 15) {
+      setUsernameError("Username must be between 3 and 15 characters long.");
+    } else {
+      setUsernameError(null);
+    }
+  };
+
+  const validatePassword = (password: string) => {
+    const isValid = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g.test(password);
+    setIsValidPassword(isValid);
   }
+
+  const renderChecklistItems = () => {
+    return validationRules.map((rule, index) => {
+      const isValid = rule.regex.test(formData.password);
+      return (
+        <li key={index} className={isValid ? 'valid' : 'invalid'}>
+          {rule.message}
+        </li>
+      );
+    });
+  };
+
+  const checkEmailExists = (email: string) => {
+    if (email) {
+      checkEmail(email).then((response) => {
+        console.log(response);
+        setEmailExist(false);
+      }).catch((error) => {
+        if (error.response.status === 302) {
+          setEmailExist(true);
+        }
+        console.log(error);
+        throw error;
+      })
+    }
+  };
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
       {!hidden ? (
@@ -216,18 +287,13 @@ const Register = () => {
                 label="Username"
                 placeholder="johndoe"
                 value={formData.username}
-                onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
-                }
-                onBlur={() => { setTouched({ ...touched, username: true }); checkUserExists(formData.username) }}
-                error={
-                  (touched.username || submit) &&
-                  (formData.username.trim() === "" || userNameExist)
-                }
+                onChange={handleChange}
+                error={(touched.username || submit) && (formData.username.trim() === "" || userNameExist || !!usernameError)}
                 helperText={
-                  (touched.username || submit) && formData.username.trim() === ""
-                    ? "Username cannot be empty."
-                    : (userNameExist ? 'Username Already exists' : '')
+                  (touched.username || submit) &&
+                  ((formData.username.trim() === "" && "Username cannot be empty.") ||
+                    (userNameExist && "Username Already exists") ||
+                    usernameError)
                 }
               />
               <CustomTextField
@@ -239,19 +305,19 @@ const Register = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                onBlur={() => setTouched({ ...touched, email: true })}
+                onBlur={() => { setTouched({ ...touched, email: true }); checkEmailExists(formData.email) }}
                 error={
                   (touched.email || submit) &&
                   (formData.email.trim() === "" ||
-                    !isValidEmail(formData.email))
+                    !isValidEmail(formData.email) || emailExist)
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email)
-                      ? "Please enter a valid email address."
-                      : "")
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
+                    ? "Please enter a valid email address."
+                    : (emailExist ? 'Email Already exists' : '')
                 }
               />
               <CustomTextField
@@ -277,26 +343,18 @@ const Register = () => {
                   ),
                 }}
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
+                onChange={(e) => { setFormData({ ...formData, password: e.target.value }); validatePassword(e.target.value) }
                 }
                 onBlur={() => setTouched({ ...touched, password: true })}
                 error={
                   (touched.password || submit) &&
-                  (formData.password.trim() === "" ||
-                    formData.password.length < MIN_PASSWORD_LENGTH ||
-                    formData.password.length > MAX_PASSWORD_LENGTH)
+                  !isValidPassword
                 }
-                helperText={
-                  (touched.password || submit) &&
-                  (formData.password.trim() === ""
-                    ? "Password cannot be empty."
-                    : formData.password.length < MIN_PASSWORD_LENGTH ||
-                      formData.password.length > MAX_PASSWORD_LENGTH
-                      ? `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long.`
-                      : "")
-                }
+              
               />
+              <ul className="password-checklist">
+                {renderChecklistItems()}
+              </ul>
               <CustomTextField
                 fullWidth
                 label="Organization"
@@ -361,10 +419,17 @@ const Register = () => {
                 fullWidth
                 type="submit"
                 variant="contained"
-                sx={{ mb: 4 }}
+                sx={{ mb: 4 }} 
               >
                 Sign up
               </Button>
+              <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        closeOnClick
+        pauseOnHover
+      />
               <Box
                 sx={{
                   display: "flex",
