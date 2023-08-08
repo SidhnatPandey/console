@@ -21,6 +21,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp, checkUsername, checkEmail } from "src/services/authService";
+import { errorToast, successToast } from "src/lib/react-taostify";
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -135,7 +136,7 @@ const Register = () => {
       return; // Exit early if the form is not valid
     }
     if (!formData.agreeToTerms) {
-      alert("Please agree to the Terms and Conditions.");
+      errorToast("Please agree to the Terms and Conditions.");
       return; // Exit early if "agree to terms" checkbox is not checked
     }
     const user = {
@@ -148,15 +149,12 @@ const Register = () => {
     };
 
     setError(null);
-    console.log("User Info:", user);
     signUp(user)
       .then((response) => {
-        console.log(response);
-        toast.success("Registration Successful!");
+        successToast("Registered successfully")
         router.push("/login");
       })
       .catch((error) => {
-        console.log(error);
         throw error;
       });
   };
@@ -165,14 +163,12 @@ const Register = () => {
     if (username) {
       checkUsername(username)
         .then((response) => {
-          console.log(response);
           setUserNameExist(false);
         })
         .catch((error) => {
           if (error.response.status === 302) {
             setUserNameExist(true);
           }
-          console.log(error);
           throw error;
         });
     }
@@ -215,14 +211,12 @@ const Register = () => {
     if (email) {
       checkEmail(email)
         .then((response) => {
-          console.log(response);
           setEmailExist(false);
         })
         .catch((error) => {
           if (error.response.status === 302) {
             setEmailExist(true);
           }
-          console.log(error);
           throw error;
         });
     }
@@ -313,13 +307,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email))
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                    ? "Email Already exists"
-                    : ""
+                      ? "Email Already exists"
+                      : ""
                 }
               />
               <CustomTextField
@@ -426,13 +420,6 @@ const Register = () => {
               >
                 Sign up
               </Button>
-              <ToastContainer
-                position="top-right"
-                autoClose={7000}
-                hideProgressBar
-                closeOnClick
-                pauseOnHover
-              />
               <Box
                 sx={{
                   display: "flex",
