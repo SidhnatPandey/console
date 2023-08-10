@@ -129,7 +129,7 @@ const Register = () => {
       formData.username.trim() === "" ||
       formData.email.trim() === "" ||
       formData.password.trim() === "" ||
-      formData.org.trim() === "" ||
+      formData.org.trim() === "" || userNameExist || emailExist ||
       !isValidEmail(formData.email)
     ) {
       setError("Please fill in all the fields.");
