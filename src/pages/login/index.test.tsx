@@ -1,5 +1,10 @@
+import React from 'react'
+import LoginPage from './index'
+import { render, screen } from '@testing-library/react'
+
 describe("Login page", () => {
     it("Submit Button", () => {
-        expect(1 + 3).toBe(4)
+        render(<LoginPage />);
+
     })
 })
