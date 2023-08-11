@@ -5,6 +5,7 @@ import { forwardRef } from 'react'
 import { styled } from '@mui/material/styles'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
 
+/* eslint-disable react/display-name */
 const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   alignItems: 'flex-start',
   '& .MuiInputLabel-root': {
@@ -18,12 +19,12 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   '& .MuiInputBase-root': {
     borderRadius: 8,
     backgroundColor: 'transparent !important',
-    border: `1px solid rgba(${theme.palette.customColors.main}, 0.2)`,
+    border: `1px solid rgba(${theme.palette.customColors?.main}, 0.2)`,
     transition: theme.transitions.create(['border-color', 'box-shadow'], {
       duration: theme.transitions.duration.shorter
     }),
     '&:not(.Mui-focused):not(.Mui-disabled):not(.Mui-error):hover': {
-      borderColor: `rgba(${theme.palette.customColors.main}, 0.28)`
+      borderColor: `rgba(${theme.palette.customColors?.main}, 0.28)`
     },
     '&:before, &:after': {
       display: 'none'

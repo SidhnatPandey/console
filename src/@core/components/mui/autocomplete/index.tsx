@@ -5,6 +5,7 @@ import { ElementType, forwardRef } from 'react'
 import Paper from '@mui/material/Paper'
 import Autocomplete, { AutocompleteProps } from '@mui/material/Autocomplete'
 
+/* eslint-disable react/display-name */
 const CustomAutocomplete = forwardRef(
   <
     T,

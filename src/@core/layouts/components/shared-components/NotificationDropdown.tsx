@@ -35,22 +35,22 @@ export type NotificationsType = {
   title: string
   subtitle: string
 } & (
-  | { avatarAlt: string; avatarImg: string; avatarText?: never; avatarColor?: never; avatarIcon?: never }
-  | {
+    | { avatarAlt: string; avatarImg: string; avatarText?: never; avatarColor?: never; avatarIcon?: never }
+    | {
       avatarAlt?: never
       avatarImg?: never
       avatarText: string
       avatarIcon?: never
       avatarColor?: ThemeColor
     }
-  | {
+    | {
       avatarAlt?: never
       avatarImg?: never
       avatarText?: never
       avatarIcon: ReactNode
       avatarColor?: ThemeColor
     }
-)
+  )
 interface Props {
   settings: Settings
   notifications: NotificationsType[]
@@ -205,11 +205,11 @@ const NotificationDropdown = (props: Props) => {
               <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                 <RenderAvatar notification={notification} />
                 <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
-                  <MenuItemTitle>{notification.title}</MenuItemTitle>
-                  <MenuItemSubtitle variant='body2'>{notification.subtitle}</MenuItemSubtitle>
+                  <MenuItemTitle>{notification?.title}</MenuItemTitle>
+                  <MenuItemSubtitle variant='body2'>{notification?.subtitle}</MenuItemSubtitle>
                 </Box>
                 <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                  {notification.meta}
+                  {notification?.meta}
                 </Typography>
               </Box>
             </MenuItem>
