@@ -1,5 +1,7 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
+import { useRouter } from 'next/router';
+
 
 // ** Next Imports
 import Link from 'next/link'
@@ -41,6 +43,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { login } from 'src/services/authService';
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -105,6 +108,8 @@ const LoginPage = () => {
   const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const router = useRouter();
+
 
   // ** Vars
   const { skin } = settings
@@ -121,13 +126,38 @@ const LoginPage = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
+    console.log(data); // Log the data object to the console
+
+    const { email, password } = data;
+    const payload = {
+      email: email,
+      password
+    };
+
+    // Log the payload in JSON format to the console
+    console.log(JSON.stringify(payload));
+
+    /* const loginSuccess:any = auth.login({ email, password, rememberMe }, () => {
       setError('email', {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
     })
+    if (loginSuccess) {
+      // Redirect to the next page after successful login
+      router.push('/dashboard'); // Replace '/dashboard' with the desired URL of the next page
+    } else {
+      // Handle login error, e.g., show an error message
+    } */
+    login(payload)
+      .then((response) => {
+        //successToast("Registered successfully")
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        throw error;
+      });
+
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
@@ -162,7 +192,7 @@ const LoginPage = () => {
           }}
         >
           <Box sx={{ width: '100%', maxWidth: 400 }}>
-          <img src='../images/logo.png' alt='logo' width='90' height='90' />
+            <img src='../images/logo.png' alt='logo' width='90' height='90' />
             <Box sx={{ my: 0.5 }}>
               <Typography variant='h3' sx={{ mb: 1 }}>
                 {`Welcome to ${themeConfig.templateName}! 👋🏻`}
