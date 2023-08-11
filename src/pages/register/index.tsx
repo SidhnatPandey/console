@@ -166,13 +166,15 @@ const Register = () => {
           setUserNameExist(false);
         })
         .catch((error) => {
-          if (error.response.status === 302) {
+          if (error.response && error.response.status === 302) {
             setUserNameExist(true);
+          } else {
+            console.error("An error occurred:", error);
           }
-          throw error;
         });
     }
   };
+  
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
     const truncatedUsername = inputUsername.slice(0, 15); // Truncate the input to a maximum length of 15 characters
@@ -214,10 +216,11 @@ const Register = () => {
           setEmailExist(false);
         })
         .catch((error) => {
-          if (error.response.status === 302) {
+          if (error.response && error.response.status === 302) {
             setEmailExist(true);
+          } else {
+            console.error("An error occurred:", error);
           }
-          throw error;
         });
     }
   };
