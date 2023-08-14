@@ -27,21 +27,22 @@ describe('Register Form', () => {
         cy.get('.success-message').should('contain', 'Registration successful'); // Replace with appropriate success message selector
     });
 
-    /* it('displays an error message for invalid input', () => {
+    it('displays an error message for invalid input', () => {
         cy.visit('/register');
 
         // Interact with form inputs
         cy.get('input[name="username"]').type('ff'); // Invalid empty username
+        cy.get('#\:r0\:-helper-text').should('eq', 'Username must be between 3 and 15 characters long.') // check username mesasge
+
         cy.get('input[name="email"]').type('invalid-email'); // Invalid email format
+        cy.get('#\:r1\:-helper-text').should('eq', 'Please enter a valid email address.')
         cy.get('input[name="password"]').type('short'); // Invalid short password
-        cy.get('input[name="password"]').type('Password'); // Invalida Long password
-        //cy.get('input[name="org"]').type('testb');
-        //cy.get('.PrivateSwitchBase-input').click();
+        cy.get('input[name="org"]').type('abc'); // Invalida Long password
 
         // Submit the form
         cy.get('button[type="submit"]').click();
 
         // Assert error messages
         cy.get('.error-message').should('have.length', 4); // Replace with appropriate error message selector and count
-    }); */
+    });
 });
