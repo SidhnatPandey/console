@@ -33,19 +33,19 @@ import StepperWrapper from 'src/@core/styles/mui/stepper'
 
 const steps = [
   {
-    title: 'Deal Type',
+    title: 'Source Code',
     icon: 'tabler:users',
-    subtitle: 'Choose type of deal'
+    subtitle: 'Enter Details'
   },
   {
-    title: 'Deal Usage',
+    title: 'Configuration',
     icon: 'tabler:credit-card',
-    subtitle: 'Limitations & Offers'
+    subtitle: 'Environment Variables'
   },
   {
     icon: 'tabler:checkbox',
-    subtitle: 'Launch a deal',
-    title: 'Review & Complete'
+    subtitle: 'Review & Submit',
+    title: 'Review'
   }
 ]
 
