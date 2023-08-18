@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
-import Register from "./index";
+import Register from "../../../pages/register/index";
 import { successToast } from "src/lib/react-taostify";
 import * as authService from "src/services/authService";
 
