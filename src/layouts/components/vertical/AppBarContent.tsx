@@ -16,6 +16,7 @@ import NotificationDropdown, { NotificationsType } from 'src/@core/layouts/compo
 import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import { Button } from '@mui/material'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   hidden: boolean
@@ -28,6 +29,8 @@ const shortcuts: ShortcutsType[] = [];
 const notifications: NotificationsType[] = [];
 
 const AppBarContent = (props: Props) => {
+
+  const router = useRouter()
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
@@ -44,7 +47,7 @@ const AppBarContent = (props: Props) => {
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         {/* <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
-        <Button variant='contained' size="large">Create</Button>
+        <Button variant='contained' size="large" onClick={() => router.push('/create-app')}>Create</Button>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
         <NotificationDropdown settings={settings} notifications={notifications} />
