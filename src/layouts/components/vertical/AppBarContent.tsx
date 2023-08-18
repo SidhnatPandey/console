@@ -7,10 +7,15 @@ import Icon from 'src/@core/components/icon'
 
 // ** Type Import
 import { Settings } from 'src/@core/context/settingsContext'
+import LanguageDropdown from 'src/@core/layouts/components/shared-components/LanguageDropdown'
 
 // ** Components
+import Autocomplete from 'src/layouts/components/Autocomplete'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
+import NotificationDropdown, { NotificationsType } from 'src/@core/layouts/components/shared-components/NotificationDropdown'
+import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
+import { Button } from '@mui/material'
 
 interface Props {
   hidden: boolean
@@ -18,6 +23,9 @@ interface Props {
   toggleNavVisibility: () => void
   saveSettings: (values: Settings) => void
 }
+
+const shortcuts: ShortcutsType[] = [];
+const notifications: NotificationsType[] = [];
 
 const AppBarContent = (props: Props) => {
   // ** Props
@@ -32,9 +40,14 @@ const AppBarContent = (props: Props) => {
           </IconButton>
         ) : null}
 
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
+        <Autocomplete hidden={hidden} settings={settings} />
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
+        <Button variant='contained' size="large">Create</Button>
+        <ModeToggler settings={settings} saveSettings={saveSettings} />
+        <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
+        <NotificationDropdown settings={settings} notifications={notifications} />
         <UserDropdown settings={settings} />
       </Box>
     </Box>

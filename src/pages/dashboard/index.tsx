@@ -7,3 +7,7 @@ const Dashboard = () => {
         </>
     )
 }
+
+//Dashboard.guestGuard = true
+
+export default Dashboard

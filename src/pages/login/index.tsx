@@ -126,38 +126,18 @@ const LoginPage = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    console.log(data); // Log the data object to the console
-
     const { email, password } = data;
     const payload = {
       email: email,
       password
     };
 
-    // Log the payload in JSON format to the console
-    console.log(JSON.stringify(payload));
-
-    /* const loginSuccess:any = auth.login({ email, password, rememberMe }, () => {
+    const loginSuccess: any = auth.login({ email, password, rememberMe }, () => {
       setError('email', {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
     })
-    if (loginSuccess) {
-      // Redirect to the next page after successful login
-      router.push('/dashboard'); // Replace '/dashboard' with the desired URL of the next page
-    } else {
-      // Handle login error, e.g., show an error message
-    } */
-    login(payload)
-      .then((response) => {
-        //successToast("Registered successfully")
-        router.push("/dashboard");
-      })
-      .catch((error) => {
-        throw error;
-      });
-
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
