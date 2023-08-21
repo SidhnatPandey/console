@@ -81,6 +81,7 @@ const AuthProvider = ({ children }: Props) => {
         const returnUrl = router.query.returnUrl
         console.log('User Data: ', response.data);
         const user: UserDataType = {
+          id: 0,
           role: response.data.data.user_data?.role,
           email: response.data.data.user_data?.email,
           fullName: response.data.data.user_data?.user_name,

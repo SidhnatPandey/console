@@ -11,7 +11,7 @@ export type RouteParams = {
   folder?: string
 }
 
-export type MailLayoutType = RouteParams & {}
+export type MailLayoutType = RouteParams & any;
 
 export type MailAttachmentType = {
   url: string

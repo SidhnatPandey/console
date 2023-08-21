@@ -41,7 +41,6 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import { login } from 'src/services/authService';
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -106,7 +105,6 @@ const LoginPage = () => {
   const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const router = useRouter();
 
 
   // ** Vars
@@ -125,10 +123,6 @@ const LoginPage = () => {
 
   const onSubmit = (data: FormData) => {
     const { email, password } = data;
-    const payload = {
-      email: email,
-      password
-    };
 
     const loginSuccess: any = auth.login({ email, password, rememberMe }, () => {
       setError('email', {

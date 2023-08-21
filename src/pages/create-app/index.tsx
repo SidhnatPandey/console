@@ -23,7 +23,6 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import StepDealType from 'src/pages/create-app/StepDealType'
 import StepReview from 'src/pages/create-app/StepReview'
 import StepDealUsage from 'src/pages/create-app/StepDealUsage'
-import StepDealDetails from 'src/pages/create-app/StepDealDetails'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
