@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -7,7 +7,6 @@ import Link from 'next/link'
 // ** MUI Components
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
