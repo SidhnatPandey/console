@@ -98,6 +98,8 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
+
 
   // ** Hooks
   const auth = useAuth()
@@ -120,7 +122,6 @@ const LoginPage = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
-
   const onSubmit = (data: FormData) => {
     const { email, password } = data;
 
@@ -131,6 +132,7 @@ const LoginPage = () => {
       })
     })
   }
+
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
@@ -146,7 +148,7 @@ const LoginPage = () => {
             borderRadius: '20px',
             justifyContent: 'center',
             backgroundColor: 'customColors.bodyBg',
-            margin: theme => theme.spacing(8, 0, 8, 8)
+            margin: (theme: { spacing: (arg0: number, arg1: number, arg2: number, arg3: number) => any; }) => theme.spacing(8, 0, 8, 8)
           }}
         >
           <LoginIllustration alt='login-illustration' src={`/images/pages/${imageSource}-${theme.palette.mode}.png`} />
@@ -223,7 +225,9 @@ const LoginPage = () => {
                           <InputAdornment position='end'>
                             <IconButton
                               edge='end'
-                              onMouseDown={e => e.preventDefault()}
+                              onMouseDown={(e: { preventDefault: () => any; }) => {
+                                return e.preventDefault();
+                              }}
                               onClick={() => setShowPassword(!showPassword)}
                             >
                               <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
@@ -244,6 +248,9 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
+                <Alert icon={false} severity="error" sx={{ py: 3, mb: 6 }}>
+                  {errorMessage} {/* Display the error message */}
+                </Alert>
                 <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
