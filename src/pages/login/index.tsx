@@ -1,9 +1,6 @@
 // ** React Imports
-import { useState, ReactNode } from 'react'
 import { useRouter } from 'next/router';
-import { login } from 'src/services/authService';
-
-
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -110,7 +107,6 @@ const LoginPage = () => {
   const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const router = useRouter();
 
 
   // ** Vars
@@ -127,31 +123,14 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
   const onSubmit = (data: FormData) => {
-    console.log(data); // Log the data object to the console
-
     const { email, password } = data;
-    const payload = {
-      email: email,
-      password: password
-    };
 
-    // Log the payload in JSON format to the console
-    console.log(JSON.stringify(payload));
-
-
-
-    login(payload)
-      .then((response) => {
-        console.log(response);
-        // alert('Login successful!');
-
-        router.push("/dashboard");
+    const loginSuccess: any = auth.login({ email, password, rememberMe }, () => {
+      setError('email', {
+        type: 'manual',
+        message: 'Email or Password is invalid'
       })
-      .catch((error) => {
-        console.log(error);
-        setErrorMessage(error.message); // Set the error message
-
-      })
+    })
   }
 
 

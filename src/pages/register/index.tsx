@@ -149,7 +149,7 @@ const Register = () => {
 
     setError(null);
     signUp(user)
-      .then((response) => {
+      .then(() => {
         successToast("Registered successfully")
         router.push("/login");
       })
@@ -161,7 +161,7 @@ const Register = () => {
   const checkUserExists = (username: string) => {
     if (username) {
       checkUsername(username)
-        .then((response) => {
+        .then(() => {
           setUserNameExist(false);
         })
         .catch((error) => {
@@ -173,7 +173,7 @@ const Register = () => {
         });
     }
   };
-  
+
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
     const truncatedUsername = inputUsername.slice(0, 15); // Truncate the input to a maximum length of 15 characters
@@ -211,7 +211,7 @@ const Register = () => {
   const checkEmailExists = (email: string) => {
     if (email) {
       checkEmail(email)
-        .then((response) => {
+        .then(() => {
           setEmailExist(false);
         })
         .catch((error) => {
