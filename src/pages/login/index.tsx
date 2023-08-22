@@ -1,6 +1,8 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, ReactNode } from 'react'
 import { useRouter } from 'next/router';
+import { login } from 'src/services/authService';
+
 
 
 // ** Next Imports
@@ -9,7 +11,6 @@ import Link from 'next/link'
 // ** MUI Components
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -100,6 +101,8 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
+
 
   // ** Hooks
   const auth = useAuth()
@@ -123,32 +126,34 @@ const LoginPage = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
-
   const onSubmit = (data: FormData) => {
     console.log(data); // Log the data object to the console
 
     const { email, password } = data;
     const payload = {
       email: email,
-      password
+      password: password
     };
 
     // Log the payload in JSON format to the console
     console.log(JSON.stringify(payload));
 
-    const loginSuccess:any = auth.login({ email, password, rememberMe }, () => {
-      setError('email', {
-        type: 'manual',
-        message: 'Email or Password is invalid'
+
+
+    login(payload)
+      .then((response) => {
+        console.log(response);
+        // alert('Login successful!');
+
+        router.push("/dashboard");
       })
-    })
-    if (loginSuccess) {
-      // Redirect to the next page after successful login
-      router.push('/dashboard'); // Replace '/dashboard' with the desired URL of the next page
-    } else {
-      // Handle login error, e.g., show an error message
-    }
+      .catch((error) => {
+        console.log(error);
+        setErrorMessage(error.message); // Set the error message
+
+      })
   }
+
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
@@ -164,7 +169,7 @@ const LoginPage = () => {
             borderRadius: '20px',
             justifyContent: 'center',
             backgroundColor: 'customColors.bodyBg',
-            margin: theme => theme.spacing(8, 0, 8, 8)
+            margin: (theme: { spacing: (arg0: number, arg1: number, arg2: number, arg3: number) => any; }) => theme.spacing(8, 0, 8, 8)
           }}
         >
           <LoginIllustration alt='login-illustration' src={`/images/pages/${imageSource}-${theme.palette.mode}.png`} />
@@ -182,7 +187,7 @@ const LoginPage = () => {
           }}
         >
           <Box sx={{ width: '100%', maxWidth: 400 }}>
-          <img src='../images/logo.png' alt='logo' width='90' height='90' />
+            <img src='../images/logo.png' alt='logo' width='90' height='90' />
             <Box sx={{ my: 0.5 }}>
               <Typography variant='h3' sx={{ mb: 1 }}>
                 {`Welcome to ${themeConfig.templateName}! 👋🏻`}
@@ -241,7 +246,9 @@ const LoginPage = () => {
                           <InputAdornment position='end'>
                             <IconButton
                               edge='end'
-                              onMouseDown={e => e.preventDefault()}
+                              onMouseDown={(e: { preventDefault: () => any; }) => {
+                                return e.preventDefault();
+                              }}
                               onClick={() => setShowPassword(!showPassword)}
                             >
                               <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
@@ -262,6 +269,9 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
+                <Alert icon={false} severity="error" sx={{ py: 3, mb: 6 }}>
+                  {errorMessage} {/* Display the error message */}
+                </Alert>
                 <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
