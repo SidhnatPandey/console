@@ -21,7 +21,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Step Components
 import StepDealType from 'src/pages/create-app/StepDealType'
-import StepReview from 'src/pages/create-app/StepReview'
+import AppReview from 'src/pages/create-app/AppReview'
 import StepDealUsage from 'src/pages/create-app/StepDealUsage'
 
 // ** Util Import
@@ -115,7 +115,7 @@ const CreateDealWizard = () => {
       case 1:
         return <StepDealUsage />
       case 2:
-        return <StepReview />
+        return <AppReview />
       default:
         return null
     }

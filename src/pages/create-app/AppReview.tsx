@@ -12,9 +12,17 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
+import Container from '@mui/system/Container'
 
 const ReviewComplete = () => {
   return (
+    <Container>
+      <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'center' }}>
+        Create App from Source Code
+      </Typography>
+      <Typography variant='body1' sx={{ color: 'text.secondary', textAlign: 'center' }}>
+        Provide data with this form to create your app.
+      </Typography>
     <Grid container spacing={6}>
       <Grid item xs={12} lg={6} xl={7}>
         <Grid container spacing={2}>
@@ -43,60 +51,80 @@ const ReviewComplete = () => {
                   <TableRow>
                     <TableCell>
                       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Type
+                        App Name
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>Percentage</Typography>
+                      <Typography sx={{ color: 'text.secondary' }}>api</Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
                       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Amount
+                        Repository
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>25%</Typography>
+                      <Typography sx={{ color: 'text.secondary' }}>initializ/api</Typography>
                     </TableCell>
                   </TableRow>
-                  <TableRow>
+                  {/* <TableRow>
                     <TableCell>
                       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Code
+                        Branch
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <CustomChip rounded size='small' skin='light' color='warning' label='25PEROFF' />
                     </TableCell>
+                  </TableRow> */}
+                  <TableRow>
+                    <TableCell>
+                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                        Branch
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ color: 'text.secondary' }}>main</Typography>
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
                       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Title
+                        Env Variables
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>Black friday sale, 25% OFF</Typography>
+                      <Typography sx={{ color: 'text.secondary' }}>2</Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
                       <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                        Deal Duration
+                        HTTP Port
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography sx={{ color: 'text.secondary' }}>2021-07-14 to 2021-07-30</Typography>
+                      <Typography sx={{ color: 'text.secondary' }}>8080</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography noWrap sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                        HTTP Path
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ color: 'text.secondary' }}>/</Typography>
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <FormControlLabel control={<Switch />} label='I have confirmed the deal details.' />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Grid>
       <Grid
@@ -118,10 +146,12 @@ const ReviewComplete = () => {
             border: theme => `1px solid ${theme.palette.divider}`
           }}
         >
-          <img height={230} alt='review-illustration' src='/images/pages/create-deal-review-complete.png' />
+          <img height={230} alt='App-Review-illustration' src="/images/avatars/App--Review.png" />
         </Box>
       </Grid>
     </Grid>
+    </Container>
+
   )
 }
 
