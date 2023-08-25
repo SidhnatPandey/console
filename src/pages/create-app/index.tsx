@@ -22,13 +22,14 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 // ** Step Components
 import StepDealType from 'src/pages/create-app/StepDealType'
 import StepReview from 'src/pages/create-app/StepReview'
-import StepDealUsage from 'src/pages/create-app/StepDealUsage'
+import StepDealUsage from 'src/pages/create-app/AppConfiguration'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+import AppConfiguration from 'src/pages/create-app/AppConfiguration'
 
 const steps = [
   {
@@ -113,7 +114,7 @@ const CreateDealWizard = () => {
       case 0:
         return <StepDealType />
       case 1:
-        return <StepDealUsage />
+        return <AppConfiguration />
       case 2:
         return <StepReview />
       default:
