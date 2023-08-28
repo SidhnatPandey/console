@@ -248,9 +248,7 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
-                <Alert icon={false} severity="error" sx={{ py: 3, mb: 6 }}>
-                  {errorMessage} {/* Display the error message */}
-                </Alert>
+                
                 <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
