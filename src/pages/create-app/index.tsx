@@ -21,8 +21,9 @@ import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Step Components
+
+import AppReview from 'src/pages/create-app/AppReview'
 import SourceCode from 'src/pages/create-app/SourceCode'
-import StepReview from 'src/pages/create-app/StepReview'
 import StepDealUsage from 'src/pages/create-app/AppConfiguration'
 
 // ** Util Import
@@ -142,7 +143,8 @@ const CreateDealWizard = () => {
       case 1:
         return <AppConfiguration onNext={handleNext} />;
       case 2:
-        return <StepReview />;
+        return <AppReview />
+
       default:
         return null
     }
