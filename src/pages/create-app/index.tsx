@@ -1,6 +1,7 @@
 // ** React Imports
 import { useState } from 'react'
 
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -30,6 +31,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import AppConfiguration from 'src/pages/create-app/AppConfiguration'
+import React from 'react';
 
 const steps = [
   {
@@ -99,10 +101,25 @@ const CreateDealWizard = () => {
   // ** States
   const [activeStep, setActiveStep] = useState<number>(0)
 
+  const [sourceCodeData, setSourceCodeData] = useState<any>({});
+  const [configurationData, setConfigurationData] = useState<any>({});
+
+
   // Handle Stepper
-  const handleNext = () => {
-    setActiveStep(activeStep + 1)
-  }
+  const handleNext = (data: any) => {
+    // Update data based on the active step
+    if (activeStep === 0) {
+      setSourceCodeData(data);
+    } else if (activeStep === 1) {
+      setConfigurationData(data);
+    }
+
+    // Move to the next step
+    setActiveStep(activeStep + 1);
+    console.log("Data received in index:", data);
+
+  };
+
   const handlePrev = () => {
     if (activeStep !== 0) {
       setActiveStep(activeStep - 1)
@@ -112,11 +129,11 @@ const CreateDealWizard = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <StepDealType />
+        return <StepDealType onNext={handleNext} />;
       case 1:
-        return <AppConfiguration />
+        return <AppConfiguration onNext={handleNext} />;
       case 2:
-        return <StepReview />
+        return <StepReview sourceCodeData={sourceCodeData} configurationData={configurationData} />;
       default:
         return null
     }
@@ -144,12 +161,13 @@ const CreateDealWizard = () => {
           variant='contained'
           color={stepCondition ? 'success' : 'primary'}
           {...(!stepCondition ? { endIcon: <Icon icon='tabler:chevron-right' /> } : {})}
-          onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext())}
+          onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext({}))}
         >
           {stepCondition ? 'Submit' : 'Next'}
         </Button>
       </Box>
     )
+      
   }
 
   return (

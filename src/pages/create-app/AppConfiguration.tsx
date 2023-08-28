@@ -9,7 +9,8 @@ import Box from '@mui/material/Box';
 
 
 
-const AppConfiguration = () => {
+
+const AppConfiguration = ({ onNext }: any) => {
 
 
   const [environmentVariables, setEnvironmentVariables] = useState<any>();
@@ -50,11 +51,14 @@ const AppConfiguration = () => {
   };
 
 
-  const handlePortChange = (event: any) => {
+  const handlePortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("HTTP Port Value:", event.target.value); // Check if the value is being captured
     setHttpPort(event.target.value);
   };
 
+
   const handlePathChange = (event: any) => {
+    console.log("HTTP Path Value:", event.target.value); // Check if the value is being captured
     setHttpPath(event.target.value);
   };
 
@@ -67,11 +71,35 @@ const AppConfiguration = () => {
     setOpen(false);
   };
 
+  const logData = () => {
+    console.log("Configuration Data:");
+    console.log("Environment Variables:", keyValuePairs);
+    console.log("HTTP Port:", httpPort);
+    console.log("HTTP Path:", httpPath);
+  };
+
+
+  // function logData(arg0: {
+  //   application_name: string; git_repo: string; git_branch: string; src_code_path: string; env_variables: { key: string; value: string; }[]; // Use keyValuePairs instead of environmentVariables
+  //   port: string; // Use httpPort directly
+  //   http_path: string;
+  // }) {
+  //   throw new Error('Function not implemented.');
+  // }
+
+  // const handleNext = () => {
+  //   // Collect and log the saved data to the console
+  //   console.log("Environment Variables:", environmentVariables);
+  //   console.log("HTTP Port:", httpPort);
+  //   console.log("HTTP Path:", httpPath);
 
   return (
 
     <>
       <Container>
+        {/* <Button variant="contained" onClick={handleNext}>  Next
+          </Button> */}
+
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'center' }}>
           Create App from Source Code
         </Typography>
@@ -151,18 +179,19 @@ const AppConfiguration = () => {
                               </IconButton>
                             </div>
                           ))}
-                          {/* Rest of your code... */}
                         </Box>
                         <button onClick={handleAddKeyValuePair} style={{ alignSelf: 'flex-end' }}>+</button>
                         <Button variant="contained" onClick={handleClose}>Save</Button>
                       </div>
                     </Dialog>
 
+
                   </div>
                 </h3>
               </div>
             </div>
           </div>
+
         </Grid>
 
         <h2>Resource Settings</h2>
@@ -181,7 +210,7 @@ const AppConfiguration = () => {
               <TextField
                 label="HTTP Port"
                 id="http-port"
-                defaultValue={httpPort} 
+                defaultValue={httpPort}
                 size="small"
               />
             </div>
@@ -212,10 +241,21 @@ const AppConfiguration = () => {
             </div>
           </Box>
         </div>
+        <Button
+          variant="contained"
+          onClick={() => {
+            onNext({ environmentVariables, httpPort, httpPath });
+            logData();
+          }}
+        >
+          Next
+        </Button>
+
       </Container>
     </>
   )
 }
+
 
 
 export default AppConfiguration

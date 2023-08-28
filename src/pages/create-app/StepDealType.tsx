@@ -65,7 +65,7 @@ const ImgWrapper = styled('div')(({ theme }) => ({
   }
 }))
 
-const StepDealType = () => {
+const StepDealType = ({ onNext }: any) => {
   const initialIconSelected: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
   ].value
