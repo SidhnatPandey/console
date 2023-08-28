@@ -376,19 +376,19 @@ const AutocompleteComponent = ({ hidden, settings }: Props) => {
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'))
 
   // Get all data using API
-  useEffect(() => {
-    axios
-      .get('/app-bar/search', {
-        params: { q: searchValue }
-      })
-      .then(response => {
-        if (response.data && response.data.length) {
-          setOptions(response.data)
-        } else {
-          setOptions([])
-        }
-      })
-  }, [searchValue])
+  /*  useEffect(() => {
+     axios
+       .get('/app-bar/search', {
+         params: { q: searchValue }
+       })
+       .then(response => {
+         if (response.data && response.data.length) {
+           setOptions(response.data)
+         } else {
+           setOptions([])
+         }
+       })
+   }, [searchValue]) */
 
   useEffect(() => {
     if (!openDialog) {
@@ -478,15 +478,15 @@ const AutocompleteComponent = ({ hidden, settings }: Props) => {
                   '& + .MuiAutocomplete-popper': {
                     ...(searchValue.length
                       ? {
-                          overflow: 'auto',
-                          maxHeight: 'calc(100vh - 69px)',
-                          borderTop: `1px solid ${theme.palette.divider}`,
-                          height: fullScreenDialog ? 'calc(100vh - 69px)' : 481,
-                          '& .MuiListSubheader-root': { p: theme.spacing(3.75, 6, 0.75) }
-                        }
+                        overflow: 'auto',
+                        maxHeight: 'calc(100vh - 69px)',
+                        borderTop: `1px solid ${theme.palette.divider}`,
+                        height: fullScreenDialog ? 'calc(100vh - 69px)' : 481,
+                        '& .MuiListSubheader-root': { p: theme.spacing(3.75, 6, 0.75) }
+                      }
                       : {
-                          '& .MuiAutocomplete-listbox': { pb: 0 }
-                        })
+                        '& .MuiAutocomplete-listbox': { pb: 0 }
+                      })
                   }
                 }}
                 renderInput={(params: AutocompleteRenderInputParams) => {

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,7 +20,7 @@ import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Step Components
-import StepDealType from 'src/pages/create-app/StepDealType'
+import SourceCode from 'src/pages/create-app/SourceCode'
 import StepReview from 'src/pages/create-app/StepReview'
 import StepDealUsage from 'src/pages/create-app/StepDealUsage'
 
@@ -98,9 +98,15 @@ const CreateDealWizard = () => {
   // ** States
   const [activeStep, setActiveStep] = useState<number>(0)
 
+  const sourceCodeRef = useRef<any>();
+
   // Handle Stepper
   const handleNext = () => {
-    setActiveStep(activeStep + 1)
+    switch (activeStep) {
+      case 0:
+        sourceCodeRef.current.showAlert();
+    }
+    // setActiveStep(activeStep + 1)
   }
   const handlePrev = () => {
     if (activeStep !== 0) {
@@ -108,10 +114,16 @@ const CreateDealWizard = () => {
     }
   }
 
+  const getSourceCodeData = () => {
+
+  }
+
+
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <StepDealType />
+        return <SourceCode onSubmit={getSourceCodeData} />
       case 1:
         return <StepDealUsage />
       case 2:
@@ -141,6 +153,7 @@ const CreateDealWizard = () => {
         </Button>
         <Button
           variant='contained'
+          type='submit'
           color={stepCondition ? 'success' : 'primary'}
           {...(!stepCondition ? { endIcon: <Icon icon='tabler:chevron-right' /> } : {})}
           onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext())}
@@ -200,6 +213,7 @@ const CreateDealWizard = () => {
         {renderContent()}
         {renderFooter()}
       </CardContent>
+
     </Card>
   )
 }
