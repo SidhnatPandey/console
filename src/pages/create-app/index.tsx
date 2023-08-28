@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,15 +21,18 @@ import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Step Components
-import StepDealType from 'src/pages/create-app/StepDealType'
+
 import AppReview from 'src/pages/create-app/AppReview'
-import StepDealUsage from 'src/pages/create-app/StepDealUsage'
+import SourceCode from 'src/pages/create-app/SourceCode'
+import StepDealUsage from 'src/pages/create-app/AppConfiguration'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+import AppConfiguration from 'src/pages/create-app/AppConfiguration'
+import React from 'react';
 
 const steps = [
   {
@@ -98,24 +102,49 @@ const CreateDealWizard = () => {
   // ** States
   const [activeStep, setActiveStep] = useState<number>(0)
 
+  const sourceCodeRef = useRef<any>();
+
   // Handle Stepper
-  const handleNext = () => {
-    setActiveStep(activeStep + 1)
-  }
+  const [sourceCodeData, setSourceCodeData] = useState<any>({});
+  const [configurationData, setConfigurationData] = useState<any>({});
+
+
+  // Handle Stepper
+  const handleNext = (data: any) => {
+    // Update data based on the active step
+    if (activeStep === 0) {
+      setSourceCodeData(data);
+    } else if (activeStep === 1) {
+      setConfigurationData(data);
+    }
+
+    // Move to the next step
+    setActiveStep(activeStep + 1);
+    console.log("Data received in index:", data);
+
+  };
+
   const handlePrev = () => {
     if (activeStep !== 0) {
       setActiveStep(activeStep - 1)
     }
   }
 
+  const getSourceCodeData = () => {
+
+  }
+
+
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <StepDealType />
+        return <SourceCode onSubmit={getSourceCodeData} />
       case 1:
-        return <StepDealUsage />
+        return <AppConfiguration onNext={handleNext} />;
       case 2:
         return <AppReview />
+
       default:
         return null
     }
@@ -141,14 +170,16 @@ const CreateDealWizard = () => {
         </Button>
         <Button
           variant='contained'
+          type='submit'
           color={stepCondition ? 'success' : 'primary'}
           {...(!stepCondition ? { endIcon: <Icon icon='tabler:chevron-right' /> } : {})}
-          onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext())}
+          onClick={() => (stepCondition ? alert('Submitted..!!') : handleNext({}))}
         >
           {stepCondition ? 'Submit' : 'Next'}
         </Button>
       </Box>
     )
+
   }
 
   return (
@@ -200,6 +231,7 @@ const CreateDealWizard = () => {
         {renderContent()}
         {renderFooter()}
       </CardContent>
+
     </Card>
   )
 }
