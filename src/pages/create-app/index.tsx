@@ -148,14 +148,12 @@ const StepperCustomVertical = () => {
     }, [gitUser])
 
     // react hook form
-    const form = useForm<FormValues>();
-    const { register, control, handleSubmit } = form;
-
     const {
         reset: accountReset,
         control: accountControl,
         handleSubmit: handleAccountSubmit,
         register: sourceCodeRegister,
+        getValues: getSoruceCodeValue,
         formState: { errors: accountErrors }
     } = useForm({
         defaultValues: defaultSourceCodeValues,
@@ -208,7 +206,6 @@ const StepperCustomVertical = () => {
 
     const onSubmit = (data: FormValues) => {
         console.log(data);
-        alert("called ")
         setActiveStep(prevActiveStep => prevActiveStep + 1)
         if (activeStep === steps.length - 1) {
             toast.success('Form Submitted')
@@ -408,7 +405,7 @@ const StepperCustomVertical = () => {
                                     <div className="section" >
                                         <h3 style={{ display: "flex", width: '100%', justifyContent: 'space-between', fontWeight: 'normal' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                                <span style={{ marginLeft: '10px' }}>api</span>
+                                                <span style={{ marginLeft: '10px' }}>{getSoruceCodeValue('application_name')}</span>
                                             </div>
 
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -578,7 +575,7 @@ const StepperCustomVertical = () => {
                                                         </TableCell>
                                                         <TableCell>
                                                             <Typography sx={{ color: "text.secondary" }}>
-                                                                api
+                                                                {getSoruceCodeValue('application_name')}
                                                             </Typography>
                                                         </TableCell>
                                                     </TableRow>
@@ -593,7 +590,7 @@ const StepperCustomVertical = () => {
                                                         </TableCell>
                                                         <TableCell>
                                                             <Typography sx={{ color: "text.secondary" }}>
-                                                                initializ/api
+                                                                {getSoruceCodeValue('git_repo')}
                                                             </Typography>
                                                         </TableCell>
                                                     </TableRow>
@@ -608,7 +605,7 @@ const StepperCustomVertical = () => {
                                                         </TableCell>
                                                         <TableCell>
                                                             <Typography sx={{ color: "text.secondary" }}>
-                                                                main
+                                                                {getSoruceCodeValue('git_branch')}
                                                             </Typography>
                                                         </TableCell>
                                                     </TableRow>
