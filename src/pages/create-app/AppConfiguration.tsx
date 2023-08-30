@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
 import { Container, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Slide, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 
@@ -97,9 +96,6 @@ const AppConfiguration = ({ onNext }: any) => {
 
     <>
       <Container>
-        {/* <Button variant="contained" onClick={handleNext}>  Next
-          </Button> */}
-
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'center' }}>
           Create App from Source Code
         </Typography>
@@ -175,7 +171,8 @@ const AppConfiguration = ({ onNext }: any) => {
                                 onClick={() => handleDeleteKeyValuePair(index)}
                                 style={{ marginLeft: '1rem' }}
                               >
-                                <DeleteIcon />
+                                {/* ////l
+                                | */}
                               </IconButton>
                             </div>
                           ))}

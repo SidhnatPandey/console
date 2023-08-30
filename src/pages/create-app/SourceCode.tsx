@@ -48,13 +48,6 @@ const SourceCode = (props: any) => {
     }
   }, [gitUser])
 
-  /* useImperativeHandle(ref, () => ({
-    showAlert() {
-      console.log(form.getValues());
-      alert("Hello from Child Component")
-    }
-  })) */
-
   // react hook form
   const form = useForm<FormValues>();
   const { register, control, handleSubmit } = form;
