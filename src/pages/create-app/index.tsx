@@ -1,5 +1,5 @@
 // ** React Imports
-import { ChangeEvent, Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -21,6 +21,8 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import MuiStep, { StepProps } from '@mui/material/Step'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CardContent, { CardContentProps } from '@mui/material/CardContent'
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 // ** Third Party Imports
 import toast from 'react-hot-toast'
@@ -40,11 +42,10 @@ import StepperWrapper from 'src/@core/styles/mui/stepper';
 
 import { sendCode, getGitOwner, getBranch, getRepositories } from '../../services/appService';
 import { errorToast } from 'src/lib/react-taostify';
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Dialog, FormControlLabel, FormHelperText, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material'
-import { Container } from '@mui/system';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormHelperText, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
@@ -53,6 +54,17 @@ type FormValues = {
     git_repo: string
     git_branch: string
     src_code_path: string
+}
+
+type ConfigurationValues = {
+    port: number
+    http_path: string
+    env_variables: EnvironmentVariable[]
+}
+
+type EnvironmentVariable = {
+    Key: string
+    Value: string
 }
 
 const steps = [
@@ -119,6 +131,19 @@ const sourceCodeSchema = yup.object().shape({
     src_code_path: yup.string()
 })
 
+const defaultConfigurationValues = {
+    port: 8080,
+    http_path: '/',
+    env_variables: [{ Key: '', Value: '' }]
+}
+
+const ConfigurationSchema = yup.object().shape({
+    port: yup.number().required(),
+    http_path: yup.string().required(),
+    git_branch: yup.string().required(),
+})
+
+
 const StepperCustomVertical = () => {
     // ** States
 
@@ -160,6 +185,22 @@ const StepperCustomVertical = () => {
         resolver: yupResolver(sourceCodeSchema)
     })
 
+    const {
+        control: configurationControl,
+        handleSubmit: handleConfigurationSubmit,
+        register: configurationRegister,
+        getValues: getConfigurationValue,
+        formState: { errors: ConfigurationErrors }
+    } = useForm({
+        defaultValues: defaultConfigurationValues,
+        resolver: yupResolver(ConfigurationSchema)
+    })
+
+    const { fields, append, remove } = useFieldArray({
+        name: 'env_variables',
+        control: configurationControl
+    })
+
     const router = useRouter()
     if (router.query?.code && !gitUser) {
         sendCode(router.query?.code as string)
@@ -174,26 +215,20 @@ const StepperCustomVertical = () => {
 
     const fetchGitOwner = () => {
         getGitOwner().then(response => {
-            console.log();
             setGitUser(response.data.gitUser);
             fetchUserRepositories(response.data.gitUser as string);
         }).catch(error => {
-            console.log(error);
         })
     }
 
     const fetchUserRepositories = (user: string) => {
-        console.log(user);
         getRepositories(user).then(response => {
-            console.log(response);
             setRepositories(response.data);
         })
     }
 
     const fetchBranch = (repo: string) => {
-        console.log(gitUser);
         getBranch(repo, gitUser).then(response => {
-            console.log(response);
             setBranches(response.data);
         })
     }
@@ -213,68 +248,23 @@ const StepperCustomVertical = () => {
     }
 
     // configuration
-    const [environmentVariables, setEnvironmentVariables] = useState<any>();
-    const [httpPort, setHttpPort] = useState('');
-    const [httpPath, setHttpPath] = useState('');
-    const [editingEnvironmentVariables, setEditingEnvironmentVariables] = useState(false);
-    const [newKey, setNewKey] = useState('');
     const [open, setOpen] = useState(false);
-    const [newValue, setNewValue] = useState('');
-    const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
 
-    const handleAddKeyValuePair = () => {
-        setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
-        setEnvironmentVariables([environmentVariables, { key: newKey, value: newValue }]);
-        setNewKey('');
-        setNewValue('');
-    };
+    const handleClickOpen = () => { setOpen(true); };
+    const handleClose = () => { setOpen(false); };
+    const onConfigurationSubmit = (data: ConfigurationValues) => {
+        console.log(data);
+        setActiveStep(prevActiveStep => prevActiveStep + 1)
+        if (activeStep === steps.length - 1) {
+            toast.success('Form Submitted')
+        }
+    }
 
-    const updateEnvironmentVariables = (pairs: any) => {
-        const newEnvironmentVariables = pairs.map((pair: { key: any; value: any; }) => ({
-            key: pair.key,
-            value: pair.value,
-        }));
-        setEnvironmentVariables(newEnvironmentVariables);
-    };
+    const handleFinalSubmit = () => {
+        const data = { ...getSoruceCodeValue(), ...getConfigurationValue() }
+        console.log(data);
 
-    const handleKeyValuePairChange = (index: any, key: any, value: any) => {
-        const updatedPairs = [...keyValuePairs];
-        updatedPairs[index] = { key, value };
-        setKeyValuePairs(updatedPairs);
-        updateEnvironmentVariables(updatedPairs);
-    };
-
-    const handleDeleteKeyValuePair = (index: any) => {
-        const updatedPairs = keyValuePairs.filter((_, i) => i !== index);
-        setKeyValuePairs(updatedPairs);
-        updateEnvironmentVariables(updatedPairs);
-    };
-
-    const handlePortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("HTTP Port Value:", event.target.value); // Check if the value is being captured
-        setHttpPort(event.target.value);
-    };
-
-    const handlePathChange = (event: any) => {
-        console.log("HTTP Path Value:", event.target.value); // Check if the value is being captured
-        setHttpPath(event.target.value);
-    };
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const logData = () => {
-        console.log("Configuration Data:");
-        console.log("Environment Variables:", keyValuePairs);
-        console.log("HTTP Port:", httpPort);
-        console.log("HTTP Path:", httpPath);
-    };
-
+    }
 
     const getStepContent = (step: number) => {
         switch (step) {
@@ -283,9 +273,6 @@ const StepperCustomVertical = () => {
                     <form onSubmit={handleAccountSubmit(onSubmit)}>
                         <Grid container spacing={5}>
                             <Grid item xs={12} sm={12}>
-                                {/* <FormControl fullWidth>
-                                    <TextField type='text' label='Application Name' id='application_name' {...register("application_name")} placeholder='Application Name' />
-                                </FormControl> */}
                                 <FormControl fullWidth>
                                     <Controller
                                         name='application_name'
@@ -313,13 +300,12 @@ const StepperCustomVertical = () => {
                                 <h3 style={{ margin: 0 }}>Source Code Provider</h3>
                                 <RadioGroup row aria-label='colored' name='colored' defaultValue='primary'>
                                     <FormControlLabel value='primary' control={<Radio />} label='Github' />
-                                    {/* <FormControlLabel value='secondary' control={<Radio />} label='Bitbucket' /> */}
                                 </RadioGroup>
                             </Grid>
                             <Grid item xs={12} sm={12}>
                                 <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
                                 <FormControl fullWidth >
-                                    <InputLabel id='git_repo'>Repository</InputLabel>
+                                    <InputLabel id='git_repo' error={Boolean(accountErrors.git_repo)}>Repository</InputLabel>
                                     <Select
                                         labelId='git_repo'
                                         input={<OutlinedInput label='Region' />}
@@ -351,7 +337,7 @@ const StepperCustomVertical = () => {
                                 <h3 style={{ margin: '0 0 10px 0' }}>Branch</h3>
                                 <FormControl fullWidth>
                                     <InputLabel
-                                        id='git-branch'>
+                                        id='git-branch' error={Boolean(accountErrors.git_repo)}>
                                         Branch
                                     </InputLabel>
                                     <Select
@@ -394,137 +380,105 @@ const StepperCustomVertical = () => {
                 )
             case 1:
                 return (
-                    <Container>
+                    <form onSubmit={handleConfigurationSubmit(onConfigurationSubmit)}>
                         <Grid container spacing={5}>
-
-                            <div style={{ width: "100%" }}>
+                            <Grid item xs={12} sm={12}>
                                 <h2>Configuration</h2>
-                                <div className="section">
-                                    <h3>Environment Variables</h3>
+                                <h3>Environment Variables</h3>
+                            </Grid>
 
-                                    <div className="section" >
-                                        <h3 style={{ display: "flex", width: '100%', justifyContent: 'space-between', fontWeight: 'normal' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                                <span style={{ marginLeft: '10px' }}>{getSoruceCodeValue('application_name')}</span>
-                                            </div>
+                            {/* environment variables */}
+                            <Grid item xs={4} sm={4}>
+                                <div >{getSoruceCodeValue('application_name')}</div>
+                            </Grid>
+                            <Grid item xs={8} sm={8}>
+                                <span>{getConfigurationValue('env_variables').length} Environment Variable</span>
+                                <Button aria-describedby="popover" variant="contained" style={{ float: 'right' }} onClick={handleClickOpen}> Edit</Button>
+                            </Grid>
 
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <span>
-
-                                                    {environmentVariables?.length ? environmentVariables?.length : 0} Environment Variable{environmentVariables?.length !== 1 && 's'}</span>
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                {editingEnvironmentVariables ? (
-                                                    <button style={{ marginRight: '2rem' }} onClick={() => setEditingEnvironmentVariables(false)}>Cancel</button>
-                                                ) : (
-                                                    <Button aria-describedby="popover" variant="contained" onClick={handleClickOpen}>
-                                                        Edit
-                                                    </Button>)}
-
-                                                <Dialog
-                                                    open={open}
-                                                    onClose={handleClose}
-                                                    aria-labelledby="alert-dialog-title"
-                                                    aria-describedby="alert-dialog-description"
-                                                    style={{ zIndex: 100 }}
-                                                >
-                                                    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                        <h3 style={{ marginBottom: '1rem' }}>Edit Environment Variables</h3>
-                                                        <Box
-                                                            component="form"
-                                                            sx={{
-                                                                '& .MuiTextField-root': { m: 1, width: '25ch' },
-                                                            }}
-                                                            noValidate
-                                                            autoComplete="off"
-                                                        >
-                                                            {keyValuePairs.map((pair, index) => (
-                                                                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-
-                                                                    <TextField
-                                                                        label="Key"
-                                                                        placeholder="Key"
-                                                                        value={pair.key}
-                                                                        onChange={(e) => handleKeyValuePairChange(index, e.target.value, pair.value)}
-
-                                                                    />
-
-                                                                    <TextField
-                                                                        label="Value"
-                                                                        placeholder="Value"
-                                                                        value={pair.value}
-                                                                        onChange={(e) => handleKeyValuePairChange(index, pair.key, e.target.value)}
-                                                                    />
-                                                                    <IconButton
-                                                                        aria-label="delete"
-                                                                        onClick={() => handleDeleteKeyValuePair(index)}
-                                                                        style={{ marginLeft: '1rem' }}
-                                                                    >
-
-                                                                    </IconButton>
-                                                                </div>
-                                                            ))}
-                                                        </Box>
-                                                        <button onClick={handleAddKeyValuePair} style={{ alignSelf: 'flex-end' }}>+</button>
-                                                        <Button variant="contained" onClick={handleClose}>Save</Button>
-                                                    </div>
-                                                </Dialog>
+                            <Grid item xs={12} sm={12}>
+                                <h2>Resource Settings</h2>
+                            </Grid>
 
 
-                                            </div>
-                                        </h3>
+
+                            {/* HTTP Port */}
+                            <Grid item xs={4} sm={4}>
+                                <div style={{ alignItems: 'center' }}>HTTP Port:</div>
+                            </Grid>
+                            <Grid item xs={8} sm={8}>
+                                <TextField label="HTTP Port" type='number' sx={{ width: 325 }} {...configurationRegister('port')} />
+                            </Grid>
+
+                            {/* HTTP Path */}
+
+                            <Grid item xs={4} sm={4}>
+                                <div >HTTP Path:</div>
+                            </Grid>
+                            <Grid item xs={8} sm={8}>
+                                <TextField label="HTTP Path" sx={{ width: 325 }} {...configurationRegister('http_path')} />
+                            </Grid>
+
+                            {/* Environment Variable Dialog */}
+                            <Dialog
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                                style={{ zIndex: 100 }}
+                                fullWidth
+                            >
+                                <DialogTitle id='max-width-dialog-title' style={{ fontSize: '24px', textAlign: 'center' }}>Edit Environment Variables</DialogTitle>
+                                <DialogContent>
+                                    <div>
+                                        {
+                                            fields.map((field, index) => {
+                                                return (
+                                                    <Grid container spacing={5} key={field.id} style={{ marginBottom: '10px' }}>
+                                                        <Grid item xs={5.5} sm={5.5}>
+                                                            <FormControl>
+                                                                <TextField
+                                                                    label='Key'
+                                                                    sx={{ width: 315 }}
+                                                                    {...configurationRegister(`env_variables.${index}.Key` as const)}
+                                                                ></TextField>
+                                                            </FormControl>
+                                                        </Grid>
+                                                        <Grid item xs={5.5} sm={5.5}>
+                                                            <FormControl>
+                                                                <TextField
+                                                                    label='Value'
+                                                                    sx={{ width: 325 }}
+                                                                    {...configurationRegister(`env_variables.${index}.Value` as const)}
+                                                                ></TextField>
+                                                            </FormControl>
+                                                        </Grid>
+                                                        <Grid item xs={1} sm={1}>
+                                                            {index === (fields.length - 1) && (
+                                                                <IconButton aria-label="delete" size="large" onClick={() => append({ Key: '', Value: '' })} >
+                                                                    <AddIcon fontSize="inherit" />
+                                                                </IconButton>
+
+                                                            )}
+                                                            {index < (fields.length - 1) && (
+                                                                <IconButton aria-label="delete" size="large" onClick={() => remove(index)}>
+                                                                    <DeleteIcon fontSize="inherit" />
+                                                                </IconButton>
+                                                            )}
+                                                        </Grid>
+                                                    </Grid>
+                                                )
+                                            })
+                                        }
                                     </div>
-                                </div>
-                            </div>
+                                </DialogContent>
 
-                        </Grid>
-
-                        <h2>Resource Settings</h2>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <span>HTTP Port:</span>
-                            <span style={{ marginRight: '375px' }}></span> {/* Add space */}
-                            <Box
-                                component="form"
-                                sx={{
-                                    '& .MuiTextField-root': { m: 1, width: '30ch' },
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                                <div>
-                                    <TextField
-                                        label="HTTP Port"
-                                        id="http-port"
-                                        defaultValue={httpPort}
-                                    />
-                                </div>
-                            </Box>
-                        </div>
-
-
-                        <br />
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <span>HTTP Path:</span>
-                            <span style={{ marginRight: '375px' }}></span> {/* Add space */}
-                            <Box
-                                component="form"
-                                sx={{
-                                    '& .MuiTextField-root': { m: 1, width: '30ch' },
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                                <div>
-                                    <TextField
-                                        label="HTTP Path"
-                                        id="http-path"
-                                        value={httpPath}
-                                        onChange={(e) => setHttpPath(e.target.value)}
-
-                                    />
-                                </div>
-                            </Box>
-                        </div>
+                                <DialogActions className='dialog-actions-dense' sx={{ justifyContent: "center" }} style={{ marginBottom: '15px' }}>
+                                    <Button variant="contained" onClick={handleClose}>Save</Button>
+                                    <Button onClick={handleClose}>Close</Button>
+                                </DialogActions>
+                            </Dialog>
+                        </Grid >
 
                         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
@@ -534,175 +488,178 @@ const StepperCustomVertical = () => {
                                 Next
                             </Button>
                         </Grid>
-                    </Container>
+                    </form >
                 )
             case 2:
                 return (
-                    <Container>
-                        <Grid container spacing={6}>
-                            <Grid item xs={12} lg={6} xl={7}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Typography variant="h5" sx={{ mb: 4 }}>
-                                            Almost done! 🚀
-                                        </Typography>
-                                        <Typography sx={{ color: "text.secondary" }}>
-                                            Confirm your deal details information and submit to create it.
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TableContainer>
-                                            <Table>
-                                                <TableBody
-                                                    sx={{
-                                                        "& .MuiTableCell-root": {
-                                                            borderBottom: 0,
-                                                            verticalAlign: "top",
-                                                            "&:last-of-type": { px: "0 !important" },
-                                                            "&:first-of-type": { pl: "0 !important" },
-                                                            py: (theme) => `${theme.spacing(0.75)} !important`,
-                                                        },
-                                                    }}
-                                                >
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                App Name
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                {getSoruceCodeValue('application_name')}
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                Repository
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                {getSoruceCodeValue('git_repo')}
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                Branch
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                {getSoruceCodeValue('git_branch')}
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                Env Variables
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                2
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                HTTP Port
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                8080
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ fontWeight: 500, color: "text.secondary" }}
-                                                            >
-                                                                HTTP Path
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography sx={{ color: "text.secondary" }}>
-                                                                /
-                                                            </Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Grid>
+                    <Grid container spacing={6}>
+                        <Grid item xs={12} lg={6} xl={7}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <Typography variant="h5" sx={{ mb: 4 }}>
+                                        Almost done! 🚀
+                                    </Typography>
+                                    <Typography sx={{ color: "text.secondary" }}>
+                                        Confirm your deal details information and submit to create it.
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody
+                                                sx={{
+                                                    "& .MuiTableCell-root": {
+                                                        borderBottom: 0,
+                                                        verticalAlign: "top",
+                                                        "&:last-of-type": { px: "0 !important" },
+                                                        "&:first-of-type": { pl: "0 !important" },
+                                                        py: (theme) => `${theme.spacing(0.75)} !important`,
+                                                    },
+                                                }}
+                                            >
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            App Name
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getSoruceCodeValue('application_name')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            Repository
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getSoruceCodeValue('git_repo')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            Branch
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getSoruceCodeValue('git_branch')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            Env Variables
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getConfigurationValue('env_variables').length}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            HTTP Port
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getConfigurationValue('port')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ fontWeight: 500, color: "text.secondary" }}
+                                                        >
+                                                            HTTP Path
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography sx={{ color: "text.secondary" }}>
+                                                            {getConfigurationValue('http_path')}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
                                 </Grid>
                             </Grid>
-                            <Grid
-                                item
-                                lg={6}
-                                xl={5}
-                                xs={12}
+                        </Grid>
+                        <Grid
+                            item
+                            lg={6}
+                            xl={5}
+                            xs={12}
+                            sx={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                justifyContent: "center",
+                                "& img": { maxWidth: "100%" },
+                            }}
+                        >
+                            <Box
                                 sx={{
+                                    pt: 5,
+                                    px: 5,
+                                    width: "100%",
                                     display: "flex",
-                                    alignItems: "flex-start",
+                                    borderRadius: 1,
+                                    alignItems: "flex-end",
                                     justifyContent: "center",
-                                    "& img": { maxWidth: "100%" },
+                                    border: (theme) => `1px solid ${theme.palette.divider}`,
+                                    marginLeft: "20px", // You can adjust the value as needed
                                 }}
                             >
-                                <Box
-                                    sx={{
-                                        pt: 5,
-                                        px: 5,
-                                        width: "100%",
-                                        display: "flex",
-                                        borderRadius: 1,
-                                        alignItems: "flex-end",
-                                        justifyContent: "center",
-                                        border: (theme) => `1px solid ${theme.palette.divider}`,
-                                        marginLeft: "20px", // You can adjust the value as needed
-                                    }}
-                                >
-                                    <img
-                                        height={230}
-                                        alt="App-Review-illustration"
-                                        src="/images/pages/create-deal-review-complete.png"
-                                    />
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
-                                    Back
-                                </Button>
-                                <Button size='large' variant='contained' type='submit' onClick={handleNext}>
-                                    Next
-                                </Button>
-                            </Grid>
+                                <img
+                                    height={230}
+                                    alt="App-Review-illustration"
+                                    src="/images/pages/create-deal-review-complete.png"
+                                />
+                            </Box>
                         </Grid>
-                    </Container>
+
+                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
+                                Back
+                            </Button>
+                            <Button size='large' variant='contained' type='submit'
+                                color={(activeStep === steps.length - 1) ? 'success' : 'primary'}
+                                {...(!(activeStep === steps.length - 1) ? { endIcon: <Icon icon='tabler:chevron-right' /> } : {})}
+                                onClick={handleFinalSubmit}
+                            >
+                                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                            </Button>
+
+                        </Grid>
+                    </Grid>
                 )
             default:
                 return 'Unknown Step'
@@ -728,7 +685,7 @@ const StepperCustomVertical = () => {
                             Back
                         </Button>
                         <Button size='large' variant='contained' type='submit' onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                            
                         </Button>
                     </Grid> */}
             </Grid>
