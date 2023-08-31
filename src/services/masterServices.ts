@@ -14,6 +14,18 @@ export const get = async (partialUrl: string, params = {}) => {
   }
 };
 
+export const post = async (partialUrl: string, data: any, params = {}) => {
+  try {
+    const url = constructUrl(partialUrl);
+    const requestConfig: AxiosRequestConfig = { headers: getHeaders() };
+    const response = await axios.post(url, data, requestConfig);
+    return response;
+  } catch (error) {
+    console.error('Error :', error);
+    throw error;
+  }
+};
+
 
 export const getPublic = async (partialUrl: string, params = {}) => {
   try {
