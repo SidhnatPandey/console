@@ -217,7 +217,7 @@ const StepperCustomVertical = () => {
                 fetchUserRepositories(response.git_user as string);
             })
             .catch(error => {
-                errorToast(error.message);
+                toast.error(error.message);
             })
     }
 
@@ -410,7 +410,7 @@ const StepperCustomVertical = () => {
                                     <Grid item xs={12} sm={12}>
                                         <h3 style={{ margin: '0 0 10px 0' }}>Source Directory (optional)</h3>
                                         <FormControl fullWidth>
-                                            <TextField type='text' label='Source Directory' placeholder='Application Name' />
+                                            <TextField type='text' label='Source Directory' placeholder='Application Name' {...sourceCodeRegister('src_code_path')} />
                                         </FormControl>
                                     </Grid>
                                 </>}
