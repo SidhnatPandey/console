@@ -23,7 +23,6 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CardContent, { CardContentProps } from '@mui/material/CardContent'
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { DevTool } from '@hookform/devtools';
 
 // ** Third Party Imports
 import toast from 'react-hot-toast'
@@ -551,7 +550,6 @@ const StepperCustomVertical = () => {
                                 </Button>
                             </Grid>
                         </form >
-                        <DevTool control={configurationControl} />
                     </>
                 )
             case 2:
