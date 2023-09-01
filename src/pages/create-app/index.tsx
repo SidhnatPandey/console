@@ -40,7 +40,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 // ** Styled Component
 import StepperWrapper from 'src/@core/styles/mui/stepper';
 
-import { sendCode, getGitOwner, getBranch, getRepositories, saveApp } from '../../services/appService';
+import { sendCode, getGitOwner, getBranch, getRepositories, saveApp } from 'src/services/appService';
 import { errorToast } from 'src/lib/react-taostify';
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
@@ -221,42 +221,46 @@ const StepperCustomVertical = () => {
             })
     }
 
-    const fetchGitOwner = () => {
-        getGitOwner().then(response => {
-            if (response.data) {
-                setGitUser(response.data.gitUser);
-                fetchUserRepositories(response.data.gitUser as string);
-            } else {
-                toast.error("Some Error Occured. Please try again.")
-            }
-        }).catch(error => {
-            toast.error("Could not fetch gituser.!")
-        })
-    }
-
-    const fetchUserRepositories = (user: string) => {
-        getRepositories(user).then(response => {
-            if (response.data) {
-                setRepositories(response.data);
-            } else {
-                toast.error("Some Error Occured. Please try again.")
-            }
-        }).catch(error => {
-            toast.error("Could not fetch repositories.!")
-        })
-    }
-
-    const fetchBranch = (repo: string) => {
-        getBranch(repo, gitUser).then(response => {
-            if (response.data) {
-                setBranches(response.data);
-            } else {
-                toast.error("Some Error Occured. Please try again.")
-            }
-        }).catch(error => {
-            toast.error("Could not fetch branches.!")
-        })
-    }
+    const fetchGitOwner = async () => {
+        try {
+          const response = await getGitOwner();
+          if (response.data) {
+            setGitUser(response.data.gitUser);
+            await fetchUserRepositories(response.data.gitUser as string);
+          } else {
+            toast.error("Some Error Occurred. Please try again.");
+          }
+        } catch (error) {
+          toast.error("Could not fetch git user.");
+        }
+      };
+      
+      const fetchUserRepositories = async (user: string) => {
+        try {
+          const response = await getRepositories(user);
+          if (response.data) {
+            setRepositories(response.data);
+          } else {
+            toast.error("Some Error Occurred. Please try again.");
+          }
+        } catch (error) {
+          toast.error("Could not fetch repositories.");
+        }
+      };
+      
+      const fetchBranch = async (repo: string) => {
+        try {
+          const response = await getBranch(repo, gitUser);
+          if (response.data) {
+            setBranches(response.data);
+          } else {
+            toast.error("Some Error Occurred. Please try again.");
+          }
+        } catch (error) {
+          toast.error("Could not fetch branches.");
+        }
+      };
+      
 
     const handleChange = (event: SelectChangeEvent<typeof repo>) => {
         const repo = event.target.value
@@ -333,7 +337,7 @@ const StepperCustomVertical = () => {
                             <Grid item xs={12} sm={12}>
                                 <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
                                 <FormControl fullWidth >
-                                    <InputLabel id='git_repo' error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
+                                    <InputLabel id='git_repo'  error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
                                     <Controller
                                         name='git_repo'
                                         control={sourceCodeControl}
