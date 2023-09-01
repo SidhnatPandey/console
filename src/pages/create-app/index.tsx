@@ -141,7 +141,10 @@ const defaultConfigurationValues = {
 const ConfigurationSchema = yup.object().shape({
     port: yup.number().required(),
     http_path: yup.string().required(),
-    env_variables: yup.object()
+    env_variables: yup.array().of(yup.object({
+        Key: yup.string(),
+        Value: yup.string()
+    }))
 })
 
 
@@ -332,22 +335,30 @@ const StepperCustomVertical = () => {
                                 <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
                                 <FormControl fullWidth >
                                     <InputLabel id='git_repo' error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
-                                    <Select
-                                        labelId='git_repo'
-                                        input={<OutlinedInput label='Region' />}
-                                        id='git_repo'
-                                        error={Boolean(sourceCodeErrors.git_repo)}
-                                        {...sourceCodeRegister("git_repo", {
-                                            onChange: handleChange,
-                                            required: true
-                                        })}
-                                    >
-                                        {repositories.map(reg => (
-                                            <MenuItem key={reg} value={reg}>
-                                                {reg}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
+                                    <Controller
+                                        name='git_repo'
+                                        control={sourceCodeControl}
+                                        rules={{ required: true }}
+                                        render={({ field: { value, onChange } }) => (
+                                            <Select
+                                                value={value}
+                                                label='Repository'
+                                                onChange={(e) => {
+                                                    onChange(e)
+                                                    handleChange(e)
+                                                }}
+                                                error={Boolean(sourceCodeErrors.git_repo)}
+                                                labelId='stepper-linear-personal-country'
+                                                aria-describedby='stepper-linear-personal-country-helper'
+                                            >
+                                                {repositories.map(reg => (
+                                                    <MenuItem key={reg} value={reg}>
+                                                        {reg}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        )}
+                                    />
                                     {sourceCodeErrors.git_repo && (
                                         <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
                                             This field is required
@@ -369,21 +380,27 @@ const StepperCustomVertical = () => {
                                                 id='git-branch' error={Boolean(sourceCodeErrors.git_repo)}>
                                                 Branch
                                             </InputLabel>
-                                            <Select
-                                                labelId='git_branch'
-                                                input={<OutlinedInput label='Branch' />}
-                                                id='git_branch'
-                                                error={Boolean(sourceCodeErrors.git_repo)}
-                                                {...sourceCodeRegister("git_branch", {
-                                                    required: true
-                                                })}
-                                            >
-                                                {branches.map(branch => (
-                                                    <MenuItem key={branch} value={branch}>
-                                                        {branch}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
+                                            <Controller
+                                                name='git_branch'
+                                                control={sourceCodeControl}
+                                                rules={{ required: true }}
+                                                render={({ field: { value, onChange } }) => (
+                                                    <Select
+                                                        value={value}
+                                                        label='Branch'
+                                                        onChange={onChange}
+                                                        error={Boolean(sourceCodeErrors.git_branch)}
+                                                        labelId='stepper-linear-personal-country'
+                                                        aria-describedby='stepper-linear-personal-country-helper'
+                                                    >
+                                                        {branches.map(branch => (
+                                                            <MenuItem key={branch} value={branch}>
+                                                                {branch}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                )}
+                                            />
                                             {sourceCodeErrors.git_branch && (
                                                 <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
                                                     This field is required
@@ -403,7 +420,7 @@ const StepperCustomVertical = () => {
                                 <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
                                     Back
                                 </Button>
-                                <Button size='large' variant='contained' type='submit' onClick={handleSourceCodeSubmit(onSubmit)} disabled={!isSourceCodeFormValid}>
+                                <Button size='large' variant='contained' type='submit' onClick={handleSourceCodeSubmit(onSubmit)}>
                                     Next
                                 </Button>
                             </Grid>
@@ -448,29 +465,6 @@ const StepperCustomVertical = () => {
                                             This field is required
                                         </FormHelperText>
                                     )}
-
-                                    {/*  <FormControl fullWidth>
-                                    <Controller
-                                        name='port'
-                                        control={configurationControl}
-                                        rules={{ required: true }}
-                                        render={({ field: { value, onChange } }) => (
-                                            <TextField
-                                                value={value}
-                                                label="HTTP Port"
-                                                onChange={onChange}
-                                                placeholder='8080'
-                                                error={Boolean(ConfigurationErrors.port)}
-                                                aria-describedby='stepper-linear-account-username'
-                                            />
-                                        )}
-                                    />
-                                    {ConfigurationErrors.port && (
-                                        <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
-                                            This field is required
-                                        </FormHelperText>
-                                    )}
-                                </FormControl> */}
                                 </Grid>
 
                                 {/* HTTP Path */}
@@ -552,12 +546,12 @@ const StepperCustomVertical = () => {
                                 <Button size='large' variant='outlined' color='secondary' onClick={handleBack}>
                                     Back
                                 </Button>
-                                <Button size='large' variant='contained' type='submit' onClick={handleNext} disabled={!isConfigurationFormValid}>
+                                <Button size='large' variant='contained' type='submit' onClick={handleConfigurationSubmit(onConfigurationSubmit)} >
                                     Next
                                 </Button>
                             </Grid>
                         </form >
-                        {/* <DevTool control={configurationControl} /> */}
+                        <DevTool control={configurationControl} />
                     </>
                 )
             case 2:
