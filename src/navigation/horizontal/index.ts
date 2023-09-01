@@ -1,24 +1,29 @@
 // ** Type import
 import { HorizontalNavItemsType } from 'src/@core/layouts/types'
 
-const navigation = (): HorizontalNavItemsType => [
-  {
-    title: 'Home',
-    path: '/home',
-    icon: 'tabler:smart-home',
-  },
-  {
-    title: 'Second Page',
-    path: '/second-page',
-    icon: 'tabler:mail',
-  },
-  {
-    path: '/acl',
-    action: 'read',
-    subject: 'acl-page',
-    title: 'Access Control',
-    icon: 'tabler:shield',
-  }
-]
+const navigation = (): HorizontalNavItemsType => {
+  return [
+    {
+      title: 'Dashboards',
+      icon: 'tabler:smart-home',
+      badgeContent: 'new',
+      badgeColor: 'error',
+      children: [
+        {
+          title: 'Analytics',
+          path: '/dashboard'
+        },
+        {
+          title: 'CRM',
+          path: '/dashboard'
+        },
+        {
+          title: 'eCommerce',
+          path: '/dashboard'
+        }
+      ]
+    },
+  ]
+}
 
 export default navigation

@@ -34,12 +34,12 @@ class CustomDocument extends Document {
 }
 
 CustomDocument.getInitialProps = async ctx => {
-  const originalRenderPage = ctx.renderPage
+  const view = ctx.renderPage
   const cache = createEmotionCache()
   const { extractCriticalToChunks } = createEmotionServer(cache)
 
   ctx.renderPage = () =>
-    originalRenderPage({
+    view({
       enhanceApp: App => props =>
         (
           <App

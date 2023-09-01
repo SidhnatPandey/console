@@ -76,14 +76,22 @@ const AuthProvider = ({ children }: Props) => {
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
         params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
+          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.access_token)
           : null
         const returnUrl = router.query.returnUrl
-        console.log('User Data: ', response.data.userData)
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        console.log('User Data: ', response.data);
+        const user: UserDataType = {
+          id: 0,
+          role: response.data.data.user_data?.role,
+          email: response.data.data.user_data?.email,
+          fullName: response.data.data.user_data?.user_name,
+          username: response.data.data.user_data?.user_name,
+          org: response.data.data.user_data?.org
+        }
+        setUser({ ...user })
+        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(user)) : null
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/dashboard'
 
         router.replace(redirectURL as string)
       })

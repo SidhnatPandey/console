@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react"; // ** React Imports
 import { useRouter } from "next/router"; //**the useRouter hook */
+import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link"; // ** Next Import
 import Button from "@mui/material/Button"; // ** MUI Components
 import Checkbox from "@mui/material/Checkbox";
@@ -128,8 +129,8 @@ const Register = () => {
       formData.username.trim() === "" ||
       formData.email.trim() === "" ||
       formData.password.trim() === "" ||
-      formData.org.trim() === "" ||
-      !isValidEmail(formData.email) || userNameExist || emailExist
+      formData.org.trim() === "" || userNameExist || emailExist ||
+      !isValidEmail(formData.email)
     ) {
       setError("Please fill in all the fields.");
       return; // Exit early if the form is not valid
@@ -149,7 +150,7 @@ const Register = () => {
 
     setError(null);
     signUp(user)
-      .then((response) => {
+      .then(() => {
         successToast("Registered successfully")
         router.push("/login");
       })
@@ -161,17 +162,19 @@ const Register = () => {
   const checkUserExists = (username: string) => {
     if (username) {
       checkUsername(username)
-        .then((response) => {
+        .then(() => {
           setUserNameExist(false);
         })
         .catch((error) => {
-          if (error.response.status === 302) {
+          if (error.response && error.response.status === 302) {
             setUserNameExist(true);
+          } else {
+            console.error("An error occurred:", error);
           }
-          //throw error;
         });
     }
   };
+
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
     const truncatedUsername = inputUsername.slice(0, 15); // Truncate the input to a maximum length of 15 characters
@@ -209,14 +212,15 @@ const Register = () => {
   const checkEmailExists = (email: string) => {
     if (email) {
       checkEmail(email)
-        .then((response) => {
+        .then(() => {
           setEmailExist(false);
         })
         .catch((error) => {
-          if (error.response.status === 302) {
+          if (error.response && error.response.status === 302) {
             setEmailExist(true);
+          } else {
+            console.error("An error occurred:", error);
           }
-          //throw error;
         });
     }
   };
