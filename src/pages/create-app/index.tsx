@@ -40,7 +40,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 // ** Styled Component
 import StepperWrapper from 'src/@core/styles/mui/stepper';
 
-import { sendCode, getGitOwner, getBranch, getRepositories } from '../../services/appService';
+import { sendCode, getGitOwner, getBranch, getRepositories, saveApp } from '../../services/appService';
 import { errorToast } from 'src/lib/react-taostify';
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
@@ -140,7 +140,10 @@ const defaultConfigurationValues = {
 const ConfigurationSchema = yup.object().shape({
     port: yup.number().required(),
     http_path: yup.string().required(),
-    git_branch: yup.string().required(),
+    env_variables: yup.array().of(yup.object({
+        Key: yup.string(),
+        Value: yup.string()
+    }))
 })
 
 
@@ -148,10 +151,15 @@ const StepperCustomVertical = () => {
     // ** States
 
     const [activeStep, setActiveStep] = useState<number>(0)
+    const [repoSelected, setRepoSelected] = useState<boolean>(false);
 
     // Handle Stepper
     const handleBack = () => {
-        setActiveStep(prevActiveStep => prevActiveStep - 1)
+        setActiveStep(prevActiveStep => prevActiveStep - 1);
+        if (activeStep === 1) {
+            const sourceCodeValue = getSoruceCodeValue();
+            //setSourceCodeValue();
+        }
     }
     const handleNext = () => {
         setActiveStep(prevActiveStep => prevActiveStep + 1)
@@ -174,12 +182,12 @@ const StepperCustomVertical = () => {
 
     // react hook form
     const {
-        reset: accountReset,
-        control: accountControl,
-        handleSubmit: handleAccountSubmit,
+        control: sourceCodeControl,
+        handleSubmit: handleSourceCodeSubmit,
         register: sourceCodeRegister,
         getValues: getSoruceCodeValue,
-        formState: { errors: accountErrors }
+        setValue: setSourceCodeValue,
+        formState: { errors: sourceCodeErrors, isValid: isSourceCodeFormValid }
     } = useForm({
         defaultValues: defaultSourceCodeValues,
         resolver: yupResolver(sourceCodeSchema)
@@ -190,7 +198,7 @@ const StepperCustomVertical = () => {
         handleSubmit: handleConfigurationSubmit,
         register: configurationRegister,
         getValues: getConfigurationValue,
-        formState: { errors: ConfigurationErrors }
+        formState: { errors: ConfigurationErrors, isValid: isConfigurationFormValid }
     } = useForm({
         defaultValues: defaultConfigurationValues,
         resolver: yupResolver(ConfigurationSchema)
@@ -209,38 +217,55 @@ const StepperCustomVertical = () => {
                 fetchUserRepositories(response.git_user as string);
             })
             .catch(error => {
-                errorToast(error.message);
+                toast.error(error.message);
             })
     }
 
     const fetchGitOwner = () => {
         getGitOwner().then(response => {
-            setGitUser(response.data.gitUser);
-            fetchUserRepositories(response.data.gitUser as string);
+            if (response.data) {
+                setGitUser(response.data.gitUser);
+                fetchUserRepositories(response.data.gitUser as string);
+            } else {
+                toast.error("Some Error Occured. Please try again.")
+            }
         }).catch(error => {
+            toast.error("Could not fetch gituser.!")
         })
     }
 
     const fetchUserRepositories = (user: string) => {
         getRepositories(user).then(response => {
-            setRepositories(response.data);
+            if (response.data) {
+                setRepositories(response.data);
+            } else {
+                toast.error("Some Error Occured. Please try again.")
+            }
+        }).catch(error => {
+            toast.error("Could not fetch repositories.!")
         })
     }
 
     const fetchBranch = (repo: string) => {
         getBranch(repo, gitUser).then(response => {
-            setBranches(response.data);
+            if (response.data) {
+                setBranches(response.data);
+            } else {
+                toast.error("Some Error Occured. Please try again.")
+            }
+        }).catch(error => {
+            toast.error("Could not fetch branches.!")
         })
     }
 
     const handleChange = (event: SelectChangeEvent<typeof repo>) => {
         const repo = event.target.value
         setRepo(repo);
+        setRepoSelected(true);
         fetchBranch(repo);
     }
 
     const onSubmit = (data: FormValues) => {
-        console.log(data);
         setActiveStep(prevActiveStep => prevActiveStep + 1)
         if (activeStep === steps.length - 1) {
             toast.success('Form Submitted')
@@ -253,7 +278,6 @@ const StepperCustomVertical = () => {
     const handleClickOpen = () => { setOpen(true); };
     const handleClose = () => { setOpen(false); };
     const onConfigurationSubmit = (data: ConfigurationValues) => {
-        console.log(data);
         setActiveStep(prevActiveStep => prevActiveStep + 1)
         if (activeStep === steps.length - 1) {
             toast.success('Form Submitted')
@@ -261,22 +285,26 @@ const StepperCustomVertical = () => {
     }
 
     const handleFinalSubmit = () => {
-        const data = { ...getSoruceCodeValue(), ...getConfigurationValue() }
-        console.log(data);
-
+        const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() }
+        data['git_user'] = gitUser;
+        saveApp(data).then(response => {
+            toast.success('App Created Successfully')
+        }).catch(error => {
+            toast.error(error)
+        })
     }
 
     const getStepContent = (step: number) => {
         switch (step) {
             case 0:
                 return (
-                    <form onSubmit={handleAccountSubmit(onSubmit)}>
+                    <form onSubmit={handleSourceCodeSubmit(onSubmit)}>
                         <Grid container spacing={5}>
                             <Grid item xs={12} sm={12}>
                                 <FormControl fullWidth>
                                     <Controller
                                         name='application_name'
-                                        control={accountControl}
+                                        control={sourceCodeControl}
                                         rules={{ required: true }}
                                         render={({ field: { value, onChange } }) => (
                                             <TextField
@@ -284,12 +312,12 @@ const StepperCustomVertical = () => {
                                                 label='Application Name'
                                                 onChange={onChange}
                                                 placeholder='carterLeonard'
-                                                error={Boolean(accountErrors.application_name)}
+                                                error={Boolean(sourceCodeErrors.application_name)}
                                                 aria-describedby='stepper-linear-account-username'
                                             />
                                         )}
                                     />
-                                    {accountErrors.application_name && (
+                                    {sourceCodeErrors.application_name && (
                                         <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
                                             This field is required
                                         </FormHelperText>
@@ -305,23 +333,32 @@ const StepperCustomVertical = () => {
                             <Grid item xs={12} sm={12}>
                                 <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
                                 <FormControl fullWidth >
-                                    <InputLabel id='git_repo' error={Boolean(accountErrors.git_repo)}>Repository</InputLabel>
-                                    <Select
-                                        labelId='git_repo'
-                                        input={<OutlinedInput label='Region' />}
-                                        id='git_repo'
-                                        error={Boolean(accountErrors.git_repo)}
-                                        {...sourceCodeRegister("git_repo", {
-                                            onChange: handleChange
-                                        })}
-                                    >
-                                        {repositories.map(reg => (
-                                            <MenuItem key={reg} value={reg}>
-                                                {reg}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    {accountErrors.git_repo && (
+                                    <InputLabel id='git_repo' error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
+                                    <Controller
+                                        name='git_repo'
+                                        control={sourceCodeControl}
+                                        rules={{ required: true }}
+                                        render={({ field: { value, onChange } }) => (
+                                            <Select
+                                                value={value}
+                                                label='Repository'
+                                                onChange={(e) => {
+                                                    onChange(e)
+                                                    handleChange(e)
+                                                }}
+                                                error={Boolean(sourceCodeErrors.git_repo)}
+                                                labelId='stepper-linear-personal-country'
+                                                aria-describedby='stepper-linear-personal-country-helper'
+                                            >
+                                                {repositories.map(reg => (
+                                                    <MenuItem key={reg} value={reg}>
+                                                        {reg}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        )}
+                                    />
+                                    {sourceCodeErrors.git_repo && (
                                         <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
                                             This field is required
                                         </FormHelperText>
@@ -333,45 +370,56 @@ const StepperCustomVertical = () => {
                                 <p style={{ margin: 0 }}>Not seeing the repositories you expected here? <strong style={{ cursor: 'pointer' }}><Link href='https://github.com/apps/testApp21/installations/new'>Edit Your Github Permissions</Link></strong> </p>
                             </Grid>
 
-                            <Grid item xs={12} sm={12}>
-                                <h3 style={{ margin: '0 0 10px 0' }}>Branch</h3>
-                                <FormControl fullWidth>
-                                    <InputLabel
-                                        id='git-branch' error={Boolean(accountErrors.git_repo)}>
-                                        Branch
-                                    </InputLabel>
-                                    <Select
-                                        labelId='git_branch'
-                                        input={<OutlinedInput label='Branch' />}
-                                        id='git_branch'
-                                        error={Boolean(accountErrors.git_repo)}
-                                        {...sourceCodeRegister("git_branch")}
-                                    >
-                                        {branches.map(branch => (
-                                            <MenuItem key={branch} value={branch}>
-                                                {branch}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    {accountErrors.git_branch && (
-                                        <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
-                                            This field is required
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={12}>
-                                <h3 style={{ margin: '0 0 10px 0' }}>Source Directory (optional)</h3>
-                                <FormControl fullWidth>
-                                    <TextField type='text' label='Source Directory' placeholder='Application Name' />
-                                </FormControl>
-                            </Grid>
+                            {repoSelected &&
+                                <>
+                                    <Grid item xs={12} sm={12}>
+                                        <h3 style={{ margin: '0 0 10px 0' }}>Branch</h3>
+                                        <FormControl fullWidth>
+                                            <InputLabel
+                                                id='git-branch' error={Boolean(sourceCodeErrors.git_repo)}>
+                                                Branch
+                                            </InputLabel>
+                                            <Controller
+                                                name='git_branch'
+                                                control={sourceCodeControl}
+                                                rules={{ required: true }}
+                                                render={({ field: { value, onChange } }) => (
+                                                    <Select
+                                                        value={value}
+                                                        label='Branch'
+                                                        onChange={onChange}
+                                                        error={Boolean(sourceCodeErrors.git_branch)}
+                                                        labelId='stepper-linear-personal-country'
+                                                        aria-describedby='stepper-linear-personal-country-helper'
+                                                    >
+                                                        {branches.map(branch => (
+                                                            <MenuItem key={branch} value={branch}>
+                                                                {branch}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                )}
+                                            />
+                                            {sourceCodeErrors.git_branch && (
+                                                <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                                                    This field is required
+                                                </FormHelperText>
+                                            )}
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <h3 style={{ margin: '0 0 10px 0' }}>Source Directory (optional)</h3>
+                                        <FormControl fullWidth>
+                                            <TextField type='text' label='Source Directory' placeholder='Application Name' {...sourceCodeRegister('src_code_path')} />
+                                        </FormControl>
+                                    </Grid>
+                                </>}
 
                             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
                                     Back
                                 </Button>
-                                <Button size='large' variant='contained' type='submit' onClick={handleAccountSubmit(onSubmit)}>
+                                <Button size='large' variant='contained' type='submit' onClick={handleSourceCodeSubmit(onSubmit)}>
                                     Next
                                 </Button>
                             </Grid>
@@ -380,115 +428,129 @@ const StepperCustomVertical = () => {
                 )
             case 1:
                 return (
-                    <form onSubmit={handleConfigurationSubmit(onConfigurationSubmit)}>
-                        <Grid container spacing={5}>
-                            <Grid item xs={12} sm={12}>
-                                <h2>Configuration</h2>
-                                <h3>Environment Variables</h3>
-                            </Grid>
+                    <>
+                        <form onSubmit={handleConfigurationSubmit(onConfigurationSubmit)}>
+                            <Grid container spacing={5}>
+                                <Grid item xs={12} sm={12}>
+                                    <h2>Configuration</h2>
+                                    <h3>Environment Variables</h3>
+                                </Grid>
 
-                            {/* environment variables */}
-                            <Grid item xs={4} sm={4}>
-                                <div >{getSoruceCodeValue('application_name')}</div>
-                            </Grid>
-                            <Grid item xs={8} sm={8}>
-                                <span>{getConfigurationValue('env_variables').length} Environment Variable</span>
-                                <Button aria-describedby="popover" variant="contained" style={{ float: 'right' }} onClick={handleClickOpen}> Edit</Button>
-                            </Grid>
+                                {/* environment variables */}
+                                <Grid item xs={4} sm={4}>
+                                    <div >{getSoruceCodeValue('application_name')}</div>
+                                </Grid>
+                                <Grid item xs={8} sm={8}>
+                                    <span>{getConfigurationValue('env_variables').length} Environment Variable</span>
+                                    <Button aria-describedby="popover" variant="contained" style={{ float: 'right' }} onClick={handleClickOpen}> Edit</Button>
+                                </Grid>
 
-                            <Grid item xs={12} sm={12}>
-                                <h2>Resource Settings</h2>
-                            </Grid>
+                                <Grid item xs={12} sm={12}>
+                                    <h2>Resource Settings</h2>
+                                </Grid>
 
 
 
-                            {/* HTTP Port */}
-                            <Grid item xs={4} sm={4}>
-                                <div style={{ alignItems: 'center' }}>HTTP Port:</div>
-                            </Grid>
-                            <Grid item xs={8} sm={8}>
-                                <TextField label="HTTP Port" type='number' sx={{ width: 325 }} {...configurationRegister('port')} />
-                            </Grid>
+                                {/* HTTP Port */}
+                                <Grid item xs={4} sm={4}>
+                                    <div style={{ alignItems: 'center' }}>HTTP Port:</div>
+                                </Grid>
+                                <Grid item xs={8} sm={8}>
+                                    <TextField label="HTTP Port" type='number' sx={{ width: 325 }}
+                                        error={Boolean(ConfigurationErrors.port)}
+                                        {...configurationRegister('port', { required: true, valueAsNumber: true })} />
+                                    {ConfigurationErrors.port && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
+                                </Grid>
 
-                            {/* HTTP Path */}
+                                {/* HTTP Path */}
 
-                            <Grid item xs={4} sm={4}>
-                                <div >HTTP Path:</div>
-                            </Grid>
-                            <Grid item xs={8} sm={8}>
-                                <TextField label="HTTP Path" sx={{ width: 325 }} {...configurationRegister('http_path')} />
-                            </Grid>
+                                <Grid item xs={4} sm={4}>
+                                    <div >HTTP Path:</div>
+                                </Grid>
+                                <Grid item xs={8} sm={8}>
+                                    <TextField label="HTTP Path" sx={{ width: 325 }} error={Boolean(ConfigurationErrors.http_path)} {...configurationRegister('http_path', { required: true })} />
+                                    {ConfigurationErrors.http_path && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
+                                </Grid>
 
-                            {/* Environment Variable Dialog */}
-                            <Dialog
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                                style={{ zIndex: 100 }}
-                                fullWidth
-                            >
-                                <DialogTitle id='max-width-dialog-title' style={{ fontSize: '24px', textAlign: 'center' }}>Edit Environment Variables</DialogTitle>
-                                <DialogContent>
-                                    <div>
-                                        {
-                                            fields.map((field, index) => {
-                                                return (
-                                                    <Grid container spacing={5} key={field.id} style={{ marginBottom: '10px' }}>
-                                                        <Grid item xs={5.5} sm={5.5}>
-                                                            <FormControl>
-                                                                <TextField
-                                                                    label='Key'
-                                                                    sx={{ width: 315 }}
-                                                                    {...configurationRegister(`env_variables.${index}.Key` as const)}
-                                                                ></TextField>
-                                                            </FormControl>
+                                {/* Environment Variable Dialog */}
+                                <Dialog
+                                    open={open}
+                                    onClose={handleClose}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                    style={{ zIndex: 100 }}
+                                    fullWidth
+                                >
+                                    <DialogTitle id='max-width-dialog-title' style={{ fontSize: '24px', textAlign: 'center' }}>Edit Environment Variables</DialogTitle>
+                                    <DialogContent>
+                                        <div>
+                                            {
+                                                fields.map((field, index) => {
+                                                    return (
+                                                        <Grid container spacing={5} key={field.id} style={{ marginBottom: '10px' }}>
+                                                            <Grid item xs={5.5} sm={5.5}>
+                                                                <FormControl>
+                                                                    <TextField
+                                                                        label='Key'
+                                                                        sx={{ width: 315 }}
+                                                                        {...configurationRegister(`env_variables.${index}.Key` as const)}
+                                                                    ></TextField>
+                                                                </FormControl>
+                                                            </Grid>
+                                                            <Grid item xs={5.5} sm={5.5}>
+                                                                <FormControl>
+                                                                    <TextField
+                                                                        label='Value'
+                                                                        sx={{ width: 325 }}
+                                                                        {...configurationRegister(`env_variables.${index}.Value` as const)}
+                                                                    ></TextField>
+                                                                </FormControl>
+                                                            </Grid>
+                                                            <Grid item xs={1} sm={1}>
+                                                                {index === (fields.length - 1) && (
+                                                                    <IconButton aria-label="delete" size="large" onClick={() => append({ Key: '', Value: '' })} >
+                                                                        <AddIcon fontSize="inherit" />
+                                                                    </IconButton>
+
+                                                                )}
+                                                                {index < (fields.length - 1) && (
+                                                                    <IconButton aria-label="delete" size="large" onClick={() => remove(index)}>
+                                                                        <DeleteIcon fontSize="inherit" />
+                                                                    </IconButton>
+                                                                )}
+                                                            </Grid>
                                                         </Grid>
-                                                        <Grid item xs={5.5} sm={5.5}>
-                                                            <FormControl>
-                                                                <TextField
-                                                                    label='Value'
-                                                                    sx={{ width: 325 }}
-                                                                    {...configurationRegister(`env_variables.${index}.Value` as const)}
-                                                                ></TextField>
-                                                            </FormControl>
-                                                        </Grid>
-                                                        <Grid item xs={1} sm={1}>
-                                                            {index === (fields.length - 1) && (
-                                                                <IconButton aria-label="delete" size="large" onClick={() => append({ Key: '', Value: '' })} >
-                                                                    <AddIcon fontSize="inherit" />
-                                                                </IconButton>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </DialogContent>
 
-                                                            )}
-                                                            {index < (fields.length - 1) && (
-                                                                <IconButton aria-label="delete" size="large" onClick={() => remove(index)}>
-                                                                    <DeleteIcon fontSize="inherit" />
-                                                                </IconButton>
-                                                            )}
-                                                        </Grid>
-                                                    </Grid>
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                </DialogContent>
+                                    <DialogActions className='dialog-actions-dense' sx={{ justifyContent: "center" }} style={{ marginBottom: '15px' }}>
+                                        <Button variant="contained" onClick={handleClose}>Save</Button>
+                                        <Button onClick={handleClose}>Close</Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </Grid >
 
-                                <DialogActions className='dialog-actions-dense' sx={{ justifyContent: "center" }} style={{ marginBottom: '15px' }}>
-                                    <Button variant="contained" onClick={handleClose}>Save</Button>
-                                    <Button onClick={handleClose}>Close</Button>
-                                </DialogActions>
-                            </Dialog>
-                        </Grid >
-
-                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Button size='large' variant='outlined' color='secondary' disabled={activeStep === 0} onClick={handleBack}>
-                                Back
-                            </Button>
-                            <Button size='large' variant='contained' type='submit' onClick={handleNext}>
-                                Next
-                            </Button>
-                        </Grid>
-                    </form >
+                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Button size='large' variant='outlined' color='secondary' onClick={handleBack}>
+                                    Back
+                                </Button>
+                                <Button size='large' variant='contained' type='submit' onClick={handleConfigurationSubmit(onConfigurationSubmit)} >
+                                    Next
+                                </Button>
+                            </Grid>
+                        </form >
+                    </>
                 )
             case 2:
                 return (
@@ -674,20 +736,6 @@ const StepperCustomVertical = () => {
                     <p>Provide data with this form to create your app.</p>
                     {getStepContent(activeStep)}
                 </Grid>
-                {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button
-                            size='large'
-                            variant='outlined'
-                            color='secondary'
-                            disabled={activeStep === 0}
-                            onClick={handleBack}
-                        >
-                            Back
-                        </Button>
-                        <Button size='large' variant='contained' type='submit' onClick={handleNext}>
-                            
-                        </Button>
-                    </Grid> */}
             </Grid>
         )
     }
