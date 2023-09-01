@@ -39,4 +39,4 @@ declare module '@mui/material/ButtonGroup' {
   }
 }
 
-export {}
+export { }

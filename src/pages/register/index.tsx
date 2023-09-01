@@ -13,6 +13,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import MuiFormControlLabel, {
   FormControlLabelProps,
 } from "@mui/material/FormControlLabel";
+import "react-toastify/dist/ReactToastify.css";
 import { FormControl } from "@mui/material";
 import CustomTextField from "src/@core/components/mui/text-field"; // ** Custom Component Import
 import Icon from "src/@core/components/icon"; // ** Icon Imports
@@ -154,7 +155,7 @@ const Register = () => {
         router.push("/login");
       })
       .catch((error) => {
-        throw error;
+        //throw error;
       });
   };
 
@@ -274,6 +275,7 @@ const Register = () => {
                 placeholder="johndoe"
                 value={formData.username}
                 onChange={handleChange}
+                name="username"
                 error={
                   (touched.username || submit) &&
                   (formData.username.trim() === "" ||
@@ -294,6 +296,7 @@ const Register = () => {
                 sx={{ mb: 4 }}
                 placeholder="user@email.com"
                 value={formData.email}
+                name="email"
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
@@ -324,6 +327,7 @@ const Register = () => {
                 sx={{ mb: 4 }}
                 id="auth-login-v2-password"
                 type={showPassword ? "text" : "password"}
+                name="password"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -359,6 +363,7 @@ const Register = () => {
                 label="Organization"
                 placeholder="Initializ Inc."
                 value={formData.org}
+                name="org"
                 onChange={(e) =>
                   setFormData({ ...formData, org: e.target.value })
                 }
@@ -375,6 +380,7 @@ const Register = () => {
                   control={
                     <Checkbox
                       checked={formData.agreeToTerms}
+                      name="checkbox"
                       onChange={(e) =>
                         setFormData({
                           ...formData,

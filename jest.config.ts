@@ -13,9 +13,7 @@ const config = {
     testEnvironment: 'jest-environment-jsdom',
     preset: 'ts-jest',
     modulePaths: [
-
         "<rootDir>",
-
     ],
 }
 
