@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { getPublic, postPublic } from "./masterServices";
 
 export const signUp = (user: any) => {
@@ -6,8 +7,11 @@ export const signUp = (user: any) => {
   );
 };
 
-export const login = (loginDetail: any) => {
-  return postPublic("/login", loginDetail).then((response) => response.data);
+export const login = (
+  loginDetail: any,
+  apiFunction: (partialUrl: string, data: any, params?: {}) => Promise<AxiosResponse<any, any>>
+) => {
+  return apiFunction("/login", loginDetail).then((response) => response.data);
 };
 
 export const checkUsername = (username: string) => {

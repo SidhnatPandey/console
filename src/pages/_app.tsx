@@ -155,7 +155,6 @@ const App = (props: ExtendedAppProps) => {
       <ToastContainer
         position="top-right"
         autoClose={5000}
-        hideProgressBar
         closeOnClick
         pauseOnHover
       />
