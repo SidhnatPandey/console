@@ -45,3 +45,21 @@ code[class*='language-'] {
 .password-checklist .invalid {
   color: red;
 }
+
+.icon-bottom {
+  vertical-align: bottom;
+}
+
+/* Margins */
+
+.mr-1 {
+  margin-right: .5rem;
+}
+
+.mr-2 {
+  margin-right: 1rem;
+}
+
+.text-right {
+  text-align: right;
+}
