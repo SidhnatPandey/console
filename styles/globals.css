@@ -60,6 +60,14 @@ code[class*='language-'] {
   margin-right: 1rem;
 }
 
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-1 {
+  margin-top: .5rem;
+}
+
 .text-right {
   text-align: right;
 }
