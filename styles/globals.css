@@ -71,3 +71,30 @@ code[class*='language-'] {
 .text-right {
   text-align: right;
 }
+
+.scroll-container {
+  overflow: auto; /* Allow scrolling in both directions */
+  display: flex;
+  flex-direction: row; /* Stack content vertically */
+  align-items: center;
+  padding: 20px;
+  scrollbar-width: thin; /* For Firefox and some other browsers */
+  scrollbar-color: white transparent; /* For Firefox and some other browsers */
+  /* WebKit-based browsers (Chrome, Safari, etc.) */
+  -webkit-overflow-scrolling: touch;
+}
+/* Style the scrollbar track */
+.scroll-container::-webkit-scrollbar {
+  width: 8px; /* Adjust the width as needed */
+}
+/* Style the scrollbar thumb */
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 4px; /* Adjust the radius as needed */
+}
+/* Style the scrollbar track for Firefox and some other browsers */
+.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: white transparent;
+}
+
