@@ -72,9 +72,8 @@ const AppDashboard = () => {
                 <TabPanel value='1' sx={{ p: 0 }}>
                     <AppSummary></AppSummary>
                     <br></br>
-                    <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                         <ProcessTile />
-                    </Card>
+                    
                 </TabPanel>
                 <TabPanel value='2'>
                     <Typography>
