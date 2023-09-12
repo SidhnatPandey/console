@@ -17,7 +17,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({ title }) => {
         <Typography variant="h6" style={{ marginBottom: '30px' }}><b>Duration:</b> 29 sec</Typography>
       </Grid>
 
-      <Grid item xs={8.8} container justifyContent="space-between">
+      <Grid item xs={8.6} container justifyContent="space-between">
         <Grid item>
           <Typography variant="h5"><b>Git Repo:</b> git@github.com:initializ/api:git</Typography>
         </Grid>
