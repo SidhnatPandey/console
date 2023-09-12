@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Card, Typography } from "@mui/material";
-import GridViewIcon from "@mui/icons-material/GridView";
+import PendingIcon from '@mui/icons-material/Pending';
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import ProcessDetails from "./ProcessDetails";
 
 interface ProcessTileProps {
   title: string;
@@ -32,9 +33,9 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
       }}
     >
       {status === "running" ? (
-        <GridViewIcon fontSize="large" color="primary" />
+        <PendingIcon fontSize="large" color="primary" />
       ) : (
-        <GridViewIcon fontSize="large" />
+        <PendingIcon fontSize="large" />
       )}
       <Typography variant="h6" className="mt-2">
         {title}
@@ -63,25 +64,31 @@ const AppCreationFlow: React.FC = () => {
   };
 
   return (
-    <div
-    className={`scroll-container`}
-    >
-      {processList.map((process, index) => (
-        <React.Fragment key={index}>
-          <ProcessTile
-            title={process.title}
-            status={process.status}
-            onClick={() => handleTileClick(process.title)}
-            isSelected={selectedTile === process.title}
-          />
-          {index < processList.length - 1 && (
-            <ArrowRightAltIcon
-              sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </div>
+    <><Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+
+      <div
+        className={`scroll-container`}
+      >
+        {processList.map((process, index) => (
+          <React.Fragment key={index}>
+            <ProcessTile
+              title={process.title}
+              status={process.status}
+              onClick={() => handleTileClick(process.title)}
+              isSelected={selectedTile === process.title} />
+            {index < processList.length - 1 && (
+              <ArrowRightAltIcon
+                sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }} />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </Card>
+    <br></br>
+    <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+    <ProcessDetails title={selectedTile} />
+      </Card></>
+
   );
 };
 
