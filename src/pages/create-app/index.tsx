@@ -24,6 +24,7 @@ import CardContent, { CardContentProps } from '@mui/material/CardContent'
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
+
 // ** Third Party Imports
 import toast from 'react-hot-toast'
 
@@ -293,6 +294,7 @@ const StepperCustomVertical = () => {
         data['git_user'] = gitUser;
         saveApp(data).then(response => {
             toast.success('App Created Successfully')
+            router.push("/app-dashboard");
         }).catch(error => {
             toast.error(error)
         })
