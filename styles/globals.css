@@ -80,31 +80,23 @@ code[class*='language-'] {
   padding: 25px;
 }
 
-*::-webkit-scrollbar {       
-   width: 8px;
-   height: 8px;
+
+/* Scroll bar */
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-*::-webkit-scrollbar-track {       
-   background: rgb(252, 252, 252);
+
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
-*::-webkit-scrollbar-thumb {       
-   background-color: rgb(219, 216, 216);
-    border-radius: 10px;
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(87, 87, 87, 0.247);
+  border-radius: 10px;
 }
 
 .scroll-container2 {
   overflow: auto;
- 
-}
-
-*::-webkit-scrollbar {       
-   width: 8px;
-   height: 8px;
-}
-*::-webkit-scrollbar-track {       
-   background: rgb(252, 252, 252);
-}
-*::-webkit-scrollbar-thumb {       
-   background-color: rgb(219, 216, 216);
-    border-radius: 10px;
 }

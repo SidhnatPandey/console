@@ -6,22 +6,43 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
-      badgeContent: 'new',
-      badgeColor: 'error',
-      children: [
-        {
-          title: 'Analytics',
-          path: '/dashboard'
-        },
-        {
-          title: 'CRM',
-          path: '/dashboard'
-        },
-        {
-          title: 'eCommerce',
-          path: '/dashboard'
-        }
-      ]
+      path: '/dashboard'
+    },
+    {
+      title: 'Apps',
+      icon: 'ion:document-outline',
+      path: '/app-dashboard'
+    },
+    {
+      title: 'Security',
+      icon: 'material-symbols:lock-outline',
+      path: '/apps/email'
+    },
+    {
+      sectionTitle: 'MANAGE'
+    },
+    {
+      title: 'Billing',
+      icon: 'jam:document',
+      path: '/apps/email'
+    },
+    {
+      title: 'Setting',
+      icon: 'uil:setting',
+      path: '/apps/email'
+    },
+    {
+      title: 'Support',
+      icon: 'ri:headphone-line',
+      path: '/apps/email'
+    },
+    {
+      sectionTitle: 'Misc'
+    },
+    {
+      title: 'Documentation',
+      icon: 'carbon:document',
+      path: '/apps/email'
     },
   ]
 }

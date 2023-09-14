@@ -35,6 +35,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     cursor: "pointer",
     transform: title === "Approval" ? "rotate(-45deg)" : "none",
     backgroundColor: title === "Approval" ? "rgb(115, 83, 229)" : "transparent",
+    boxShadow: '10'
   };
 
   // Rotate the content inside the "Approval" process by 45 degrees
@@ -82,16 +83,16 @@ const AppCreationFlow: React.FC = () => {
     title: string;
     status: "completed" | "running" | "pending";
   }[] = [
-    { title: "Clone", status: "completed" },
-    { title: "Build", status: "completed" },
-    { title: "Package", status: "completed" },
-    { title: "SCA", status: "pending" },
-    { title: "Scan", status: "pending" },
-    { title: "Approval", status: "running" }, // Renamed "Approval 1" to "Approval"
-    { title: "Stg", status: "pending" },
-    { title: "Approval", status: "running" }, // Renamed "Approval 2" to "Approval"
-    { title: "Prod", status: "pending" },
-  ];
+      { title: "Clone", status: "completed" },
+      { title: "Build", status: "completed" },
+      { title: "Package", status: "completed" },
+      { title: "SCA", status: "pending" },
+      { title: "Scan", status: "pending" },
+      { title: "Approval", status: "running" }, // Renamed "Approval 1" to "Approval"
+      { title: "Stg", status: "pending" },
+      { title: "Approval", status: "running" }, // Renamed "Approval 2" to "Approval"
+      { title: "Prod", status: "pending" },
+    ];
 
   const handleTileClick = (title: string) => {
     setSelectedTile(title === selectedTile ? null : title);

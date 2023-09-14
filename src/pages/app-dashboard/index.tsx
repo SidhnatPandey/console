@@ -52,13 +52,13 @@ const AppDashboard = () => {
         <>
             <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                 <span>
-                    <Icon icon={'uit:create-dashboard'} style={{ fontSize: '120px', margin: '20px', background: '#E8E3FB' }} rotate={3} />
+                    <Icon icon={'uit:create-dashboard'} style={{ fontSize: '120px', margin: '20px', background: 'rgba(101, 91, 211, 0.2)' }} rotate={3} />
                 </span>
                 <span style={{ marginTop: '3.5rem' }}>
                     <h1 style={{ marginBottom: '0' }}>Hello World</h1>
                     <span className="mr-2"> <StackedBarChartOutlinedIcon className="icon-bottom" /><b> Current Stage : QA </b></span>
                     <span className="mr-2"> <CheckCircleIcon className="icon-bottom" color="success" /> Running</span>
-                    <span className="mr-2"> <LocationOnOutlinedIcon className="icon-bottom" /><Link href={'abc.com'}> https://hello-world.init.run </Link></span>
+                    <span className="mr-2"> <LocationOnOutlinedIcon className="icon-bottom" /><Link href={'abc.com'} style={{ color: '#655bd3' }}> https://hello-world.init.run </Link></span>
                 </span>
             </Card>
 
@@ -72,8 +72,8 @@ const AppDashboard = () => {
                 <TabPanel value='1' sx={{ p: 0 }}>
                     <AppSummary></AppSummary>
                     <br></br>
-                        <ProcessTile />
-                    
+                    <ProcessTile />
+
                 </TabPanel>
                 <TabPanel value='2'>
                     <Typography>
