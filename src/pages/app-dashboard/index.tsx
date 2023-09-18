@@ -50,50 +50,84 @@ const AppDashboard = () => {
 
     return (
         <>
-            <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-                <span>
-                    <Icon icon={'uit:create-dashboard'} style={{ fontSize: '120px', margin: '20px', background: 'rgba(101, 91, 211, 0.2)' }} rotate={3} />
-                </span>
-                <span style={{ marginTop: '3.5rem' }}>
-                    <h1 style={{ marginBottom: '0' }}>Hello World</h1>
-                    <span className="mr-2"> <StackedBarChartOutlinedIcon className="icon-bottom" /><b> Current Stage : QA </b></span>
-                    <span className="mr-2"> <CheckCircleIcon className="icon-bottom" color="success" /> Running</span>
-                    <span className="mr-2"> <LocationOnOutlinedIcon className="icon-bottom" /><Link href={'abc.com'} style={{ color: '#655bd3' }}> https://hello-world.init.run </Link></span>
-                </span>
-            </Card>
-
-            <TabContext value={value}>
-                <TabList onChange={handleChange} aria-label='customized tabs example' style={{ margin: '1.5rem 0' }}>
-                    <Tab value='1' label='Overview' icon={<AppsIcon />} iconPosition="start" />
-                    <Tab value='2' label='Insights' icon={<InsightsIcon />} iconPosition="start" />
-                    <Tab value='3' label='Logs' icon={<GridViewIcon />} iconPosition="start" />
-                    <Tab value='4' label='Settings' icon={<SettingsIcon />} iconPosition="start" />
-                </TabList>
-                <TabPanel value='1' sx={{ p: 0 }}>
-                    <AppSummary></AppSummary>
-                    <br></br>
-                    <ProcessTile />
-
-                </TabPanel>
-                <TabPanel value='2'>
-                    <Typography>
-                        Chocolate bar carrot cake candy canes sesame snaps. Cupcake pie gummi bears jujubes candy canes. Chupa chups
-                        sesame snaps halvah.
-                    </Typography>
-                </TabPanel>
-                <TabPanel value='3'>
-                    <Typography>
-                        Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa chups. Macaroon ice cream tootsie roll
-                        carrot cake gummi bears.
-                    </Typography>
-                </TabPanel>
-                <TabPanel value='4'>
-                    <Typography>
-                        Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa chups. Macaroon ice cream tootsie roll
-                        carrot cake gummi bears.
-                    </Typography>
-                </TabPanel>
-            </TabContext>
+          <Card
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
+            data-testid="card"
+          >
+            <span>
+              <Icon
+                icon={'uit:create-dashboard'}
+                style={{
+                  fontSize: '120px',
+                  margin: '20px',
+                  background: 'rgba(101, 91, 211, 0.2)',
+                }}
+                rotate={3}
+              />
+            </span>
+            <span style={{ marginTop: '3.5rem' }}>
+              <h1 style={{ marginBottom: '0' }} data-testid="title">
+                Hello World
+              </h1>
+              <span className="mr-2">
+                {' '}
+                <StackedBarChartOutlinedIcon className="icon-bottom" />
+                <b> Current Stage : QA </b>
+              </span>
+              <span className="mr-2">
+                {' '}
+                <CheckCircleIcon className="icon-bottom" color="success" /> Running
+              </span>
+              <span className="mr-2">
+                {' '}
+                <LocationOnOutlinedIcon className="icon-bottom" />
+                <Link href={'abc.com'} style={{ color: '#655bd3' }}>
+                  {' '}
+                  https://hello-world.init.run{' '}
+                </Link>
+              </span>
+            </span>
+          </Card>
+    
+          <TabContext value={value}>
+            <TabList
+              onChange={handleChange}
+              aria-label="customized tabs example"
+              style={{ margin: '1.5rem 0' }}
+              data-testid="tab-list"
+            >
+              <Tab value="1" label="Overview" icon={<AppsIcon />} iconPosition="start" data-testid="tab-1" />
+              <Tab value="2" label="Insights" icon={<InsightsIcon />} iconPosition="start" data-testid="tab-2" />
+              <Tab value="3" label="Logs" icon={<GridViewIcon />} iconPosition="start" data-testid="tab-3" />
+              <Tab value="4" label="Settings" icon={<SettingsIcon />} iconPosition="start" data-testid="tab-4" />
+            </TabList>
+            <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
+              <AppSummary data-testid="app-summary" />
+              <br />
+              <ProcessTile data-testid="process-tile" />
+            </TabPanel>
+            <TabPanel value="2" data-testid="tab-panel-2">
+              <Typography>
+                Chocolate bar carrot cake candy canes sesame snaps. Cupcake pie gummi bears jujubes candy canes. Chupa chups
+                sesame snaps halvah.
+              </Typography>
+            </TabPanel>
+            <TabPanel value="3" data-testid="tab-panel-3">
+              <Typography>
+                Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa chups. Macaroon ice cream tootsie roll
+                carrot cake gummi bears.
+              </Typography>
+            </TabPanel>
+            <TabPanel value="4" data-testid="tab-panel-4">
+              <Typography>
+                Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa chups. Macaroon ice cream tootsie roll
+                carrot cake gummi bears.
+              </Typography>
+            </TabPanel>
+          </TabContext>
 
         </>
     )

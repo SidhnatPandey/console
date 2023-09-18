@@ -1,8 +1,14 @@
 import React from 'react';
 import { Typography, Grid, Card } from "@mui/material";
 
+// Define the prop types for the ProcessDetails component
 interface ProcessDetailsProps {
-  title: string | null;
+  title: string;
+  duration?: string; // Make 'duration' prop optional
+  gitRepo?: string;
+  commit?: string;
+  branch?: string;
+  date?: string;
 }
 
 const ProcessDetails: React.FC<ProcessDetailsProps> = ({ title }) => {
