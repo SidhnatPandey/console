@@ -221,6 +221,7 @@ const StepperCustomVertical = () => {
     handleSubmit: handleConfigurationSubmit,
     register: configurationRegister,
     getValues: getConfigurationValue,
+    setValue: setConfigurationValue,
     formState: {
       errors: ConfigurationErrors,
       isValid: isConfigurationFormValid,
@@ -310,6 +311,10 @@ const StepperCustomVertical = () => {
     setOpen(true);
   };
   const handleClose = () => {
+    const environmentVariables = getConfigurationValue("env_variables").filter(
+      (variable) => variable.Key && variable.Value
+    )
+    setConfigurationValue( "env_variables",  environmentVariables)
     setOpen(false);
   };
   //configuration page environment variable 
@@ -328,6 +333,7 @@ const StepperCustomVertical = () => {
   const handleFinalSubmit = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
+    console.log(data);
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
