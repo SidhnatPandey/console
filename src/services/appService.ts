@@ -25,7 +25,7 @@ export const getBranch = (repo: string, gituser: string) => {
 }
 
 export const saveApp = (app: any) => {
-    return post(`/initializ/v1/SaveApp`, app).then(
+    return post(`/initializ/v1/apps`, app).then(
         (response) => response.data
     )
 }

@@ -327,6 +327,9 @@ const StepperCustomVertical = () => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
+    if (getConfigurationValue("env_variables").length === 0) {
+      setConfigurationValue("env_variables", [{ Key: "", Value: "" }]);
+    }
     setOpen(true);
   };
   const handleClose = () => {
