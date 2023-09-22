@@ -33,19 +33,19 @@ const data: DataType[] = [
     color: 'info',
     stats: '1 %',
     title: 'CPU',
-    icon: 'ph:cpu-thin'
+    icon: 'ph:cpu-bold'
   },
   {
     color: 'error',
     stats: '0.7/1 GB',
     title: 'Memory/Allocated',
-    icon: 'fluent:memory-16-regular'
+    icon: 'icon-park-outline:memory-one'
   },
   {
     stats: '1.4/2 GB',
     color: 'success',
     title: 'Disk/Allocated',
-    icon: 'ph:database-light'
+    icon: 'material-symbols:database-outline'
   }
 ]
 

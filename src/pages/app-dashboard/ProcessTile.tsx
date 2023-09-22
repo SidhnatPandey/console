@@ -35,7 +35,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     cursor: "pointer",
     transform: title === "Approval" ? "rotate(-45deg)" : "none",
     backgroundColor: title === "Approval" ? "rgb(115, 83, 229)" : "transparent",
-    boxShadow: '10'
+    boxShadow: '15'
   };
 
   // Rotate the content inside the "Approval" process by 45 degrees
