@@ -52,6 +52,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -146,12 +147,21 @@ const defaultSourceCodeValues = {
   src_code_path: "",
 };
 
+
 const sourceCodeSchema = yup.object().shape({
   application_name: yup.string().required(),
   git_repo: yup.string().required(),
   git_branch: yup.string().required(),
   src_code_path: yup.string(),
 });
+
+const LoaderComponent = () => {
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CircularProgress />
+    </Box>
+  )
+};
 
 const defaultConfigurationValues = {
   port: 8080,
@@ -175,6 +185,9 @@ const StepperCustomVertical = () => {
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
+  const [isLoadingRepositories, setLoadingRepositories] = useState<boolean>(true);
+  const [isLoadingBranches, setLoadingBranches] = useState<boolean>(true);
+
 
   // Handle Stepper
   const handleBack = () => {
@@ -260,6 +273,7 @@ const StepperCustomVertical = () => {
     } catch (error) {
       toast.error("Could not fetch git user.");
     }
+
   };
 
   const fetchUserRepositories = async (user: string) => {
@@ -272,7 +286,10 @@ const StepperCustomVertical = () => {
       }
     } catch (error) {
       toast.error("Could not fetch repositories.");
+    } finally {
+      setLoadingRepositories(false);
     }
+
   };
 
   const fetchBranch = async (repo: string) => {
@@ -285,6 +302,8 @@ const StepperCustomVertical = () => {
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
+    } finally {
+      setLoadingBranches(false); // Set isLoadingBranches to false here
     }
   };
 
@@ -314,7 +333,7 @@ const StepperCustomVertical = () => {
     const environmentVariables = getConfigurationValue("env_variables").filter(
       (variable) => variable.Key && variable.Value
     )
-    setConfigurationValue( "env_variables",  environmentVariables)
+   setConfigurationValue("env_variables", environmentVariables)
     setOpen(false);
   };
   //configuration page environment variable 
@@ -322,7 +341,7 @@ const StepperCustomVertical = () => {
   const environmentVariablesCount = environmentVariables.filter(
     (variable) => variable.Key && variable.Value
   ).length;
-  
+
   const onConfigurationSubmit = (data: ConfigurationValues) => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
@@ -392,48 +411,49 @@ const StepperCustomVertical = () => {
                   />
                 </RadioGroup>
               </Grid>
+
+
               <Grid item xs={12} sm={12}>
-                <h3 style={{ margin: "0 0 10px 0" }}>Repository</h3>
-                <FormControl fullWidth>
-                  <InputLabel
-                    id="git_repo"
-                    error={Boolean(sourceCodeErrors.git_repo)}
-                  >
-                    Repository
-                  </InputLabel>
-                  <Controller
-                    name="git_repo"
-                    control={sourceCodeControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        value={value}
-                        label="Repository"
-                        onChange={(e) => {
-                          onChange(e);
-                          handleChange(e);
-                        }}
-                        error={Boolean(sourceCodeErrors.git_repo)}
-                        labelId="stepper-linear-personal-country"
-                        aria-describedby="stepper-linear-personal-country-helper"
-                      >
-                        {repositories.map((reg) => (
-                          <MenuItem key={reg} value={reg}>
-                            {reg}
-                          </MenuItem>
-                        ))}
-                      </Select>
+                <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
+                {isLoadingRepositories ? (
+                  <LoaderComponent />
+                ) : (
+                  <FormControl fullWidth>
+                    <InputLabel id='git_repo' error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
+
+                    <Controller
+                      name='git_repo'
+                      control={sourceCodeControl}
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          value={value}
+                          label='Repository'
+                          onChange={(e) => {
+                            onChange(e)
+                            handleChange(e)
+                          }}
+                          error={Boolean(sourceCodeErrors.git_repo)}
+                          labelId='stepper-linear-personal-country'
+                          aria-describedby='stepper-linear-personal-country-helper'
+                        >
+                          {repositories.map(reg => (
+                            <MenuItem key={reg} value={reg}>
+                              {reg}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+
+                    {sourceCodeErrors.git_repo && (
+                      <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                        This field is required
+                      </FormHelperText>
                     )}
-                  />
-                  {sourceCodeErrors.git_repo && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-account-username"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
+
+                  </FormControl>
+                )}
               </Grid>
 
               <Grid item xs={12} sm={12}>
@@ -450,45 +470,49 @@ const StepperCustomVertical = () => {
               {repoSelected && (
                 <>
                   <Grid item xs={12} sm={12}>
-                    <h3 style={{ margin: "0 0 10px 0" }}>Branch</h3>
-                    <FormControl fullWidth>
-                      <InputLabel
-                        id="git-branch"
-                        error={Boolean(sourceCodeErrors.git_repo)}
-                      >
-                        Branch
-                      </InputLabel>
-                      <Controller
-                        name="git_branch"
-                        control={sourceCodeControl}
-                        rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            value={value}
-                            label="Branch"
-                            onChange={onChange}
-                            error={Boolean(sourceCodeErrors.git_branch)}
-                            labelId="stepper-linear-personal-country"
-                            aria-describedby="stepper-linear-personal-country-helper"
-                          >
-                            {branches.map((branch) => (
-                              <MenuItem key={branch} value={branch}>
-                                {branch}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        )}
-                      />
-                      {sourceCodeErrors.git_branch && (
-                        <FormHelperText
-                          sx={{ color: "error.main" }}
-                          id="stepper-linear-account-username"
+                    <h3 style={{ margin: '0 0 10px 0' }}>Branch</h3>
+                    {isLoadingBranches ? (
+                      <LoaderComponent />
+                    ) : (
+                      <FormControl fullWidth>
+                        <InputLabel
+                          id='git-branch'
+                          error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
                         >
-                          This field is required
-                        </FormHelperText>
-                      )}
-                    </FormControl>
+                          Branch
+                        </InputLabel>
+                        <Controller
+                          name='git_branch'
+                          control={sourceCodeControl}
+                          rules={{ required: true }}
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              value={value}
+                              label='Branch'
+                              onChange={onChange}
+                              error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
+                              labelId='stepper-linear-personal-country'
+                              aria-describedby='stepper-linear-personal-country-helper'
+                            >
+                              {branches.map(branch => (
+                                <MenuItem key={branch} value={branch}>
+                                  {branch}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          )}
+                        />
+                        {sourceCodeErrors.git_branch && (
+                          <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                            This field is required
+                          </FormHelperText>
+                        )}
+                      </FormControl>
+                    )}
                   </Grid>
+
+
+
                   <Grid item xs={12} sm={12}>
                     <h3 style={{ margin: "0 0 10px 0" }}>
                       Source Directory (optional)
@@ -980,3 +1004,5 @@ const StepperCustomVertical = () => {
 };
 
 export default StepperCustomVertical;
+
+
