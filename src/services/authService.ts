@@ -9,7 +9,7 @@ export const signUp = (user: any) => {
 
 export const login = (
   loginDetail: any,
-  apiFunction: (partialUrl: string, data: any, params?: {}) => Promise<AxiosResponse<any, any>>
+  apiFunction: (partialUrl: string, data: any, params?: any) => Promise<AxiosResponse<any, any>>
 ) => {
   return apiFunction("/login", loginDetail).then((response) => response.data);
 };
