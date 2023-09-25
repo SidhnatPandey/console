@@ -1,30 +1,14 @@
 import axios from 'axios';
+import requestInterceptor from './interceptors/request-interceptor';
+import responseInterceptor from './interceptors/response-interceptor';
 
-export const BASE_URL = 'http://localhost:8089';
+
+const httpClient = axios.create({
+  baseURL: 'http://localhost:8089', // Replace with your API's base URL
+});
 
 
-export const get = async (partialUrl: string, params = {}) => {
-  try {
-    const url = constructUrl(partialUrl);
-    const response = await axios.get(url, { params });
-    return response;
-  } catch (error) {
-    console.error('Error :', error);
-    throw error;
-  }
-};
+responseInterceptor(httpClient);
+requestInterceptor(httpClient);
 
-export const post = async (partialUrl: string, data: any, params = {}) => {
-  try {
-    const url = constructUrl(partialUrl);
-    const response = await axios.post(url, data, { params });
-    return response;
-  } catch (error) {
-    console.error('Error :', error);
-    throw error;
-  }
-};
-
-const constructUrl = (url: string) => {
-  return BASE_URL + url;
-}
+export default httpClient;
