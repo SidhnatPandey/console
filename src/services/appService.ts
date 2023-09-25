@@ -13,7 +13,7 @@ export const getGitOwner = () => {
 }
 
 export const getRepositories = (gituser: string) => {
-    return get(`/repositories/${gituser}`).then(
+    return get(`/repositories?git_user=${gituser}`).then(
         (response) => response.data
     );
 }
