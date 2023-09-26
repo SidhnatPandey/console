@@ -1,8 +1,11 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { FormEvent, ReactNode, useState } from 'react'
+
 
 // ** Next Import
 import Link from 'next/link'
+import forgotpasswordPage from 'src/pages/forgot-password'
+
 
 // ** MUI Components
 import Button from '@mui/material/Button'
@@ -22,6 +25,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import toast from 'react-hot-toast'
+import { forgotPassword } from 'src/services/authService'
 
 // Styled Components
 const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
@@ -36,6 +41,10 @@ const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
     maxHeight: 500
   }
 }))
+
+const ForgotPasswordPage = () => {
+  return <ForgotPassword />;
+};
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
@@ -65,6 +74,29 @@ const ForgotPassword = () => {
 
   // ** Vars
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const [message, setMessage] = useState<string>(''); // Initialize as an empty string
+
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+  
+    // Get the email input value from the form
+    const email = event.currentTarget.email.value;
+    console.log('Email:', email);
+  
+    forgotPassword(email).then((response) => {
+      //show success toast
+      toast.success("link sent on email successfully")
+
+    }).catch(error => {
+      //show toast error
+      toast.error("link failed to be sent on email")
+
+    })
+  };
+  
+
+
 
   return (
     <Box className='content-right' sx={{ backgroundColor: 'background.paper' }}>
@@ -135,11 +167,31 @@ const ForgotPassword = () => {
                 Enter your email and we&prime;ll send you instructions to reset your password
               </Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-              <CustomTextField fullWidth autoFocus type='email' label='Email' sx={{ display: 'flex', mb: 4 }} />
+            <form noValidate autoComplete='off' onSubmit={handleSubmit}>
+              <CustomTextField
+                fullWidth
+                autoFocus
+                type='email'
+                id='email'
+                label='Email'
+                sx={{ display: 'flex', mb: 4 }}
+                // You should provide a name attribute to the input field
+                name='email'
+              // Add a ref attribute to access the input's value
+              />
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
                 Send reset link
               </Button>
+              {message && (
+                <Typography
+                  sx={{
+                    color: message.includes('successfully') ? 'success.main' : 'error.main',
+                    mt: 2, // Add margin to separate it from the form
+                  }}
+                >
+                  {message}
+                </Typography>
+              )}
               <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}>
                 <LinkStyled href='/login'>
                   <Icon fontSize='1.25rem' icon='tabler:chevron-left' />
