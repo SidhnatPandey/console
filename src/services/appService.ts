@@ -19,7 +19,8 @@ export const getRepositories = (gituser: string) => {
 }
 
 export const getBranch = (repo: string, gituser: string) => {
-    return get(`/branches?repository=${repo}&git_user=${gituser}`).then(
+    const arr = repo.split("/");
+    return get(`/repos/${arr[0]}/${arr[1]}/branches?git_user=${gituser}`).then(
         (response) => response.data
     );
 }
