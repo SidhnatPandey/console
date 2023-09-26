@@ -40,6 +40,9 @@ module.exports = {
         "@typescript-eslint/ban-ts-comment": "off",
         "react/no-unescaped-entities": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "react/prop-types": "off"
+        "react/prop-types": "off",
+        "testing-library/no-render-in-setup": "off",
+        "jest-dom/prefer-to-have-text-content": "off",
+        "testing-library/no-debugging-utils": "off"
     }
 }

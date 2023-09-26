@@ -45,3 +45,58 @@ code[class*='language-'] {
 .password-checklist .invalid {
   color: red;
 }
+
+.icon-bottom {
+  vertical-align: bottom;
+}
+
+/* Margins */
+
+.mr-1 {
+  margin-right: .5rem;
+}
+
+.mr-2 {
+  margin-right: 1rem;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-1 {
+  margin-top: .5rem;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.scroll-container {
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 25px;
+}
+
+
+/* Scroll bar */
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(87, 87, 87, 0.247);
+  border-radius: 10px;
+}
+
+.scroll-container2 {
+  overflow: auto;
+}
