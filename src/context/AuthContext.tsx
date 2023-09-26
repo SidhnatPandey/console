@@ -40,28 +40,35 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      //setLoading(false)
       if (storedToken) {
-        setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
+        const user = JSON.parse(window.localStorage.getItem('userData')!);
+        if (user) {
+          setLoading(false)
+          setUser({ ...user })
+        } else {
+          setLoading(true)
+          await axios
+            .get(authConfig.meEndpoint, {
+              headers: {
+                Authorization: `Bearer ${storedToken}`
+              }
+            })
+            .then(async response => {
+              setLoading(false)
+              setUser({ ...response.data.userData })
+            })
+            .catch(() => {
+              localStorage.removeItem('userData')
+              localStorage.removeItem('refreshToken')
+              localStorage.removeItem('accessToken')
+              setUser(null)
+              setLoading(false)
+              if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+                router.replace('/login')
+              }
+            })
+        }
       } else {
         setLoading(false)
       }
@@ -89,7 +96,7 @@ const AuthProvider = ({ children }: Props) => {
           org: response.data.data.user_data?.org
         }
         setUser({ ...user })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(user)) : null
+        params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/dashboard'
 
