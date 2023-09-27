@@ -9,7 +9,7 @@ export const signUp = (user: any) => {
 
 export const login = (
   loginDetail: any,
-  apiFunction: (partialUrl: string, data: any, params?: any) => Promise<AxiosResponse<any, any>>
+  apiFunction: (partialUrl: string, data: any, params?: {}) => Promise<AxiosResponse<any, any>>
 ) => {
   return apiFunction("/login", loginDetail).then((response) => response.data);
 };
@@ -21,3 +21,10 @@ export const checkUsername = (username: string) => {
 export const checkEmail = (email: string) => {
   return getPublic(`/checkEmail/${email}`).then((response) => response.data);
 };
+
+export const forgotPassword = (email: string) => {
+  return postPublic("/initializ/v1/forgetPassword", { email }).then(
+    (response) => response.data
+  );
+};
+
