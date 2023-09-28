@@ -26,7 +26,7 @@ export const checkEmail = (email: string) => {
 };
 
 export const forgotPassword = (email: string) => {
-  return post(APP_API.forgetPassword,  email ).then(
+  return post(APP_API.forgetPassword, { email }).then(
     (response) => response?.data
   );
 };
