@@ -23,7 +23,10 @@ export const getRepositories = (gituser: string) => {
 
 export const getBranch = (repo: string, gituser: string) => {
     const arr = repo.split("/");
-    return get(`repos/${arr[0]}/${arr[1]}/branches?git_user=${gituser}`).then(
+    let url = APP_API.getBranches.replace('{repoOwner}', arr[0]);
+    url = url.replace('{repoName}', arr[1]);
+    url = url.replace('{gituser}', gituser);
+    return get(url).then(
         (response) => response?.data
     );
 }
