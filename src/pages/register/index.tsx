@@ -20,7 +20,7 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
-import { signUp, checkUsername, checkEmail } from "src/services/authService";
+import { signUp, checkUsername, checkEmail } from "src/pages/register/authService";
 import { errorToast, successToast } from "src/lib/react-taostify";
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -162,15 +162,12 @@ const Register = () => {
   const checkUserExists = (username: string) => {
     if (username) {
       checkUsername(username)
-        .then(() => {
-          setUserNameExist(false);
+        .then((response) => {
+          if (response) {
+            (response.status === 302) ? setUserNameExist(true) : setUserNameExist(false);
+          }
         })
         .catch((error) => {
-          if (error.response && error.response.status === 302) {
-            setUserNameExist(true);
-          } else {
-            console.error("An error occurred:", error);
-          }
         });
     }
   };
@@ -212,15 +209,12 @@ const Register = () => {
   const checkEmailExists = (email: string) => {
     if (email) {
       checkEmail(email)
-        .then(() => {
-          setEmailExist(false);
+        .then((response) => {
+          if (response) {
+            (response.status === 302) ? setEmailExist(true) : setEmailExist(false);
+          }
         })
         .catch((error) => {
-          if (error.response && error.response.status === 302) {
-            setEmailExist(true);
-          } else {
-            console.error("An error occurred:", error);
-          }
         });
     }
   };

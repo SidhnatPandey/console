@@ -46,7 +46,7 @@ import {
   getBranch,
   getRepositories,
   saveApp,
-} from "src/services/appService";
+} from "src/pages/create-app/appService";
 import { errorToast } from "src/lib/react-taostify";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
@@ -179,6 +179,8 @@ const ConfigurationSchema = yup.object().shape({
     })
   ),
 });
+
+const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
 const StepperCustomVertical = () => {
   // ** States
@@ -463,7 +465,7 @@ const StepperCustomVertical = () => {
                 <p style={{ margin: 0 }}>
                   Not seeing the repositories you expected here?{" "}
                   <strong style={{ cursor: "pointer" }}>
-                    <Link href="https://github.com/apps/testApp21/installations/new">
+                    <Link href={`https://github.com/apps/${appName}/installations/new`}>
                       Edit Your Github Permissions
                     </Link>
                   </strong>{" "}

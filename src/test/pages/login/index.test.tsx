@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import Login from "../../../pages/login/index";
-import * as authService from "src/services/authService";
+import * as authService from "src/pages/register/authService";
 
 jest.mock("next/router", () => ({
   useRouter: () => ({
@@ -12,19 +12,19 @@ jest.mock("next/router", () => ({
 console.error = jest.fn();
 
 describe("login function", () => {
-  it("submits the form with valid data and successfully logs in",()=>{
+  it("submits the form with valid data and successfully logs in", () => {
     render(<Login />);
 
-        // Simulate user interactions (typing in email and password fields)
-        const emailInput = screen.getByLabelText("Email");
-        const passwordInput = screen.getByLabelText("Password");
-    
-        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-        fireEvent.change(passwordInput, { target: { value: "password" } });
-    
-        // Simulate form submission
-        const submitButton = screen.getByText("Login");
-        fireEvent.click(submitButton);
+    // Simulate user interactions (typing in email and password fields)
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password" } });
+
+    // Simulate form submission
+    const submitButton = screen.getByText("Login");
+    fireEvent.click(submitButton);
   });
   it("should call postPublic and return response data", async () => {
     // Mock the response data

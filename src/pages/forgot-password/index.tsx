@@ -26,7 +26,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import toast from 'react-hot-toast'
-import { forgotPassword } from 'src/services/authService'
+import { forgotPassword } from 'src/pages/register/authService'
 
 // Styled Components
 const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
@@ -79,11 +79,11 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-  
+
     // Get the email input value from the form
     const email = event.currentTarget.email.value;
     console.log('Email:', email);
-  
+
     forgotPassword(email).then((response) => {
       //show success toast
       toast.success("link sent on email successfully")
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
 
     })
   };
-  
+
 
 
 
