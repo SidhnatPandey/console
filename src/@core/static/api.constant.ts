@@ -1,9 +1,11 @@
 export const APP_API = {
-    // Register
+    // Auth
+    forgetPassword: 'initializ/v1/forgetPassword',
+    checkEmail: 'checkEmail/{email}',
 
 
     // Create-App
-    sendGitCode: 'code?code=',
+    sendGitCode: 'code?code={code}',
     gitOwner: 'gitOwner',
 
 

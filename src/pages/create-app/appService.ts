@@ -2,7 +2,8 @@ import { APP_API } from 'src/@core/static/api.constant';
 import { get, post } from '../../@core/services/masterServices';
 
 export const sendCode = (code: string) => {
-    return get(`${APP_API.sendGitCode} + ${code}`).then(
+    const url = APP_API.sendGitCode.replace('{code}', code)
+    return get(url).then(
         (response) => response?.data
     );
 }

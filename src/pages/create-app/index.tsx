@@ -180,7 +180,7 @@ const ConfigurationSchema = yup.object().shape({
   ),
 });
 
-const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
+const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL;
 
 const StepperCustomVertical = () => {
   // ** States
@@ -465,7 +465,7 @@ const StepperCustomVertical = () => {
                 <p style={{ margin: 0 }}>
                   Not seeing the repositories you expected here?{" "}
                   <strong style={{ cursor: "pointer" }}>
-                    <Link href={`https://github.com/apps/${appName}/installations/new`}>
+                    <Link href={githubUrl || ''}>
                       Edit Your Github Permissions
                     </Link>
                   </strong>{" "}

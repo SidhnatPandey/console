@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { get, post } from "../../@core/services/masterServices";
+import { APP_API } from "src/@core/static/api.constant";
 
 export const signUp = (user: any) => {
   return post("initializ/v1/registerUser", user).then(
@@ -19,11 +20,12 @@ export const checkUsername = (username: string) => {
 };
 
 export const checkEmail = (email: string) => {
-  return get(`checkEmail/${email}`).then((response) => response?.data);
+  const url = APP_API.checkEmail.replace('{email}', email)
+  return get(url).then((response) => response?.data);
 };
 
 export const forgotPassword = (email: string) => {
-  return post("initializ/v1/forgetPassword", { email }).then(
+  return post(APP_API.forgetPassword, { email }).then(
     (response) => response?.data
   );
 };
