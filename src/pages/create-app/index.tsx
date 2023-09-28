@@ -526,7 +526,7 @@ const StepperCustomVertical = () => {
                       <TextField
                         type="text"
                         label="Source Directory"
-                        placeholder="Application Name"
+                        placeholder="Source Directory"
                         {...sourceCodeRegister("src_code_path")}
                       />
                     </FormControl>

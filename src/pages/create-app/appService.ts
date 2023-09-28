@@ -15,7 +15,8 @@ export const getGitOwner = () => {
 }
 
 export const getRepositories = (gituser: string) => {
-    return get(`repositories?git_user=${gituser}`).then(
+    const url = APP_API.getRepositories.replace('{gituser}', gituser)
+    return get(url).then(
         (response) => response?.data
     );
 }
@@ -28,7 +29,7 @@ export const getBranch = (repo: string, gituser: string) => {
 }
 
 export const saveApp = (app: any) => {
-    return post(`initializ/v1/apps`, app).then(
+    return post(APP_API.saveApp, app).then(
         (response) => response?.data
     )
 }
