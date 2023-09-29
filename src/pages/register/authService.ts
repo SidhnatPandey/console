@@ -10,7 +10,7 @@ export const signUp = (user: any) => {
 
 export const login = (
   loginDetail: any,
-  apiFunction: (partialUrl: string, data: any, params?: {}) => Promise<AxiosResponse<any, any>>
+  apiFunction: (partialUrl: string, data: any) => Promise<AxiosResponse<any, any>>
 ) => {
   return apiFunction(APP_API.login, loginDetail).then((response) => response?.data);
 };

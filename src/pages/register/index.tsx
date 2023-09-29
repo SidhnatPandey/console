@@ -168,6 +168,7 @@ const Register = () => {
           }
         })
         .catch((error) => {
+          console.log(error);
         });
     }
   };
@@ -215,6 +216,8 @@ const Register = () => {
           }
         })
         .catch((error) => {
+          console.log(error);
+
         });
     }
   };
