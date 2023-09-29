@@ -1,30 +1,33 @@
 import { AxiosResponse } from "axios";
-import { getPublic, postPublic } from "./masterServices";
+import { get, post } from "../@core/services/masterServices";
+import { APP_API } from "src/@core/static/api.constant";
 
 export const signUp = (user: any) => {
-  return postPublic("/initializ/v1/registerUser", user).then(
-    (response) => response.data
+  return post(APP_API.registerUser, user).then(
+    (response) => response?.data
   );
 };
 
 export const login = (
   loginDetail: any,
-  apiFunction: (partialUrl: string, data: any, params?: {}) => Promise<AxiosResponse<any, any>>
+  apiFunction: (partialUrl: string, data: any) => Promise<AxiosResponse<any, any>>
 ) => {
-  return apiFunction("/login", loginDetail).then((response) => response.data);
+  return apiFunction(APP_API.login, loginDetail).then((response) => response?.data);
 };
 
 export const checkUsername = (username: string) => {
-  return getPublic(`/checkUser/${username}`).then((response) => response.data);
+  const url = APP_API.checkUser.replace('{username}', username)
+  return get(url).then((response) => response?.data);
 };
 
 export const checkEmail = (email: string) => {
-  return getPublic(`/checkEmail/${email}`).then((response) => response.data);
+  const url = APP_API.checkEmail.replace('{email}', email)
+  return get(url).then((response) => response?.data);
 };
 
 export const forgotPassword = (email: string) => {
-  return postPublic("/initializ/v1/forgetPassword", { email }).then(
-    (response) => response.data
+  return post(APP_API.forgetPassword, { email }).then(
+    (response) => response?.data
   );
 };
 

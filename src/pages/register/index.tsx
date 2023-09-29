@@ -162,15 +162,13 @@ const Register = () => {
   const checkUserExists = (username: string) => {
     if (username) {
       checkUsername(username)
-        .then(() => {
-          setUserNameExist(false);
+        .then((response) => {
+          if (response) {
+            (response.status === 302) ? setUserNameExist(true) : setUserNameExist(false);
+          }
         })
         .catch((error) => {
-          if (error.response && error.response.status === 302) {
-            setUserNameExist(true);
-          } else {
-            console.error("An error occurred:", error);
-          }
+          console.log(error);
         });
     }
   };
@@ -212,15 +210,14 @@ const Register = () => {
   const checkEmailExists = (email: string) => {
     if (email) {
       checkEmail(email)
-        .then(() => {
-          setEmailExist(false);
+        .then((response) => {
+          if (response) {
+            (response.status === 302) ? setEmailExist(true) : setEmailExist(false);
+          }
         })
         .catch((error) => {
-          if (error.response && error.response.status === 302) {
-            setEmailExist(true);
-          } else {
-            console.error("An error occurred:", error);
-          }
+          console.log(error);
+
         });
     }
   };

@@ -79,11 +79,11 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-  
+
     // Get the email input value from the form
     const email = event.currentTarget.email.value;
     console.log('Email:', email);
-  
+
     forgotPassword(email).then((response) => {
       //show success toast
       toast.success("link sent on email successfully")
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
 
     })
   };
-  
+
 
 
 

@@ -180,6 +180,8 @@ const ConfigurationSchema = yup.object().shape({
   ),
 });
 
+const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL;
+
 const StepperCustomVertical = () => {
   // ** States
 
@@ -463,7 +465,7 @@ const StepperCustomVertical = () => {
                 <p style={{ margin: 0 }}>
                   Not seeing the repositories you expected here?{" "}
                   <strong style={{ cursor: "pointer" }}>
-                    <Link href="https://github.com/apps/testApp21/installations/new">
+                    <Link href={githubUrl || ''}>
                       Edit Your Github Permissions
                     </Link>
                   </strong>{" "}
@@ -524,7 +526,7 @@ const StepperCustomVertical = () => {
                       <TextField
                         type="text"
                         label="Source Directory"
-                        placeholder="Application Name"
+                        placeholder="Source Directory"
                         {...sourceCodeRegister("src_code_path")}
                       />
                     </FormControl>
