@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { get, post } from "../../@core/services/masterServices";
+import { get, post } from "../@core/services/masterServices";
 import { APP_API } from "src/@core/static/api.constant";
 
 export const signUp = (user: any) => {

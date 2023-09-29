@@ -26,7 +26,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import toast from 'react-hot-toast'
-import { forgotPassword } from 'src/pages/register/authService'
+import { forgotPassword } from 'src/services/authService'
 
 // Styled Components
 const ForgotPasswordIllustration = styled('img')(({ theme }) => ({

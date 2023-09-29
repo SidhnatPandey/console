@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import Login from "../../../pages/login/index";
-import * as authService from "src/pages/register/authService";
+import * as authService from "src/services/authService";
 
 jest.mock("next/router", () => ({
   useRouter: () => ({

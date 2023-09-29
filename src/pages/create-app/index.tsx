@@ -46,7 +46,7 @@ import {
   getBranch,
   getRepositories,
   saveApp,
-} from "src/pages/create-app/appService";
+} from "src/services/appService";
 import { errorToast } from "src/lib/react-taostify";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";

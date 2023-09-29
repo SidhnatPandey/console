@@ -20,7 +20,7 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
-import { signUp, checkUsername, checkEmail } from "src/pages/register/authService";
+import { signUp, checkUsername, checkEmail } from "src/services/authService";
 import { errorToast, successToast } from "src/lib/react-taostify";
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
