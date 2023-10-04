@@ -12,5 +12,5 @@ export const APP_API = {
     saveApp: `initializ/v1/apps`,
     getRepositories: 'repositories?git_user={gituser}',
     getBranches: 'repos/{repoOwner}/{repoName}/branches?git_user={gituser}',
-    supplyChainRuns:'initializ/v1/supplychainruns?appid=650c25862d2877fca8b399d3'
+    supplyChainRuns: 'initializ/v1/supplychainruns?appid={appId}'
 }

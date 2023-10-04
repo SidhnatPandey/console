@@ -37,7 +37,3 @@ export const saveApp = (app: any) => {
     )
 }
 
-export const supplychainruns = () => {
-    const url = APP_API.supplyChainRuns; 
-    return get(url).then((response) => response?.data);
-  };
