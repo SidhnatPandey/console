@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
 import AppDashboard from "../../../pages/app-dashboard/index";
-import AppSummary from "../../../pages/app-dashboard/AppSummay";
+import AppSummary from "../../../pages/apps/app-dashboard/AppSummay";
 import AppCreationFlow from "../../../pages/app-dashboard/ProcessTile";
 import ProcessDetails from "../../../pages/app-dashboard/ProcessDetails";
 import ProcessLogs from "../../../pages/app-dashboard/ProcessLogs";

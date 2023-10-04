@@ -361,7 +361,7 @@ const StepperCustomVertical = () => {
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
-        router.push("/app-dashboard");
+        router.push("/apps/app-dashboard");
       })
       .catch((error) => {
         toast.error(error);

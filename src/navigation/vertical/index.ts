@@ -11,7 +11,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Apps',
       icon: 'ion:document-outline',
-      path: '/app-dashboard'
+      path: '/apps'
     },
     {
       title: 'Security',
