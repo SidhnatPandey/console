@@ -19,9 +19,10 @@ import Icon from 'src/@core/components/icon'
 
 
 import Link from "next/link";
-import { SyntheticEvent, useState } from "react"
+import { SyntheticEvent, useEffect, useState } from "react"
 import AppSummary from "./AppSummay"
 import ProcessTile from "./ProcessTile"
+import { supplychainruns } from "src/services/appService"
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     borderBottom: '0 !important',
@@ -47,7 +48,18 @@ const AppDashboard = () => {
     }
 
     /* uit:create-dashboard */
-
+    const [data, setData] = useState<any>(null); // State to hold the fetched data
+    const [error, setError] = useState<Error | null>(null); // State to handle errors
+  
+    useEffect(() => {
+      supplychainruns()
+        .then((response) => {
+          setData(response);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+    }, []);
     return (
         <>
           <Card
