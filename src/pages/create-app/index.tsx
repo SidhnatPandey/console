@@ -773,7 +773,7 @@ const StepperCustomVertical = () => {
                             verticalAlign: "top",
                             "&:last-of-type": { px: "0 !important" },
                             "&:first-of-type": { pl: "0 !important" },
-                            py: (theme) => `${theme.spacing(0.75)} !important`,
+                            py: (theme: { spacing: (arg0: number) => any; }) => `${theme.spacing(0.75)} !important`,
                           },
                         }}
                       >
@@ -894,7 +894,7 @@ const StepperCustomVertical = () => {
                   borderRadius: 1,
                   alignItems: "flex-end",
                   justifyContent: "center",
-                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  border: (theme: { palette: { divider: any; }; }) => `1px solid ${theme.palette.divider}`,
                   marginLeft: "20px", // You can adjust the value as needed
                 }}
               >
@@ -976,10 +976,10 @@ const StepperCustomVertical = () => {
                         {...(activeStep >= index && { color: "primary" })}
                         sx={{
                           ...(activeStep === index && {
-                            boxShadow: (theme) => theme.shadows[3],
+                            boxShadow: (theme: { shadows: any[]; }) => theme.shadows[3],
                           }),
                           ...(activeStep > index && {
-                            color: (theme) =>
+                            color: (theme: { palette: { primary: { main: string; }; }; }) =>
                               hexToRGBA(theme.palette.primary.main, 0.4),
                           }),
                         }}
