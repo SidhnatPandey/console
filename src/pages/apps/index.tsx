@@ -7,6 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
+import AppDashboardHome from './app-dashboard';
+import { useRouter } from 'next/router';
 
 interface Row {
   id: number;
@@ -83,25 +85,20 @@ const rows: Row[] = [
   }),
 ];
 
-interface EnhancedTableProps {
+const EnhancedTableHead: React.FC<{
   onRequestSort: (property: keyof Row) => void;
   order: 'asc' | 'desc';
   orderBy: string;
-}
-const EnhancedTableHead: React.FC<EnhancedTableProps> = ({
-  onRequestSort,
-  order,
-  orderBy,
-}) => {
-  const headCells: { id: string| keyof Row; label: string }[] = [
-    { id: '1', label: 'NAME' },
-    { id: '2', label: 'Current Env' },
-    { id: '3', label: 'Last Deployed' },
-    { id: '4', label: 'LIVE APP URL' },
-    { id: '5', label: 'STATUS' }
+}> = ({ onRequestSort, order, orderBy }) => {
+  const headCells: { id: keyof Row; label: string }[] = [
+    { id: 'name', label: 'NAME' },
+    { id: 'currentEnv', label: 'Current Env' },
+    { id: 'lastDeployed', label: 'Last Deployed' },
+    { id: 'liveAppUrl', label: 'LIVE APP URL' },
+    { id: 'status', label: 'STATUS' },
   ];
 
-  const createSortHandler = (property: any) => {
+  const createSortHandler = (property: keyof Row) => {
     return () => {
       onRequestSort(property);
     };
@@ -129,9 +126,11 @@ const EnhancedTableHead: React.FC<EnhancedTableProps> = ({
   );
 };
 
-const AppList: React.FC<AppListProps> = ({ selectedRow, setSelectedRow }) => {
+const Apps: React.FC<AppListProps> = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<keyof Row>('id');
+  const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  const router = useRouter();
 
   const handleRequestSort = (property: keyof Row) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -141,51 +140,54 @@ const AppList: React.FC<AppListProps> = ({ selectedRow, setSelectedRow }) => {
 
   const handleRowClick = (rowId: number) => {
     setSelectedRow(rowId);
+    router.push('/apps/app-dashboard');
     // Render your component here based on the selected row ID
     console.log(`Clicked row with ID: ${rowId}`);
   };
 
   return (
-    <Paper>
-      <TableContainer>
-        <Table>
-          <EnhancedTableHead
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-          />
-          <TableBody>
-            {rows
-              .slice()
-              .sort((a, b) =>
-                order === 'asc'
-                  ? a[orderBy] > b[orderBy]
-                    ? 1
-                    : -1
-                  : b[orderBy] > a[orderBy]
-                  ? 1
-                  : -1
-              )
-              .map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => handleRowClick(row.id)}
-                  selected={selectedRow === row.id}
-                  hover
-                  style={{ cursor: 'pointer' }}
-                >
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.currentEnv}</TableCell>
-                  <TableCell>{row.lastDeployed}</TableCell>
-                  <TableCell>{row.liveAppUrl}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+    <>
+      <Paper>
+        <TableContainer>
+          <Table>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+            />
+            <TableBody>
+              {rows
+                .slice()
+                .sort((a, b) =>
+                  order === 'asc'
+                    ? a[orderBy] > b[orderBy]
+                      ? 1
+                      : -1
+                    : b[orderBy] > a[orderBy]
+                      ? 1
+                      : -1
+                )
+                .map((row) => (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => handleRowClick(row.id)}
+                    selected={selectedRow === row.id}
+                    hover
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.currentEnv}</TableCell>
+                    <TableCell>{row.lastDeployed}</TableCell>
+                    <TableCell>{row.liveAppUrl}</TableCell>
+                    <TableCell>{row.status}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </>
   );
 };
 
-export default AppList;
+export default Apps;
