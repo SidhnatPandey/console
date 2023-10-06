@@ -19,9 +19,10 @@ import Icon from 'src/@core/components/icon'
 
 
 import Link from "next/link";
-import { SyntheticEvent, useState } from "react"
+import { SetStateAction, SyntheticEvent, useEffect, useState } from "react"
 import AppSummary from "./AppSummay"
-import ProcessTile from "../app-dashboard/ProcessTile"
+import ProcessTile from "./ProcessTile"
+import { supplyChainRuns } from "src/services/dashboardService";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: '0 !important',
@@ -38,7 +39,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const AppDashboardHome = () => {
+const AppDashboard = () => {
 
   const [value, setValue] = useState<string>('1')
 
@@ -47,6 +48,23 @@ const AppDashboardHome = () => {
   }
 
   /* uit:create-dashboard */
+  const [data, setData] = useState<any>(null); // State to hold the fetched data
+  const [error, setError] = useState<Error | null>(null); // State to handle errors
+
+  useEffect(() => {
+    getSupplyChainRun('650c25862d2877fca8b399d3');
+  }, []);
+
+  const getSupplyChainRun = (id: string) => {
+    supplyChainRuns(id)
+      .then((response: any) => {
+        setData(response);
+        console.log(data);
+      })
+      .catch((err: SetStateAction<Error | null>) => {
+        setError(err);
+      });
+  }
 
   return (
     <>
@@ -133,4 +151,4 @@ const AppDashboardHome = () => {
   )
 }
 
-export default AppDashboardHome
+export default AppDashboard
