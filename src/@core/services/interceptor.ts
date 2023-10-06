@@ -33,7 +33,13 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         // Handle response errors
-        return error;
+        if (error?.response) {
+            if (error?.response.status === 401) {
+                // clear localstorage and send user to login page
+                localStorage.clear();
+                window.location.href = '/login';
+            }
+        }
         return Promise.reject(error);
     }
 );
