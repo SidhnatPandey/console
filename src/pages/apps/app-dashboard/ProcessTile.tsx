@@ -8,17 +8,15 @@ import CustomAvatar from "src/@core/components/mui/avatar";
 import Icon from "src/@core/components/icon";
 import ProcessLogs from "./ProcessLogs";
 import { supplyChainSteps } from "src/services/dashboardService";
-
-
+import { Container } from "@mui/system";
+import LoopIcon from '@mui/icons-material/Loop';
 
 interface ProcessTileProps {
   title: string;
-  status: "completed" | "running" | "pending";
+  status: string;
   onClick: () => void;
   isSelected: boolean;
 }
-
-
 
 const ProcessTile: React.FC<ProcessTileProps> = ({
   title,
@@ -43,43 +41,50 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     boxShadow: '15'
   };
 
-
-
   // Rotate the content inside the "Approval" process by 45 degrees
   const contentStyle: React.CSSProperties = {
     transform: title === "Approval" ? "rotate(45deg)" : "none",
   };
 
-
-
   const dotStyle: React.CSSProperties = {
     color: title === "Approval" ? "white" : "primary", // Change the color to black for "Approval"
   };
-
-
 
   const textStyle: React.CSSProperties = {
     color: title === "Approval" ? "white" : "inherit", // Change the text color to white for "Approval"
   };
 
-
+  const getTileIcon = (status: string) => {
+    switch (status) {
+      case 'Succeeded':
+        return <CustomAvatar
+          skin="light"
+          color={"success"}
+          sx={{ marginTop: -1, width: 42, height: 42 }}
+          style={{ marginLeft: 25, marginBottom: 5 }}
+        >
+          <Icon icon={"ph:check-light"} />
+        </CustomAvatar>;
+      case 'Running':
+        return <><Container maxWidth="sm">
+          <LoopIcon style={{ animation: "spin 4s linear infinite" }} color="primary" fontSize="large" />
+          <style>{`
+            @keyframes spin {
+                 0% { transform: rotate(360deg); }
+                 100% { transform: rotate(0deg); }
+                  }`}</style>
+        </Container></>
+      case 'waiting':
+        return <PendingIcon fontSize="large" style={dotStyle} />
+      default:
+        return <PendingIcon fontSize="large" style={dotStyle} />;
+    }
+  }
 
   return (
     <Card onClick={onClick} sx={cardStyle}>
       <div style={contentStyle}>
-        {status === "completed" ? (
-          // <PendingIcon fontSize="large" style={dotStyle} />
-          <CustomAvatar
-            skin="light"
-            color={"success"}
-            sx={{ marginTop: -1, width: 42, height: 42 }}
-            style={{ marginLeft: 25, marginBottom: 5 }}
-          >
-            <Icon icon={"ph:check-light"} />
-          </CustomAvatar>
-        ) : (
-          <PendingIcon fontSize="large" style={dotStyle} />
-        )}
+        {getTileIcon(status)}
         <Typography variant="h6" className="mt-2" style={textStyle}>
           {title}
         </Typography>
@@ -96,30 +101,13 @@ interface AppCreationFlow {
     run_name: string,
     started_at: string,
     status: string,
-    steps: string[]
+    steps: { status: string, step_name: string }[]
   }
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
   const [selectedTile, setSelectedTile] = useState<string | null>("Clone"); // Set the initial value to "Clone"
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
-
-  // Update the processList to rename "Approval 1" and "Approval 2" to "Approval"
-  /*   const processList: {
-      title: string;
-      status: "completed" | "running" | "pending";
-    }[] = [
-        { title: "Clone", status: "completed" },
-        { title: "Build", status: "completed" },
-        { title: "Package", status: "completed" },
-        { title: "SCA", status: "pending" },
-        { title: "Scan", status: "pending" },
-        { title: "Approval", status: "running" }, // Renamed "Approval 1" to "Approval"
-        { title: "Stg", status: "pending" },
-        { title: "Approval", status: "running" }, // Renamed "Approval 2" to "Approval"
-        { title: "Prod", status: "pending" },
-      ];
-   */
   const handleTileClick = (title: string) => {
     setSelectedTile(title === selectedTile ? null : title);
   };
@@ -147,10 +135,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
           {supplyChainData?.steps.map((process, index) => (
             <React.Fragment key={index}>
               <ProcessTile
-                title={process}
-                status={"completed"}
-                onClick={() => getSupplyChainStep(supplyChainData.id,process)}
-                isSelected={selectedTile === process}
+                title={process.step_name}
+                status={process.status}
+                onClick={() => { if (process.status != 'waiting') { getSupplyChainStep(supplyChainData.id,process.step_name) } }}
+                isSelected={selectedTile === process.step_name}
               />
               {index < supplyChainData.steps.length - 1 && (
                 <ArrowRightAltIcon
