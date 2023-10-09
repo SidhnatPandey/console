@@ -1,10 +1,10 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
-import AppDashboard from "../../../pages/app-dashboard/index";
+import AppDashboard from "../../../pages/apps/app-dashboard/index";
 import AppSummary from "../../../pages/apps/app-dashboard/AppSummay";
-import AppCreationFlow from "../../../pages/app-dashboard/ProcessTile";
-import ProcessDetails from "../../../pages/app-dashboard/ProcessDetails";
-import ProcessLogs from "../../../pages/app-dashboard/ProcessLogs";
+import AppCreationFlow from "../../../pages/apps/app-dashboard/ProcessTile";
+import ProcessDetails from "../../../pages/apps/app-dashboard/ProcessDetails";
+import ProcessLogs from "../../../pages/apps/app-dashboard/ProcessLogs";
 describe("Integration Test Suite", () => {
   // Tests for AppDashboard Component
   describe("AppDashboard Component", () => {

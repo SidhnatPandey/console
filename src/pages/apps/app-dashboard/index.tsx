@@ -19,9 +19,11 @@ import Icon from 'src/@core/components/icon'
 
 
 import Link from "next/link";
-import { SyntheticEvent, useState } from "react"
+import { SetStateAction, SyntheticEvent, useEffect, useState } from "react"
 import AppSummary from "./AppSummay"
-import ProcessTile from "../app-dashboard/ProcessTile"
+import ProcessTile from "./ProcessTile"
+import { supplyChainRuns } from "src/services/dashboardService";
+import { error } from "console"
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: '0 !important',
@@ -38,7 +40,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const AppDashboardHome = () => {
+const AppDashboard = () => {
 
   const [value, setValue] = useState<string>('1')
 
@@ -47,6 +49,21 @@ const AppDashboardHome = () => {
   }
 
   /* uit:create-dashboard */
+  const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
+
+  useEffect(() => {
+    getSupplyChainRun('651e5ef34abbe2cd9e22c9a1');
+  }, []);
+
+  const getSupplyChainRun = (id: string) => {
+    supplyChainRuns(id)
+      .then((response: any) => {
+        setSupplyChainRunData(response.data[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   return (
     <>
@@ -107,7 +124,7 @@ const AppDashboardHome = () => {
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
           <AppSummary data-testid="app-summary" />
           <br />
-          <ProcessTile data-testid="process-tile" />
+          {supplyChainRunData && <ProcessTile data-testid="process-tile" supplyChainData={supplyChainRunData} />}
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
           <Typography>
@@ -133,4 +150,4 @@ const AppDashboardHome = () => {
   )
 }
 
-export default AppDashboardHome
+export default AppDashboard
