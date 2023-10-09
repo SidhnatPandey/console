@@ -36,7 +36,7 @@ const AppBrand = () => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <img src='../images/logo.png' alt='logo' width='30' height='30' />
-      <Typography variant='h4' sx={{ ml: 2, fontWeight: 'bold'}}>
+      <Typography variant='h4' sx={{ ml: 2, fontWeight: 'bold' }}>
         initializ
       </Typography>
     </Box>
@@ -73,7 +73,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       verticalLayoutProps={{
         navMenu: {
           navItems: VerticalNavItems(),
-          branding: () => <AppBrand />
+          //branding: () => <AppBrand />
 
           // Uncomment the below line when using server-side menu in vertical layout and comment the above line
           // navItems: verticalMenuItems
@@ -104,7 +104,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       })}
     >
       {children}
-      
+
     </Layout>
   )
 }
