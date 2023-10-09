@@ -58,7 +58,7 @@ const AppDashboard = () => {
   const getSupplyChainRun = (id: string) => {
     supplyChainRuns(id)
       .then((response: any) => {
-        setSupplyChainRunData(response.data[0]);
+        setSupplyChainRunData(response.data);
       })
       .catch((error) => {
         console.log(error);
