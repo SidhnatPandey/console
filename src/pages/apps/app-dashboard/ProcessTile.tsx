@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Typography } from "@mui/material";
 import PendingIcon from "@mui/icons-material/Pending";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
@@ -7,6 +7,7 @@ import ProcessDetails from "./ProcessDetails";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import Icon from "src/@core/components/icon";
 import ProcessLogs from "./ProcessLogs";
+import { supplyChainSteps } from "src/services/dashboardService";
 
 
 
@@ -101,6 +102,7 @@ interface AppCreationFlow {
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
   const [selectedTile, setSelectedTile] = useState<string | null>("Clone"); // Set the initial value to "Clone"
+  const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
 
   // Update the processList to rename "Approval 1" and "Approval 2" to "Approval"
   /*   const processList: {
@@ -122,6 +124,20 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
     setSelectedTile(title === selectedTile ? null : title);
   };
 
+  // useEffect(() => {
+  //   getSupplyChainStep('651e5f1455938061c842b400');
+  // }, []);
+
+  const getSupplyChainStep = (id: string, step: string) => {
+    supplyChainSteps(id,step)
+      .then((response: any) => {
+        setSupplyChainStepData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    };
+
   return (
     <div>
       <Card
@@ -133,7 +149,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
               <ProcessTile
                 title={process}
                 status={"completed"}
-                onClick={() => handleTileClick(process)}
+                onClick={() => getSupplyChainStep(supplyChainData.id,process)}
                 isSelected={selectedTile === process}
               />
               {index < supplyChainData.steps.length - 1 && (
@@ -148,15 +164,13 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
       <br></br>
       {selectedTile != null && (
         <>
-          <ProcessDetails title={selectedTile} />
+          < ProcessDetails title={selectedTile} />
           <br></br>
           <ProcessLogs />
         </>
       )}
     </div>
-  );
+ );
 };
-
-
 
 export default AppCreationFlow;
