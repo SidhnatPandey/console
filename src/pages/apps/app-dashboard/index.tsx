@@ -124,7 +124,7 @@ const AppDashboard = () => {
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
           <AppSummary data-testid="app-summary" />
           <br />
-          <ProcessTile data-testid="process-tile" supplyChainData={supplyChainRunData} />
+          {supplyChainRunData && <ProcessTile data-testid="process-tile" supplyChainData={supplyChainRunData} />}
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
           <Typography>

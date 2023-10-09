@@ -128,7 +128,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
         sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
       >
         <div className={`scroll-container`}>
-          {supplyChainData.steps.map((process, index) => (
+          {supplyChainData?.steps.map((process, index) => (
             <React.Fragment key={index}>
               <ProcessTile
                 title={process}
