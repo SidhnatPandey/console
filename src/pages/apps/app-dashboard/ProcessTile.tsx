@@ -153,7 +153,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
         </div>
       </Card>
       <br></br>
-      {selectedTile != null && (
+      {supplyChainStepData && (
         < ProcessDetails supplyChainStepData={supplyChainStepData} />
       )}
     </div>
