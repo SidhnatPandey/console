@@ -112,19 +112,22 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
     setSelectedTile(stage === selectedTile ? null : stage);
   };
 
-  // useEffect(() => {
-  //   getSupplyChainStep('651e5f1455938061c842b400');
-  // }, []);
+  useEffect(() => {
+    if (supplyChainData) {
+      getSupplyChainStep(supplyChainData.id, supplyChainData.steps[0].step_name)
+    }
+  }, []);
 
   const getSupplyChainStep = (id: string, step: string) => {
-    supplyChainSteps(id,step)
+    handleTileClick(step);
+    supplyChainSteps(id, step)
       .then((response: any) => {
         setSupplyChainStepData(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
-    };
+  };
 
   return (
     <div>
@@ -137,7 +140,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
               <ProcessTile
                 stage={process.step_name}
                 status={process.status}
-                onClick={() => { if (process.status != 'waiting') { getSupplyChainStep(supplyChainData.id,process.step_name) } }}
+                onClick={() => { if (process.status != 'waiting') { getSupplyChainStep(supplyChainData.id, process.step_name) } }}
                 isSelected={selectedTile === process.step_name}
               />
               {index < supplyChainData.steps.length - 1 && (
@@ -151,14 +154,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
       </Card>
       <br></br>
       {selectedTile != null && (
-        <>
-          < ProcessDetails supplyChainStepData={supplyChainStepData}  />
-          <br></br>
-          <ProcessLogs log={supplyChainStepData?.steps[0].log} />
-        </>
+        < ProcessDetails supplyChainStepData={supplyChainStepData} />
       )}
     </div>
- );
+  );
 };
 
 export default AppCreationFlow;
