@@ -12,14 +12,14 @@ import { Container } from "@mui/system";
 import LoopIcon from '@mui/icons-material/Loop';
 
 interface ProcessTileProps {
-  title: string;
+  stage: string;
   status: string;
   onClick: () => void;
   isSelected: boolean;
 }
 
 const ProcessTile: React.FC<ProcessTileProps> = ({
-  title,
+  stage,
   status,
   onClick,
   isSelected,
@@ -36,22 +36,22 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
       ? "2px solid rgb(115, 83, 229)"
       : "2px solid transparent",
     cursor: "pointer",
-    transform: title === "Approval" ? "rotate(-45deg)" : "none",
-    backgroundColor: title === "Approval" ? "rgb(115, 83, 229)" : "transparent",
+    transform: stage === "Approval" ? "rotate(-45deg)" : "none",
+    backgroundColor: stage === "Approval" ? "rgb(115, 83, 229)" : "transparent",
     boxShadow: '15'
   };
 
   // Rotate the content inside the "Approval" process by 45 degrees
   const contentStyle: React.CSSProperties = {
-    transform: title === "Approval" ? "rotate(45deg)" : "none",
+    transform: stage === "Approval" ? "rotate(45deg)" : "none",
   };
 
   const dotStyle: React.CSSProperties = {
-    color: title === "Approval" ? "white" : "primary", // Change the color to black for "Approval"
+    color: stage === "Approval" ? "white" : "primary", // Change the color to black for "Approval"
   };
 
   const textStyle: React.CSSProperties = {
-    color: title === "Approval" ? "white" : "inherit", // Change the text color to white for "Approval"
+    color: stage === "Approval" ? "white" : "inherit", // Change the text color to white for "Approval"
   };
 
   const getTileIcon = (status: string) => {
@@ -86,7 +86,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
       <div style={contentStyle}>
         {getTileIcon(status)}
         <Typography variant="h6" className="mt-2" style={textStyle}>
-          {title}
+          {stage}
         </Typography>
       </div>
     </Card>
@@ -106,10 +106,10 @@ interface AppCreationFlow {
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
-  const [selectedTile, setSelectedTile] = useState<string | null>("Clone"); // Set the initial value to "Clone"
+  const [selectedTile, setSelectedTile] = useState<string | null>(""); // Set the initial value to "Clone"
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
-  const handleTileClick = (title: string) => {
-    setSelectedTile(title === selectedTile ? null : title);
+  const handleTileClick = (stage: string) => {
+    setSelectedTile(stage === selectedTile ? null : stage);
   };
 
   // useEffect(() => {
@@ -135,7 +135,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
           {supplyChainData?.steps.map((process, index) => (
             <React.Fragment key={index}>
               <ProcessTile
-                title={process.step_name}
+                stage={process.step_name}
                 status={process.status}
                 onClick={() => { if (process.status != 'waiting') { getSupplyChainStep(supplyChainData.id,process.step_name) } }}
                 isSelected={selectedTile === process.step_name}
@@ -152,9 +152,9 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
       <br></br>
       {selectedTile != null && (
         <>
-          < ProcessDetails title={selectedTile} />
+          < ProcessDetails supplyChainStepData={supplyChainStepData}  />
           <br></br>
-          <ProcessLogs />
+          <ProcessLogs log={supplyChainStepData?.steps[0].log} />
         </>
       )}
     </div>
