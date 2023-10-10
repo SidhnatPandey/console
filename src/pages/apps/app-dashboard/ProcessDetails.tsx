@@ -42,15 +42,14 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
     setValue(newValue);
   }
 
-  /* useEffect(() => {
+  useEffect(() => {
     // Update the document title using the browser API
     if (supplyChainStepData) {
       setStep(supplyChainStepData.steps[0]);
     }
-  }, [step]); */
+  }, [supplyChainStepData?.steps[0]]);
 
   const handleTabChange = (step: Step, index: number) => {
-    console.log(step, index);
     setStep(step);
   }
 
