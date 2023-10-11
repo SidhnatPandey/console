@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -9,6 +9,15 @@ interface ProcessLogsProps {
 }
 
 const ProcessLogs: React.FC<ProcessLogsProps> = ({ log }) => {
+
+  const [logs, setLogs] = useState<string[]>([])
+
+  useEffect(() => {
+    if (log) {
+      setLogs(log.split('\n'));
+    }
+  }, [log])
+
   return (
     <Card sx={{ height: "auto", display: "flex", flexDirection: "column" }}>
       <CardContent sx={{ padding: "10px", marginLeft: "20px", flex: 1 }}>
@@ -26,8 +35,11 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ log }) => {
         color: 'white',
         width: '100%',
         overflow: 'auto',
+        padding: '10px',
       }}>
-       {log}
+        {logs.map((log, index) => {
+          return <p style={{ color: 'white', margin: 0 }} key={index}>{log}</p>
+        })}
       </div>
     </Card>
   );
