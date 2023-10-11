@@ -9,7 +9,8 @@ import Icon from "src/@core/components/icon";
 import ProcessLogs from "./ProcessLogs";
 import { supplyChainSteps } from "src/services/dashboardService";
 import { Container } from "@mui/system";
-import LoopIcon from '@mui/icons-material/Loop';
+import LoopIcon from "@mui/icons-material/Loop";
+import Tooltip from "@mui/material/Tooltip";
 
 interface ProcessTileProps {
   stage: string;
@@ -38,7 +39,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     cursor: "pointer",
     transform: stage === "Approval" ? "rotate(-45deg)" : "none",
     backgroundColor: stage === "Approval" ? "rgb(115, 83, 229)" : "transparent",
-    boxShadow: '15'
+    boxShadow: "15",
   };
 
   // Rotate the content inside the "Approval" process by 45 degrees
@@ -56,53 +57,65 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
 
   const getTileIcon = (status: string) => {
     switch (status) {
-      case 'Succeeded':
-        return <CustomAvatar
-          skin="light"
-          color={"success"}
-          sx={{ marginTop: -1, width: 42, height: 42 }}
-          style={{ marginLeft: 25, marginBottom: 5 }}
-        >
-          <Icon icon={"ph:check-light"} />
-        </CustomAvatar>;
-      case 'Running':
-        return <><Container maxWidth="sm">
-          <LoopIcon style={{ animation: "spin 4s linear infinite" }} color="primary" fontSize="large" />
-          <style>{`
+      case "Succeeded":
+        return (
+          <CustomAvatar
+            skin="light"
+            color={"success"}
+            sx={{ marginTop: -1, width: 42, height: 42 }}
+            style={{ marginLeft: 25, marginBottom: 5 }}
+          >
+            <Icon icon={"ph:check-light"} />
+          </CustomAvatar>
+        );
+      case "Running":
+        return (
+          <>
+            <Container maxWidth="sm">
+              <LoopIcon
+                style={{ animation: "spin 4s linear infinite" }}
+                color="primary"
+                fontSize="large"
+              />
+              <style>{`
             @keyframes spin {
                  0% { transform: rotate(360deg); }
                  100% { transform: rotate(0deg); }
                   }`}</style>
-        </Container></>
-      case 'waiting':
-        return <PendingIcon fontSize="large" style={dotStyle} />
+            </Container>
+          </>
+        );
+      case "waiting":
+        return <PendingIcon fontSize="large" style={dotStyle} />;
       default:
         return <PendingIcon fontSize="large" style={dotStyle} />;
     }
-  }
+  };
 
   return (
-    <Card onClick={onClick} sx={cardStyle}>
-      <div style={contentStyle}>
-        {getTileIcon(status)}
-        <Typography variant="h6" className="mt-2" style={textStyle}>
-          {stage}
-        </Typography>
-      </div>
-    </Card>
+    <Tooltip title={`Status: ${status}`} arrow>
+      <Card onClick={onClick} sx={cardStyle}>
+        <div style={contentStyle}>
+          {getTileIcon(status)}
+          <Typography variant="h6" className="mt-2" style={textStyle}>
+            {stage}
+          </Typography>
+        </div>
+      </Card>
+    </Tooltip>
   );
 };
 
 interface AppCreationFlow {
   supplyChainData: {
-    app_id: string,
-    completed_at: string,
-    id: string,
-    run_name: string,
-    started_at: string,
-    status: string,
-    steps: { status: string, step_name: string }[]
-  }
+    app_id: string;
+    completed_at: string;
+    id: string;
+    run_name: string;
+    started_at: string;
+    status: string;
+    steps: { status: string; step_name: string }[];
+  };
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
@@ -114,7 +127,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
 
   useEffect(() => {
     if (supplyChainData) {
-      getSupplyChainStep(supplyChainData.id, supplyChainData.steps[0].step_name)
+      getSupplyChainStep(
+        supplyChainData.id,
+        supplyChainData.steps[0].step_name
+      );
     }
   }, []);
 
@@ -140,7 +156,11 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
               <ProcessTile
                 stage={process.step_name}
                 status={process.status}
-                onClick={() => { if (process.status != 'waiting') { getSupplyChainStep(supplyChainData.id, process.step_name) } }}
+                onClick={() => {
+                  if (process.status != "waiting") {
+                    getSupplyChainStep(supplyChainData.id, process.step_name);
+                  }
+                }}
                 isSelected={selectedTile === process.step_name}
               />
               {index < supplyChainData.steps.length - 1 && (
@@ -154,7 +174,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
       </Card>
       <br></br>
       {supplyChainStepData && (
-        < ProcessDetails supplyChainStepData={supplyChainStepData} />
+        <ProcessDetails supplyChainStepData={supplyChainStepData} />
       )}
     </div>
   );
