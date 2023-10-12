@@ -6,3 +6,10 @@ export const supplyChainRuns = (appId: string) => {
     url = url.replace('{appId}', appId)
     return get(url).then((response) => response?.data);
 };
+
+export const appList = (userId: string) => {
+    let url = APP_API.appList;
+    url = url.replace('{userId}', userId)
+    return get(url).then((response) => response?.data);
+};
+
