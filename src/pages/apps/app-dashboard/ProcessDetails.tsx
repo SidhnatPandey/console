@@ -6,12 +6,14 @@ import TabList from "@mui/lab/TabList";
 import TabContext from "@mui/lab/TabContext";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
-import ErrorIcon from "@mui/icons-material/Error";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import PendingIcon from "@mui/icons-material/Pending";
 import LoopIcon from "@mui/icons-material/Loop";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import Icon from "src/@core/components/icon";
 import { Container } from "@mui/system";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
 
 // Define the prop types for the ProcessDetails component
 interface ProcessDetailsProps {
@@ -45,59 +47,61 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
-  const FailedIcon = () => (
-    <ErrorIcon style={{ fontSize: "30", color: "red" }} />
-  );
-  const icon = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return (
-          <CustomAvatar
-            skin="light"
-            color={"success"}
-            sx={{
-              marginTop: 1,
-              width: 30,
-              height: 30,
-              display: "flex",
-              alignItems: "center",
-            }}
-            style={{ marginRight: 5 }} // Adjust margin as needed
-          >
-            <Icon icon={"ph:check-light"} />
-          </CustomAvatar>
-        );
-      case "Running":
-        return (
-          <>
-            <Container maxWidth="sm">
-              <LoopIcon
-                style={{ animation: "spin 4s linear infinite" }}
-                color="primary"
-                fontSize="large"
-              />
-              <style>
-                {`
-                @keyframes spin {
-                  0% { transform: rotate(360deg); }
-                  100% { transform: rotate(0deg); }
-                }`}
-              </style>
-            </Container>
-          </>
-        );
-      case "Pending":
-        return (
-          <PendingIcon fontSize="large" style={{ color: "rgb(85, 85, 85)" }} />
-        );
-      case "Failed": // Add the case for 'Failed' status
-        return <FailedIcon />;
-      default:
-        return (
-          <PendingIcon fontSize="large" style={{ color: "rgb(85, 85, 85)" }} />
-        );
-    }
-  };
+  
+
+const icon = (status: string) => {
+  
+  switch (status) {
+    case "Succeeded":
+      return (
+        <CustomAvatar
+          skin="light"
+          color={"success"}
+          sx={{
+            marginTop: 1,
+            width: 20,
+            height: 20,
+            display: "flex",
+            alignItems: "center",
+          }}
+          style={{ marginRight: 10 }}
+        >
+          <Icon icon={"ph:check-light"} />
+        </CustomAvatar>
+      );
+    case "InProgress":
+      return (
+        <>
+         
+            <LoopIcon
+              style={{ animation: "spin 4s linear infinite", marginLeft:"5px" }}
+            
+              color="primary"
+              fontSize="medium"
+            />
+            <style>
+              {`
+              @keyframes spin {
+                0% { transform: rotate(360deg); }
+                100% { transform: rotate(0deg); }
+              }`}
+            </style>
+        
+        </>
+      );
+    case "Waiting":
+      return (
+        <PendingIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
+      );
+    case "Failed":
+      return <ErrorOutlineIcon  fontSize="medium" style={{ color: "red" }} />;
+    default:
+      return (
+        <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
+      );
+  }
+};
+
 
   useEffect(() => {
     setValue("0");
