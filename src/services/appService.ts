@@ -37,3 +37,9 @@ export const saveApp = (app: any) => {
     )
 }
 
+export const appList = (userId: string) => {
+    let url = APP_API.appList;
+    url = url.replace('{userId}', userId)
+    return get(url).then((response) => response?.data);
+};
+

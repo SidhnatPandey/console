@@ -86,7 +86,6 @@ const AuthProvider = ({ children }: Props) => {
           ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.access_token)
           : null
         const returnUrl = router.query.returnUrl
-        console.log('User Data: ', response.data);
         const user: UserDataType = {
           id: 0,
           role: response.data.data.user_data?.role,
@@ -98,7 +97,7 @@ const AuthProvider = ({ children }: Props) => {
         setUser({ ...user })
         params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/dashboard'
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
 
         router.replace(redirectURL as string)
       })
