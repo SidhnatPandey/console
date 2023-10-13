@@ -50,44 +50,6 @@ const createData = ({
   };
 };
 
-const rows: Row[] = [
-  createData({
-    name: 'App 1',
-    currentEnv: 'Production',
-    lastDeployed: '28 Days ago',
-    liveAppUrl: 'http://app1.com',
-    status: 'Active',
-  }),
-  createData({
-    name: 'App 2',
-    currentEnv: 'Development',
-    lastDeployed: '20 Days ago',
-    liveAppUrl: 'http://app2.com',
-    status: 'Inactive',
-  }),
-  createData({
-    name: 'App 3',
-    currentEnv: 'Testing',
-    lastDeployed: '15 Days ago',
-    liveAppUrl: 'http://app3.com',
-    status: 'Active',
-  }),
-  createData({
-    name: 'App 4',
-    currentEnv: 'Production',
-    lastDeployed: '10 Days ago',
-    liveAppUrl: 'http://app4.com',
-    status: 'Inactive',
-  }),
-  createData({
-    name: 'App 5',
-    currentEnv: 'Development',
-    lastDeployed: '5 Days ago',
-    liveAppUrl: 'http://app5.com',
-    status: 'Active',
-  }),
-];
-
 const EnhancedTableHead: React.FC<{
   onRequestSort: (property: keyof Row) => void;
   order: 'asc' | 'desc';
@@ -168,7 +130,7 @@ const Apps: React.FC<AppListProps> = () => {
       case 'Failed':
         return 'error'; // Red color for Failed status
       default:
-        return 'default'; // Default color for other statuses
+        return 'warning'; // Default color for other statuses
     }
   };
 
@@ -234,7 +196,7 @@ const Apps: React.FC<AppListProps> = () => {
                     <TableCell>{row.liveAppUrl}</TableCell>
                     <TableCell>
                       <Chip
-                        label={row.status}
+                        label={row.status?row.status:'unknown'}
                         color={getStatusChipColor(row.status)}
                         variant="outlined"
                       />
