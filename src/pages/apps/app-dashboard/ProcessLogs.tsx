@@ -128,7 +128,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps }) => {
                 sx={{
                   width: "100%", // Make the tabs take the full width of the Box
                   "& .MuiTab-root": {
-                    fontSize: "1.2rem", // Increase the font size
+                    fontSize: "1", // Increase the font size
                     padding: "10px 20px", // Adjust padding for larger size
                   },
                 }}
