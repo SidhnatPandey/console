@@ -90,6 +90,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps }) => {
     setValue("0");
     if (steps) {
       setStep(steps[0]);
+      setLogs(steps[0].log.split('\n'));
     }
   }, [steps[0]])
 
