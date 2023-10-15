@@ -46,6 +46,7 @@ import {
   getBranch,
   getRepositories,
   saveApp,
+  appNameExists,
 } from "src/services/appService";
 import { errorToast } from "src/lib/react-taostify";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -141,12 +142,12 @@ const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
 }));
 
 const defaultSourceCodeValues = {
+  appNameExist: "",
   application_name: "",
   git_repo: "",
   git_branch: "",
   src_code_path: "",
 };
-
 
 const sourceCodeSchema = yup.object().shape({
   application_name: yup.string().required(),
@@ -157,10 +158,10 @@ const sourceCodeSchema = yup.object().shape({
 
 const LoaderComponent = () => {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CircularProgress />
     </Box>
-  )
+  );
 };
 
 const defaultConfigurationValues = {
@@ -187,9 +188,11 @@ const StepperCustomVertical = () => {
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
-  const [isLoadingRepositories, setLoadingRepositories] = useState<boolean>(true);
+  const [isLoadingRepositories, setLoadingRepositories] =
+    useState<boolean>(true);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(true);
-
+  const [appName, setAppName] = useState("");
+  const [appNameExist, setAppNameExist] = useState(false);
 
   // Handle Stepper
   const handleBack = () => {
@@ -263,6 +266,29 @@ const StepperCustomVertical = () => {
       });
   }
 
+  const isNextButtonDisabled = appNameExist || !isConfigurationFormValid;
+
+  // Function to check if the application name exists
+  useEffect(() => {
+    checkAppNameExists(appName);
+  }, [appName]);
+
+  const checkAppNameExists = async (appName: string) => {
+    if (appName) {
+      try {
+        const exists = await appNameExists(appName);
+        if (exists) {
+          setAppNameExist(true);
+        } else {
+          setAppNameExist(false);
+        }
+      } catch (error) {
+        console.error(error);
+        setAppNameExist(false); // Handle the error case appropriately
+      }
+    }
+  };
+
   const fetchGitOwner = async () => {
     try {
       const response = await getGitOwner();
@@ -275,7 +301,6 @@ const StepperCustomVertical = () => {
     } catch (error) {
       toast.error("Could not fetch git user.");
     }
-
   };
 
   const fetchUserRepositories = async (user: string) => {
@@ -291,7 +316,6 @@ const StepperCustomVertical = () => {
     } finally {
       setLoadingRepositories(false);
     }
-
   };
 
   const fetchBranch = async (repo: string) => {
@@ -308,8 +332,6 @@ const StepperCustomVertical = () => {
       setLoadingBranches(false); // Set isLoadingBranches to false here
     }
   };
-
-
 
   const handleChange = (event: SelectChangeEvent<typeof repo>) => {
     const repo = event.target.value;
@@ -337,11 +359,11 @@ const StepperCustomVertical = () => {
   const handleClose = () => {
     const environmentVariables = getConfigurationValue("env_variables").filter(
       (variable) => variable.Key && variable.Value
-    )
-    setConfigurationValue("env_variables", environmentVariables)
+    );
+    setConfigurationValue("env_variables", environmentVariables);
     setOpen(false);
   };
-  //configuration page environment variable 
+  //configuration page environment variable
   const environmentVariables = getConfigurationValue("env_variables");
   const environmentVariablesCount = environmentVariables.filter(
     (variable) => variable.Key && variable.Value
@@ -384,9 +406,16 @@ const StepperCustomVertical = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={onChange}
+                        onChange={(e) => {
+                          setAppName(e.target.value); // Update appName state
+                          onChange(e);
+                          checkAppNameExists(e.target.value); // Check if the app name exists
+                        }}
                         placeholder="carterLeonard"
-                        error={Boolean(sourceCodeErrors.application_name)}
+                        error={
+                          Boolean(sourceCodeErrors.application_name) ||
+                          appNameExist
+                        }
                         aria-describedby="stepper-linear-account-username"
                       />
                     )}
@@ -397,6 +426,14 @@ const StepperCustomVertical = () => {
                       id="stepper-linear-account-username"
                     >
                       This field is required
+                    </FormHelperText>
+                  )}
+                  {appNameExist && (
+                    <FormHelperText
+                      sx={{ color: "error.main" }}
+                      id="app-exists-error"
+                    >
+                      This application name already exists
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -417,32 +454,36 @@ const StepperCustomVertical = () => {
                 </RadioGroup>
               </Grid>
 
-
               <Grid item xs={12} sm={12}>
-                <h3 style={{ margin: '0 0 10px 0' }}>Repository</h3>
+                <h3 style={{ margin: "0 0 10px 0" }}>Repository</h3>
                 {isLoadingRepositories ? (
                   <LoaderComponent />
                 ) : (
                   <FormControl fullWidth>
-                    <InputLabel id='git_repo' error={Boolean(sourceCodeErrors.git_repo)}>Repository</InputLabel>
+                    <InputLabel
+                      id="git_repo"
+                      error={Boolean(sourceCodeErrors.git_repo)}
+                    >
+                      Repository
+                    </InputLabel>
 
                     <Controller
-                      name='git_repo'
+                      name="git_repo"
                       control={sourceCodeControl}
                       rules={{ required: true }}
                       render={({ field: { value, onChange } }) => (
                         <Select
                           value={value}
-                          label='Repository'
+                          label="Repository"
                           onChange={(e) => {
-                            onChange(e)
-                            handleChange(e)
+                            onChange(e);
+                            handleChange(e);
                           }}
                           error={Boolean(sourceCodeErrors.git_repo)}
-                          labelId='stepper-linear-personal-country'
-                          aria-describedby='stepper-linear-personal-country-helper'
+                          labelId="stepper-linear-personal-country"
+                          aria-describedby="stepper-linear-personal-country-helper"
                         >
-                          {repositories.map(reg => (
+                          {repositories.map((reg) => (
                             <MenuItem key={reg} value={reg}>
                               {reg}
                             </MenuItem>
@@ -452,11 +493,13 @@ const StepperCustomVertical = () => {
                     />
 
                     {sourceCodeErrors.git_repo && (
-                      <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                      <FormHelperText
+                        sx={{ color: "error.main" }}
+                        id="stepper-linear-account-username"
+                      >
                         This field is required
                       </FormHelperText>
                     )}
-
                   </FormControl>
                 )}
               </Grid>
@@ -465,7 +508,7 @@ const StepperCustomVertical = () => {
                 <p style={{ margin: 0 }}>
                   Not seeing the repositories you expected here?{" "}
                   <strong style={{ cursor: "pointer" }}>
-                    <Link href={githubUrl || ''}>
+                    <Link href={githubUrl || ""}>
                       Edit Your Github Permissions
                     </Link>
                   </strong>{" "}
@@ -475,31 +518,31 @@ const StepperCustomVertical = () => {
               {repoSelected && (
                 <>
                   <Grid item xs={12} sm={12}>
-                    <h3 style={{ margin: '0 0 10px 0' }}>Branch</h3>
+                    <h3 style={{ margin: "0 0 10px 0" }}>Branch</h3>
                     {isLoadingBranches ? (
                       <LoaderComponent />
                     ) : (
                       <FormControl fullWidth>
                         <InputLabel
-                          id='git-branch'
+                          id="git-branch"
                           error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
                         >
                           Branch
                         </InputLabel>
                         <Controller
-                          name='git_branch'
+                          name="git_branch"
                           control={sourceCodeControl}
                           rules={{ required: true }}
                           render={({ field: { value, onChange } }) => (
                             <Select
                               value={value}
-                              label='Branch'
+                              label="Branch"
                               onChange={onChange}
                               error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
-                              labelId='stepper-linear-personal-country'
-                              aria-describedby='stepper-linear-personal-country-helper'
+                              labelId="stepper-linear-personal-country"
+                              aria-describedby="stepper-linear-personal-country-helper"
                             >
-                              {branches.map(branch => (
+                              {branches.map((branch) => (
                                 <MenuItem key={branch} value={branch}>
                                   {branch}
                                 </MenuItem>
@@ -508,15 +551,16 @@ const StepperCustomVertical = () => {
                           )}
                         />
                         {sourceCodeErrors.git_branch && (
-                          <FormHelperText sx={{ color: 'error.main' }} id='stepper-linear-account-username'>
+                          <FormHelperText
+                            sx={{ color: "error.main" }}
+                            id="stepper-linear-account-username"
+                          >
                             This field is required
                           </FormHelperText>
                         )}
                       </FormControl>
                     )}
                   </Grid>
-
-
 
                   <Grid item xs={12} sm={12}>
                     <h3 style={{ margin: "0 0 10px 0" }}>
@@ -553,6 +597,7 @@ const StepperCustomVertical = () => {
                   variant="contained"
                   type="submit"
                   onClick={handleSourceCodeSubmit(onSubmit)}
+                  disabled={isNextButtonDisabled}
                 >
                   Next
                 </Button>
@@ -773,7 +818,8 @@ const StepperCustomVertical = () => {
                             verticalAlign: "top",
                             "&:last-of-type": { px: "0 !important" },
                             "&:first-of-type": { pl: "0 !important" },
-                            py: (theme: { spacing: (arg0: number) => any; }) => `${theme.spacing(0.75)} !important`,
+                            py: (theme: { spacing: (arg0: number) => any }) =>
+                              `${theme.spacing(0.75)} !important`,
                           },
                         }}
                       >
@@ -894,7 +940,8 @@ const StepperCustomVertical = () => {
                   borderRadius: 1,
                   alignItems: "flex-end",
                   justifyContent: "center",
-                  border: (theme: { palette: { divider: any; }; }) => `1px solid ${theme.palette.divider}`,
+                  border: (theme: { palette: { divider: any } }) =>
+                    `1px solid ${theme.palette.divider}`,
                   marginLeft: "20px", // You can adjust the value as needed
                 }}
               >
@@ -976,11 +1023,13 @@ const StepperCustomVertical = () => {
                         {...(activeStep >= index && { color: "primary" })}
                         sx={{
                           ...(activeStep === index && {
-                            boxShadow: (theme: { shadows: any[]; }) => theme.shadows[3],
+                            boxShadow: (theme: { shadows: any[] }) =>
+                              theme.shadows[3],
                           }),
                           ...(activeStep > index && {
-                            color: (theme: { palette: { primary: { main: string; }; }; }) =>
-                              hexToRGBA(theme.palette.primary.main, 0.4),
+                            color: (theme: {
+                              palette: { primary: { main: string } };
+                            }) => hexToRGBA(theme.palette.primary.main, 0.4),
                           }),
                         }}
                       >
@@ -1009,5 +1058,3 @@ const StepperCustomVertical = () => {
 };
 
 export default StepperCustomVertical;
-
-
