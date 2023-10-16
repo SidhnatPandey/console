@@ -129,7 +129,9 @@ const Register = () => {
       formData.username.trim() === "" ||
       formData.email.trim() === "" ||
       formData.password.trim() === "" ||
-      formData.org.trim() === "" || userNameExist || emailExist ||
+      formData.org.trim() === "" ||
+      userNameExist ||
+      emailExist ||
       !isValidEmail(formData.email)
     ) {
       setError("Please fill in all the fields.");
@@ -151,7 +153,7 @@ const Register = () => {
     setError(null);
     signUp(user)
       .then(() => {
-        successToast("Registered successfully")
+        successToast("Registered successfully");
         router.push("/login");
       })
       .catch((error) => {
@@ -164,7 +166,9 @@ const Register = () => {
       checkUsername(username)
         .then((response) => {
           if (response) {
-            (response.status === 409) ? setUserNameExist(true) : setUserNameExist(false);
+            response.status === 409
+              ? setUserNameExist(true)
+              : setUserNameExist(false);
           }
         })
         .catch((error) => {
@@ -212,12 +216,13 @@ const Register = () => {
       checkEmail(email)
         .then((response) => {
           if (response) {
-            (response.status === 409) ? setEmailExist(true) : setEmailExist(false);
+            response.status === 409
+              ? setEmailExist(true)
+              : setEmailExist(false);
           }
         })
         .catch((error) => {
           console.log(error);
-
         });
     }
   };
@@ -271,7 +276,14 @@ const Register = () => {
                 label="Username"
                 placeholder="johndoe"
                 value={formData.username}
-                onChange={handleChange}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                onBlur={(e) => {
+                  setTouched({ ...touched, username: true });
+                  // checkUserExists(formData.username);
+                  handleChange(e);
+                }}
                 name="username"
                 error={
                   (touched.username || submit) &&
@@ -309,13 +321,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                    (formData.email.trim() === ""
-                      ? "Email cannot be empty."
-                      : !isValidEmail(formData.email))
+                  (formData.email.trim() === ""
+                    ? "Email cannot be empty."
+                    : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                      ? "Email Already exists"
-                      : ""
+                    ? "Email Already exists"
+                    : ""
                 }
               />
               <CustomTextField
