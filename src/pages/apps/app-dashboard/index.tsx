@@ -19,11 +19,10 @@ import Icon from 'src/@core/components/icon'
 
 
 import Link from "next/link";
-import { SetStateAction, SyntheticEvent, useEffect, useState } from "react"
+import { SyntheticEvent, useEffect, useState } from "react"
 import AppSummary from "./AppSummay"
 import ProcessTile from "./ProcessTile"
 import { supplyChainRuns } from "src/services/dashboardService";
-import { error } from "console"
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: '0 !important',
@@ -42,7 +41,8 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 
 const AppDashboard = () => {
 
-  const [value, setValue] = useState<string>('1')
+  const [value, setValue] = useState<string>('1');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
@@ -56,11 +56,16 @@ const AppDashboard = () => {
   }, []);
 
   const getSupplyChainRun = (id: string) => {
+    setLoading(true);
     supplyChainRuns(id)
       .then((response: any) => {
         setSupplyChainRunData(response.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000)
       })
       .catch((error) => {
+        setLoading(false);
         console.log(error);
       });
   }
@@ -124,7 +129,7 @@ const AppDashboard = () => {
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
           <AppSummary data-testid="app-summary" />
           <br />
-          {supplyChainRunData && <ProcessTile data-testid="process-tile" supplyChainData={supplyChainRunData} />}
+          <ProcessTile loading={loading} data-testid="process-tile" supplyChainData={supplyChainRunData} />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
           <Typography>
