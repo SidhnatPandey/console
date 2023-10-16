@@ -13,5 +13,6 @@ export const APP_API = {
     getRepositories: 'repositories?git_user={gituser}',
     getBranches: 'repos/{repoOwner}/{repoName}/branches?git_user={gituser}',
     supplyChainRuns: 'initializ/v1/supplychainruns/latest?appid={appId}',
+    appList: 'initializ/v1/apps',
     supplyChainSteps: 'initializ/v1/supplychainruns/{runId}/steps?stage={stage}'
 }

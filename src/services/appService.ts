@@ -37,3 +37,8 @@ export const saveApp = (app: any) => {
     )
 }
 
+export const appList = () => {
+    const url = APP_API.appList;
+    return get(url).then((response) => response?.data);
+};
+
