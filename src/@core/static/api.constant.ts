@@ -3,7 +3,7 @@ export const APP_API = {
     forgetPassword: 'initializ/v1/forgetPassword',
     checkEmail: 'checkEmail/{email}',
     login: "login",
-    checkUser: 'username/{username}',
+    checkUser: 'checkUser/{username}',
     registerUser: "initializ/v1/registerUser",
     checkAppNameExists :"/initializ/v1/apps/checkAppNameExists?application_name={appName}",
 

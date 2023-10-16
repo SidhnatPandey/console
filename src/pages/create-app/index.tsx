@@ -273,19 +273,19 @@ const StepperCustomVertical = () => {
     checkAppNameExists(appName);
   }, [appName]);
 
-  const checkAppNameExists = async (appName: string) => {
+  const checkAppNameExists = (appName: string) => {
     if (appName) {
-      try {
-        const exists = await appNameExists(appName);
-        if (exists) {
-          setAppNameExist(true);
-        } else {
-          setAppNameExist(false);
-        }
-      } catch (error) {
-        console.error(error);
-        setAppNameExist(false); // Handle the error case appropriately
-      }
+      appNameExists(appName)
+        .then((response) => {
+          if (response) {
+            response.status === 409
+              ? setAppNameExist(true)
+              : setAppNameExist(false);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

@@ -164,7 +164,7 @@ const Register = () => {
       checkUsername(username)
         .then((response) => {
           if (response) {
-            (response.status === 302) ? setUserNameExist(true) : setUserNameExist(false);
+            (response.status === 409) ? setUserNameExist(true) : setUserNameExist(false);
           }
         })
         .catch((error) => {
@@ -212,7 +212,7 @@ const Register = () => {
       checkEmail(email)
         .then((response) => {
           if (response) {
-            (response.status === 302) ? setEmailExist(true) : setEmailExist(false);
+            (response.status === 409) ? setEmailExist(true) : setEmailExist(false);
           }
         })
         .catch((error) => {
