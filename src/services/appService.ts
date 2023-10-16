@@ -28,5 +28,13 @@ export const getBranch = (repo: string, gituser: string) => {
 };
 
 export const saveApp = (app: any) => {
-  return post(APP_API.saveApp, app).then((response) => response?.data);
+  return post(APP_API.saveApp, app).then(
+    (response) => response?.data
+  )
+}
+
+export const appList = () => {
+  const url = APP_API.appList;
+  return get(url).then((response) => response?.data);
 };
+
