@@ -152,13 +152,18 @@ const Register = () => {
 
     setError(null);
     signUp(user)
-      .then(() => {
-        successToast("Registered successfully");
-        router.push("/login");
+      .then((response) => {
+        if (response.status === 201) {
+          successToast("Registered successfully")
+          router.push("/login");
+        } else if (response.status === 400) {
+          errorToast(response.message)
+        } else {
+          errorToast("Some Error Occured")
+        }
+      }).catch((error) => {
+        // hanlde error
       })
-      .catch((error) => {
-        //throw error;
-      });
   };
 
   const checkUserExists = (username: string) => {
@@ -281,7 +286,6 @@ const Register = () => {
                 }
                 onBlur={(e) => {
                   setTouched({ ...touched, username: true });
-                  // checkUserExists(formData.username);
                   handleChange(e);
                 }}
                 name="username"
