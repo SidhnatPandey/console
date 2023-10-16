@@ -406,11 +406,8 @@ const StepperCustomVertical = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={(e) => {
-                          setAppName(e.target.value); // Update appName state
-                          onChange(e);
-                          checkAppNameExists(e.target.value); // Check if the app name exists
-                        }}
+                        onChange={onChange}
+                        onBlur={() => { checkAppNameExists(value) }}
                         placeholder="carterLeonard"
                         error={
                           Boolean(sourceCodeErrors.application_name) ||
