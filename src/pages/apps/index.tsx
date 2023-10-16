@@ -101,20 +101,21 @@ const Apps: React.FC<AppListProps> = () => {
   const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [apiData, setApiData] = useState<Row[]>([]); // State to store API data
-  const [appListData, setAppListData] = useState([]);
+  const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const router = useRouter();
 
   useEffect(() => {
-    getAppList('auth0|64f06f85f372cefc09f3460e');
+    getAppList();
   }, []);
 
-  const getAppList = (id: string) => {
-    appList(id)
-      .then((response: any) => {
-        setAppListData(response.data);
+  const getAppList = () => {
+    appList()
+      .then((response: {data:Row[]}) => {
+        const data= response.data
+        setAppListData(data);
       })
       .catch((error: any) => {
         console.log(error);
