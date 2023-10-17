@@ -163,7 +163,22 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
             {!loading && logs.map((log, index) => {
               return <p style={{ color: 'white', margin: 0 }} key={index}>{log}</p>
             })}
-            {loading && <Skeleton count={20} width={500} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={500} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={300} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={500} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={300} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
           </div>
         </Grid>
       </Grid>

@@ -42,7 +42,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
               <b>Stage</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
-            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
+            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
               <b>Duration:</b> {"N/A"}
             </Typography>}
             {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
@@ -68,14 +68,14 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           </Grid>
 
           <Grid item xs={6}>
-            {loading ? <Skeleton width={200} height={20} /> :
+            {loading ? <Skeleton width={150} height={20} /> :
               <Typography variant="h5">
                 <b>Branch:</b> {"N/A"}
               </Typography>}
           </Grid>
 
           <Grid item>
-            {loading ? <Skeleton width={200} height={20} /> :
+            {loading ? <Skeleton width={150} height={20} /> :
               <Typography variant="h5">
                 <b>Date:</b> {"N/A"}
               </Typography>}
