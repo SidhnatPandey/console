@@ -131,8 +131,8 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading }
   };
 
   useEffect(() => {
-    setStepLoading(true);
     if (supplyChainData) {
+      setStepLoading(true);
       getSupplyChainStep(
         supplyChainData.id,
         supplyChainData.steps[0].step_name

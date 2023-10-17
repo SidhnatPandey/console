@@ -383,7 +383,7 @@ const StepperCustomVertical = () => {
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
-        router.push("/apps");
+        router.push({ pathname: '/apps/app-dashboard' });
       })
       .catch((error) => {
         toast.error(error);
