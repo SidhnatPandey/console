@@ -6,17 +6,19 @@ import ProcessDetails from "./ProcessDetails";
 // ** Custom Components Imports
 import CustomAvatar from "src/@core/components/mui/avatar";
 import Icon from "src/@core/components/icon";
-import ProcessLogs from "./ProcessLogs";
 import { supplyChainSteps } from "src/services/dashboardService";
 import { Container } from "@mui/system";
 import LoopIcon from "@mui/icons-material/Loop";
 import Tooltip from "@mui/material/Tooltip";
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 interface ProcessTileProps {
   stage: string;
   status: string;
   onClick: () => void;
   isSelected: boolean;
+  loading: boolean
 }
 
 const ProcessTile: React.FC<ProcessTileProps> = ({
@@ -24,6 +26,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   status,
   onClick,
   isSelected,
+  loading
 }) => {
   // Rotate the card by 45 degrees for the "Approval" process and set a purple background
   const cardStyle: React.CSSProperties = {
@@ -96,9 +99,9 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     <Tooltip title={`Status: ${status}`} arrow>
       <Card onClick={onClick} sx={cardStyle}>
         <div style={contentStyle}>
-          {getTileIcon(status)}
+          {loading ? <Skeleton width={100} height={30} /> : getTileIcon(status)}
           <Typography variant="h6" className="mt-2" style={textStyle}>
-            {stage}
+            {loading ? <Skeleton width={100} height={20} /> : stage}
           </Typography>
         </div>
       </Card>
@@ -116,32 +119,38 @@ interface AppCreationFlow {
     status: string;
     steps: { status: string; step_name: string }[];
   };
+  loading: boolean;
 }
 
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
+const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading }) => {
   const [selectedTile, setSelectedTile] = useState<string | null>(""); // Set the initial value to "Clone"
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
+  const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
   const handleTileClick = (stage: string) => {
     setSelectedTile(stage === selectedTile ? null : stage);
   };
 
   useEffect(() => {
+    setStepLoading(true);
     if (supplyChainData) {
       getSupplyChainStep(
         supplyChainData.id,
         supplyChainData.steps[0].step_name
       );
     }
-  }, []);
+  }, [loading]);
 
   const getSupplyChainStep = (id: string, step: string) => {
+    setStepLoading(true);
     handleTileClick(step);
     supplyChainSteps(id, step)
       .then((response: any) => {
         setSupplyChainStepData(response.data);
+        setStepLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setStepLoading(false);
       });
   };
 
@@ -150,7 +159,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
       <Card
         sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
       >
-        <div className={`scroll-container`}>
+        {loading ? <div className={`scroll-container`}>
+          <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline />
+
+        </div> : <div className={`scroll-container`}>
           {supplyChainData?.steps.map((process, index) => (
             <React.Fragment key={index}>
               <ProcessTile
@@ -162,6 +174,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
                   }
                 }}
                 isSelected={selectedTile === process.step_name}
+                loading={loading}
               />
               {index < supplyChainData.steps.length - 1 && (
                 <ArrowRightAltIcon
@@ -170,12 +183,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData }) => {
               )}
             </React.Fragment>
           ))}
-        </div>
+        </div>}
       </Card>
       <br></br>
-      {supplyChainStepData && (
-        <ProcessDetails supplyChainStepData={supplyChainStepData} />
-      )}
+      <ProcessDetails supplyChainStepData={supplyChainStepData} loading={loading || stepLoading} />
     </div>
   );
 };

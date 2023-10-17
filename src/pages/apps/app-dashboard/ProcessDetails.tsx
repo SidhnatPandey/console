@@ -2,6 +2,7 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Grid, Card } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
+import Skeleton from 'react-loading-skeleton';
 
 // Define the prop types for the ProcessDetails component
 interface ProcessDetailsProps {
@@ -15,6 +16,7 @@ interface ProcessDetailsProps {
     date?: string;
     steps: Step[];
   };
+  loading: boolean
 }
 
 interface Step {
@@ -28,6 +30,7 @@ interface Step {
 
 const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   supplyChainStepData,
+  loading
 }) => {
 
   return (
@@ -35,47 +38,52 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
       <Card sx={{ display: "flex", flexDirection: "row" }}>
         <Grid container spacing={2} style={{ padding: "30px" }}>
           <Grid item xs={12}>
-            <Typography variant="h5">
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
               <b>Stage</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
-            </Typography>
-            <Typography variant="h6" style={{ marginBottom: "30px" }}>
+            </Typography>}
+            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
               <b>Duration:</b> {"N/A"}
-            </Typography>
-            <Typography variant="h5">
+            </Typography>}
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
               <b>Status</b>{" "}
               {supplyChainStepData ? supplyChainStepData.status : "N/A"}{" "}
-            </Typography>
+            </Typography>}
+
           </Grid>
 
           <Grid item xs={6}>
-            <Typography variant="h5">
-              <b>Git Repo:</b>
-              {"N/A"}
-            </Typography>
+            {loading ? <Skeleton width={200} height={20} /> :
+              <Typography variant="h5">
+                <b>Git Repo:</b>
+                {"N/A"}
+              </Typography>}
           </Grid>
 
           <Grid item>
-            <Typography variant="h5">
-              <b>Commit:</b> {"N/A"}
-            </Typography>
+            {loading ? <Skeleton width={200} height={20} /> :
+              <Typography variant="h5">
+                <b>Commit:</b> {"N/A"}
+              </Typography>}
           </Grid>
 
           <Grid item xs={6}>
-            <Typography variant="h5">
-              <b>Branch:</b> {"N/A"}
-            </Typography>
+            {loading ? <Skeleton width={150} height={20} /> :
+              <Typography variant="h5">
+                <b>Branch:</b> {"N/A"}
+              </Typography>}
           </Grid>
 
           <Grid item>
-            <Typography variant="h5">
-              <b>Date:</b> {"N/A"}
-            </Typography>
+            {loading ? <Skeleton width={150} height={20} /> :
+              <Typography variant="h5">
+                <b>Date:</b> {"N/A"}
+              </Typography>}
           </Grid>
         </Grid>
       </Card>
       <br></br>
-      <ProcessLogs steps={supplyChainStepData.steps} />
+      <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} />
     </>
   );
 };
