@@ -56,11 +56,9 @@ interface App {
   description: string
 }
 
-
 const AppDashboard = () => {
 
   const router = useRouter();
-  const { query: { appId }, } = router;
 
   //states
   const [value, setValue] = useState<string>('1');
@@ -69,9 +67,9 @@ const AppDashboard = () => {
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
   useEffect(() => {
-    getAppDetails(appId)
-    getSupplyChainRun(appId);
-  }, [appId]);
+    getAppDetails(router.query.appId)
+    getSupplyChainRun(router.query.appId);
+  }, [router.query.appId]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
@@ -95,9 +93,7 @@ const AppDashboard = () => {
     supplyChainRuns(id)
       .then((response: any) => {
         setSupplyChainRunData(response.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000)
+        setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
