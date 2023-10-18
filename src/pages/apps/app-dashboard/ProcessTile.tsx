@@ -12,6 +12,7 @@ import LoopIcon from "@mui/icons-material/Loop";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
+import { set } from "nprogress";
 
 interface ProcessTileProps {
   stage: string;
@@ -120,9 +121,12 @@ interface AppCreationFlow {
     steps: { status: string; step_name: string }[];
   };
   loading: boolean;
+  timer: number,
+  gitRepo: string | undefined,
+  gitBranch: string | undefined
 }
 
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading }) => {
+const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
   const [selectedTile, setSelectedTile] = useState<string | null>(""); // Set the initial value to "Clone"
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
   const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
@@ -138,7 +142,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading }
         supplyChainData.steps[0].step_name
       );
     }
-  }, [loading]);
+  }, []);
 
   const getSupplyChainStep = (id: string, step: string) => {
     setStepLoading(true);
@@ -154,39 +158,41 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading }
       });
   };
 
+  const getSupplyChain = () => {
+    return (supplyChainData ? <div className={`scroll-container`}>
+      {supplyChainData?.steps.map((process, index) => (
+        <React.Fragment key={index}>
+          <ProcessTile
+            stage={process.step_name}
+            status={process.status}
+            onClick={() => {
+              if (process.status != "waiting") {
+                getSupplyChainStep(supplyChainData.id, process.step_name);
+              }
+            }}
+            isSelected={selectedTile === process.step_name}
+            loading={loading}
+          />
+          {index < supplyChainData.steps.length - 1 && (
+            <ArrowRightAltIcon
+              sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
+            />
+          )}
+        </React.Fragment>
+      ))}
+    </div> : <div style={{ fontSize: '20px', padding: "40px", margin: "0 auto" }}>No Data</div>)
+  }
+
   return (
     <div>
       <Card
         sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
       >
         {loading ? <div className={`scroll-container`}>
-          <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline />
-
-        </div> : <div className={`scroll-container`}>
-          {supplyChainData?.steps.map((process, index) => (
-            <React.Fragment key={index}>
-              <ProcessTile
-                stage={process.step_name}
-                status={process.status}
-                onClick={() => {
-                  if (process.status != "waiting") {
-                    getSupplyChainStep(supplyChainData.id, process.step_name);
-                  }
-                }}
-                isSelected={selectedTile === process.step_name}
-                loading={loading}
-              />
-              {index < supplyChainData.steps.length - 1 && (
-                <ArrowRightAltIcon
-                  sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </div>}
+          <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> : getSupplyChain()}
       </Card>
       <br></br>
-      <ProcessDetails supplyChainStepData={supplyChainStepData} loading={loading || stepLoading} />
+      {(loading || (!loading && supplyChainData)) && <ProcessDetails supplyChainStepData={supplyChainStepData} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading || stepLoading} />}
     </div>
   );
 };

@@ -59,6 +59,7 @@ interface App {
 const AppDashboard = () => {
 
   const router = useRouter();
+  const timer = Number(process.env.NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER) || 60000;
 
   //states
   const [value, setValue] = useState<string>('1');
@@ -67,16 +68,20 @@ const AppDashboard = () => {
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
   useEffect(() => {
+    setLoading(true);
     getAppDetails(router.query.appId)
     getSupplyChainRun(router.query.appId);
-  }, [router.query.appId]);
+    /* const intervalId = setInterval(() => {
+      getSupplyChainRun(router.query.appId);
+    }, timer); // Call every 60 seconds (adjust as needed)
+    return () => clearInterval(intervalId); */
+  }, []);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
   }
 
   const getAppDetails = (id: any) => {
-    setLoading(true);
     appDetails(id)
       .then((response: any) => {
         setAppData(response.data);
@@ -89,7 +94,6 @@ const AppDashboard = () => {
   }
 
   const getSupplyChainRun = (id: any) => {
-    setLoading(true);
     supplyChainRuns(id)
       .then((response: any) => {
         setSupplyChainRunData(response.data);
@@ -162,7 +166,8 @@ const AppDashboard = () => {
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
           <AppSummary data-testid="app-summary" loading={loading} />
           <br />
-          <ProcessTile loading={loading} data-testid="process-tile" supplyChainData={supplyChainRunData} />
+          <ProcessTile loading={loading} timer={timer} data-testid="process-tile" supplyChainData={supplyChainRunData}
+            gitRepo={appData?.git_repo} gitBranch={appData?.git_branch} />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
           <Typography>
