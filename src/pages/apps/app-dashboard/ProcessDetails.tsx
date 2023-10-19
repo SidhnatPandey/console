@@ -16,7 +16,9 @@ interface ProcessDetailsProps {
     date?: string;
     steps: Step[];
   };
-  loading: boolean
+  loading: boolean,
+  gitRepo: string | undefined,
+  gitBranch: string | undefined
 }
 
 interface Step {
@@ -30,7 +32,9 @@ interface Step {
 
 const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   supplyChainStepData,
-  loading
+  loading,
+  gitRepo,
+  gitBranch
 }) => {
 
   return (
@@ -55,8 +59,8 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           <Grid item xs={6}>
             {loading ? <Skeleton width={200} height={20} /> :
               <Typography variant="h5">
-                <b>Git Repo:</b>
-                {"N/A"}
+                <b>Git Repo: </b>
+                {gitRepo ? gitRepo : "N/A"}
               </Typography>}
           </Grid>
 
@@ -70,7 +74,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           <Grid item xs={6}>
             {loading ? <Skeleton width={150} height={20} /> :
               <Typography variant="h5">
-                <b>Branch:</b> {"N/A"}
+                <b>Branch:</b> {gitBranch ? gitBranch : "N/A"}
               </Typography>}
           </Grid>
 

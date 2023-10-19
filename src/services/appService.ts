@@ -38,3 +38,11 @@ export const appList = () => {
   return get(url).then((response) => response?.data);
 };
 
+export const appDetails = (id: any) => {
+  let url = APP_API.appDetails;
+  url = url.replace("{appId}", id);
+  return get(url).then((response) => response?.data);
+};
+
+
+

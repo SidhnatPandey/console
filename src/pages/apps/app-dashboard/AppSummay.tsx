@@ -5,6 +5,7 @@ import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import Skeleton from 'react-loading-skeleton';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -65,10 +66,14 @@ const renderStats = () => {
   ))
 }
 
-const AppSummary = () => {
+interface AppSummaryProps {
+  loading: boolean
+}
+
+const AppSummary: React.FC<AppSummaryProps> = ({ loading }) => {
   return (
     <Card>
-      <CardHeader
+      {loading ? <Skeleton width={200} height={20} style={{ margin: "20px" }} /> : <CardHeader
         title='App Summary'
         sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
         action={
@@ -76,10 +81,10 @@ const AppSummary = () => {
             Updated 1 minute ago
           </Typography>
         }
-      />
+      />}
       <CardContent sx={{ pt: theme => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={6}>
-          {renderStats()}
+          {loading ? <Skeleton width={300} height={40} style={{ marginLeft: "20px" }} count={4} inline /> : renderStats()}
         </Grid>
       </CardContent>
     </Card>
