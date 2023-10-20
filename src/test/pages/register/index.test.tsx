@@ -25,7 +25,7 @@ describe("Register Component", () => {
   test("submits the form successfully", async () => {
     // Mock the successful signUp function
     const mockSignUp = authService.signUp as jest.Mock;
-    mockSignUp.mockResolvedValue({ message: "Registered successfully" });
+    mockSignUp.mockResolvedValue({status: 201, message: "Registered successfully"});
 
     // Mock the checkUsername function
     const mockCheckUsername = authService.checkUsername as jest.Mock;

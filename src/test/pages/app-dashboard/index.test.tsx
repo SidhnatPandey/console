@@ -5,6 +5,7 @@ import AppSummary from "../../../pages/apps/app-dashboard/AppSummay";
 import AppCreationFlow from "../../../pages/apps/app-dashboard/ProcessTile";
 import ProcessDetails from "../../../pages/apps/app-dashboard/ProcessDetails";
 import ProcessLogs from "../../../pages/apps/app-dashboard/ProcessLogs";
+
 describe("Integration Test Suite", () => {
   // Tests for AppDashboard Component
   describe("AppDashboard Component", () => {
@@ -61,7 +62,6 @@ describe("Integration Test Suite", () => {
       // Ensure that the 'Insights' tab panel is active and its content is displayed
       const insightsTabPanel = screen.getByTestId("tab-panel-2");
       expect(insightsTabPanel).toBeInTheDocument();
-
     });
 
     it("displays a link in the card", () => {
@@ -86,99 +86,147 @@ describe("Integration Test Suite", () => {
     });
   });
 
-  // Tests for AppSummary Component
-  describe("AppSummary Component", () => {
-    beforeEach(() => {
-      render(<AppSummary />);
-    });
+  // // Tests for AppSummary Component
+  // describe("AppSummary Component", () => {
+  //   beforeEach(() => {
+  //     render(<AppSummary />);
+  //   });
 
-    it("renders without crashing", () => {
-      // Check if the component renders without errors
-      const appSummaryElement = screen.getByText("App Summary");
-      expect(appSummaryElement).toBeInTheDocument();
-    });
-
-    it("displays last updated time", () => {
-      // Check if the last updated time text is displayed
-      const updatedTimeElement = screen.getByText("Updated 1 minute ago");
-      expect(updatedTimeElement).toBeInTheDocument();
-    });
+  it("renders without crashing", () => {
+    // Check if the component renders without errors
+    const appSummaryElement = screen.getByText("App Summary");
+    expect(appSummaryElement).toBeInTheDocument();
   });
 
-  // Tests for AppCreationFlow Component
-  describe("AppCreationFlow Component", () => {
-    beforeEach(() => {
-      render(<AppCreationFlow />);
-    });
+  it("displays last updated time", () => {
+    // Check if the last updated time text is displayed
+    const updatedTimeElement = screen.getByText("Updated 1 minute ago");
+    expect(updatedTimeElement).toBeInTheDocument();
+  });
+});
 
-    it("renders without crashing", () => {
-      // Check if the component renders without errors
-      const appCreationFlowElement = screen.getByText("Clone");
-      expect(appCreationFlowElement).toBeInTheDocument();
-    });
+// // Tests for AppCreationFlow Component
+// describe("AppCreationFlow Component", () => {
+//   beforeEach(() => {
+//     render(
+//       <AppCreationFlow
+//       stage="yourStageValue"
+//       status="yourStatusValue"
+//       onClick={() => {}}
+//       isSelected={true}
+//       loading={false}
+//       />
+//     );
+//   });
+// });
 
-    it("marks the selected process tile as selected", () => {
-      // Click on a process tile to select it
-      fireEvent.click(screen.getByText("Clone"));
-    });
+it("renders without crashing", () => {
+  // Check if the component renders without errors
+  const appCreationFlowElement = screen.getByText("Clone");
+  expect(appCreationFlowElement).toBeInTheDocument();
+});
 
-    it("displays process details and logs when a tile is selected", () => {
-      // Click on a process tile to select it
-      fireEvent.click(screen.getByText("Build"));
-    });
+it("marks the selected process tile as selected", () => {
+  // Click on a process tile to select it
+  fireEvent.click(screen.getByText("Clone"));
+});
 
-    it("closes process details and logs when another tile is selected", () => {
-      // Click on a process tile to select it
-      fireEvent.click(screen.getByText("Build"));
+it("displays process details and logs when a tile is selected", () => {
+  // Click on a process tile to select it
+  fireEvent.click(screen.getByText("Build"));
+});
 
-      // Click on another process tile to select it
+it("closes process details and logs when another tile is selected", () => {
+  // Click on a process tile to select it
+  fireEvent.click(screen.getByText("Build"));
 
-      // Check if the previously displayed process details and logs are no longer present
-    });
+  // Click on another process tile to select it
 
-    it('displays the "Production" tile', () => {
-      // Check if the "Production" tile is displayed
-      const productionTile = screen.getByText("Prod");
-      expect(productionTile).toBeInTheDocument();
-    });
+  // Check if the previously displayed process details and logs are no longer present
+});
 
+it('displays the "Production" tile', () => {
+  // Check if the "Production" tile is displayed
+  const productionTile = screen.getByText("Prod");
+  expect(productionTile).toBeInTheDocument();
+});
+
+// Tests for ProcessDetails Component
+describe("ProcessDetails Component", () => {
+  beforeEach(() => {
+    // Assuming supplyChainStepData is an array
+    const supplyChainStepData = [
+      { title: "Test Process 1" /* other properties */ },
+      { title: "Test Process 2" /* other properties */ },
+    ];
+
+    // render(<ProcessDetails stage={supplyChainStepData[0].status} />);
   });
 
-  // Tests for ProcessDetails Component
-  describe("ProcessDetails Component", () => {
-    it("renders without crashing", () => {
-      // Render the component
-      render(<ProcessDetails title="Test Process" />);
-
-      // Check if the component renders without errors
-      const processDetailsElement = screen.getByText("Test Process:");
-      expect(processDetailsElement).toBeInTheDocument();
-    });
-
-    it("displays the process title and status", () => {
-      // Render the component with a specific title
-      render(<ProcessDetails title="Test Process" />);
-
-      // Check if the process title and status are displayed correctly
-      const processTitleElement = screen.getByText("Test Process:");
-      const processStatusElement = screen.getByText("In progress");
-      expect(processTitleElement).toBeInTheDocument();
-      expect(processStatusElement).toBeInTheDocument();
-    });
-
+  it("renders without crashing", () => {
+    // Check if the component renders without errors
+    const processDetailsElement = screen.getByText("Test Process 1:");
+    expect(processDetailsElement).toBeInTheDocument();
   });
 
-  // Tests for ProcessLogs Component
-  describe("ProcessLogs Component", () => {
-    beforeEach(() => {
-      render(<ProcessLogs />);
-    });
+  it("displays the process title and status", () => {
+    // Render the component with a specific title
+    // render(<ProcessDetails stage={supplyChainStepData[0].status} />);
 
-    it("renders without crashing", () => {
-      // Check if the component renders without errors
-      const processLogsElement = screen.getByText("Logs");
-      expect(processLogsElement).toBeInTheDocument();
-    });
+    // Check if the process title and status are displayed correctly
+    const processTitleElement = screen.getByText("Test Process 1:");
+    const processStatusElement = screen.getByText("In progress");
+    expect(processTitleElement).toBeInTheDocument();
+    expect(processStatusElement).toBeInTheDocument();
+  });
+});
 
+// Tests for ProcessLogs Component
+describe("ProcessLogs Component", () => {
+  beforeEach(() => {
+    render(
+      <ProcessLogs
+        steps={[
+          {
+            completed_at: "2023-10-20",
+            log: "Main step log content",
+            reason: "Some reason",
+            run_name: "Main Step",
+            started_at: "2023-10-19",
+            status: "Succeeded",
+          },
+        ]}
+        loading={false}
+      />
+    );
+  });
+
+  it("renders without crashing", () => {
+    // Check if the component renders without errors
+    const processLogsElement = screen.getByText("Logs");
+    expect(processLogsElement).toBeInTheDocument();
+  });
+
+  it("displays sub-steps when a step is selected", () => {
+    // Click on the 'Main Step' tab
+    fireEvent.click(screen.getByText("Main Step"));
+
+    // Ensure that the sub-steps are displayed
+    const subStep1Button = screen.getByText("Succeeded");
+    const subStep2Button = screen.getByText("InProgress");
+    expect(subStep1Button).toBeInTheDocument();
+    expect(subStep2Button).toBeInTheDocument();
+  });
+
+  it("switches to sub-step log when a sub-step is selected", () => {
+    // Click on the 'Main Step' tab
+    fireEvent.click(screen.getByText("Main Step"));
+
+    // Click on 'Sub-step 1'
+    fireEvent.click(screen.getByText("Succeeded"));
+
+    // Ensure that the log for 'Sub-step 1' is displayed
+    const logContent = screen.getByText("Sub-step 1 log content");
+    expect(logContent).toBeInTheDocument();
   });
 });

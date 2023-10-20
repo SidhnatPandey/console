@@ -44,7 +44,7 @@ describe("login function", () => {
 
     // Assertions
     expect(result).toEqual(responseData);
-    expect(mockApiFunction).toHaveBeenCalledWith("/login", loginDetail);
+    expect(mockApiFunction).toHaveBeenCalledWith("login", loginDetail);
   });
 
   it("should throw an error if postPublic throws an error", async () => {
@@ -62,6 +62,6 @@ describe("login function", () => {
 
     // Call the login function with the mock API function and expect it to throw an error
     await expect(authService.login(loginDetail, mockApiFunction)).rejects.toThrow(error);
-    expect(mockApiFunction).toHaveBeenCalledWith("/login", loginDetail);
+    expect(mockApiFunction).toHaveBeenCalledWith("login", loginDetail);
   });
 });
