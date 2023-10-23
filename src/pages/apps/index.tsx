@@ -113,8 +113,8 @@ const Apps: React.FC<AppListProps> = () => {
 
   const getAppList = () => {
     appList()
-      .then((response: {data:Row[]}) => {
-        const data= response.data
+      .then((response: { data: Row[] }) => {
+        const data = response.data
         setAppListData(data);
       })
       .catch((error: any) => {
@@ -143,9 +143,8 @@ const Apps: React.FC<AppListProps> = () => {
 
   const handleRowClick = (rowId: number) => {
     setSelectedRow(rowId);
-    router.push('/apps/app-dashboard');
+    router.push({ pathname: '/apps/app-dashboard', query: { appId: rowId } });
     // Render your component here based on the selected row ID
-    console.log(`Clicked row with ID: ${rowId}`);
   };
 
   const emptyRows =
@@ -197,7 +196,7 @@ const Apps: React.FC<AppListProps> = () => {
                     <TableCell>{row.liveAppUrl}</TableCell>
                     <TableCell>
                       <Chip
-                        label={row.status?row.status:'unknown'}
+                        label={row.status ? row.status : 'unknown'}
                         color={getStatusChipColor(row.status)}
                         variant="outlined"
                       />
