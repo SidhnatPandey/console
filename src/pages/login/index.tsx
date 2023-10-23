@@ -1,4 +1,3 @@
-// ** React Imports
 import { useRouter } from 'next/router';
 import { useState, ReactNode } from 'react'
 
@@ -78,11 +77,11 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   '& .MuiFormControlLabel-label': {
     color: theme.palette.text.secondary
   }
-}))
+})) 
 
 const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().min(5).required(),
+  email: yup.string().email('Email is a required field').required('Email is a required field'),
+  password: yup.string().min(5,'Password must be at least 5 characters').required('Password is a required field'),
 })
 
 const defaultValues = {
