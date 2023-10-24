@@ -1,6 +1,6 @@
 export default {
-  meEndpoint: 'http://localhost:8089/initializ/v1/userInfo',
-  loginEndpoint: 'http://localhost:8089/login',
+  meEndpoint: `${process.env.NEXT_PUBLIC_BASE_URL}/initializ/v1/userInfo`,
+  loginEndpoint: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'accessToken',
   onTokenExpiration: 'refreshToken' // logout | refreshToken
