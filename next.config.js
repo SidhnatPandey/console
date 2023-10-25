@@ -5,15 +5,13 @@ const path = require('path')
 
 // Remove this if you're not using Fullcalendar features
 
+const { configureRuntimeEnv } = require('next-runtime-env/build/configure');
+
+configureRuntimeEnv();
+
 module.exports = {
   trailingSlash: true,
   reactStrictMode: false,
-  env: {
-    GITHUB_APP_NAME: process.env.GITHUB_APP_NAME,
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER: process.env.NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER,
-    NEXT_PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL
-  },
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
