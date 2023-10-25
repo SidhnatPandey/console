@@ -1,6 +1,6 @@
 {
-  "name": "vuexy-nextjs-admin-template",
-  "version": "1.2.0",
+  "name": "initializ-console",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -58,6 +58,7 @@
     "jsonwebtoken": "8.5.1",
     "keen-slider": "6.8.5",
     "next": "13.3.2",
+    "next-runtime-env": "^1.7.1",
     "nprogress": "0.2.0",
     "payment": "2.4.6",
     "prismjs": "1.29.0",

@@ -5,6 +5,10 @@ const path = require('path')
 
 // Remove this if you're not using Fullcalendar features
 
+const { configureRuntimeEnv } = require('next-runtime-env/build/configure');
+
+configureRuntimeEnv();
+
 module.exports = {
   trailingSlash: true,
   reactStrictMode: false,

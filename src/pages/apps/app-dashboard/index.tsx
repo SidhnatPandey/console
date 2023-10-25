@@ -26,6 +26,8 @@ import ProcessTile from "./ProcessTile"
 import { supplyChainRuns } from "src/services/dashboardService";
 import { useRouter } from "next/router"
 import { appDetails } from "src/services/appService"
+import { env } from 'next-runtime-env';
+
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: '0 !important',
@@ -59,7 +61,7 @@ interface App {
 const AppDashboard = () => {
 
   const router = useRouter();
-  const timer = Number(process.env.NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER) || 60000;
+  const timer = Number(env('NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER')) || 60000;
 
   //states
   const [value, setValue] = useState<string>('1');

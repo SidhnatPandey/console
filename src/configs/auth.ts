@@ -1,6 +1,6 @@
 export default {
-  meEndpoint: 'http://localhost:8089/initializ/v1/userInfo',
-  loginEndpoint: 'http://localhost:8089/login',
+  meEndpoint: '/initializ/v1/userInfo',
+  loginEndpoint: '/login',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'accessToken',
   onTokenExpiration: 'refreshToken' // logout | refreshToken

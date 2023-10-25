@@ -70,6 +70,8 @@ import {
 } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { env } from 'next-runtime-env';
+
 
 type FormValues = {
   application_name: string;
@@ -181,7 +183,7 @@ const ConfigurationSchema = yup.object().shape({
   ),
 });
 
-const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL;
+const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 
 const StepperCustomVertical = () => {
   // ** States
