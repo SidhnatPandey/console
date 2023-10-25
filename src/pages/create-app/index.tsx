@@ -410,15 +410,21 @@ const StepperCustomVertical = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={onChange}
-                        onBlur={() => { checkAppNameExists(value) }}
+                        onChange={(e) => {
+                          onChange(e);
+                          setAppNameExist(false);
+                        }}
+                        onBlur={() => {
+                          checkAppNameExists(value);
+                        }}
                         placeholder="carterLeonard"
                         error={
-                          Boolean(sourceCodeErrors.application_name) ||
-                          appNameExist
+                          (Boolean(sourceCodeErrors.application_name) || appNameExist) &&
+                          !(sourceCodeErrors.application_name === undefined && !appNameExist)
                         }
                         aria-describedby="stepper-linear-account-username"
                       />
+
                     )}
                   />
                   {sourceCodeErrors.application_name && (
