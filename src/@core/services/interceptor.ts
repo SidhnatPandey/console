@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
+import { env } from 'next-runtime-env';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = env('NEXT_PUBLIC_BASE_URL');
 
 // Create an Axios instance with default configuration
 const axiosInstance = axios.create({
