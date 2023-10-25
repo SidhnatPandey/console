@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 import Chip from '@mui/material/Chip'; // Import Chip component
-import AppDashboardHome from './app-dashboard';
 import { useRouter } from 'next/router';
 import { appList } from 'src/services/appService';
 
@@ -26,29 +25,6 @@ interface AppListProps {
   selectedRow: number | null;
   setSelectedRow: React.Dispatch<React.SetStateAction<number | null>>;
 }
-
-const createData = ({
-  name,
-  currentEnv,
-  lastDeployed,
-  liveAppUrl,
-  status,
-}: {
-  name: string;
-  currentEnv: string;
-  lastDeployed: string;
-  liveAppUrl: string;
-  status: string;
-}): Row => {
-  return {
-    id: Math.floor(Math.random() * 1000), // Generate a unique ID for the row
-    name,
-    currentEnv,
-    lastDeployed,
-    liveAppUrl,
-    status,
-  };
-};
 
 const EnhancedTableHead: React.FC<{
   onRequestSort: (property: keyof Row) => void;
@@ -100,7 +76,6 @@ const Apps: React.FC<AppListProps> = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [apiData, setApiData] = useState<Row[]>([]); // State to store API data
   const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -147,9 +122,6 @@ const Apps: React.FC<AppListProps> = () => {
     // Render your component here based on the selected row ID
   };
 
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, appListData.length - page * rowsPerPage);
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -162,8 +134,8 @@ const Apps: React.FC<AppListProps> = () => {
   return (
     <>
       <Paper>
-        <TableContainer style={{ height:"100%"}}>
-          <Table style={{ height:"100%"}}>
+        <TableContainer style={{ height: "100%" }}>
+          <Table style={{ height: "100%" }}>
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
@@ -179,7 +151,7 @@ const Apps: React.FC<AppListProps> = () => {
               //       ? 1
               //       : -1
               // ) */}
-            <TableBody  style={{ height:"100%"}}>
+            <TableBody style={{ height: "100%" }}>
               {appListData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any) => (
@@ -188,7 +160,7 @@ const Apps: React.FC<AppListProps> = () => {
                     onClick={() => handleRowClick(row.id)}
                     selected={selectedRow === row.id}
                     hover
-                    style={{ cursor: 'pointer' , height:"100%"}}
+                    style={{ cursor: 'pointer', height: "100%" }}
                   >
                     <TableCell>{row.application_name}</TableCell>
                     <TableCell>{row.currentEnv}</TableCell>
@@ -202,7 +174,7 @@ const Apps: React.FC<AppListProps> = () => {
                       />
                     </TableCell>
                   </TableRow>
-                ))} 
+                ))}
             </TableBody>
 
           </Table>
