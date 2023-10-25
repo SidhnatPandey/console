@@ -184,16 +184,19 @@ const Register = () => {
 
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
-    if (inputUsername.length > 15) {
-      setUsernameError("Username must be a maximum of 15 characters.");
+    if (inputUsername.length < 3) {
+        setUsernameError("Username must be at least 3 characters.");
+    } else if (inputUsername.length > 15) {
+        setUsernameError("Username must be a maximum of 15 characters.");
     } else {
-      setUsernameError(null);
-      const truncatedUsername = inputUsername;
-      setFormData({ ...formData, username: truncatedUsername });
-      setTouched({ ...touched, username: true });
-      checkUserExists(truncatedUsername);
+        setUsernameError(null);
+        const truncatedUsername = inputUsername;
+        setFormData({ ...formData, username: truncatedUsername });
+        setTouched({ ...touched, username: true });
+        checkUserExists(truncatedUsername);
     }
-  };
+};
+
 
   const validatePassword = (password: string) => {
     const isValid =
