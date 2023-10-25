@@ -65,19 +65,20 @@ const AppDashboard = () => {
 
   //states
   const [value, setValue] = useState<string>('1');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
   useEffect(() => {
-    setLoading(true);
-    getAppDetails(router.query.appId)
-    getSupplyChainRun(router.query.appId);
-    /* const intervalId = setInterval(() => {
+    if (router.query.appId) {
+      getAppDetails(router.query.appId)
+      getSupplyChainRun(router.query.appId);
+    }
+    const intervalId = setInterval(() => {
       getSupplyChainRun(router.query.appId);
     }, timer); // Call every 60 seconds (adjust as needed)
-    return () => clearInterval(intervalId); */
-  }, []);
+    return () => clearInterval(intervalId);
+  }, [router]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)

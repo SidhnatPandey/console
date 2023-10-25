@@ -191,8 +191,8 @@ const StepperCustomVertical = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
-    useState<boolean>(true);
-  const [isLoadingBranches, setLoadingBranches] = useState<boolean>(true);
+    useState<boolean>(false);
+  const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appName, setAppName] = useState("");
   const [appNameExist, setAppNameExist] = useState(false);
 
@@ -214,8 +214,8 @@ const StepperCustomVertical = () => {
   // Source Code
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
-  const [repositories, setRepositories] = useState<string[]>([]);
-  const [branches, setBranches] = useState<string[]>([]);
+  const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
+  const [branches, setBranches] = useState<string[]>(["No Branch"]);
 
   useEffect(() => {
     if (!gitUser) {
@@ -297,16 +297,15 @@ const StepperCustomVertical = () => {
       if (response.data) {
         setGitUser(response.data.gitUser);
         await fetchUserRepositories(response.data.gitUser as string);
-      } else {
-        toast.error("Some Error Occurred. Please try again.");
       }
     } catch (error) {
-      toast.error("Could not fetch git user.");
+      //toast.error("Could not fetch git user.");
     }
   };
 
   const fetchUserRepositories = async (user: string) => {
     try {
+      setLoadingRepositories(true);
       const response = await getRepositories(user);
       if (response.data) {
         setRepositories(response.data);
@@ -322,6 +321,7 @@ const StepperCustomVertical = () => {
 
   const fetchBranch = async (repo: string) => {
     try {
+      setLoadingBranches(true);
       const response = await getBranch(repo, gitUser);
       if (response.data) {
         setBranches(response.data);
@@ -337,9 +337,11 @@ const StepperCustomVertical = () => {
 
   const handleChange = (event: SelectChangeEvent<typeof repo>) => {
     const repo = event.target.value;
-    setRepo(repo);
-    setRepoSelected(true);
-    fetchBranch(repo);
+    if (repo != "No Repository") {
+      setRepo(repo);
+      setRepoSelected(true);
+      fetchBranch(repo);
+    }
   };
 
   const onSubmit = (data: FormValues) => {

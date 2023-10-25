@@ -126,11 +126,11 @@ interface AppCreationFlow {
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
-  const [selectedTile, setSelectedTile] = useState<string | null>(""); // Set the initial value to "Clone"
+  const [selectedTile, setSelectedTile] = useState<string>(""); // Set the initial value to "Clone"
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
   const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
   const handleTileClick = (stage: string) => {
-    setSelectedTile(stage === selectedTile ? null : stage);
+    setSelectedTile(stage === selectedTile ? '' : stage);
   };
 
   useEffect(() => {
@@ -141,7 +141,17 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         supplyChainData.steps[0].step_name
       );
     }
-  }, []);
+  }, [loading]);
+
+  /* useEffect(() => {
+    if (supplyChainData) {
+      setStepLoading(true);
+      getSupplyChainStep(
+        supplyChainData.id,
+        selectedTile
+      );
+    }
+  }, [supplyChainData]); */
 
   const getSupplyChainStep = (id: string, step: string) => {
     setStepLoading(true);
