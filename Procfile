@@ -1,1 +1,0 @@
-script: chmod -R 0755 /workspace
