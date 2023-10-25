@@ -100,3 +100,16 @@ code[class*='language-'] {
 .scroll-container2 {
   overflow: auto;
 }
+
+.MuiTab-root[title]:hover:after {
+  content: attr(title);
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}

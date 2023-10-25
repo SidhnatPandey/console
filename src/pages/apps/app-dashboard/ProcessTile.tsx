@@ -12,7 +12,6 @@ import LoopIcon from "@mui/icons-material/Loop";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
-import { set } from "nprogress";
 
 interface ProcessTileProps {
   stage: string;
