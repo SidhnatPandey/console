@@ -138,7 +138,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                 >
                   {steps?.map((step, index) => {
                     return (
-                      <Tooltip title={step.run_name.length > 9 ? step.run_name : null}>
+                      <Tooltip title={step.run_name.length > 9 ? step.run_name : null} key={index}>
                         <Tab
                           iconPosition="end"
                           value={index.toString()}
