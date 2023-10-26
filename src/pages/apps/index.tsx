@@ -103,7 +103,7 @@ const Apps: React.FC<AppListProps> = () => {
   const [apiData, setApiData] = useState<Row[]>([]); // State to store API data
   const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const router = useRouter();
 
@@ -160,27 +160,17 @@ const Apps: React.FC<AppListProps> = () => {
   };
 
   return (
-    <>
-      <Paper>
-        <TableContainer>
-          <Table>
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            {/* // .slice()
-              // .sort((a, b) =>
-              //   order === 'asc'
-              //     ? a[orderBy] > b[orderBy]
-              //       ? 1
-              //       : -1
-              //     : b[orderBy] > a[orderBy]
-              //       ? 1
-              //       : -1
-              // ) */}
-            <TableBody>
-              {appListData
+    <Paper>
+      <TableContainer style={{ height: "100%" }}>
+        <Table style={{ height: "100%" }}>
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+          />
+          <TableBody style={{ height: "100%" }}>
+            {appListData.length > 0 ? (
+              appListData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any) => (
                   <TableRow
@@ -188,7 +178,7 @@ const Apps: React.FC<AppListProps> = () => {
                     onClick={() => handleRowClick(row.id)}
                     selected={selectedRow === row.id}
                     hover
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', height: '100%' }}
                   >
                     <TableCell>{row.application_name}</TableCell>
                     <TableCell>{row.currentEnv}</TableCell>
@@ -202,27 +192,36 @@ const Apps: React.FC<AppListProps> = () => {
                       />
                     </TableCell>
                   </TableRow>
-                ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={5} />
-                </TableRow>
-              )}
-            </TableBody>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '18px',
+                    paddingTop: '20px', // Increase the top padding
+                    paddingBottom: '20px', // Increase the bottom padding
+                  }}
+                >
+                  No Data Available
+                </TableCell>
 
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={rowsPerPageOptions}
-          component="div"
-          count={appListData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={rowsPerPageOptions}
+        component="div"
+        count={appListData.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
   );
 };
 

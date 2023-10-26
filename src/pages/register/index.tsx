@@ -22,6 +22,8 @@ import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp, checkUsername, checkEmail } from "src/services/authService";
 import { errorToast, successToast } from "src/lib/react-taostify";
+import toast from "react-hot-toast";
+
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -138,7 +140,8 @@ const Register = () => {
       return; // Exit early if the form is not valid
     }
     if (!formData.agreeToTerms) {
-      errorToast("Please agree to the Terms and Conditions.");
+      //errorToast("Please agree to the Terms and Conditions.");
+      toast.error("Please agree to the Terms and Conditions.")
       return; // Exit early if "agree to terms" checkbox is not checked
     }
     const user = {
@@ -153,16 +156,18 @@ const Register = () => {
     setError(null);
     signUp(user)
       .then((response) => {
-        if (response.status === 201) {
-          successToast("Registered successfully")
+        if (response?.status === 201) {
+          toast.success("Registered successfully");
           router.push("/login");
-        } else if (response.status === 400) {
-          errorToast(response.message)
+        } else if (response?.status === 400) {
+          toast.error(response.message)
         } else {
-          errorToast("Some Error Occured")
+          toast.error("Some Error Occured")
         }
       }).catch((error) => {
-        // hanlde error
+        console.log(error);
+
+        toast.error(error.message)
       })
   };
 
@@ -184,18 +189,19 @@ const Register = () => {
 
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
-    const truncatedUsername = inputUsername.slice(0, 15); // Truncate the input to a maximum length of 15 characters
-
-    setFormData({ ...formData, username: truncatedUsername });
-    setTouched({ ...touched, username: true });
-    checkUserExists(truncatedUsername);
-
-    if (truncatedUsername.length < 3 || truncatedUsername.length > 15) {
-      setUsernameError("Username must be between 3 and 15 characters long.");
+    if (inputUsername.length < 3) {
+        setUsernameError("Username must be at least 3 characters.");
+    } else if (inputUsername.length > 15) {
+        setUsernameError("Username must be a maximum of 15 characters.");
     } else {
-      setUsernameError(null);
+        setUsernameError(null);
+        const truncatedUsername = inputUsername;
+        setFormData({ ...formData, username: truncatedUsername });
+        setTouched({ ...touched, username: true });
+        checkUserExists(truncatedUsername);
     }
-  };
+};
+
 
   const validatePassword = (password: string) => {
     const isValid =
@@ -325,13 +331,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email))
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                    ? "Email Already exists"
-                    : ""
+                      ? "Email Already exists"
+                      : ""
                 }
               />
               <CustomTextField

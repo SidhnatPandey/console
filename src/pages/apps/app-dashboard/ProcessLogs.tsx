@@ -13,6 +13,7 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabList from "@mui/lab/TabList";
 import TabContext from "@mui/lab/TabContext";
+import Tooltip from '@mui/material/Tooltip';
 import Skeleton from 'react-loading-skeleton';
 
 
@@ -137,14 +138,17 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                 >
                   {steps?.map((step, index) => {
                     return (
-                      <Tab
-                        iconPosition="end"
-                        value={index.toString()}
-                        label={step.run_name}
-                        key={index}
-                        onClick={() => handleTabChange(step, index)}
-                        icon={icon(step.status)}
-                      />
+                      <Tooltip title={step.run_name.length > 9 ? step.run_name : null} key={index}>
+                        <Tab
+                          iconPosition="end"
+                          value={index.toString()}
+                          label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
+                          key={index}
+                          onClick={() => handleTabChange(step, index)}
+                          icon={icon(step.status)}
+                        />
+                      </Tooltip>
+
                     );
                   })}
                 </TabList>
