@@ -70,9 +70,9 @@ const AppDashboard = () => {
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
   useEffect(() => {
-    if (router.query.appId) {
-      getAppDetails(router.query.appId)
-      getSupplyChainRun(router.query.appId);
+    if (router?.query?.appId) {
+      getAppDetails(router?.query?.appId)
+      getSupplyChainRun(router?.query?.appId);
     }
     const intervalId = setInterval(() => {
       getSupplyChainRun(router.query.appId);

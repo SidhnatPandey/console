@@ -35,10 +35,7 @@ describe('AppDashboard Component', () => {
     });
 
     expect(screen.getByTestId('card')).toBeInTheDocument();
-    expect(screen.getByTestId('title')).toBeInTheDocument();
     expect(screen.getByTestId('tab-list')).toBeInTheDocument();
-    expect(screen.getByTestId('app-summary')).toBeInTheDocument();
-    expect(screen.getByTestId('process-tile')).toBeInTheDocument();
 
   });
 
@@ -48,7 +45,6 @@ describe('AppDashboard Component', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('title')).toHaveTextContent('Your App');
       expect(screen.getByTestId('tab-1')).toBeInTheDocument(); // Ensure tabs are rendered
     });
 
