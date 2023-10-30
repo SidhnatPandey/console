@@ -110,49 +110,61 @@ const AppDashboard = () => {
 
   return (
     <>
-      <Card
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
+  <Card
+  sx={{
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+  }}
+  data-testid="card" // Add the test ID for the card
+>
+  <span>
+    {loading ? (
+      <Skeleton  width={120} height={120} style={{ margin: '20px' }} inline />
+    ) : (
+      <Icon
+        icon={'uit:create-dashboard'}
+        style={{
+          fontSize: '120px',
+          margin: '20px',
+          background: 'rgba(101, 91, 211, 0.2)',
         }}
-        data-testid="card"
-      >
-        <span>
-          {loading ? <Skeleton width={120} height={120} style={{ margin: '20px' }} inline /> :
-            <Icon
-              icon={'uit:create-dashboard'}
-              style={{
-                fontSize: '120px',
-                margin: '20px',
-                background: 'rgba(101, 91, 211, 0.2)',
-              }}
-              rotate={3}
-            />}
+        rotate={3}
+      />
+    )}
+  </span>
+  <span style={{ marginTop: '3.5rem' }}>
+    <h1 style={{ marginBottom: '0' }} data-testid="title">
+      {loading ? (
+        <Skeleton />
+      ) : (
+        (appData?.application_name || 'N/A')
+      )}
+    </h1>
+    {loading ? (
+      <Skeleton width={400} height={20} style={{ marginBottom: '35px' }} />
+    ) : (
+      <>
+        <span className="mr-2">
+          {' '}
+          <StackedBarChartOutlinedIcon className="icon-bottom" />
+          <b data-testid="stage"> Current Stage : {appData?.stage || "N/A"} </b> {/* Add the test ID for the current stage */}
         </span>
-        <span style={{ marginTop: '3.5rem' }}>
-          <h1 style={{ marginBottom: '0' }} data-testid="title">
-            {loading ? <Skeleton /> : (appData?.application_name || 'N/A')}
-          </h1>
-          {loading ? <Skeleton width={400} height={20} style={{ marginBottom: '35px' }} /> : <>
-            <span className="mr-2">
-              {' '}
-              <StackedBarChartOutlinedIcon className="icon-bottom" />
-              <b> Current Stage : {appData?.stage || "N/A"} </b>
-            </span>
-            <span className="mr-2">
-              {' '}
-              <CheckCircleIcon className="icon-bottom" color="success" /> {appData?.status || "N/A"}
-            </span>
-            <span className="mr-2">
-              {' '}
-              <LocationOnOutlinedIcon className="icon-bottom" />
-              <Link href={'abc.com'} style={{ color: '#655bd3' }}>
-                {' '}
-                https://hello-world.init.run{' '}
-              </Link>
-            </span></>}
+        <span className="mr-2">
+          {' '}
+          <CheckCircleIcon className="icon-bottom" color="success" /> <b data-testid="status">{appData?.status || "N/A"}</b> {/* Add the test ID for the status */}
         </span>
-      </Card>
+        <span className="mr-2">
+          {' '}
+          <LocationOnOutlinedIcon className="icon-bottom" />
+          <Link href={'abc.com'} style={{ color: '#655bd3' }}>
+            <b data-testid="website-link"> https://hello-world.init.run </b> {/* Add the test ID for the website link */}
+          </Link>
+        </span>
+      </>
+    )}
+  </span>
+</Card>
+
 
       <TabContext value={value}>
         <TabList
