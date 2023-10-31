@@ -113,7 +113,7 @@ const AppDashboard = () => {
 
   const getIcon = (status: string | undefined) => {
     if (status) {
-      let lstatus = status.toLowerCase();
+      const lstatus = status.toLowerCase();
       switch (lstatus) {
         case "succeeded":
           return (
@@ -190,7 +190,7 @@ const AppDashboard = () => {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
         }}
-        data-testid="card" 
+        data-testid="card"
       >
         <span>
           {loading ? (

@@ -60,7 +60,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   };
 
   const getTileIcon = (status: string) => {
-    let lstatus = status.toLowerCase();
+    const lstatus = status.toLowerCase();
     switch (lstatus) {
       case "succeeded":
         return (

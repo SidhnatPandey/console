@@ -39,10 +39,12 @@ jest.mock("react", () => ({
   useState: () => [false, jest.fn()],
 }));
 describe("AppDashboard Component", () => {
+
+  beforeEach(() => {
+    render(<AppDashboard />);
+  })
+
   it("should render loading state", async () => {
-    act(() => {
-      render(<AppDashboard />);
-    });
 
     expect(screen.getByTestId("card")).toBeInTheDocument();
 
@@ -64,9 +66,6 @@ describe("AppDashboard Component", () => {
   });
 
   it("should render data state", async () => {
-    act(() => {
-      render(<AppDashboard />);
-    });
 
     await waitFor(() => {
       expect(screen.getByTestId("tab-1")).toBeInTheDocument();
@@ -86,23 +85,11 @@ describe("AppDashboard Component", () => {
   });
 
   it("should switch tabs", async () => {
-    act(() => {
-      render(<AppDashboard />);
-    });
-
-    await waitFor(() => {
-      act(() => {
-        userEvent.click(screen.getByTestId("tab-2"));
-      });
-
-      expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
-    });
-
-    act(() => {
-      userEvent.click(screen.getByTestId("tab-3"));
-      expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
-      userEvent.click(screen.getByTestId("tab-4"));
-      expect(screen.getByTestId("tab-panel-4")).toBeInTheDocument();
-    });
+    userEvent.click(screen.getByTestId("tab-2"));
+    expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
+    userEvent.click(screen.getByTestId("tab-3"));
+    expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
+    userEvent.click(screen.getByTestId("tab-4"));
+    expect(screen.getByTestId("tab-panel-4")).toBeInTheDocument();
   });
 });

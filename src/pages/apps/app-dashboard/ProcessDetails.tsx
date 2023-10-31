@@ -44,16 +44,16 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   const calcDuration = () => {
     const sDate = new Date(supplyChainStepData.started_at);
     const eDate = new Date(supplyChainStepData.completed_at);
-    var diff = eDate.getTime() - sDate.getTime();
-    var hours = Math.floor(diff / 1000 / 60 / 60);
+    let diff = eDate.getTime() - sDate.getTime();
+    const hours = Math.floor(diff / 1000 / 60 / 60);
     diff -= hours * 1000 * 60 * 60;
-    var minutes = Math.floor(diff / 1000 / 60);
+    const minutes = Math.floor(diff / 1000 / 60);
     diff -= minutes * 1000 * 60;
-    var seconds = Math.floor(diff / 1000);
+    const seconds = Math.floor(diff / 1000);
     let string = '';
-    if (hours > 0) { string = hours + " hour " };
-    if (minutes > 0) { string += minutes + " min " };
-    if (seconds > 0) { string += seconds + " sec" };
+    if (hours > 0) { string = hours + " hour " }
+    if (minutes > 0) { string += minutes + " min " }
+    if (seconds > 0) { string += seconds + " sec" }
     setDuration(string);
   }
 

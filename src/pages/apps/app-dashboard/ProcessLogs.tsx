@@ -54,7 +54,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
   const [logs, setLogs] = useState<string[]>([])
 
   const icon = (status: string) => {
-    let lstatus = status.toLowerCase();
+    const lstatus = status.toLowerCase();
     switch (lstatus) {
       case "succeeded":
         return (
