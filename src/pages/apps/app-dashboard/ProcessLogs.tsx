@@ -169,7 +169,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
             padding: '10px',
           }}>
             {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace" }} key={index}>{log}</p>
+              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{log}</p>
             })}
             {loading && <Skeleton width={600} height={10} />}
             {loading && <Skeleton width={400} height={10} />}

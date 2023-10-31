@@ -14,6 +14,8 @@ interface ProcessDetailsProps {
     commit?: string;
     branch?: string;
     date?: string;
+    started_at: string,
+    completed_at: string
     steps: Step[];
   };
   loading: boolean,
@@ -37,6 +39,30 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   gitBranch
 }) => {
 
+  const [duration, setDuration] = useState<string | undefined>();
+
+  const calcDuration = () => {
+    const sDate = new Date(supplyChainStepData.started_at);
+    const eDate = new Date(supplyChainStepData.completed_at);
+    var diff = eDate.getTime() - sDate.getTime();
+    var hours = Math.floor(diff / 1000 / 60 / 60);
+    diff -= hours * 1000 * 60 * 60;
+    var minutes = Math.floor(diff / 1000 / 60);
+    diff -= minutes * 1000 * 60;
+    var seconds = Math.floor(diff / 1000);
+    let string = '';
+    if (hours > 0) { string = hours + " hour " };
+    if (minutes > 0) { string += minutes + " min " };
+    if (seconds > 0) { string += seconds + " sec" };
+    setDuration(string);
+  }
+
+  useEffect(() => {
+    if (supplyChainStepData) {
+      calcDuration();
+    }
+  }, [supplyChainStepData])
+
   return (
     <>
       <Card sx={{ display: "flex", flexDirection: "row" }}>
@@ -47,7 +73,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
             {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
-              <b>Duration:</b> {"N/A"}
+              <b>Duration:</b> {duration}
             </Typography>}
             {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
               <b>Status:</b>{" "}
@@ -81,7 +107,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           <Grid item>
             {loading ? <Skeleton width={150} height={20} /> :
               <Typography variant="h5">
-                <b>Date:</b> {"N/A"}
+                <b>Date:</b> {supplyChainStepData?.started_at ? new Date(supplyChainStepData?.started_at).toLocaleString() : "N/A"}
               </Typography>}
           </Grid>
         </Grid>
