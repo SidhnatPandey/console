@@ -11,7 +11,8 @@ import { Container } from "@mui/system";
 import LoopIcon from "@mui/icons-material/Loop";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 interface ProcessTileProps {
   stage: string;
@@ -59,8 +60,9 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   };
 
   const getTileIcon = (status: string) => {
-    switch (status) {
-      case "Succeeded":
+    const lstatus = status.toLowerCase();
+    switch (lstatus) {
+      case "succeeded":
         return (
           <CustomAvatar
             skin="light"
@@ -71,7 +73,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
             <Icon icon={"ph:check-light"} />
           </CustomAvatar>
         );
-      case "Running":
+      case "inprogress":
         return (
           <>
             <Container maxWidth="sm">
@@ -90,8 +92,10 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
         );
       case "waiting":
         return <PendingIcon fontSize="large" style={dotStyle} />;
+      case "failed":
+        return <ErrorOutlineIcon fontSize="large" style={{ color: "red" }} />;
       default:
-        return <PendingIcon fontSize="large" style={dotStyle} />;
+        return <HelpOutlineIcon fontSize="large" style={{ color: "rgb(85, 85, 85)" }} />;
     }
   };
 
@@ -175,7 +179,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
             stage={process.step_name}
             status={process.status}
             onClick={() => {
-              if (process.status != "waiting") {
+              if (process.status.toLowerCase() != "waiting") {
                 getSupplyChainStep(supplyChainData.id, process.step_name);
               }
             }}

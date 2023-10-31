@@ -260,8 +260,10 @@ const StepperCustomVertical = () => {
   if (router.query?.code && !gitUser) {
     sendCode(router.query?.code as string)
       .then((response) => {
-        setGitUser(response.git_user);
-        fetchUserRepositories(response.git_user as string);
+        if (response?.git_user) {
+          setGitUser(response.git_user);
+          fetchUserRepositories(response.git_user as string);
+        }
       })
       .catch((error) => {
         toast.error(error.message);
@@ -271,9 +273,9 @@ const StepperCustomVertical = () => {
   const isNextButtonDisabled = appNameExist || !isConfigurationFormValid;
 
   // Function to check if the application name exists
-  useEffect(() => {
-    checkAppNameExists(appName);
-  }, [appName]);
+  /*   useEffect(() => {
+      checkAppNameExists(appName);
+    }, [appName]); */
 
   const checkAppNameExists = (appName: string) => {
     if (appName) {

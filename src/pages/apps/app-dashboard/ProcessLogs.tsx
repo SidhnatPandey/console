@@ -11,11 +11,11 @@ import Icon from "src/@core/components/icon";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
-import TabList from "@mui/lab/TabList";
 import TabContext from "@mui/lab/TabContext";
 import Tooltip from '@mui/material/Tooltip';
 import Skeleton from 'react-loading-skeleton';
-
+import { styled } from '@mui/material/styles'
+import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 
 interface ProcessLogsProps {
   steps: Step[];
@@ -31,14 +31,32 @@ interface Step {
   status: string;
 }
 
+// Styled TabList component
+const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
+  borderRight: 0,
+  '& .MuiTabs-indicator': {
+    display: 'none'
+  },
+  '& .Mui-selected': {
+    backgroundColor: theme.palette.primary.main,
+    color: `${theme.palette.common.white} !important`
+  },
+  '& .MuiTab-root': {
+    lineHeight: 1,
+    margin: theme.spacing(0.5, 0),
+    borderRadius: theme.shape.borderRadius
+  }
+}))
+
 const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
 
   const [value, setValue] = useState<string>("0");
   const [logs, setLogs] = useState<string[]>([])
 
   const icon = (status: string) => {
-    switch (status) {
-      case "Succeeded":
+    const lstatus = status.toLowerCase();
+    switch (lstatus) {
+      case "succeeded":
         return (
           <CustomAvatar
             skin="light"
@@ -55,10 +73,9 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
             <Icon icon={"ph:check-light"} />
           </CustomAvatar>
         );
-      case "InProgress":
+      case "inprogress":
         return (
           <>
-
             <LoopIcon
               style={{ animation: "spin 4s linear infinite", marginLeft: "5px" }}
 
@@ -72,19 +89,16 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                 100% { transform: rotate(0deg); }
               }`}
             </style>
-
           </>
         );
-      case "Waiting":
+      case "waiting":
         return (
           <PendingIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
         );
-      case "Failed":
+      case "failed":
         return <ErrorOutlineIcon fontSize="medium" style={{ color: "red" }} />;
       default:
-        return (
-          <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
-        );
+        return <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
     }
   };
 
@@ -113,7 +127,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
       </CardContent>
 
       <Grid container spacing={2} style={{ paddingLeft: "100px" }}>
-        <Grid item xs={1}>
+        <Grid item xs={1.2}>
           <Box
             sx={{
               display: "flex",
@@ -128,34 +142,25 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                 <TabList
                   orientation="vertical"
                   aria-label="vertical tabs example"
-                  sx={{
-                    width: "100%", // Make the tabs take the full width of the Box
-                    "& .MuiTab-root": {
-                      fontSize: "1", // Increase the font size
-                      padding: "10px 20px", // Adjust padding for larger size
-                    },
-                  }}
                 >
                   {steps?.map((step, index) => {
                     return (
-                      <Tooltip title={step.run_name.length > 9 ? step.run_name : null} key={index}>
-                        <Tab
-                          iconPosition="end"
-                          value={index.toString()}
-                          label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
-                          key={index}
-                          onClick={() => handleTabChange(step, index)}
-                          icon={icon(step.status)}
-                        />
-                      </Tooltip>
-
+                      <Tab
+                        iconPosition="end"
+                        value={index.toString()}
+                        // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
+                        label={step.run_name}
+                        key={index}
+                        onClick={() => handleTabChange(step, index)}
+                        icon={icon(step.status)}
+                      />
                     );
                   })}
                 </TabList>
               </TabContext>}
           </Box>
         </Grid>
-        <Grid item xs={11}>
+        <Grid item xs={10.8}>
           <div className="scroll-container2" style={{
             height: '400px',
             backgroundColor: 'black',
@@ -165,7 +170,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
             padding: '10px',
           }}>
             {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0 }} key={index}>{log}</p>
+              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{log}</p>
             })}
             {loading && <Skeleton width={600} height={10} />}
             {loading && <Skeleton width={400} height={10} />}

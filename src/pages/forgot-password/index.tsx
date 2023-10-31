@@ -27,6 +27,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import toast from 'react-hot-toast'
 import { forgotPassword } from 'src/services/authService'
+import { useRouter } from 'next/router'
 
 // Styled Components
 const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
@@ -70,7 +71,8 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const ForgotPassword = () => {
   // ** Hooks
-  const theme = useTheme()
+  const theme = useTheme();
+  const router = useRouter()
 
   // ** Vars
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
@@ -87,7 +89,7 @@ const ForgotPassword = () => {
     forgotPassword(email).then((response) => {
       //show success toast
       toast.success("link sent on email successfully")
-
+      router.push('/login');
     }).catch(error => {
       //show toast error
       toast.error("link failed to be sent on email")
