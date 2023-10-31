@@ -157,7 +157,7 @@ const Register = () => {
     signUp(user)
       .then((response) => {
         if (response?.status === 201) {
-          toast.success("Registered successfully");
+          successToast("Registered successfully");
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message)
