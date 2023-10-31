@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 import Chip from '@mui/material/Chip'; // Import Chip component
-import AppDashboardHome from './app-dashboard';
 import { useRouter } from 'next/router';
 import { appList } from 'src/services/appService';
 
