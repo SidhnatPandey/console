@@ -148,7 +148,8 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                       <Tab
                         iconPosition="end"
                         value={index.toString()}
-                        label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
+                        // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
+                        label={step.run_name}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step.status)}
