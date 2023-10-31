@@ -200,15 +200,7 @@ const AppDashboard = () => {
             <Skeleton width={400} height={20} style={{ marginBottom: '35px' }} />
           ) : (
             <>
-              <span className="mr-2">
-                {' '}
-                <StackedBarChartOutlinedIcon className="icon-bottom" />
-                <b data-testid="stage"> Current Stage : {appData?.stage || "N/A"} </b> {/* Add the test ID for the current stage */}
-              </span>
               <span style={{ marginTop: '3.5rem' }}>
-                <h1 style={{ marginBottom: '0' }} data-testid="title">
-                  {loading ? <Skeleton /> : (appData?.application_name || 'N/A')}
-                </h1>
                 {loading ? <Skeleton width={400} height={20} style={{ marginBottom: '35px' }} /> : <>
                   <span className="mr-2">
                     {' '}
@@ -227,13 +219,6 @@ const AppDashboard = () => {
                       https://hello-world.init.run{' '}
                     </Link>
                   </span></>}
-              </span>
-              <span className="mr-2">
-                {' '}
-                <LocationOnOutlinedIcon className="icon-bottom" />
-                <Link href={'abc.com'} style={{ color: '#655bd3' }}>
-                  <b data-testid="website-link"> https://hello-world.init.run </b> {/* Add the test ID for the website link */}
-                </Link>
               </span>
             </>
           )}
