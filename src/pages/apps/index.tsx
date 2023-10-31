@@ -200,11 +200,11 @@ const Apps: React.FC<AppListProps> = () => {
                   style={{
                     textAlign: 'center',
                     fontSize: '18px',
-                    paddingTop: '20px', // Increase the top padding
-                    paddingBottom: '20px', // Increase the bottom padding
+                    paddingTop: '50px', // Increase the top padding
+                    paddingBottom: '50px', // Increase the bottom padding
                   }}
                 >
-                  No Data Available
+                  No Apps
                 </TableCell>
 
               </TableRow>

@@ -16,17 +16,23 @@ import AppsIcon from '@mui/icons-material/Apps';
 import Skeleton from 'react-loading-skeleton';
 
 // ** Custom Components Imports
-import Icon from 'src/@core/components/icon'
+import Icon from 'src/@core/components/icon';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import PendingIcon from "@mui/icons-material/Pending";
+import LoopIcon from "@mui/icons-material/Loop";
+import CustomAvatar from "src/@core/components/mui/avatar";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 
 import Link from "next/link";
 import { SyntheticEvent, useEffect, useState } from "react"
-import AppSummary from "./AppSummay"
-import ProcessTile from "./ProcessTile"
+import AppSummary from "./AppSummary"
+import ProcessTiles from "./ProcessTile"
 import { supplyChainRuns } from "src/services/dashboardService";
 import { useRouter } from "next/router"
 import { appDetails } from "src/services/appService"
 import { env } from 'next-runtime-env';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
@@ -70,9 +76,9 @@ const AppDashboard = () => {
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
   useEffect(() => {
-    if (router.query.appId) {
-      getAppDetails(router.query.appId)
-      getSupplyChainRun(router.query.appId);
+    if (router?.query?.appId) {
+      getAppDetails(router?.query?.appId)
+      getSupplyChainRun(router?.query?.appId);
     }
     const intervalId = setInterval(() => {
       getSupplyChainRun(router.query.appId);
@@ -108,6 +114,56 @@ const AppDashboard = () => {
       });
   }
 
+  const getIcon = (status: string | undefined) => {
+    if (status) {
+      let lstatus = status.toLowerCase();
+      switch (lstatus) {
+        case "succeeded":
+          return (
+            <CustomAvatar
+              skin="light"
+              color={"success"}
+              sx={{
+                width: 20,
+                height: 20,
+                display: "inline-block",
+                marginBottom: -1
+              }}
+            >
+              <Icon icon={"ph:check-light"} />
+            </CustomAvatar>
+          );
+        case "inprogress":
+          return (
+            <>
+              <LoopIcon
+                style={{ animation: "spin 4s linear infinite", marginLeft: "5px", marginBottom: "-5px" }}
+                color="primary"
+                fontSize="medium"
+              />
+              <style>
+                {`
+              @keyframes spin {
+                0% { transform: rotate(360deg); }
+                100% { transform: rotate(0deg); }
+              }`}
+              </style>
+            </>
+          );
+        case "waiting":
+          return (
+            <PendingIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)", marginBottom: "-5px" }} />
+          );
+        case "failed":
+          return <ErrorOutlineIcon fontSize="medium" style={{ color: "red", marginBottom: "-5px" }} />;
+        default:
+          return <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)", marginBottom: "-5px" }} />
+      }
+    } else {
+      return <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)", marginBottom: "-5px" }} />
+    }
+  };
+
   return (
     <>
       <Card
@@ -141,7 +197,7 @@ const AppDashboard = () => {
             </span>
             <span className="mr-2">
               {' '}
-              <CheckCircleIcon className="icon-bottom" color="success" /> {appData?.status || "N/A"}
+              {getIcon(supplyChainRunData?.status)} {supplyChainRunData?.status || "N/A"}
             </span>
             <span className="mr-2">
               {' '}
@@ -167,9 +223,9 @@ const AppDashboard = () => {
           <Tab value="4" label="Settings" icon={<SettingsIcon />} iconPosition="start" data-testid="tab-4" />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
-          <AppSummary data-testid="app-summary" loading={loading} />
+          <AppSummary loading={loading} />
           <br />
-          <ProcessTile loading={loading} timer={timer} data-testid="process-tile" supplyChainData={supplyChainRunData}
+          <ProcessTiles loading={loading} timer={timer} supplyChainData={supplyChainRunData}
             gitRepo={appData?.git_repo} gitBranch={appData?.git_branch} />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">

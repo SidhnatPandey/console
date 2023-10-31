@@ -12,7 +12,7 @@
     "build:icons": "tsc -b src/iconify-bundle && node src/iconify-bundle/bundle-icons-react.js",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test:watch": "jest --watchAll",
+    "testw": "jest --watch",
     "cypress": "cypress open"
   },
   "dependencies": {

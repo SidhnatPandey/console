@@ -43,14 +43,14 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
         <Grid container spacing={2} style={{ padding: "30px" }}>
           <Grid item xs={12}>
             {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
-              <b>Stage</b>{" "}
+              <b>Stage:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
             {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
               <b>Duration:</b> {"N/A"}
             </Typography>}
             {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
-              <b>Status</b>{" "}
+              <b>Status:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.status : "N/A"}{" "}
             </Typography>}
 
