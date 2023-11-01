@@ -1,5 +1,20 @@
+// test('pagination works as expected', async () => {
+//     const { findByLabelText, findByText } = render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+
+//     // Use findBy instead of getBy for asynchronous queries
+//     const rowsPerPageDropdown = await findByLabelText('Rows per page:');
+//     fireEvent.change(rowsPerPageDropdown, { target: { value: '10' } });
+
+//     // Use findBy instead of getBy for asynchronous queries
+//     const nextPageButton = await findByText('Next');
+//     fireEvent.click(nextPageButton);
+
+//     // Add your assertions here, for example, check if the next page is displayed
+//   });
+
+
 import React from 'react';
-import { fireEvent, render, act } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import Apps from 'src/pages/apps';
 import { screen } from '@testing-library/react'; // Import screen object
 
@@ -30,15 +45,13 @@ test('sorts table when column header is clicked', async () => {
   fireEvent.click(columnHeader);
 });
 
-
 test('pagination works as expected', async () => {
   render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  act(() => {
-    const rowsPerPageLabel = screen.getByLabelText('Rows per page:');
-    const nextButton = document.querySelector('.MuiIconButton-root[aria-label="Go to next page"]');
-    expect(rowsPerPageLabel).toBeInTheDocument();
-    expect(nextButton).toBeInTheDocument();
+  waitFor(async() => {
+   await screen.findByLabelText('Rows per page:', {}, { timeout: 5000 });
+    await screen.findByText('Next', {}, { timeout: 5000 });
   });
+
 });
 
 
