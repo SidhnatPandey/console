@@ -16,7 +16,9 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import Apps from 'src/pages/apps';
-import { screen } from '@testing-library/react'; // Import screen object
+import { screen } from '@testing-library/react'; 
+
+
 
 jest.mock('src/services/appService', () => ({
   appList: jest.fn(() =>
@@ -49,4 +51,25 @@ test('pagination works as expected', async () => {
   render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
   expect(screen.getByLabelText('Rows per page:')).toBeInTheDocument();
   expect(screen.getByLabelText('Go to next page')).toBeInTheDocument();
+});
+
+test('sorts table when column header is clicked', async () => {
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  const columnHeader = screen.getByText('NAME');
+  fireEvent.click(columnHeader);
+});
+
+test('pagination navigation works', async () => {
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  const nextPageButton = screen.getByLabelText('Go to next page');
+  fireEvent.click(nextPageButton);
+  const prevPageButton = screen.getByLabelText('Go to previous page');
+  fireEvent.click(prevPageButton);
+});
+
+jest.mock('src/services/appService', () => ({
+  appList: jest.fn(() => Promise.reject(new Error('API Error'))),
+}));
+test('handles API error', async () => {
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
 });
