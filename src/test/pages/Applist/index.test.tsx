@@ -16,6 +16,7 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import Apps from 'src/pages/apps';
+import { screen } from '@testing-library/react'; // Import screen object
 
 jest.mock('src/services/appService', () => ({
   appList: jest.fn(() =>
@@ -34,27 +35,23 @@ jest.mock('src/services/appService', () => ({
   ),
 }));
 
-it('renders Apps component without error', async () => {
+it('renders Apps component without error',() => {
   render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  await waitFor(() => {
-  });
 });
 
 test('sorts table when column header is clicked', async () => {
-  const { getByText } = render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-
+ render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
   await waitFor(() => {
-    const columnHeader = getByText('NAME');
+    const columnHeader = screen.getByText('NAME');
     fireEvent.click(columnHeader);
   });
 });
 
-test('pagination works as expected', async () => {
-  const { findByLabelText, findByText } = render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  await waitFor(() => {
-    const rowsPerPageDropdown = findByLabelText('Rows per page:');
-    const nextPageButton = findByText('Next');
-
+test('pagination works as expected',  () => {
+ render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  waitFor(async () => {
+   await screen.findByLabelText('Rows per page:');
+   await screen.findByText('Next');
   });
 });
 
