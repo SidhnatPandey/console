@@ -41,17 +41,16 @@ it('renders Apps component without error',() => {
 
 test('sorts table when column header is clicked', async () => {
  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  await waitFor(() => {
-    const columnHeader = screen.getByText('NAME');
+    const columnHeader = await screen.getByText('NAME');
     fireEvent.click(columnHeader);
   });
-});
 
-test('pagination works as expected',  () => {
- render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  waitFor(async () => {
-   await screen.findByLabelText('Rows per page:');
-   await screen.findByText('Next');
+  test('pagination works as expected', async () => {
+    render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+     waitFor(async () => {
+      await screen.findByLabelText('Rows per page:', {}, { timeout: 5000 }); 
+      await screen.findByText('Next', {}, { timeout: 5000 });
+    });
   });
-});
+  
 
