@@ -47,11 +47,14 @@ test('sorts table when column header is clicked', async () => {
 
 test('pagination works as expected', async () => {
   render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
-  waitFor(async() => {
-   await screen.findByLabelText('Rows per page:', {}, { timeout: 5000 });
-    await screen.findByText('Next', {}, { timeout: 5000 });
-  });
 
+  await waitFor(
+    () => {
+      expect(screen.getByLabelText('Rows per page:')).toBeInTheDocument();
+      expect(screen.getByLabelText('Go to next page')).toBeInTheDocument();
+    },
+    { timeout: 10000 }
+  );
 });
 
 
