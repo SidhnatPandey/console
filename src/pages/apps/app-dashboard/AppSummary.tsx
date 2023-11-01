@@ -54,12 +54,12 @@ const renderStats = () => {
   return data.map((sale: DataType, index: number) => (
     <Grid item xs={6} md={3} key={index}>
       <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-        <CustomAvatar skin='light' color={sale.color} sx={{ mr: 4, width: 42, height: 42 }}>
-          <Icon icon={sale.icon} />
+        <CustomAvatar skin='light' color={sale.color}  data-testid="custom-avatar" sx={{ mr: 4, width: 42, height: 42 }}>
+          <Icon icon={sale.icon}  />
         </CustomAvatar>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant='h5'>{sale.stats}</Typography>
-          <Typography variant='body2'>{sale.title}</Typography>
+          <Typography variant='h5'  data-testid="statistic">{sale.stats}</Typography>
+          <Typography variant='body2' data-testid="title" >{sale.title}</Typography>
         </Box>
       </Box>
     </Grid>

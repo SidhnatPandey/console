@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Card } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";

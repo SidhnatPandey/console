@@ -2,7 +2,6 @@ import AppDashboard from "../../../pages/apps/app-dashboard/index";
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { act } from "@testing-library/react";
 
 
 jest.mock("next/router", () => ({

@@ -1,4 +1,4 @@
-import { Card, Grid, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
@@ -7,7 +7,6 @@ import { styled } from "@mui/material/styles";
 
 //icons
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
 import GridViewIcon from "@mui/icons-material/GridView";
 import SettingsIcon from "@mui/icons-material/Settings";
