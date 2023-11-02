@@ -186,7 +186,7 @@ const LoginPage = () => {
                       fullWidth
                       autoFocus
                       label='Email'
-                      id='abcd'
+                      id='user-email-input'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}

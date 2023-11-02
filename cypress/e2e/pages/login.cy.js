@@ -5,7 +5,7 @@ it('Loads the login page', () => {
 
 it('After click create button , three landing screens are opened', () => {
     cy.visit('/login');
-    cy.get('input[id=abcd]').clear().type('jsb@gmail.com');
+    cy.get('input[id=user-email-input]').clear().type('jsb@gmail.com');
     cy.get('input[id=auth-login-v2-password]').clear().type('Jaggu@123');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/app');
