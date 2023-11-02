@@ -15,6 +15,11 @@ const config = {
     modulePaths: [
         "<rootDir>",
     ],
+    "jest": {
+        "moduleNameMapper": {
+          "^next/router$": "<rootDir>/__mocks__/next/router.js"
+        }
+      }
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
