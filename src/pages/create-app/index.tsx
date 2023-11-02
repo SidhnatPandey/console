@@ -85,8 +85,8 @@ type ConfigurationValues = {
 };
 
 type EnvironmentVariable = {
-  Key: string;
-  Value: string;
+  key: string;
+  value: string;
 };
 
 const steps = [
@@ -167,7 +167,7 @@ const LoaderComponent = () => {
 const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
-  env_variables: [{ Key: "", Value: "" }],
+  env_variables: [{ key: "", value: "" }],
 };
 
 const ConfigurationSchema = yup.object().shape({
@@ -175,8 +175,8 @@ const ConfigurationSchema = yup.object().shape({
   http_path: yup.string().required(),
   env_variables: yup.array().of(
     yup.object({
-      Key: yup.string(),
-      Value: yup.string(),
+      key: yup.string(),
+      value: yup.string(),
     })
   ),
 });
@@ -354,13 +354,13 @@ const StepperCustomVertical = () => {
 
   const handleClickOpen = () => {
     if (getConfigurationValue("env_variables").length === 0) {
-      setConfigurationValue("env_variables", [{ Key: "", Value: "" }]);
+      setConfigurationValue("env_variables", [{ key: "", value: "" }]);
     }
     setOpen(true);
   };
   const handleClose = () => {
     const environmentVariables = getConfigurationValue("env_variables").filter(
-      (variable) => variable.Key && variable.Value
+      (variable) => variable.key && variable.value
     );
     setConfigurationValue("env_variables", environmentVariables);
     setOpen(false);
@@ -368,7 +368,7 @@ const StepperCustomVertical = () => {
   //configuration page environment variable
   const environmentVariables = getConfigurationValue("env_variables");
   const environmentVariablesCount = environmentVariables.filter(
-    (variable) => variable.Key && variable.Value
+    (variable) => variable.key && variable.value
   ).length;
 
   const onConfigurationSubmit = () => {
@@ -719,7 +719,7 @@ const StepperCustomVertical = () => {
                                   label="Key"
                                   sx={{ width: 315 }}
                                   {...configurationRegister(
-                                    `env_variables.${index}.Key` as const
+                                    `env_variables.${index}.key` as const
                                   )}
                                 ></TextField>
                               </FormControl>
@@ -730,7 +730,7 @@ const StepperCustomVertical = () => {
                                   label="Value"
                                   sx={{ width: 325 }}
                                   {...configurationRegister(
-                                    `env_variables.${index}.Value` as const
+                                    `env_variables.${index}.value` as const
                                   )}
                                 ></TextField>
                               </FormControl>
@@ -740,7 +740,7 @@ const StepperCustomVertical = () => {
                                 <IconButton
                                   aria-label="delete"
                                   size="large"
-                                  onClick={() => append({ Key: "", Value: "" })}
+                                  onClick={() => append({ key: "", value: "" })}
                                 >
                                   <AddIcon fontSize="inherit" />
                                 </IconButton>
