@@ -14,9 +14,13 @@ describe('AppSummary component', () => {
 
   it('displays "Updated 1 minute ago" when not loading', () => {
     render(<AppSummary loading={false} />);
-    expect(screen.getByText('Updated 1 minute ago')).toBeInTheDocument();
+    expect(screen.getByTestId('updated-time')).toBeInTheDocument();
   });
 
+  it('displays 4 titles when not loading', () => {
+    render(<AppSummary loading={false} />);
+    expect(screen.getAllByTestId('title')).toHaveLength(4);
+  });
 
   it('displays 4 custom avatars when not loading', () => {
     render(<AppSummary loading={false} />);

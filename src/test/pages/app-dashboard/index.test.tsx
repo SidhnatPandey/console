@@ -67,28 +67,28 @@ describe("AppDashboard Component", () => {
   it("should render data state", async () => {
 
     await waitFor(() => {
-      expect(screen.getByTestId("tab-1")).toBeInTheDocument();
+      expect(screen.getByTestId("Overview")).toBeInTheDocument();
     });
 
-    userEvent.click(screen.getByTestId("tab-1"));
+    userEvent.click(screen.getByTestId("Overview"));
     expect(screen.getByTestId("tab-panel-1")).toBeInTheDocument();
 
-    userEvent.click(screen.getByTestId("tab-2"));
+    userEvent.click(screen.getByTestId("Insights"));
     expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
 
-    userEvent.click(screen.getByTestId("tab-3"));
+    userEvent.click(screen.getByTestId("Logs"));
     expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
 
-    userEvent.click(screen.getByTestId("tab-4"));
+    userEvent.click(screen.getByTestId("Settings"));
     expect(screen.getByTestId("tab-panel-4")).toBeInTheDocument();
-  });
+  }); 
 
   it("should switch tabs", async () => {
-    userEvent.click(screen.getByTestId("tab-2"));
+    userEvent.click(screen.getByTestId("Insights"));
     expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("tab-3"));
+    userEvent.click(screen.getByTestId("Logs"));
     expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("tab-4"));
+    userEvent.click(screen.getByTestId("Settings"));
     expect(screen.getByTestId("tab-panel-4")).toBeInTheDocument();
   });
 });

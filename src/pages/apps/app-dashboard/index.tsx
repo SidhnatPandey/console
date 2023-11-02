@@ -273,28 +273,28 @@ const AppDashboard = () => {
             label="Overview"
             icon={<AppsIcon />}
             iconPosition="start"
-            data-testid="tab-1"
+            data-testid="Overview"
           />
           <Tab
             value="2"
             label="Insights"
             icon={<InsightsIcon />}
             iconPosition="start"
-            data-testid="tab-2"
+            data-testid="Insights"
           />
           <Tab
             value="3"
             label="Logs"
             icon={<GridViewIcon />}
             iconPosition="start"
-            data-testid="tab-3"
+            data-testid="Logs"
           />
           <Tab
             value="4"
             label="Settings"
             icon={<SettingsIcon />}
             iconPosition="start"
-            data-testid="tab-4"
+            data-testid="Settings"
           />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">

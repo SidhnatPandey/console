@@ -77,7 +77,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading }) => {
         title='App Summary'
         sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
         action={
-          <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+          <Typography variant='body2'data-testid="updated-time" sx={{ color: 'text.disabled' }}>
             Updated 1 minute ago
           </Typography>
         }
