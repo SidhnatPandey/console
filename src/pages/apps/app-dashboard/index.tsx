@@ -22,7 +22,6 @@ import LoopIcon from "@mui/icons-material/Loop";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-import Link from "next/link";
 import { SyntheticEvent, useEffect, useState } from "react";
 import AppSummary from "./AppSummary";
 import AppCreationFlow from "./AppCreationFlow";
@@ -250,7 +249,7 @@ const AppDashboard = () => {
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      <a href={"abc.com"} style={{ color: "#655bd3" }} target="_blank">
+                      <a href={"abc.com"} style={{ color: "#655bd3" }} >
                         {appData?.url}
                       </a>
                     </span>
