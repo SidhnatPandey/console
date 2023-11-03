@@ -65,17 +65,17 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
   return (
     <>
-      <Card sx={{ display: "flex", flexDirection: "row" }}>
+      <Card  data-testid="card" sx={{ display: "flex", flexDirection: "row" }}>
         <Grid container spacing={2} style={{ padding: "30px" }}>
           <Grid item xs={12}>
-            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
-              <b>Stage:</b>{" "}
+            {loading ? <Skeleton width={200} height={20} /> : <Typography data-testid="stage" variant="h5">
+              <b> Stage:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
-            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h6" style={{ marginBottom: "30px" }}>
+            {loading ? <Skeleton width={150} height={20} /> : <Typography data-testid="duration" variant="h6" style={{ marginBottom: "30px" }}>
               <b>Duration:</b> {duration}
             </Typography>}
-            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
+            {loading ? <Skeleton width={200} height={20} /> : <Typography data-testid="status" variant="h5">
               <b>Status:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.status : "N/A"}{" "}
             </Typography>}
@@ -84,7 +84,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item xs={6}>
             {loading ? <Skeleton width={200} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="gitrepo" variant="h5">
                 <b>Git Repo: </b>
                 {gitRepo ? gitRepo : "N/A"}
               </Typography>}
@@ -92,21 +92,21 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item>
             {loading ? <Skeleton width={200} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="commit" variant="h5">
                 <b>Commit:</b> {"N/A"}
               </Typography>}
           </Grid>
 
           <Grid item xs={6}>
             {loading ? <Skeleton width={150} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="branch" variant="h5">
                 <b>Branch:</b> {gitBranch ? gitBranch : "N/A"}
               </Typography>}
           </Grid>
 
           <Grid item>
             {loading ? <Skeleton width={150} height={20} /> :
-              <Typography variant="h5">
+              <Typography  data-testid="date" variant="h5">
                 <b>Date:</b> {supplyChainStepData?.started_at ? new Date(supplyChainStepData?.started_at).toLocaleString() : "N/A"}
               </Typography>}
           </Grid>

@@ -87,13 +87,17 @@ const ForgotPassword = () => {
     console.log('Email:', email);
 
     forgotPassword(email).then((response) => {
-      //show success toast
-      toast.success("link sent on email successfully")
-      router.push('/login');
+      if (response?.status==200){
+        toast.success("link sent on email successfully")
+        router.push('/login');
+      } else{
+        toast.error("Not a valid Email.")
+      }          
     }).catch(error => {
       //show toast error
       toast.error("link failed to be sent on email")
-
+      // if ()
+      console.log(error)
     })
   };
 

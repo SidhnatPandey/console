@@ -17,8 +17,8 @@ import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 
 interface ProcessLogsProps {
-  steps: Step[];
-  loading: boolean
+  steps: Step[] | undefined;
+  loading: boolean;
 }
 
 interface Step {
@@ -102,11 +102,12 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
   };
 
   useEffect(() => {
-    setValue("0");
-    if (steps) {
+    if (steps && steps.length > 0 && steps[0].log) {
       setLogs(steps[0].log.split('\n'));
+    } else {
+      setLogs([]); 
     }
-  }, [loading])
+  }, [steps, loading]); 
 
   const handleTabChange = (step: Step, index: number) => {
     setValue(index.toString());
