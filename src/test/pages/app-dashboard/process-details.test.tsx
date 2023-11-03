@@ -32,12 +32,12 @@ describe('ProcessDetails component', () => {
   it('renders loading state', () => {
     render(<ProcessDetails {...mockData} loading={true} />);
 
-    expect(screen.queryByTestId('stage')).toBeNull();
-    expect(screen.queryByTestId('duration')).toBeNull();
-    expect(screen.queryByTestId('status')).toBeNull();
-    expect(screen.queryByTestId('gitrepo')).toBeNull();
-    expect(screen.queryByTestId('commit')).toBeNull();
-    expect(screen.queryByTestId('branch')).toBeNull();
-    expect(screen.queryByTestId('date')).toBeNull();
-  });
+    expect(screen.queryByTestId('stage')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('duration')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('gitrepo')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('commit')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('branch')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('date')).not.toBeInTheDocument();
+ });
 });
