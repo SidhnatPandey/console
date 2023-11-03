@@ -114,14 +114,6 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
     setLogs(step.log.split('\n'));
   };
 
-  const MAX_RUN_NAME_LENGTH = 20; // Set the maximum length for run names
-  const truncateRunName = (runName: string): string => {
-    if (runName.length > MAX_RUN_NAME_LENGTH) {
-      return `${runName.substring(0, MAX_RUN_NAME_LENGTH)}...`;
-    }
-    return runName;
-  };
-
   return (
     <Card sx={{ height: "auto", display: "flex", flexDirection: "column" }}>
       <CardContent sx={{ padding: "10px", marginLeft: "20px", flex: 1 }}>
@@ -157,7 +149,6 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                         iconPosition="end"
                         value={index.toString()}
                         // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
-                        label={truncateRunName(step.run_name)}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step.status)}
