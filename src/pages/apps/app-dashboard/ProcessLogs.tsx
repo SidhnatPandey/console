@@ -12,14 +12,13 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import Tooltip from '@mui/material/Tooltip';
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 
 interface ProcessLogsProps {
-  steps: Step[];
-  loading: boolean
+  steps: Step[] | undefined;
+  loading: boolean;
 }
 
 interface Step {
@@ -103,11 +102,12 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
   };
 
   useEffect(() => {
-    setValue("0");
-    if (steps) {
+    if (steps && steps.length > 0 && steps[0].log) {
       setLogs(steps[0].log.split('\n'));
+    } else {
+      setLogs([]); 
     }
-  }, [loading])
+  }, [steps, loading]); 
 
   const handleTabChange = (step: Step, index: number) => {
     setValue(index.toString());
@@ -149,7 +149,6 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                         iconPosition="end"
                         value={index.toString()}
                         // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
-                        label={step.run_name}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step.status)}

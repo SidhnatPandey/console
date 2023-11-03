@@ -17,7 +17,6 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MuiStep, { StepProps } from "@mui/material/Step";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
@@ -48,7 +47,6 @@ import {
   saveApp,
   appNameExists,
 } from "src/services/appService";
-import { errorToast } from "src/lib/react-taostify";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -193,7 +191,6 @@ const StepperCustomVertical = () => {
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
-  const [appName, setAppName] = useState("");
   const [appNameExist, setAppNameExist] = useState(false);
 
   // Handle Stepper
@@ -229,8 +226,7 @@ const StepperCustomVertical = () => {
     handleSubmit: handleSourceCodeSubmit,
     register: sourceCodeRegister,
     getValues: getSoruceCodeValue,
-    setValue: setSourceCodeValue,
-    formState: { errors: sourceCodeErrors, isValid: isSourceCodeFormValid },
+    formState: { errors: sourceCodeErrors },
   } = useForm({
     defaultValues: defaultSourceCodeValues,
     resolver: yupResolver(sourceCodeSchema),
@@ -346,7 +342,7 @@ const StepperCustomVertical = () => {
     }
   };
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");
@@ -375,7 +371,7 @@ const StepperCustomVertical = () => {
     (variable) => variable.key && variable.value
   ).length;
 
-  const onConfigurationSubmit = (data: ConfigurationValues) => {
+  const onConfigurationSubmit = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");

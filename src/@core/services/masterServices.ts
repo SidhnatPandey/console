@@ -1,6 +1,6 @@
 import axiosInstance from './interceptor';
 
-export const get = async (url: string, params = {}) => {
+export const get = async (url: string) => {
   try {
     const response = await axiosInstance.get(url);
     return response;
@@ -9,7 +9,7 @@ export const get = async (url: string, params = {}) => {
   }
 };
 
-export const post = async (url: string, data: any, params = {}) => {
+export const post = async (url: string, data: any) => {
   try {
     const response = await axiosInstance.post(url, data);
     return response;
