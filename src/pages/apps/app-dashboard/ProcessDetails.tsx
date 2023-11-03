@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card, Button } from "@mui/material";
+import { Grid, Card, Button, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
 import Skeleton from 'react-loading-skeleton';
@@ -121,13 +121,13 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
             <Grid item xs={12} style={{ marginBottom: "-20px", marginTop: "-10px" }}><h2>Result</h2></Grid>
             {supplyChainStepData.result.map((result: any, index: number) => {
               return <>
-                <Grid item xs={3}>
+                <Grid item xs={2.5}>
                   {loading ? <Skeleton width={150} height={20} /> :
                     <Typography variant="h5">
                       <b>{result.Key.toLowerCase()}</b>
                     </Typography>}
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={9.5}>
                   {loading ? <Skeleton width={350} height={20} /> :
                     <Typography variant="h5">
                       {result.Value}
@@ -139,14 +139,18 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           }
 
           <Grid item xs={12}>
-            {(supplyChainStepData?.stage?.toLowerCase().includes("approval") && supplyChainStepData.status === 'Succeeded') && <div className='demo-space-x'>
-              <Button variant='contained' color='success' size="large">
-                Approve
-              </Button>
-              <Button variant='contained' color='error' size="large">
-                Reject
-              </Button>
-            </div>}
+            {(supplyChainStepData?.stage?.toLowerCase().includes("approval") && supplyChainStepData.status === 'Rejected') && <>
+              <Grid item xs={12} style={{ marginBottom: "0px", marginTop: "-10px" }}><h2>Approval</h2></Grid>
+              <TextField id="outlined-basic" label="Comment" variant="outlined" style={{ width: '100%' }} />
+              <div className='demo-space-x'>
+                <Button variant='contained' color='success' size="large">
+                  Approve
+                </Button>
+                <Button variant='contained' color='error' size="large">
+                  Reject
+                </Button>
+              </div>
+            </>}
           </Grid>
         </Grid>
       </Card >
