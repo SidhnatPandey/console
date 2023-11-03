@@ -22,7 +22,6 @@ import LoopIcon from "@mui/icons-material/Loop";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-import Link from "next/link";
 import { SyntheticEvent, useEffect, useState } from "react";
 import AppSummary from "./AppSummary";
 import AppCreationFlow from "./AppCreationFlow";
@@ -59,6 +58,8 @@ interface App {
   status: string;
   http_path: string;
   description: string;
+  url: string
+  last_deployed: string
 }
 
 const AppDashboard = () => {
@@ -248,10 +249,9 @@ const AppDashboard = () => {
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      <Link href={"abc.com"} style={{ color: "#655bd3" }}>
-                        {" "}
-                        https://hello-world.init.run{" "}
-                      </Link>
+                      <a href={"abc.com"} style={{ color: "#655bd3" }} >
+                        {appData?.url}
+                      </a>
                     </span>
                   </>
                 )}
@@ -298,7 +298,7 @@ const AppDashboard = () => {
           />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
-          <AppSummary loading={loading} />
+          <AppSummary loading={loading} appName={appData?.application_name} />
           <br />
           <AppCreationFlow
             loading={loading}

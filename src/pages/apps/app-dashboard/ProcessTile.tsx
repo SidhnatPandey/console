@@ -25,6 +25,10 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   isSelected,
   loading
 }) => {
+
+  const checkApproval = () => {
+    return stage.toLowerCase().includes("approval")
+  }
   // Rotate the card by 45 degrees for the "Approval" process and set a purple background
   const cardStyle: React.CSSProperties = {
     minWidth: "120px",
@@ -37,22 +41,22 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
       ? "2px solid rgb(115, 83, 229)"
       : "2px solid transparent",
     cursor: "pointer",
-    transform: stage === "Approval" ? "rotate(-45deg)" : "none",
-    backgroundColor: stage === "Approval" ? "rgb(115, 83, 229)" : "transparent",
+    transform: checkApproval() ? "rotate(-45deg)" : "none",
+    backgroundColor: checkApproval() ? "rgb(115, 83, 229)" : "transparent",
     boxShadow: "15",
   };
 
   // Rotate the content inside the "Approval" process by 45 degrees
   const contentStyle: React.CSSProperties = {
-    transform: stage === "Approval" ? "rotate(45deg)" : "none",
+    transform: checkApproval() ? "rotate(45deg)" : "none",
   };
 
   const dotStyle: React.CSSProperties = {
-    color: stage === "Approval" ? "white" : "primary", // Change the color to black for "Approval"
+    color: checkApproval() ? "white" : "primary", // Change the color to black for "Approval"
   };
 
   const textStyle: React.CSSProperties = {
-    color: stage === "Approval" ? "white" : "inherit", // Change the text color to white for "Approval"
+    color: checkApproval() ? "white" : "inherit", // Change the text color to white for "Approval"
   };
 
   const getTileIcon = (status: string) => {

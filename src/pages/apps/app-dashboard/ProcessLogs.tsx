@@ -105,9 +105,9 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
     if (steps && steps.length > 0 && steps[0].log) {
       setLogs(steps[0].log.split('\n'));
     } else {
-      setLogs([]); 
+      setLogs([]);
     }
-  }, [steps, loading]); 
+  }, [steps, loading]);
 
   const handleTabChange = (step: Step, index: number) => {
     setValue(index.toString());
@@ -149,6 +149,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                         iconPosition="end"
                         value={index.toString()}
                         // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
+                        label={step.run_name}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step.status)}

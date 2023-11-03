@@ -9,7 +9,13 @@ export const supplyChainRuns = (appId: string) => {
 
 export const supplyChainSteps = (runId: string, runStep: string) => {
     let url = APP_API.supplyChainSteps;
-    url = url.replace('{runId}', runId )
-    url = url.replace('{stage}', runStep )
+    url = url.replace('{runId}', runId)
+    url = url.replace('{stage}', runStep)
     return get(url).then((response) => response?.data);
 };
+
+export const matrixData = (appName: string) => {
+    let url = APP_API.appMatrix;
+    url = url.replace('{appName}', appName);
+    return get(url).then((response) => response?.data);
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card } from "@mui/material";
+import { Grid, Card, Button, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
 import Skeleton from 'react-loading-skeleton';
@@ -14,9 +14,10 @@ interface ProcessDetailsProps {
     commit?: string;
     branch?: string;
     date?: string;
-    started_at: string,
-    completed_at: string
+    started_at: string;
+    completed_at: string;
     steps: Step[];
+    result: Result[];
   };
   loading: boolean,
   gitRepo: string | undefined,
@@ -30,6 +31,11 @@ interface Step {
   run_name: string;
   started_at: string;
   status: string;
+}
+
+interface Result {
+  Key: string,
+  Value: string
 }
 
 const ProcessDetails: React.FC<ProcessDetailsProps> = ({
@@ -58,6 +64,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   }
 
   useEffect(() => {
+    setDuration(undefined);
     if (supplyChainStepData) {
       calcDuration();
     }
@@ -65,24 +72,28 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
   return (
     <>
-      <Card  data-testid="card" sx={{ display: "flex", flexDirection: "row" }}>
+      <Card data-testid="card" sx={{ display: "flex", flexDirection: "row" }}>
         <Grid container spacing={2} style={{ padding: "30px" }}>
-          <Grid item xs={12}>
-            {loading ? <Skeleton width={200} height={20} /> : <Typography data-testid="stage" variant="h5">
-              <b> Stage:</b>{" "}
+          <Grid item xs={12} style={{ marginBottom: "-10px", marginTop: "-20px" }}><h2>Stage Summary</h2></Grid>
+          <Grid item xs={4}>
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5" data-testid="stage">
+              <b>Stage:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
-            {loading ? <Skeleton width={150} height={20} /> : <Typography data-testid="duration" variant="h6" style={{ marginBottom: "30px" }}>
-              <b>Duration:</b> {duration}
+          </Grid>
+          <Grid item xs={4}>
+            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h5" data-testid="duration">
+              <b>Duration:</b> {duration ? duration : "N/A"}
             </Typography>}
-            {loading ? <Skeleton width={200} height={20} /> : <Typography data-testid="status" variant="h5">
+          </Grid>
+          <Grid item xs={4}>
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5" data-testid="status">
               <b>Status:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.status : "N/A"}{" "}
             </Typography>}
-
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             {loading ? <Skeleton width={200} height={20} /> :
               <Typography data-testid="gitrepo" variant="h5">
                 <b>Git Repo: </b>
@@ -90,30 +101,61 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
               </Typography>}
           </Grid>
 
-          <Grid item>
-            {loading ? <Skeleton width={200} height={20} /> :
-              <Typography data-testid="commit" variant="h5">
-                <b>Commit:</b> {"N/A"}
-              </Typography>}
-          </Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             {loading ? <Skeleton width={150} height={20} /> :
               <Typography data-testid="branch" variant="h5">
                 <b>Branch:</b> {gitBranch ? gitBranch : "N/A"}
               </Typography>}
           </Grid>
 
-          <Grid item>
+          <Grid item xs={4}>
             {loading ? <Skeleton width={150} height={20} /> :
-              <Typography  data-testid="date" variant="h5">
+              <Typography data-testid="date" variant="h5">
                 <b>Date:</b> {supplyChainStepData?.started_at ? new Date(supplyChainStepData?.started_at).toLocaleString() : "N/A"}
               </Typography>}
           </Grid>
+
+
+
+          {supplyChainStepData?.result.length > 0 && <>
+            <Grid item xs={12} style={{ marginBottom: "-20px", marginTop: "-10px" }}><h2>Result</h2></Grid>
+            {supplyChainStepData.result.map((result: any, index: number) => {
+              return <>
+                <Grid item xs={2.5}>
+                  {loading ? <Skeleton width={150} height={20} /> :
+                    <Typography variant="h5">
+                      <b>{result.Key.toLowerCase()}</b>
+                    </Typography>}
+                </Grid>
+                <Grid item xs={9.5}>
+                  {loading ? <Skeleton width={350} height={20} /> :
+                    <Typography variant="h5">
+                      {result.Value}
+                    </Typography>}
+                </Grid>
+              </>
+            })}
+          </>
+          }
+
+          <Grid item xs={12}>
+            {(supplyChainStepData?.stage?.toLowerCase().includes("approval") && supplyChainStepData.status === 'Rejected') && <>
+              <Grid item xs={12} style={{ marginBottom: "0px", marginTop: "-10px" }}><h2>Approval</h2></Grid>
+              <TextField id="outlined-basic" label="Comment" variant="outlined" style={{ width: '100%' }} />
+              <div className='demo-space-x'>
+                <Button variant='contained' color='success' size="large">
+                  Approve
+                </Button>
+                <Button variant='contained' color='error' size="large">
+                  Reject
+                </Button>
+              </div>
+            </>}
+          </Grid>
         </Grid>
-      </Card>
+      </Card >
       <br></br>
-      <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} />
+      {supplyChainStepData?.steps?.length > 0 && <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} />}
     </>
   );
 };
