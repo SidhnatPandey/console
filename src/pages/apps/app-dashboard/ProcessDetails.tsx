@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Card, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
@@ -72,22 +72,22 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
   return (
     <>
-      <Card sx={{ display: "flex", flexDirection: "row" }}>
+      <Card data-testid="card" sx={{ display: "flex", flexDirection: "row" }}>
         <Grid container spacing={2} style={{ padding: "30px" }}>
           <Grid item xs={12} style={{ marginBottom: "-10px", marginTop: "-20px" }}><h2>Stage Summary</h2></Grid>
           <Grid item xs={4}>
-            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5" data-testid="stage">
               <b>Stage:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.stage : "N/A"}{" "}
             </Typography>}
           </Grid>
           <Grid item xs={4}>
-            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h5">
+            {loading ? <Skeleton width={150} height={20} /> : <Typography variant="h5" data-testid="duration">
               <b>Duration:</b> {duration ? duration : "N/A"}
             </Typography>}
           </Grid>
           <Grid item xs={4}>
-            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5">
+            {loading ? <Skeleton width={200} height={20} /> : <Typography variant="h5" data-testid="status">
               <b>Status:</b>{" "}
               {supplyChainStepData ? supplyChainStepData.status : "N/A"}{" "}
             </Typography>}
@@ -95,7 +95,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item xs={4}>
             {loading ? <Skeleton width={200} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="gitrepo" variant="h5">
                 <b>Git Repo: </b>
                 {gitRepo ? gitRepo : "N/A"}
               </Typography>}
@@ -103,14 +103,14 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item xs={4}>
             {loading ? <Skeleton width={150} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="branch" variant="h5">
                 <b>Branch:</b> {gitBranch ? gitBranch : "N/A"}
               </Typography>}
           </Grid>
 
           <Grid item xs={4}>
             {loading ? <Skeleton width={150} height={20} /> :
-              <Typography variant="h5">
+              <Typography data-testid="date" variant="h5">
                 <b>Date:</b> {supplyChainStepData?.started_at ? new Date(supplyChainStepData?.started_at).toLocaleString() : "N/A"}
               </Typography>}
           </Grid>

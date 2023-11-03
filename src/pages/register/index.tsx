@@ -21,7 +21,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp, checkUsername, checkEmail } from "src/services/authService";
-import { errorToast, successToast } from "src/lib/react-taostify";
+import {  successToast } from "src/lib/react-taostify";
 import toast from "react-hot-toast";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
@@ -141,7 +141,7 @@ const Register = () => {
     }
     if (!formData.agreeToTerms) {
       //errorToast("Please agree to the Terms and Conditions.");
-      toast.error("Please agree to the Terms and Conditions.")
+      toast.error("Please agree to the Terms and Conditions.");
       return; // Exit early if "agree to terms" checkbox is not checked
     }
     const user = {
@@ -160,15 +160,16 @@ const Register = () => {
           successToast("Registered successfully");
           router.push("/login");
         } else if (response?.status === 400) {
-          toast.error(response.message)
+          toast.error(response.message);
         } else {
-          toast.error("Some Error Occured")
+          toast.error("Some Error Occured");
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
 
-        toast.error(error.message)
-      })
+        toast.error(error.message);
+      });
   };
 
   const checkUserExists = (username: string) => {
@@ -190,18 +191,17 @@ const Register = () => {
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
     if (inputUsername.length < 3) {
-        setUsernameError("Username must be at least 3 characters.");
+      setUsernameError("Username must be at least 3 characters.");
     } else if (inputUsername.length > 15) {
-        setUsernameError("Username must be a maximum of 15 characters.");
+      setUsernameError("Username must be a maximum of 15 characters.");
     } else {
-        setUsernameError(null);
-        const truncatedUsername = inputUsername;
-        setFormData({ ...formData, username: truncatedUsername });
-        setTouched({ ...touched, username: true });
-        checkUserExists(truncatedUsername);
+      setUsernameError(null);
+      const truncatedUsername = inputUsername;
+      setFormData({ ...formData, username: truncatedUsername });
+      setTouched({ ...touched, username: true });
+      checkUserExists(truncatedUsername);
     }
-};
-
+  };
 
   const validatePassword = (password: string) => {
     const isValid =
@@ -211,16 +211,16 @@ const Register = () => {
     setIsValidPassword(isValid);
   };
 
-  const renderChecklistItems = () => {
-    return validationRules.map((rule, index) => {
-      const isValid = rule.regex.test(formData.password);
-      return (
-        <li key={index} className={isValid ? "valid" : "invalid"}>
-          {rule.message}
-        </li>
-      );
-    });
-  };
+  // const renderChecklistItems = () => {
+  //   return validationRules.map((rule, index) => {
+  //     const isValid = rule.regex.test(formData.password);
+  //     return (
+  //       <li key={index} className={isValid ? "valid" : "invalid"}>
+  //         {rule.message}
+  //       </li>
+  //     );
+  //   });
+  // };
 
   const checkEmailExists = (email: string) => {
     if (email) {
@@ -331,15 +331,16 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                    (formData.email.trim() === ""
-                      ? "Email cannot be empty."
-                      : !isValidEmail(formData.email))
+                  (formData.email.trim() === ""
+                    ? "Email cannot be empty."
+                    : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                      ? "Email Already exists"
-                      : ""
+                    ? "Email Already exists"
+                    : ""
                 }
               />
+
               <CustomTextField
                 fullWidth
                 label="Password"
@@ -372,11 +373,16 @@ const Register = () => {
                 error={touched.password && !isValidPassword}
                 helperText={
                   touched.password && !isValidPassword
-                    ? "Password does not meet the requirements"
+                    ? "Password does not meet the requirements. Please ensure it has:\n" +
+                      validationRules
+                        .filter((rule) => !rule.regex.test(formData.password))
+                        .map((rule) => rule.message)
+                        .join("\n")
                     : ""
                 }
               />
-              <ul className="password-checklist">{renderChecklistItems()}</ul>
+
+              {/* <ul className="password-checklist">{renderChecklistItems()}</ul> */}
               <CustomTextField
                 fullWidth
                 label="Organization"

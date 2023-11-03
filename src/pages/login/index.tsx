@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
+// import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
@@ -80,8 +80,8 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 })) 
 
 const schema = yup.object().shape({
-  email: yup.string().email('Email is a required field').required('Email is a required field'),
-  password: yup.string().min(5,'Password must be at least 5 characters').required('Password is a required field'),
+  email: yup.string().required('Email is a required field').email('Email is Invalid'),
+  password: yup.string().required('Password is a required field'),
 })
 
 const defaultValues = {
@@ -97,13 +97,13 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
+  // const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
 
 
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
-  const bgColors = useBgColor()
+  // const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -186,6 +186,7 @@ const LoginPage = () => {
                       fullWidth
                       autoFocus
                       label='Email'
+                      id='user-email-input'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}

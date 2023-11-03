@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Card, Typography } from "@mui/material";
 import PendingIcon from "@mui/icons-material/Pending";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import ProcessDetails from "./ProcessDetails";
 // ** Custom Components Imports
 import CustomAvatar from "src/@core/components/mui/avatar";
 import Icon from "src/@core/components/icon";
-import { supplyChainSteps } from "src/services/dashboardService";
 import { Container } from "@mui/system";
 import LoopIcon from "@mui/icons-material/Loop";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-
 interface ProcessTileProps {
   stage: string;
   status: string;
@@ -104,11 +100,11 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   };
 
   return (
-    <Tooltip title={`Status: ${status}`} arrow>
-      <Card onClick={onClick} sx={cardStyle}>
-        <div style={contentStyle}>
+    <Tooltip  title={`Status: ${status}`} arrow data-testid="Tooltip">
+      <Card data-testid="Card" onClick={onClick} sx={cardStyle}>
+        <div data-testid="status" style={contentStyle}>
           {loading ? <Skeleton width={100} height={30} /> : getTileIcon(status)}
-          <Typography variant="h6" className="mt-2" style={textStyle}>
+          <Typography  data-testid="stage" variant="h6" className="mt-2" style={textStyle}>
             {loading ? <Skeleton width={100} height={20} /> : stage}
           </Typography>
         </div>
@@ -117,101 +113,4 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   );
 };
 
-interface AppCreationFlow {
-  supplyChainData: {
-    app_id: string;
-    completed_at: string;
-    id: string;
-    run_name: string;
-    started_at: string;
-    status: string;
-    steps: { status: string; step_name: string }[];
-  };
-  loading: boolean;
-  timer: number,
-  gitRepo: string | undefined,
-  gitBranch: string | undefined
-}
-
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
-  const [selectedTile, setSelectedTile] = useState<string>(""); // Set the initial value to "Clone"
-  const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
-  const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
-  const handleTileClick = (stage: string) => {
-    setSelectedTile(stage === selectedTile ? '' : stage);
-  };
-
-  useEffect(() => {
-    if (supplyChainData) {
-      setStepLoading(true);
-      getSupplyChainStep(
-        supplyChainData.id,
-        supplyChainData.steps[0].step_name
-      );
-    }
-  }, [loading]);
-
-  /* useEffect(() => {
-    if (supplyChainData) {
-      setStepLoading(true);
-      getSupplyChainStep(
-        supplyChainData.id,
-        selectedTile
-      );
-    }
-  }, [supplyChainData]); */
-
-  const getSupplyChainStep = (id: string, step: string) => {
-    setStepLoading(true);
-    handleTileClick(step);
-    supplyChainSteps(id, step)
-      .then((response: any) => {
-        setSupplyChainStepData(response.data);
-        setStepLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setStepLoading(false);
-      });
-  };
-
-  const getSupplyChain = () => {
-    return (supplyChainData ? <div className={`scroll-container`}>
-      {supplyChainData?.steps.map((process, index) => (
-        <React.Fragment key={index}>
-          <ProcessTile
-            stage={process.step_name}
-            status={process.status}
-            onClick={() => {
-              if (process.status.toLowerCase() != "waiting") {
-                getSupplyChainStep(supplyChainData.id, process.step_name);
-              }
-            }}
-            isSelected={selectedTile === process.step_name}
-            loading={loading}
-          />
-          {index < supplyChainData.steps.length - 1 && (
-            <ArrowRightAltIcon
-              sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </div> : <div style={{ fontSize: '20px', padding: "40px", margin: "0 auto" }}>No Data</div>)
-  }
-
-  return (
-    <div>
-      <Card
-        sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
-      >
-        {loading ? <div className={`scroll-container`}>
-          <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> : getSupplyChain()}
-      </Card>
-      <br></br>
-      {(loading || (!loading && supplyChainData)) && <ProcessDetails supplyChainStepData={supplyChainStepData} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading || stepLoading} />}
-    </div>
-  );
-};
-
-export default AppCreationFlow;
+export default ProcessTile;

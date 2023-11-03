@@ -1,4 +1,4 @@
-import { Card, Grid, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
@@ -7,7 +7,6 @@ import { styled } from "@mui/material/styles";
 
 //icons
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
 import GridViewIcon from "@mui/icons-material/GridView";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -26,7 +25,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Link from "next/link";
 import { SyntheticEvent, useEffect, useState } from "react";
 import AppSummary from "./AppSummary";
-import ProcessTiles from "./ProcessTile";
+import AppCreationFlow from "./AppCreationFlow";
 import { supplyChainRuns } from "src/services/dashboardService";
 import { useRouter } from "next/router";
 import { appDetails } from "src/services/appService";
@@ -275,34 +274,34 @@ const AppDashboard = () => {
             label="Overview"
             icon={<AppsIcon />}
             iconPosition="start"
-            data-testid="tab-1"
+            data-testid="Overview"
           />
           <Tab
             value="2"
             label="Insights"
             icon={<InsightsIcon />}
             iconPosition="start"
-            data-testid="tab-2"
+            data-testid="Insights"
           />
           <Tab
             value="3"
             label="Logs"
             icon={<GridViewIcon />}
             iconPosition="start"
-            data-testid="tab-3"
+            data-testid="Logs"
           />
           <Tab
             value="4"
             label="Settings"
             icon={<SettingsIcon />}
             iconPosition="start"
-            data-testid="tab-4"
+            data-testid="Settings"
           />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
           <AppSummary loading={loading} appName={appData?.application_name} />
           <br />
-          <ProcessTiles
+          <AppCreationFlow
             loading={loading}
             timer={timer}
             supplyChainData={supplyChainRunData}
