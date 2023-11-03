@@ -182,8 +182,8 @@ const Apps: React.FC<AppListProps> = () => {
                   >
                     <TableCell>{row.application_name}</TableCell>
                     <TableCell>{row.currentEnv}</TableCell>
-                    <TableCell>{row.lastDeployed}</TableCell>
-                    <TableCell>{row.liveAppUrl}</TableCell>
+                    <TableCell>{new Date(row.last_deployed).toLocaleString()}</TableCell>
+                    <TableCell>{row.url}</TableCell>
                     <TableCell>
                       <Chip
                         label={row.status ? row.status : 'unknown'}

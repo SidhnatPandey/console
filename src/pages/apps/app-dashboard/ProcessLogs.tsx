@@ -104,6 +104,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
 
   useEffect(() => {
     setValue("0");
+    setLogs([]);
     if (steps) {
       setLogs(steps[0].log.split('\n'));
     }

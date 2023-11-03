@@ -15,12 +15,22 @@ import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import { useDeferredValue, useEffect, useState } from 'react'
+import { matrixData } from 'src/services/dashboardService'
 
 interface DataType {
   icon: string
   stats: string
   title: string
   color: ThemeColor
+}
+
+interface Matrix {
+  CPUPercentage: string,
+  MemoryRequestMB: string,
+  MemoryUsageMB: string,
+  NetworkReceiveBytes: string,
+  NetworkTransmitBytes: string,
 }
 
 const data: DataType[] = [
@@ -67,10 +77,21 @@ const renderStats = () => {
 }
 
 interface AppSummaryProps {
-  loading: boolean
+  loading: boolean,
+  appName: string | undefined
 }
 
-const AppSummary: React.FC<AppSummaryProps> = ({ loading }) => {
+const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
+
+  const [matrix, setMatrix] = useState<Matrix>();
+  useEffect(() => {
+    if (appName) {
+      matrixData(appName).then(
+        (response) => {
+          setMatrix(response?.data);
+        })
+    }
+  }, [appName])
   return (
     <Card>
       {loading ? <Skeleton width={200} height={20} style={{ margin: "20px" }} /> : <CardHeader
@@ -84,7 +105,54 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading }) => {
       />}
       <CardContent sx={{ pt: theme => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={6}>
-          {loading ? <Skeleton width={300} height={40} style={{ marginLeft: "20px" }} count={4} inline /> : renderStats()}
+          {loading ? <Skeleton width={300} height={40} style={{ marginLeft: "20px" }} count={4} inline /> : <>
+            <Grid item xs={6} md={3}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' color="primary" sx={{ mr: 4, width: 42, height: 42 }}>
+                  <Icon icon="tabler:chart-pie-2" />
+                </CustomAvatar>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant='h5'>1 / 2</Typography>
+                  <Typography variant='body1'>Instances/Auto Scale</Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' color="info" sx={{ mr: 4, width: 42, height: 42 }}>
+                  <Icon icon="ph:cpu-bold" />
+                </CustomAvatar>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant='h5'>{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage) * 100).toFixed(2) : "N/A"} %</Typography>
+                  <Typography variant='body1'>CPU</Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' color="error" sx={{ mr: 4, width: 42, height: 42 }}>
+                  <Icon icon="icon-park-outline:memory-one" />
+                </CustomAvatar>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant='h5'>
+                    {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "N/A"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "N/A"}</Typography>
+                  <Typography variant='body1'>Memory/Allocated (MB)</Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' color="success" sx={{ mr: 4, width: 42, height: 42 }}>
+                  <Icon icon="ooui:network" />
+                </CustomAvatar>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant='h5'>
+                    {matrix?.NetworkReceiveBytes ? Number(matrix?.NetworkReceiveBytes).toFixed(2) : "N/A"} / {matrix?.NetworkTransmitBytes ? Number(matrix?.NetworkTransmitBytes).toFixed(2) : "N/A"}</Typography>
+                  <Typography variant='body1'>Network Received/Transmit (Bytes)</Typography>
+                </Box>
+              </Box>
+            </Grid>
+          </>}
         </Grid>
       </CardContent>
     </Card>
