@@ -35,25 +35,25 @@ interface Matrix {
 
 const data: DataType[] = [
   {
-    stats: '1 / 2',
+    stats: '? / ?',
     title: 'Instances/Auto Scale',
     color: 'primary',
     icon: 'tabler:chart-pie-2'
   },
   {
     color: 'info',
-    stats: '1 %',
+    stats: '? %',
     title: 'CPU',
     icon: 'ph:cpu-bold'
   },
   {
     color: 'error',
-    stats: '0.7/1 GB',
+    stats: '?/? GB',
     title: 'Memory/Allocated',
     icon: 'icon-park-outline:memory-one'
   },
   {
-    stats: '1.4/2 GB',
+    stats: '?/? GB',
     color: 'success',
     title: 'Disk/Allocated',
     icon: 'material-symbols:database-outline'
@@ -112,7 +112,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                   <Icon icon="tabler:chart-pie-2" />
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant='h5'>1 / 2</Typography>
+                  <Typography variant='h5'>? / ?</Typography>
                   <Typography variant='body1'>Instances/Auto Scale</Typography>
                 </Box>
               </Box>
@@ -123,7 +123,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                   <Icon icon="ph:cpu-bold" />
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant='h5'>{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage) * 100).toFixed(2) : "N/A"} %</Typography>
+                  <Typography variant='h5'>{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage) * 100).toFixed(2) : "?"} %</Typography>
                   <Typography variant='body1'>CPU</Typography>
                 </Box>
               </Box>
@@ -135,7 +135,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography variant='h5'>
-                    {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "N/A"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "N/A"}</Typography>
+                    {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "?"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "?"}</Typography>
                   <Typography variant='body1'>Memory/Allocated (MB)</Typography>
                 </Box>
               </Box>
@@ -147,8 +147,8 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography variant='h5'>
-                    {matrix?.NetworkReceiveBytes ? Number(matrix?.NetworkReceiveBytes).toFixed(2) : "N/A"} / {matrix?.NetworkTransmitBytes ? Number(matrix?.NetworkTransmitBytes).toFixed(2) : "N/A"}</Typography>
-                  <Typography variant='body1'>Network Received/Transmit (Bytes)</Typography>
+                    {matrix?.NetworkReceiveBytes ? Number(matrix?.NetworkReceiveBytes).toFixed(2) : "?"} / {matrix?.NetworkTransmitBytes ? Number(matrix?.NetworkTransmitBytes).toFixed(2) : "?"}</Typography>
+                  <Typography variant='body1'>N/W Receive/Transmit (B/s)</Typography>
                 </Box>
               </Box>
             </Grid>
