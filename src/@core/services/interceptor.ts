@@ -40,6 +40,9 @@ axiosInstance.interceptors.response.use(
                 localStorage.clear();
                 window.location.href = '/login';
             }
+            if (error?.response.status === 404) {
+               return error.response;
+            }
         }
         return Promise.reject(error);
     }
