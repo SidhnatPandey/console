@@ -87,6 +87,11 @@ const AppDashboard = () => {
     setValue(newValue);
   };
 
+  const handleTriggerFromChild = () => {
+    getAppDetails(router?.query?.appId);
+    getSupplyChainRun(router?.query?.appId);
+  }
+
   const getAppDetails = (id: any) => {
     appDetails(id)
       .then((response: any) => {
@@ -306,6 +311,7 @@ const AppDashboard = () => {
             supplyChainData={supplyChainRunData}
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
+            hanldeChildTrigger={handleTriggerFromChild}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">

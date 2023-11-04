@@ -19,5 +19,6 @@ export const APP_API = {
     appList: 'initializ/v1/apps',
     supplyChainSteps: 'initializ/v1/supplychainruns/{runId}/steps?stage={stage}',
     appDetails: 'initializ/v1/apps/{appId}',
-    appMatrix: 'initializ/v1/app/metrics?deployment={appName}'
+    appMatrix: 'initializ/v1/app/metrics?deployment={appName}',
+    approval: 'initializ/v1/changeapprovalstatus'
 }

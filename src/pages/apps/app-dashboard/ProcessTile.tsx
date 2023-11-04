@@ -10,6 +10,9 @@ import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+
 interface ProcessTileProps {
   stage: string;
   status: string;
@@ -92,6 +95,12 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
         );
       case "waiting":
         return <PendingIcon fontSize="large" style={dotStyle} />;
+      case "pending":
+        return <PendingIcon fontSize="large" style={dotStyle} />;
+      case "approved":
+        return <CheckIcon fontSize="large" style={{ color: "green" }} />;
+      case "rejected":
+        return <CloseIcon fontSize="large" style={{ color: "red" }} />;
       case "failed":
         return <ErrorOutlineIcon fontSize="large" style={{ color: "red" }} />;
       default:
@@ -100,11 +109,11 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   };
 
   return (
-    <Tooltip  title={`Status: ${status}`} arrow data-testid="Tooltip">
+    <Tooltip title={`Status: ${status}`} arrow data-testid="Tooltip">
       <Card data-testid="Card" onClick={onClick} sx={cardStyle}>
         <div data-testid="status" style={contentStyle}>
           {loading ? <Skeleton width={100} height={30} /> : getTileIcon(status)}
-          <Typography  data-testid="stage" variant="h6" className="mt-2" style={textStyle}>
+          <Typography data-testid="stage" variant="h6" className="mt-2" style={textStyle}>
             {loading ? <Skeleton width={100} height={20} /> : stage}
           </Typography>
         </div>
