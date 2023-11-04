@@ -254,7 +254,7 @@ const AppDashboard = () => {
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      <a href={"abc.com"} style={{ color: "#655bd3" }} >
+                      <a href={appData?.url} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
                         {appData?.url}
                       </a>
                     </span>
@@ -303,7 +303,7 @@ const AppDashboard = () => {
           />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
-          <AppSummary loading={loading} appName={appData?.application_name} />
+          <AppSummary loading={loading} appName={appData?.application_name} metricsTimer={timer} />
           <br />
           <AppCreationFlow
             loading={loading}

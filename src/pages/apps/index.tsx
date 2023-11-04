@@ -134,6 +134,23 @@ const Apps: React.FC<AppListProps> = () => {
     }
   };
 
+  const getCurrentEnv = (stage:any) => {
+    switch (stage) {
+      case 'deploy-test':
+        return 'test';
+      case 'test-approval':
+        return 'test'
+      case 'deploy-stg':
+        return 'stg'
+      case 'stg-approval':
+        return 'stg'
+      case 'deploy-prod':
+        return 'prod'
+      default:
+        return '';
+    }
+  }
+
   const handleRequestSort = (property: keyof Row) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -180,9 +197,9 @@ const Apps: React.FC<AppListProps> = () => {
                     style={{ cursor: 'pointer', height: '100%' }}
                   >
                     <TableCell>{row.application_name}</TableCell>
-                    <TableCell>{row.currentEnv}</TableCell>
+                    <TableCell>{getCurrentEnv(row.stage)}</TableCell>
                     <TableCell>{new Date(row.last_deployed).toLocaleString()}</TableCell>
-                    <TableCell>{row.url}</TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
                     <TableCell>
                       <Chip
                         label={row.status ? row.status : 'unknown'}
