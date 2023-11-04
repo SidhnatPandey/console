@@ -49,15 +49,17 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
     }
   }, [loading]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (supplyChainData) {
       // setStepLoading(true);
-      getSupplyChainStep(
-        supplyChainData.id,
-        selectedTile
-      );
+      const intervalId = setInterval(() => {
+        getSupplyChainStep(
+          supplyChainData.id,
+          selectedTile
+        );
+      }, timer); // Call every 60 seconds (adjust as needed)
     }
-  }, [supplyChainData]);
+  }, [supplyChainData]); */
 
   const getSupplyChainStep = (id: string, step: string) => {
     //setStepLoading(true);
@@ -68,7 +70,6 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         setStepLoading(false);
       })
       .catch((error) => {
-        console.log(error);
         setStepLoading(false);
       });
   };
