@@ -1,4 +1,4 @@
-import { get } from "src/@core/services/masterServices";
+import { get, post } from "src/@core/services/masterServices";
 import { APP_API } from "src/@core/static/api.constant";
 
 export const supplyChainRuns = (appId: string) => {
@@ -18,4 +18,9 @@ export const matrixData = (appName: string) => {
     let url = APP_API.appMatrix;
     url = url.replace('{appName}', appName);
     return get(url).then((response) => response?.data);
+}
+
+export const approval = (data: any) => {
+    let url = APP_API.approval;
+    return post(url, data).then((response) => response?.data);
 }
