@@ -62,7 +62,6 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   }, [supplyChainData]); */
 
   const getSupplyChainStep = (id: string, step: string) => {
-    //setStepLoading(true);
     handleTileClick(step);
     supplyChainSteps(id, step)
       .then((response: any) => {
