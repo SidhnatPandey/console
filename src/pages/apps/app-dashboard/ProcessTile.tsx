@@ -34,8 +34,8 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
   }
   // Rotate the card by 45 degrees for the "Approval" process and set a purple background
   const cardStyle: React.CSSProperties = {
-    minWidth: "120px",
-    height: "120px",
+    minWidth: checkApproval() ? "130px" : "120px",
+    height: checkApproval() ? "130px" : "120px",
     margin: "0 20px",
     borderRadius: "30px",
     textAlign: "center",
