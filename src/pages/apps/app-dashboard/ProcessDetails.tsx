@@ -31,7 +31,7 @@ interface ProcessDetailsProps {
   loading: boolean,
   gitRepo: string | undefined,
   gitBranch: string | undefined,
-  handleTrigger: Function
+  handleTrigger: any
 }
 
 interface Step {
