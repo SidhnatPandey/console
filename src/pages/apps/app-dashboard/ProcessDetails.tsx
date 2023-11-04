@@ -228,7 +228,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
         </DialogContent>
         <DialogActions className='dialog-actions-dense'>
           <Button onClick={handleClose} disabled={submitted} style={{ fontSize: '18px' }}>Cancel</Button>
-          <Button onClick={submitApproval} disabled={submitted} style={{ fontSize: '18px', marginLeft: '10px' }} variant='contained'>Ok</Button>
+          <Button onClick={submitApproval} disabled={submitted} style={{ fontSize: '18px', marginLeft: '15px' }} variant='contained'>Ok</Button>
         </DialogActions>
       </Dialog>
     </>
