@@ -20,7 +20,7 @@ interface AppCreationFlow {
   timer: number,
   gitRepo: string | undefined,
   gitBranch: string | undefined,
-  hanldeChildTrigger: Function
+  hanldeChildTrigger: any
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch, hanldeChildTrigger }) => {

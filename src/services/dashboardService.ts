@@ -21,6 +21,5 @@ export const matrixData = (appName: string) => {
 }
 
 export const approval = (data: any) => {
-    let url = APP_API.approval;
-    return post(url, data).then((response) => response?.data);
+    return post(APP_API.approval, data).then((response) => response?.data);
 }
