@@ -78,7 +78,8 @@ const renderStats = () => {
 
 interface AppSummaryProps {
   loading: boolean,
-  appName: string | undefined
+  appName: string | undefined,
+  metricsTimer: number
 }
 
 const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer }) => {
