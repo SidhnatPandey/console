@@ -78,18 +78,23 @@ const renderStats = () => {
 
 interface AppSummaryProps {
   loading: boolean,
-  appName: string | undefined
+  appName: string | undefined,
+  metricsTimer: number
 }
 
-const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
+const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer }) => {
 
   const [matrix, setMatrix] = useState<Matrix>();
   useEffect(() => {
     if (appName) {
-      matrixData(appName).then(
-        (response) => {
-          setMatrix(response?.data);
-        })
+
+      const metricsIntervalId = setInterval(() => {
+        matrixData(appName).then(
+          (response) => {
+            setMatrix(response?.data);
+          })
+      }, metricsTimer); // Call every 60 seconds (adjust as needed)
+      return () => clearInterval(metricsIntervalId);
     }
   }, [appName])
   return (
@@ -99,7 +104,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
         sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
         action={
           <Typography variant='body2'data-testid="updated-time" sx={{ color: 'text.disabled' }}>
-            Updated 1 minute ago
+            Updated {(metricsTimer)/1000} seconds ago
           </Typography>
         }
       />}
@@ -112,7 +117,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                   <Icon icon="tabler:chart-pie-2" />
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant='h5'>? / ?</Typography>
+                  <Typography variant='h5'>3 / 6</Typography>
                   <Typography variant='body1'>Instances/Auto Scale</Typography>
                 </Box>
               </Box>
@@ -136,7 +141,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName }) => {
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography variant='h5'>
                     {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "?"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "?"}</Typography>
-                  <Typography variant='body1'>Memory/Allocated (MB)</Typography>
+                  <Typography variant='body1'>Memory/Request (MB)</Typography>
                 </Box>
               </Box>
             </Grid>
