@@ -10,20 +10,10 @@ import Skeleton from 'react-loading-skeleton';
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Types
-import { ThemeColor } from 'src/@core/layouts/types'
-
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { matrixData } from 'src/services/dashboardService'
-
-interface DataType {
-  icon: string
-  stats: string
-  title: string
-  color: ThemeColor
-}
 
 interface Matrix {
   CPUPercentage: string,
@@ -31,49 +21,6 @@ interface Matrix {
   MemoryUsageMB: string,
   NetworkReceiveBytes: string,
   NetworkTransmitBytes: string,
-}
-
-const data: DataType[] = [
-  {
-    stats: '? / ?',
-    title: 'Instances/Auto Scale',
-    color: 'primary',
-    icon: 'tabler:chart-pie-2'
-  },
-  {
-    color: 'info',
-    stats: '? %',
-    title: 'CPU',
-    icon: 'ph:cpu-bold'
-  },
-  {
-    color: 'error',
-    stats: '?/? GB',
-    title: 'Memory/Allocated',
-    icon: 'icon-park-outline:memory-one'
-  },
-  {
-    stats: '?/? GB',
-    color: 'success',
-    title: 'Disk/Allocated',
-    icon: 'material-symbols:database-outline'
-  }
-]
-
-const renderStats = () => {
-  return data.map((sale: DataType, index: number) => (
-    <Grid item xs={6} md={3} key={index}>
-      <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-        <CustomAvatar skin='light' color={sale.color}  data-testid="custom-avatar" sx={{ mr: 4, width: 42, height: 42 }}>
-          <Icon icon={sale.icon}  />
-        </CustomAvatar>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant='h5'  data-testid="statistic">{sale.stats}</Typography>
-          <Typography variant='body2' data-testid="title" >{sale.title}</Typography>
-        </Box>
-      </Box>
-    </Grid>
-  ))
 }
 
 interface AppSummaryProps {
@@ -103,8 +50,8 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
         title='App Summary'
         sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
         action={
-          <Typography variant='body2'data-testid="updated-time" sx={{ color: 'text.disabled' }}>
-            Updated {(metricsTimer)/1000} seconds ago
+          <Typography variant='body2' data-testid="updated-time" sx={{ color: 'text.disabled' }}>
+            Updated {(metricsTimer) / 1000} seconds ago
           </Typography>
         }
       />}

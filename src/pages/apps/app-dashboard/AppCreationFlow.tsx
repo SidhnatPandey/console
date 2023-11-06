@@ -73,7 +73,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   };
 
   const getSupplyChain = () => {
-    return (supplyChainData ? <div className={`scroll-container`}>
+    return (supplyChainData ? <div className={`scroll-container`} style={{ minHeight: '200px' }}>
       {supplyChainData?.steps.map((process, index) => (
         <React.Fragment key={index}>
           <ProcessTile
@@ -101,21 +101,21 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   return (
     <div>
       <Card>
-      {loading ? <Skeleton width={200} height={20} style={{ margin: "20px" }} /> : <CardHeader
-        subheader={"RunId: " + (supplyChainData?.run_name)}
-        sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
-        action={
-          <Typography variant='body2'data-testid="updated-time" sx={{ color: 'text.disabled' }}>
-            Updated {(timer)/1000} seconds ago
-          </Typography>
-        }
-      />}
-      
-      <CardContent  sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
-      
-        {loading ? <div className={`scroll-container`}>
-          <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> :  getSupplyChain()}
-          </CardContent>
+        {loading ? <Skeleton width={200} height={20} style={{ margin: "20px" }} /> : <CardHeader
+          subheader={"RunId: " + (supplyChainData?.run_name)}
+          sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
+          action={
+            <Typography variant='body2' data-testid="updated-time" sx={{ color: 'text.disabled' }}>
+              Updated {(timer) / 1000} seconds ago
+            </Typography>
+          }
+        />}
+
+        <CardContent sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+
+          {loading ? <div className={`scroll-container`}>
+            <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> : getSupplyChain()}
+        </CardContent>
       </Card>
       <br></br>
       {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={handleDetailsTrigger} supplyChainStepData={supplyChainStepData} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading || stepLoading} />}
