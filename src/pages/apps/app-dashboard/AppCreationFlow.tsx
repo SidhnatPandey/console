@@ -28,6 +28,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
   const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
   const handleTileClick = (stage: string) => {
+    localStorage.setItem('cStage', stage);
     setSelectedTile(stage);
   };
   const handleDetailsTrigger = (stage: string) => {
@@ -45,20 +46,16 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         supplyChainData.id,
         supplyChainData.steps[0].step_name
       );
-    }
-  }, [loading]);
-
-  /* useEffect(() => {
-    if (supplyChainData) {
-      // setStepLoading(true);
       const intervalId = setInterval(() => {
+        const stage = localStorage.getItem('cStage') || '';
         getSupplyChainStep(
           supplyChainData.id,
-          selectedTile
+          stage
         );
-      }, timer); // Call every 60 seconds (adjust as needed)
+      }, timer);
+      return () => clearInterval(intervalId);
     }
-  }, [supplyChainData]); */
+  }, [loading]);
 
   const getSupplyChainStep = (id: string, step: string) => {
     handleTileClick(step);

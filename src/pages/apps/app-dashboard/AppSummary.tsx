@@ -34,7 +34,10 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
   const [matrix, setMatrix] = useState<Matrix>();
   useEffect(() => {
     if (appName) {
-
+      matrixData(appName).then(
+        (response) => {
+          setMatrix(response?.data);
+        })
       const metricsIntervalId = setInterval(() => {
         matrixData(appName).then(
           (response) => {
