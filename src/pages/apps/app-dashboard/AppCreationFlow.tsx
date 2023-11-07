@@ -111,7 +111,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
           }
         />}
 
-        <CardContent sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+        <CardContent sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }} style={{ paddingBottom: '0px' }}>
 
           {loading ? <div className={`scroll-container`}>
             <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> : getSupplyChain()}
