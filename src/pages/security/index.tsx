@@ -1,7 +1,14 @@
 import React from 'react';
-
+import SecurityCompliance from './SecurityCompliance';
+import SecurityVulnerabilities from './SecurityVulnerabilities';
+import ApplicationVulnerabilities from './ApplicationVulnerabilities';
 const Security = () => {
-    return <h1>Security Dashboard</h1>
+    return (
+        <><SecurityCompliance />
+        <SecurityVulnerabilities />
+        <ApplicationVulnerabilities/>
+        </>
+    );
 }
 
 export default Security;
