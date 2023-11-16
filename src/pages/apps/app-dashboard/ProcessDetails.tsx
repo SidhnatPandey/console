@@ -11,6 +11,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
 import { log } from "console";
 import { Box } from "@mui/system";
+import { convertDateFormat } from "src/utils/dateUtil";
 
 // Define the prop types for the ProcessDetails component
 interface ProcessDetailsProps {
@@ -118,7 +119,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
   const getValue = (value: string) => {
     const date = new Date(value);
-    return date.toDateString() === "Invalid Date" ? value : date.toLocaleString();
+    return date.toDateString() === "Invalid Date" ? value : convertDateFormat(value);
   }
 
   return (
@@ -162,10 +163,11 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           <Grid item xs={4}>
             {loading ? <Skeleton width={150} height={20} /> :
               <Typography data-testid="date" variant="h5">
-                <b>Date:</b> {(supplyChainStepData?.started_at && !supplyChainStepData?.stage?.toLowerCase().includes("approval")) ? new Date(supplyChainStepData?.started_at).toLocaleString() : "N/A"}
+                <b>Date:</b> {(supplyChainStepData?.started_at && !supplyChainStepData?.stage?.toLowerCase().includes("approval")) ? convertDateFormat(supplyChainStepData?.started_at) : "N/A"}
               </Typography>}
           </Grid>
 
+          {/* Result */}
           {supplyChainStepData?.result.length > 0 && <>
             <Grid item xs={12} style={{ marginBottom: "-20px", marginTop: "-10px" }}><h2>Result</h2></Grid>
             {supplyChainStepData.result.map((result: any, index: number) => {
