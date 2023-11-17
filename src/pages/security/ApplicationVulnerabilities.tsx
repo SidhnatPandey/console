@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -9,10 +9,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  LinearProgress,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import OptionsMenu from "src/@core/components/option-menu";
+
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import pagination from "src/@core/theme/overrides/pagination";
 
 const ApplicationVulnerabilities = () => {
   const vulnerabilityData = [
@@ -29,6 +34,8 @@ const ApplicationVulnerabilities = () => {
       CVEs: 5,
     },
   ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const entriesPerPage = 10;
 
   const renderOptionsMenuCell = () => (
     <TableCell>
@@ -40,7 +47,11 @@ const ApplicationVulnerabilities = () => {
       </Box>
     </TableCell>
   );
-
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = Math.min(
+    startIndex + entriesPerPage - 1,
+    vulnerabilityData.length
+  );
   return (
     <Card sx={{ marginTop: "180px" }}>
       <Box p={2} display="flex" flexDirection="column">
@@ -64,8 +75,8 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
 
-        <TableContainer  >
-        <Table sx={{ border: "1px solid #ced4da" }}>
+        <TableContainer>
+          <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
                 <TableCell>
@@ -129,13 +140,32 @@ const ApplicationVulnerabilities = () => {
                   <TableCell>{row.appName}</TableCell>
                   <TableCell>{row.workspace}</TableCell>
                   <TableCell>{row.lastScanned}</TableCell>
-                  <TableCell>{row.CVEs}</TableCell>
+                  <TableCell>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={(row.CVEs / 150) * 100}
+                        sx={{ marginRight: "8px", width: "100%" }}
+                      />
+                      <span>{row.CVEs}</span>
+                    </div>
+                  </TableCell>
+
                   {renderOptionsMenuCell()}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box display="flex" mt={6} alignItems="center">
+          <span>
+            Showing {startIndex + 1} to {endIndex + 1} of{" "}
+            {vulnerabilityData.length} entries
+          </span>
+          <Stack spacing={2} mt={3} ml="auto" alignItems="flex-end">
+            <Pagination {...pagination} shape="rounded" color="primary" />
+          </Stack>
+        </Box>
       </Box>
     </Card>
   );
