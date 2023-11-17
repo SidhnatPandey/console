@@ -416,9 +416,9 @@ const StepperCustomVertical = () => {
   const convertData = (envVariables: any[]) => {
     const nData: { test: EnvironmentVariable[], stg: EnvironmentVariable[], prod: EnvironmentVariable[] } = { test: [], stg: [], prod: [] };
     envVariables.forEach((ele: any) => {
-      if (ele.test) { nData.test.push({ 'key': ele.key, 'value': ele.value }) };
-      if (ele.stg) { nData.stg.push({ 'key': ele.key, 'value': ele.value }) };
-      if (ele.prod) { nData.prod.push({ 'key': ele.key, 'value': ele.value }) };
+      if (ele.test) { nData.test.push({ 'key': ele.key, 'value': ele.value }) }
+      if (ele.stg) { nData.stg.push({ 'key': ele.key, 'value': ele.value }) }
+      if (ele.prod) { nData.prod.push({ 'key': ele.key, 'value': ele.value }) }
     })
     return nData;
   }
