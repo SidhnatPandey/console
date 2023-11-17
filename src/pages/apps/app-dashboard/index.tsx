@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import { appDetails } from "src/services/appService";
 import { env } from "next-runtime-env";
 import "react-loading-skeleton/dist/skeleton.css";
+import AppLogs from "./AppLogs";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -316,20 +317,15 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
           <Typography>
-            Chocolate bar carrot cake candy canes sesame snaps. Cupcake pie
-            gummi bears jujubes candy canes. Chupa chups sesame snaps halvah.
+            Under Development
           </Typography>
         </TabPanel>
         <TabPanel value="3" data-testid="tab-panel-3">
-          <Typography>
-            Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa
-            chups. Macaroon ice cream tootsie roll carrot cake gummi bears.
-          </Typography>
+          <AppLogs />
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            Danish tiramisu jujubes cupcake chocolate bar cake cheesecake chupa
-            chups. Macaroon ice cream tootsie roll carrot cake gummi bears.
+            Under Development
           </Typography>
         </TabPanel>
       </TabContext>
