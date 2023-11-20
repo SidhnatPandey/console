@@ -81,10 +81,11 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axios
-      .post(env('NEXT_PUBLIC_BASE_URL')+authConfig.loginEndpoint, params)
+      .post(env('NEXT_PUBLIC_BASE_URL') + authConfig.loginEndpoint, params)
       .then(async response => {
+        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.access_token)
         params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.access_token)
+          ? window.localStorage.setItem('isRemember', 'true')
           : null
         const returnUrl = router.query.returnUrl
         const user: UserDataType = {

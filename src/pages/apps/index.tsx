@@ -11,6 +11,7 @@ import TablePagination from '@mui/material/TablePagination';
 import Chip from '@mui/material/Chip'; // Import Chip component
 import { useRouter } from 'next/router';
 import { appList } from 'src/services/appService';
+import { convertDateFormat } from 'src/utils/dateUtil';
 
 interface Row {
   id: number;
@@ -134,7 +135,7 @@ const Apps: React.FC<AppListProps> = () => {
     }
   };
 
-  const getCurrentEnv = (stage:any) => {
+  const getCurrentEnv = (stage: any) => {
     switch (stage) {
       case 'deploy-test':
         return 'test';
@@ -196,10 +197,10 @@ const Apps: React.FC<AppListProps> = () => {
                     hover
                     style={{ cursor: 'pointer', height: '100%' }}
                   >
-                    <TableCell>{row.application_name}</TableCell>
-                    <TableCell>{getCurrentEnv(row.stage)}</TableCell>
-                    <TableCell>{new Date(row.last_deployed).toLocaleString()}</TableCell>
-                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
+                    <TableCell>{row?.application_name}</TableCell>
+                    <TableCell>{getCurrentEnv(row?.stage)}</TableCell>
+                    <TableCell>{convertDateFormat(row?.last_deployed)}</TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
                     <TableCell>
                       <Chip
                         label={row.status ? row.status : 'unknown'}
