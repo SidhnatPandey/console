@@ -18,9 +18,14 @@ import OptionsMenu from "src/@core/components/option-menu";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
-
+interface AppData {
+  appName: string;
+  workspace: string;
+  lastScanned: string;
+  CVEs: number;
+}
 const ApplicationVulnerabilities = () => {
-  const vulnerabilityData = [
+  const [vulnerabilityData, setVulnerabilityData] = useState<AppData[]>([
     {
       appName: "App 1",
       workspace: "Workspace A",
@@ -117,7 +122,8 @@ const ApplicationVulnerabilities = () => {
       lastScanned: "2023-01-20",
       CVEs: 150,
     },
-  ];
+  
+]);
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
@@ -132,6 +138,7 @@ const ApplicationVulnerabilities = () => {
       </Box>
     </TableCell>
   );
+  
   const filteredData = vulnerabilityData.filter((row) =>
     Object.values(row).some(
       (value) =>
@@ -146,7 +153,34 @@ const ApplicationVulnerabilities = () => {
     startIndex + entriesPerPage - 1,
     filteredData.length - 1
   );
+  const [sort, setSort] = useState<{ column: keyof AppData | null; direction: "asc" | "desc" }>({
+    column: null,
+    direction: "asc",
+  });
 
+  const handleSort = (columnName: keyof AppData) => {
+    setSort({
+      column: columnName,
+      direction: sort.column === columnName ? (sort.direction === "asc" ? "desc" : "asc") : "asc",
+    });
+
+    setVulnerabilityData((prevData) =>
+      [...prevData].sort((a, b) => {
+        const valueA = a[columnName];
+        const valueB = b[columnName];
+
+        if (typeof valueA === "number" && typeof valueB === "number") {
+          return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+        }
+
+        // If values are not numeric, handle non-numeric comparisons
+        const stringA = String(valueA);
+        const stringB = String(valueB);
+
+        return sort.direction === "asc" ? stringA.localeCompare(stringB) : stringB.localeCompare(stringA);
+      })
+    );
+  };
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
@@ -176,12 +210,12 @@ const ApplicationVulnerabilities = () => {
             />
           </Box>
         </Box>
-
+        {filteredData.length > 0 ? (
         <TableContainer>
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
-                <TableCell>
+              <TableCell onClick={() => handleSort("appName")}>
                   <Box display="flex" alignItems="center">
                     <span>App Name</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -194,7 +228,7 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => handleSort("workspace")}>
                   <Box display="flex" alignItems="center">
                     <span>Workspace</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -207,7 +241,7 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => handleSort("lastScanned")}>
                   <Box display="flex" alignItems="center">
                     <span>Last Scanned</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -220,7 +254,7 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => handleSort("CVEs")}>
                   <Box display="flex" alignItems="center">
                     <span>CVEs</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -261,6 +295,11 @@ const ApplicationVulnerabilities = () => {
             </TableBody>
           </Table>
         </TableContainer>
+          ) : (
+            <Box textAlign="center" mt={2}>
+              <span>No Apps</span>
+            </Box>
+          )}
         <Box display="flex" mt={6} alignItems="center">
           <span>
             Showing {filteredData.length > 0 ? startIndex + 1 : 0} to{" "}
