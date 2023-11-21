@@ -127,32 +127,6 @@ const ApplicationVulnerabilities = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
-
-  const renderOptionsMenuCell = () => (
-    <TableCell>
-      <Box display="flex" flexDirection="column">
-        <OptionsMenu
-          options={["Refresh", "Edit", "Share"]}
-          iconButtonProps={{ size: "small", sx: { color: "gray" } }}
-        />
-      </Box>
-    </TableCell>
-  );
-  
-  const filteredData = vulnerabilityData.filter((row) =>
-    Object.values(row).some(
-      (value) =>
-        value &&
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-
-  const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
-  const endIndex = Math.min(
-    startIndex + entriesPerPage - 1,
-    filteredData.length - 1
-  );
   const [sort, setSort] = useState<{ column: keyof AppData | null; direction: "asc" | "desc" }>({
     column: null,
     direction: "asc",
@@ -181,6 +155,32 @@ const ApplicationVulnerabilities = () => {
       })
     );
   };
+  const renderOptionsMenuCell = () => (
+    <TableCell>
+      <Box display="flex" flexDirection="column">
+        <OptionsMenu
+          options={["Refresh", "Edit", "Share"]}
+          iconButtonProps={{ size: "small", sx: { color: "gray" } }}
+        />
+      </Box>
+    </TableCell>
+  );
+  
+  const filteredData = vulnerabilityData.filter((row) =>
+    Object.values(row).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+
+  const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
+  const endIndex = Math.min(
+    startIndex + entriesPerPage - 1,
+    filteredData.length - 1
+  );
+  
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
@@ -188,7 +188,7 @@ const ApplicationVulnerabilities = () => {
 
   return (
     <Card sx={{ marginTop: "180px" }}>
-      <Box p={2} display="flex" flexDirection="column">
+      <Box  display="flex" flexDirection="column">
         <Box
           display="flex"
           justifyContent="space-between"
@@ -196,8 +196,8 @@ const ApplicationVulnerabilities = () => {
           mb={2}
           pb={2}
         >
-          <h3 style={{ marginLeft: "20px" }}>Application Vulnerabilities</h3>
-          <Box display="flex" alignItems="center" sx={{ marginRight: "20px" }}>
+          <h3 style={{ marginLeft: "20px" , marginTop:"40px" }}>Application Vulnerabilities</h3>
+          <Box display="flex" alignItems="center" sx={{ marginRight: "20px" ,  marginTop:"30px"}}>
             <Input
               placeholder="Search"
               sx={{
@@ -211,7 +211,7 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
         {filteredData.length > 0 ? (
-        <TableContainer>
+        <TableContainer sx={{ width: "100%" }}>
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
@@ -300,12 +300,12 @@ const ApplicationVulnerabilities = () => {
               <span>No Apps</span>
             </Box>
           )}
-        <Box display="flex" mt={6} alignItems="center">
+        <Box display="flex" mt={6} ml="20px"  marginBottom={"20px"} alignItems="center">
           <span>
             Showing {filteredData.length > 0 ? startIndex + 1 : 0} to{" "}
             {endIndex + 1} of {filteredData.length} entries
           </span>
-          <Stack spacing={2} mt={3} ml="auto" alignItems="flex-end">
+          <Stack spacing={2} mt={3} ml="auto" marginBottom={"20px"} alignItems="flex-end">
             {filteredData.length > 0 ? (
               <Pagination
                 {...pagination}
