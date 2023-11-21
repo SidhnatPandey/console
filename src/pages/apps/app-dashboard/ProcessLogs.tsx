@@ -15,6 +15,7 @@ import TabContext from "@mui/lab/TabContext";
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
+import Logs from "src/components/logs";
 
 interface ProcessLogsProps {
   steps: Step[] | undefined;
@@ -161,39 +162,9 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
           </Box>
         </Grid>
         <Grid item xs={10.8}>
-          <div className="scroll-container2" style={{
-            height: '400px',
-            backgroundColor: 'black',
-            color: 'white',
-            width: '100%',
-            overflow: 'auto',
-            padding: '10px',
-          }}>
-            {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{log}</p>
-            })}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={500} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={300} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={500} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={300} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-          </div>
+          <Logs loading={loading} logs={logs} />
         </Grid>
       </Grid>
-
-
-
     </Card>
   );
 };

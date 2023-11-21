@@ -51,6 +51,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -167,7 +168,7 @@ const LoaderComponent = () => {
 const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
-  env_variables: [{ key: "", value: "" }],
+  env_variables: [{ key: "", value: "", stg: false, test: false, prod: false }],
 };
 
 const ConfigurationSchema = yup.object().shape({
@@ -177,6 +178,9 @@ const ConfigurationSchema = yup.object().shape({
     yup.object({
       key: yup.string(),
       value: yup.string(),
+      stg: yup.boolean(),
+      test: yup.boolean(),
+      prod: yup.boolean(),
     })
   ),
 });
@@ -247,9 +251,9 @@ const StepperCustomVertical = () => {
     resolver: yupResolver(ConfigurationSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, } = useFieldArray({
     name: "env_variables",
-    control: configurationControl,
+    control: configurationControl
   });
 
   const router = useRouter();
@@ -354,7 +358,7 @@ const StepperCustomVertical = () => {
 
   const handleClickOpen = () => {
     if (getConfigurationValue("env_variables").length === 0) {
-      setConfigurationValue("env_variables", [{ key: "", value: "" }]);
+      setConfigurationValue("env_variables", [{ key: "", value: "", stg: false, test: false, prod: false }]);
     }
     setOpen(true);
   };
@@ -381,6 +385,7 @@ const StepperCustomVertical = () => {
   const handleFinalSubmit = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
+    data.env_variables = convertData(data.env_variables);
     console.log(data);
     saveApp(data)
       .then((response) => {
@@ -391,6 +396,32 @@ const StepperCustomVertical = () => {
         toast.error(error);
       });
   };
+
+  const handleCheckboxChange = (index: number, checked: boolean, type: string) => {
+    const currentValues = getConfigurationValue();
+    switch (type) {
+      case 'test':
+        currentValues.env_variables[index].test = checked;
+        break;
+      case 'stg':
+        currentValues.env_variables[index].stg = checked;
+        break;
+      case 'prod':
+        currentValues.env_variables[index].prod = checked;
+        break;
+    }
+    setConfigurationValue('env_variables', currentValues.env_variables);
+  };
+
+  const convertData = (envVariables: any[]) => {
+    const nData: { test: EnvironmentVariable[], stg: EnvironmentVariable[], prod: EnvironmentVariable[] } = { test: [], stg: [], prod: [] };
+    envVariables.forEach((ele: any) => {
+      if (ele.test) { nData.test.push({ 'key': ele.key, 'value': ele.value }) }
+      if (ele.stg) { nData.stg.push({ 'key': ele.key, 'value': ele.value }) }
+      if (ele.prod) { nData.prod.push({ 'key': ele.key, 'value': ele.value }) }
+    })
+    return nData;
+  }
 
   const getStepContent = (step: number) => {
     switch (step) {
@@ -713,22 +744,22 @@ const StepperCustomVertical = () => {
                             key={field.id}
                             style={{ marginBottom: "10px" }}
                           >
-                            <Grid item xs={5.5} sm={5.5}>
+                            <Grid item xs={4} sm={4}>
                               <FormControl>
                                 <TextField
                                   label="Key"
-                                  sx={{ width: 315 }}
+                                  sx={{ width: "110%" }}
                                   {...configurationRegister(
                                     `env_variables.${index}.key` as const
                                   )}
                                 ></TextField>
                               </FormControl>
                             </Grid>
-                            <Grid item xs={5.5} sm={5.5}>
+                            <Grid item xs={4} sm={4}>
                               <FormControl>
                                 <TextField
                                   label="Value"
-                                  sx={{ width: 325 }}
+                                  sx={{ width: "120%" }}
                                   {...configurationRegister(
                                     `env_variables.${index}.value` as const
                                   )}
@@ -736,11 +767,26 @@ const StepperCustomVertical = () => {
                               </FormControl>
                             </Grid>
                             <Grid item xs={1} sm={1}>
+                              <FormControlLabel label='Test' labelPlacement='top' control={<Checkbox
+                                checked={field.test}
+                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'test')} />} />
+                            </Grid>
+                            <Grid item xs={1} sm={1}>
+                              <FormControlLabel label='Stg' labelPlacement='top' control={<Checkbox
+                                checked={field.stg}
+                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'stg')} />} />
+                            </Grid>
+                            <Grid item xs={1} sm={1}>
+                              <FormControlLabel label='Prod' labelPlacement='top' control={<Checkbox
+                                checked={field.prod}
+                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'prod')} />} />
+                            </Grid>
+                            <Grid item xs={1} sm={1}>
                               {index === fields.length - 1 && (
                                 <IconButton
-                                  aria-label="delete"
+                                  aria-label="add"
                                   size="large"
-                                  onClick={() => append({ key: "", value: "" })}
+                                  onClick={() => append({ key: "", value: "", stg: false, test: false, prod: false })}
                                 >
                                   <AddIcon fontSize="inherit" />
                                 </IconButton>
