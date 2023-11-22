@@ -28,7 +28,7 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
     }
 
     const setConvertedState = (data: any) => {
-        let convertedData: LogsData[] = [];
+        const convertedData: LogsData[] = [];
         convertedData.push({ run_name: 'prod', log: data.prod.log });
         convertedData.push({ run_name: 'stg', log: data.stg.log })
         convertedData.push({ run_name: 'test', log: data.test.log })
