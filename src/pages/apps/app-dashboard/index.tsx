@@ -320,8 +320,8 @@ const AppDashboard = () => {
             Under Development
           </Typography>
         </TabPanel>
-        <TabPanel value="3" data-testid="tab-panel-3">
-          <AppLogs />
+        <TabPanel value="3" sx={{ p: 0 }} data-testid="tab-panel-3">
+          <AppLogs appName={appData?.id} />
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
