@@ -52,6 +52,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
   const [logs, setLogs] = useState<string[]>([]);
   const [tabName, setTabName] = useState<string>();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStage, setSelectedStage] = useState('');
 
   const icon = (status: string | undefined) => {
     if (status) {
@@ -109,9 +110,14 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
   };
 
   useEffect(() => {
+    const cStage = localStorage.getItem('cStage') || '';
     if (steps && steps.length > 0 && steps[0].log) {
-      setLogs(steps[0].log.split('\n'));
-      setTabName(steps[0].run_name);
+      if ((selectedStage === '') || (cStage != selectedStage)) {
+        setValue("0");
+        setLogs(steps[0].log.split('\n'));
+        setTabName(steps[0].run_name);
+        setSelectedStage(cStage);
+      }
     } else {
       setLogs([]);
     }
