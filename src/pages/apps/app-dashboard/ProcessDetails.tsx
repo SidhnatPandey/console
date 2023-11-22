@@ -207,7 +207,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
         </Grid>
       </Card >
       <br></br>
-      {supplyChainStepData?.steps?.length > 0 && <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} />}
+      {supplyChainStepData?.steps?.length > 0 && <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} tabHeading="Steps" />}
 
       <Dialog
         open={open}
