@@ -31,6 +31,7 @@ import { appDetails } from "src/services/appService";
 import { env } from "next-runtime-env";
 import "react-loading-skeleton/dist/skeleton.css";
 import AppLogs from "./AppLogs";
+import DestroyApp from "./DestroyApp";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -325,7 +326,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            Under Development
+            <DestroyApp loading={false} appName={undefined} metricsTimer={0} />
           </Typography>
         </TabPanel>
       </TabContext>
