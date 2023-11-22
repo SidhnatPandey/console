@@ -14,128 +14,113 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import OptionsMenu from "src/@core/components/option-menu";
-
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
-interface AppData {
-  appName: string;
-  workspace: string;
-  lastScanned: string;
-  CVEs: number;
+interface AppSecurityData {
+  AppName: string;
+  WorkspaceId: string;
+  LastScanned: string;
+  Cves: {
+    Count: number;
+    Severity: string;
+  }[];
 }
 const ApplicationVulnerabilities = () => {
-  const [vulnerabilityData, setVulnerabilityData] = useState<AppData[]>([
+  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
     {
-      appName: "App 1",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 10,
+      AppName: "App 1",
+      WorkspaceId: "WorkspaceId A",
+      LastScanned: "2023-01-15",
+      Cves: [
+        { Count: 1, Severity: "Critical" },
+        { Count: 2, Severity: "High" },
+        { Count: 10, Severity: "Low" },
+        { Count: 3, Severity: "Medium" },
+        { Count: 2, Severity: "Unknown" },
+      ],
     },
     {
-      appName: "App 2",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 5,
+      AppName: "App 2",
+      WorkspaceId: "WorkspaceId B",
+      LastScanned: "2023-01-20",
+      Cves: [
+        { Count: 1, Severity: "Critical" },
+
+        { Count: 2, Severity: "Unknown" },
+      ],
     },
     {
-      appName: "App 3",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 50,
+      AppName: "App 3",
+      WorkspaceId: "WorkspaceId A",
+      LastScanned: "2023-01-15",
+      Cves: [
+        { Count: 3, Severity: "Medium" },
+        { Count: 2, Severity: "Unknown" },
+      ],
     },
     {
-      appName: "App 4",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 150,
+      AppName: "App 4",
+      WorkspaceId: "WorkspaceId B",
+      LastScanned: "2023-01-20",
+      Cves: [{ Count: 3, Severity: "Medium" }],
     },
     {
-      appName: "App 1",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 10,
+      AppName: "App 1",
+      WorkspaceId: "WorkspaceId A",
+      LastScanned: "2023-01-15",
+      Cves: [
+        { Count: 3, Severity: "Medium" },
+        { Count: 2, Severity: "Unknown" },
+      ],
     },
     {
-      appName: "App 2",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 5,
+      AppName: "App 2",
+      WorkspaceId: "WorkspaceId B",
+      LastScanned: "2023-01-20",
+      Cves: [{ Count: 1, Severity: "Critical" }],
     },
     {
-      appName: "App 3",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 50,
+      AppName: "App 3",
+      WorkspaceId: "WorkspaceId A",
+      LastScanned: "2023-01-15",
+      Cves: [{ Count: 3, Severity: "Medium" }],
     },
-    {
-      appName: "App 4",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 150,
-    },
-    {
-      appName: "App 1",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 10,
-    },
-    {
-      appName: "App 2",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 5,
-    },
-    {
-      appName: "App 3",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 50,
-    },
-    {
-      appName: "App 4",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 150,
-    },
-    {
-      appName: "App 1",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 10,
-    },
-    {
-      appName: "App 2",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 5,
-    },
-    {
-      appName: "App 3",
-      workspace: "Workspace A",
-      lastScanned: "2023-01-15",
-      CVEs: 50,
-    },
-    {
-      appName: "App 4",
-      workspace: "Workspace B",
-      lastScanned: "2023-01-20",
-      CVEs: 150,
-    },
-  
-]);
+  ]);
+
+  const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
+    return Cves.reduce((total, cve) => total + cve.Count, 0);
+  };
+
+  const SeverityColors: Record<string, string> = {
+    Low: "lightgrey",
+    Medium: "rgb(115, 83, 229)",
+    High: "darkorange",
+    Critical: "red",
+    Unknown: "white",
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
-  const [sort, setSort] = useState<{ column: keyof AppData | null; direction: "asc" | "desc" }>({
+
+  const [sort, setSort] = useState<{
+    column: keyof AppSecurityData | null;
+    direction: "asc" | "desc";
+  }>({
     column: null,
     direction: "asc",
   });
 
-  const handleSort = (columnName: keyof AppData) => {
+  const handleSort = (columnName: keyof AppSecurityData) => {
     setSort({
       column: columnName,
-      direction: sort.column === columnName ? (sort.direction === "asc" ? "desc" : "asc") : "asc",
+      direction:
+        sort.column === columnName
+          ? sort.direction === "asc"
+            ? "desc"
+            : "asc"
+          : "asc",
     });
 
     setVulnerabilityData((prevData) =>
@@ -147,11 +132,12 @@ const ApplicationVulnerabilities = () => {
           return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
         }
 
-        // If values are not numeric, handle non-numeric comparisons
         const stringA = String(valueA);
         const stringB = String(valueB);
 
-        return sort.direction === "asc" ? stringA.localeCompare(stringB) : stringB.localeCompare(stringA);
+        return sort.direction === "asc"
+          ? stringA.localeCompare(stringB)
+          : stringB.localeCompare(stringA);
       })
     );
   };
@@ -165,7 +151,7 @@ const ApplicationVulnerabilities = () => {
       </Box>
     </TableCell>
   );
-  
+
   const filteredData = vulnerabilityData.filter((row) =>
     Object.values(row).some(
       (value) =>
@@ -180,7 +166,7 @@ const ApplicationVulnerabilities = () => {
     startIndex + entriesPerPage - 1,
     filteredData.length - 1
   );
-  
+
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
@@ -188,7 +174,7 @@ const ApplicationVulnerabilities = () => {
 
   return (
     <Card sx={{ marginTop: "180px" }}>
-      <Box  display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column">
         <Box
           display="flex"
           justifyContent="space-between"
@@ -196,8 +182,14 @@ const ApplicationVulnerabilities = () => {
           mb={2}
           pb={2}
         >
-          <h3 style={{ marginLeft: "20px" , marginTop:"40px" }}>Application Vulnerabilities</h3>
-          <Box display="flex" alignItems="center" sx={{ marginRight: "20px" ,  marginTop:"30px"}}>
+          <h3 style={{ marginLeft: "20px", marginTop: "40px" }}>
+            Application Vulnerabilities
+          </h3>
+          <Box
+            display="flex"
+            alignItems="center"
+            sx={{ marginRight: "20px", marginTop: "30px" }}
+          >
             <Input
               placeholder="Search"
               sx={{
@@ -211,101 +203,119 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
         {filteredData.length > 0 ? (
-        <TableContainer sx={{ width: "100%" }}>
-          <Table sx={{ border: "1px solid #ced4da" }}>
-            <TableHead>
-              <TableRow>
-              <TableCell onClick={() => handleSort("appName")}>
-                  <Box display="flex" alignItems="center">
-                    <span>App Name</span>
-                    <Box display="flex" flexDirection="column" ml={6}>
-                      <KeyboardArrowUpIcon
-                        sx={{ color: "gray", marginBottom: "-6px" }}
-                      />
-                      <KeyboardArrowDownIcon
-                        sx={{ color: "gray", marginTop: "-6px" }}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell onClick={() => handleSort("workspace")}>
-                  <Box display="flex" alignItems="center">
-                    <span>Workspace</span>
-                    <Box display="flex" flexDirection="column" ml={6}>
-                      <KeyboardArrowUpIcon
-                        sx={{ color: "gray", marginBottom: "-6px" }}
-                      />
-                      <KeyboardArrowDownIcon
-                        sx={{ color: "gray", marginTop: "-6px" }}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell onClick={() => handleSort("lastScanned")}>
-                  <Box display="flex" alignItems="center">
-                    <span>Last Scanned</span>
-                    <Box display="flex" flexDirection="column" ml={6}>
-                      <KeyboardArrowUpIcon
-                        sx={{ color: "gray", marginBottom: "-6px" }}
-                      />
-                      <KeyboardArrowDownIcon
-                        sx={{ color: "gray", marginTop: "-6px" }}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell onClick={() => handleSort("CVEs")}>
-                  <Box display="flex" alignItems="center">
-                    <span>CVEs</span>
-                    <Box display="flex" flexDirection="column" ml={6}>
-                      <KeyboardArrowUpIcon
-                        sx={{ color: "gray", marginBottom: "-6px" }}
-                      />
-                      <KeyboardArrowDownIcon
-                        sx={{ color: "gray", marginTop: "-6px" }}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                {renderOptionsMenuCell()}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredData
-                .slice(startIndex, endIndex + 1)
-                .map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{row.appName}</TableCell>
-                    <TableCell>{row.workspace}</TableCell>
-                    <TableCell>{row.lastScanned}</TableCell>
-                    <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={(row.CVEs / 150) * 100}
-                          sx={{ marginRight: "8px", width: "100%" }}
+          <TableContainer sx={{ width: "100%" }}>
+            <Table sx={{ border: "1px solid #ced4da" }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell onClick={() => handleSort("AppName")}>
+                    <Box display="flex" alignItems="center">
+                      <span>App Name</span>
+                      <Box display="flex" flexDirection="column" ml={6}>
+                        <KeyboardArrowUpIcon
+                          sx={{ color: "gray", marginBottom: "-6px" }}
                         />
-                        <span>{row.CVEs}</span>
-                      </div>
-                    </TableCell>
+                        <KeyboardArrowDownIcon
+                          sx={{ color: "gray", marginTop: "-6px" }}
+                        />
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell onClick={() => handleSort("WorkspaceId")}>
+                    <Box display="flex" alignItems="center">
+                      <span>WorkspaceId</span>
+                      <Box display="flex" flexDirection="column" ml={6}>
+                        <KeyboardArrowUpIcon
+                          sx={{ color: "gray", marginBottom: "-6px" }}
+                        />
+                        <KeyboardArrowDownIcon
+                          sx={{ color: "gray", marginTop: "-6px" }}
+                        />
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell onClick={() => handleSort("LastScanned")}>
+                    <Box display="flex" alignItems="center">
+                      <span>Last Scanned</span>
+                      <Box display="flex" flexDirection="column" ml={6}>
+                        <KeyboardArrowUpIcon
+                          sx={{ color: "gray", marginBottom: "-6px" }}
+                        />
+                        <KeyboardArrowDownIcon
+                          sx={{ color: "gray", marginTop: "-6px" }}
+                        />
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell onClick={() => handleSort("Cves")}>
+                    <Box display="flex" alignItems="center">
+                      <span>CVEs</span>
+                      <Box display="flex" flexDirection="column" ml={6}>
+                        <KeyboardArrowUpIcon
+                          sx={{ color: "gray", marginBottom: "-6px" }}
+                        />
+                        <KeyboardArrowDownIcon
+                          sx={{ color: "gray", marginTop: "-6px" }}
+                        />
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  {renderOptionsMenuCell()}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredData
+                  .slice(startIndex, endIndex + 1)
+                  .map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{row.AppName}</TableCell>
+                      <TableCell>{row.WorkspaceId}</TableCell>
+                      <TableCell>{row.LastScanned}</TableCell>
+                      <TableCell>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={(calculateTotalCVEs(row.Cves) / 150) * 100}
+                            sx={{
+                              marginRight: "8px",
+                              width: "100%",
+                              height: "20px",
+                              borderRadius: "4px",
+                              background: SeverityColors[row.Cves[0].Severity],
+                            }}
+                          />
+                          <span>{calculateTotalCVEs(row.Cves)}</span>
+                        </div>
+                      </TableCell>
 
-                    {renderOptionsMenuCell()}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-          ) : (
-            <Box textAlign="center" mt={2}>
-              <span>No Apps</span>
-            </Box>
-          )}
-        <Box display="flex" mt={6} ml="20px"  marginBottom={"20px"} alignItems="center">
+                      {renderOptionsMenuCell()}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Box textAlign="center" mt={2}>
+            <span>No Apps</span>
+          </Box>
+        )}
+        <Box
+          display="flex"
+          mt={6}
+          ml="20px"
+          marginBottom={"20px"}
+          alignItems="center"
+        >
           <span>
             Showing {filteredData.length > 0 ? startIndex + 1 : 0} to{" "}
             {endIndex + 1} of {filteredData.length} entries
           </span>
-          <Stack spacing={2} mt={3} ml="auto" marginBottom={"20px"} alignItems="flex-end">
+          <Stack
+            spacing={2}
+            mt={3}
+            ml="auto"
+            marginBottom={"20px"}
+            alignItems="flex-end"
+          >
             {filteredData.length > 0 ? (
               <Pagination
                 {...pagination}
