@@ -1,19 +1,21 @@
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
+import { Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 import Skeleton from 'react-loading-skeleton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from '@mui/material'
 
 interface DestroyAppProps {
-    loading: boolean,
+    loading: boolean;
+    appName?: string; 
+    metricsTimer?: number; 
 }
 
-const DestroyApp: React.FC<DestroyAppProps> = ({ loading }) => {
+const DestroyApp: React.FC<DestroyAppProps> = ({ loading, appName, metricsTimer }) => {
     return (
         <Card>
             {loading ? (
@@ -62,13 +64,14 @@ const DestroyApp: React.FC<DestroyAppProps> = ({ loading }) => {
                                         marginLeft: 'auto', // Set marginLeft to 'auto' to align to the right boundary
                                     }}
                                 >
-                                    <Box sx={{ marginRight: "-300px" }}>  <Button
-                                        startIcon={<DeleteIcon />}
-                                        style={{ backgroundColor: '#FF0000', color: '#FFFFFF' }}
-                                    >
-                                        Destroy
-                                    </Button></Box>
-
+                                    <Box sx={{ marginRight: "-300px" }}>
+                                        <Button
+                                            startIcon={<DeleteIcon />}
+                                            style={{ backgroundColor: '#FF0000', color: '#FFFFFF' }}
+                                        >
+                                            Destroy
+                                        </Button>
+                                    </Box>
                                 </Box>
                             </Grid>
                         </>
@@ -76,8 +79,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({ loading }) => {
                 </Grid>
             </CardContent>
         </Card>
-
-    )
+    );
 }
 
 export default DestroyApp;
