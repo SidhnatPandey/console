@@ -15,20 +15,18 @@ import TabContext from "@mui/lab/TabContext";
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import Logs from "src/components/logs";
+import { Input, TextField } from "@mui/material";
 
 interface ProcessLogsProps {
   steps: Step[] | undefined;
   loading: boolean;
+  tabHeading: string;
 }
 
 interface Step {
-  completed_at: string;
   log: string;
-  reason: string;
   run_name: string;
-  started_at: string;
-  status: string;
+  status?: string;
 }
 
 // Styled TabList component
@@ -48,63 +46,78 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
+const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading }) => {
 
   const [value, setValue] = useState<string>("0");
-  const [logs, setLogs] = useState<string[]>([])
+  const [logs, setLogs] = useState<string[]>([]);
+  const [tabName, setTabName] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStage, setSelectedStage] = useState('');
 
-  const icon = (status: string) => {
-    const lstatus = status.toLowerCase();
-    switch (lstatus) {
-      case "succeeded":
-        return (
-          <CustomAvatar
-            skin="light"
-            color={"success"}
-            sx={{
-              marginTop: 1,
-              width: 20,
-              height: 20,
-              display: "flex",
-              alignItems: "center",
-            }}
-            style={{ marginRight: 10 }}
-          >
-            <Icon icon={"ph:check-light"} />
-          </CustomAvatar>
-        );
-      case "inprogress":
-        return (
-          <>
-            <LoopIcon
-              style={{ animation: "spin 4s linear infinite", marginLeft: "5px" }}
+  const icon = (status: string | undefined) => {
+    if (status) {
+      const lstatus = status.toLowerCase();
+      switch (lstatus) {
+        case "succeeded":
+          return (
+            <CustomAvatar
+              skin="light"
+              color={"success"}
+              sx={{
+                marginTop: 1,
+                width: 20,
+                height: 20,
+                display: "flex",
+                alignItems: "center",
+              }}
+              style={{ marginRight: 10 }}
+            >
+              <Icon icon={"ph:check-light"} />
+            </CustomAvatar>
+          );
+        case "inprogress":
+          return (
+            <>
+              <LoopIcon
+                style={{ animation: "spin 4s linear infinite", marginLeft: "5px" }}
 
-              color="primary"
-              fontSize="medium"
-            />
-            <style>
-              {`
+                color="primary"
+                fontSize="medium"
+              />
+              <style>
+                {`
               @keyframes spin {
                 0% { transform: rotate(360deg); }
                 100% { transform: rotate(0deg); }
               }`}
-            </style>
-          </>
-        );
-      case "waiting":
-        return (
-          <PendingIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
-        );
-      case "failed":
-        return <ErrorOutlineIcon fontSize="medium" style={{ color: "red" }} />;
-      default:
-        return <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
+              </style>
+            </>
+          );
+        case "waiting":
+          return (
+            <PendingIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
+          );
+        case "failed":
+          return <ErrorOutlineIcon fontSize="medium" style={{ color: "red" }} />;
+        default:
+          return <HelpOutlineIcon fontSize="medium" style={{ color: "rgb(85, 85, 85)" }} />
+      }
     }
   };
 
+  const handleSearchChange = (e: any) => {
+    setSearchTerm(e.target.value);
+  };
+
   useEffect(() => {
+    const cStage = localStorage.getItem('cStage') || '';
     if (steps && steps.length > 0 && steps[0].log) {
-      setLogs(steps[0].log.split('\n'));
+      if ((selectedStage === '') || (cStage != selectedStage)) {
+        setValue("0");
+        setLogs(steps[0].log.split('\n'));
+        setTabName(steps[0].run_name);
+        setSelectedStage(cStage);
+      }
     } else {
       setLogs([]);
     }
@@ -113,29 +126,47 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
   const handleTabChange = (step: Step, index: number) => {
     setValue(index.toString());
     setLogs(step.log.split('\n'));
+    setTabName(step.run_name);
+  };
+
+  const highlightText = (text: string, highlight: string) => {
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+      <span>
+        {parts.map((part, i) => (
+          <span key={i} style={part.toLowerCase() === highlight.toLowerCase() ? { backgroundColor: '#f9f9ad', color: 'black' } : { fontWeight: 'normal' }}>
+            {part}
+          </span>
+        ))}
+      </span>
+    );
   };
 
   return (
     <Card sx={{ height: "auto", display: "flex", flexDirection: "column" }}>
-      <CardContent sx={{ padding: "10px", marginLeft: "20px", flex: 1 }}>
+      <CardContent sx={{ padding: "10px", flex: 1 }}>
         <Grid container spacing={2}>
-          <Grid item>
+          <Grid item xs={2} textAlign="center" marginLeft={"-5px"}>
             <Typography variant="h4">
-              <b>Logs</b>
+              <b>{tabHeading}</b>
             </Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <Typography variant="h4">
+              <b style={{ textTransform: 'capitalize' }}>{tabName} Logs</b>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth />
           </Grid>
         </Grid>
       </CardContent>
 
-      <Grid container spacing={2} style={{ paddingLeft: "100px" }}>
-        <Grid item xs={1.2}>
+      <Grid container spacing={2}>
+        <Grid item xs={2}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center", // Center horizontally
-              alignItems: "center", // Center vertically
-              width: "20%", // Adjust the width as needed
-              padding: "20px", // Add padding for spacing
+              paddingLeft: '10px'
             }}
           >
             {loading ? <Skeleton width={100} height={20} /> :
@@ -153,7 +184,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
                         label={step.run_name}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
-                        icon={icon(step.status)}
+                        icon={icon(step?.status)}
                       />
                     );
                   })}
@@ -161,8 +192,35 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading }) => {
               </TabContext>}
           </Box>
         </Grid>
-        <Grid item xs={10.8}>
-          <Logs loading={loading} logs={logs} />
+        <Grid item xs={10}>
+          <div className="scroll-container2" style={{
+            height: '400px',
+            backgroundColor: 'black',
+            color: 'white',
+            width: '100%',
+            overflow: 'auto',
+            padding: '10px',
+          }}>
+            {!loading && logs.map((log, index) => {
+              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{highlightText(log, searchTerm)}</p>
+            })}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={500} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={300} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+            {loading && <Skeleton width={500} height={10} />}
+            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={300} height={10} />}
+            {loading && <Skeleton width={400} height={10} />}
+            {loading && <Skeleton width={800} height={10} />}
+          </div>
         </Grid>
       </Grid>
     </Card>

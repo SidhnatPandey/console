@@ -23,3 +23,9 @@ export const matrixData = (appName: string) => {
 export const approval = (data: any) => {
     return post(APP_API.approval, data).then((response) => response?.data);
 }
+
+export const getAppLogs = (appId: string) => {
+    let url = APP_API.appLogs;
+    url = url.replace('{appId}', appId);
+    return get(url).then((response) => response?.data)
+}
