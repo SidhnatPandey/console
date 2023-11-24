@@ -43,7 +43,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
         if (index == Cves.length - 1) { borderRadius = "0 10px 10px 0" }
         if (Cves.length == 1) { borderRadius = "10px" }
         return (
-          <Tooltip title={ele.Severity + ':' + ele.Count}>
+          <Tooltip title={ele.Severity + ':' + ele.Count} key={index}>
             <div style={{ width: `${percent}%`, height: '10px', backgroundColor: color, borderRadius: `${borderRadius}` }}></div>
           </Tooltip>
         )

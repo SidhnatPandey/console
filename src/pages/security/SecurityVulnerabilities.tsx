@@ -10,6 +10,8 @@ import { Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import { useEffect, useState } from 'react'
+import { getAllvulnerabilities } from 'src/services/securityService'
 
 interface LabelProp {
   cx: number
@@ -20,34 +22,92 @@ interface LabelProp {
   outerRadius: number
 }
 
+const ColorMapping = {
+  Critical: 'red',
+  High: 'orange',
+  Medium: '#7353E5',
+  Low: '#D3D3D3',
+  Unknown: 'yellow'
+}
+
+interface CVE {
+  Count: number;
+  Severity: string;
+}
+
+interface Vulnerability {
+  name: string;
+  value: number;
+  color: string
+}
+
 const data = [
-    { name: 'Critical', value: 28, color: 'red' },
-  
+  { name: 'Critical', value: 28, color: 'red' },
   { name: 'High', value: 14, color: 'darkorange' },
   { name: 'Medium', value: 72, color: 'rgb(115, 83, 229)' },
   { name: 'Low', value: 36, color: 'lightgrey' }
- 
+
 ]
 
 const RADIAN = Math.PI / 180
-const renderCustomizedLabel = (props: LabelProp) => {
-  // ** Props
-  const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props
-
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-  const x = cx + radius * Math.cos(-midAngle * RADIAN)
-  const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
-  return (
-    <text x={x} y={y} fill='#fff' textAnchor='middle' dominantBaseline='central'>
-      {`${(percent * 150).toFixed(0)}%`}
-    </text>
-  )
-}
 
 const SecurityVulnerabilities = () => {
+
+  const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
+  const [totalVulnerabilities, setTotalVulnerabilities] = useState<number>(0);
+
+  const renderCustomizedLabel = (props: LabelProp) => {
+    // ** Props
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props
+
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
+    console.log(cx, cy, midAngle, innerRadius, outerRadius, percent);
+
+    /* const value = Math.ceil((totalVulnerabilities * percent));
+    (${value}/${totalVulnerabilities}) */
+    return (
+      <text x={x} y={y} fill='#fff' textAnchor='middle' dominantBaseline='central'>
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    )
+  }
+
+  const getVulnerabilities = () => {
+    getAllvulnerabilities().then((res) => {
+      console.log(res.data);
+      const totalV = res.data.reduce((total: number, cve: any) => total + cve.Count, 0);
+      setTotalVulnerabilities(totalV);
+      let newArr: Vulnerability[] = [];
+      res.data.forEach((ele: CVE) => {
+        let obj: Vulnerability = {
+          name: ele.Severity,
+          value: ele.Count,
+          color: getColor(ele.Severity) || 'white'
+        }
+        newArr.push(obj);
+      })
+      setVulnerabilities(newArr);
+    })
+  };
+
+  const getColor = (severity: string) => {
+    switch (severity) {
+      case "Critical": return ColorMapping.Critical;
+      case 'High': return ColorMapping.High;
+      case 'Medium': return ColorMapping.Medium;
+      case 'Low': return ColorMapping.Low;
+      case 'Unknown': return ColorMapping.Unknown;
+    }
+  }
+
+  useEffect(() => {
+    getVulnerabilities();
+  }, [])
+
   return (
-    <Card sx={{ width: '30%',position: 'absolute', right: 25, top: 104 }}>
+    <Card sx={{ width: '30%', position: 'absolute', right: 25, top: 104 }}>
       <CardHeader
         title='Vulnerabilities'
         subheader='Analysis of Vulnerabilities in Apps'
@@ -57,16 +117,16 @@ const SecurityVulnerabilities = () => {
         <Box sx={{ height: 350 }}>
           <ResponsiveContainer>
             <PieChart height={350} style={{ direction: 'ltr' }}>
-              <Pie data={data} innerRadius={80} dataKey='value' label={renderCustomizedLabel} labelLine={false} startAngle={-150} >
-                {data.map((entry, index) => (
+              <Pie data={vulnerabilities} innerRadius={80} dataKey='value' label={renderCustomizedLabel} labelLine={false} startAngle={-150} >
+                {vulnerabilities.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              
+
               <Tooltip />
               <foreignObject x="-2" y="45%" width="100%" height="100%" style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '18px' ,color: 'black' }}>CVEs</div>
-                <div style={{ fontSize: '15px', color: 'gray' }}> 150</div>
+                <div style={{ fontSize: '18px', color: 'black' }}>CVEs</div>
+                <div style={{ fontSize: '15px', color: 'gray' }}> {totalVulnerabilities}</div>
               </foreignObject>
             </PieChart>
           </ResponsiveContainer>

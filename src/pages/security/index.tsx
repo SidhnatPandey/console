@@ -4,9 +4,10 @@ import SecurityVulnerabilities from './SecurityVulnerabilities';
 import ApplicationVulnerabilities from './ApplicationVulnerabilities';
 const Security = () => {
     return (
-        <><SecurityCompliance />
-        <SecurityVulnerabilities />
-        <ApplicationVulnerabilities/>
+        <>
+            <SecurityCompliance />
+            <SecurityVulnerabilities />
+            <ApplicationVulnerabilities />
         </>
     );
 }

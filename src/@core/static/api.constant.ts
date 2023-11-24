@@ -25,5 +25,6 @@ export const APP_API = {
 
     // Security 
     vulernabilities: 'security/v1/vulernabilities',
-    getScans: '/security/v1/vulernabilities/scans'
+    getScans: '/security/v1/vulernabilities/scans',
+    allVulnerabilities: 'security/v1/vulernabilities/all'
 }

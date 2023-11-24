@@ -13,3 +13,10 @@ export const getScans = () => {
     const url = APP_API.getScans;
     return get(url).then((response) => response?.data);
 };
+
+export const getAllvulnerabilities = () => {
+    setApiBaseUrl('security');
+    const url = APP_API.allVulnerabilities;
+    return get(url).then((response) => response?.data);
+};
+

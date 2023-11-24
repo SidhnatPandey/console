@@ -11,9 +11,6 @@ import CardContent from "@mui/material/CardContent";
 // ** Third Party Imports
 import { ApexOptions } from "apexcharts";
 
-// ** Type Import
-import { ThemeColor } from "src/@core/layouts/types";
-
 // ** Custom Components Imports
 import Icon from "src/@core/components/icon";
 import OptionsMenu from "src/@core/components/option-menu";
