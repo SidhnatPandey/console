@@ -9,6 +9,18 @@ const axiosInstance = axios.create({
     baseURL: baseUrl, // Your API base URL
 });
 
+// Changes the base url for the different Services
+export const setApiBaseUrl = (service: string = 'core') => {
+    let base_url = baseUrl;
+    switch (service) {
+        case 'core':
+            base_url = baseUrl;
+        case 'security':
+            base_url = env('NEXT_PUBLIC_SECURITY_BASE_URL');
+    }
+    axiosInstance.defaults.baseURL = base_url;
+};
+
 // Request Interceptor: Modify or add headers to outgoing requests
 axiosInstance.interceptors.request.use(
     (config) => {
