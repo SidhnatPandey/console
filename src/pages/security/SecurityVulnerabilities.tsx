@@ -41,14 +41,6 @@ interface Vulnerability {
   color: string
 }
 
-const data = [
-  { name: 'Critical', value: 28, color: 'red' },
-  { name: 'High', value: 14, color: 'darkorange' },
-  { name: 'Medium', value: 72, color: 'rgb(115, 83, 229)' },
-  { name: 'Low', value: 36, color: 'lightgrey' }
-
-]
-
 const RADIAN = Math.PI / 180
 
 const SecurityVulnerabilities = () => {
@@ -63,8 +55,6 @@ const SecurityVulnerabilities = () => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5
     const x = cx + radius * Math.cos(-midAngle * RADIAN)
     const y = cy + radius * Math.sin(-midAngle * RADIAN)
-    console.log(cx, cy, midAngle, innerRadius, outerRadius, percent);
-
     /* const value = Math.ceil((totalVulnerabilities * percent));
     (${value}/${totalVulnerabilities}) */
     return (
@@ -76,7 +66,6 @@ const SecurityVulnerabilities = () => {
 
   const getVulnerabilities = () => {
     getAllvulnerabilities().then((res) => {
-      console.log(res.data);
       const totalV = res.data.reduce((total: number, cve: any) => total + cve.Count, 0);
       setTotalVulnerabilities(totalV);
       let newArr: Vulnerability[] = [];
