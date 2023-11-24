@@ -17,6 +17,7 @@ import OptionsMenu from "src/@core/components/option-menu";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
+import MultiStepBarChart from "src/component/multiStepBar";
 interface AppSecurityData {
   AppName: string;
   WorkspaceId: string;
@@ -272,7 +273,7 @@ const ApplicationVulnerabilities = () => {
                       <TableCell>{row.LastScanned}</TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <LinearProgress
+                          {/* <LinearProgress
                             variant="determinate"
                             value={(calculateTotalCVEs(row.Cves) / 150) * 100}
                             sx={{
@@ -282,7 +283,8 @@ const ApplicationVulnerabilities = () => {
                               borderRadius: "4px",
                               background: SeverityColors[row.Cves[0].Severity],
                             }}
-                          />
+                          /> */}
+                          <MultiStepBarChart Cves={row.Cves} />
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
                       </TableCell>
