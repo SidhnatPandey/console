@@ -17,9 +17,10 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import MultiStepBarChart from "src/component/multiStepBar";
+import { vulnerabilitiesList } from "src/services/securityService";
 interface AppSecurityData {
   AppName: string;
-  WorkspaceId: string;
+  WorkspaceId?: string;
   LastScanned: string;
   Cves: {
     Count: number;
@@ -87,23 +88,8 @@ const ApplicationVulnerabilities = () => {
       Cves: [{ Count: 3, Severity: "Medium" }],
     },
   ]);
-
-  const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
-    return Cves.reduce((total, cve) => total + cve.Count, 0);
-  };
-
-  const SeverityColors: Record<string, string> = {
-    Low: "lightgrey",
-    Medium: "rgb(115, 83, 229)",
-    High: "darkorange",
-    Critical: "red",
-    Unknown: "white",
-  };
-
   const [currentPage, setCurrentPage] = useState(1);
-  const entriesPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
-
   const [sort, setSort] = useState<{
     column: keyof AppSecurityData | null;
     direction: "asc" | "desc";
@@ -111,6 +97,11 @@ const ApplicationVulnerabilities = () => {
     column: null,
     direction: "asc",
   });
+  const entriesPerPage = 10;
+
+  const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
+    return Cves.reduce((total, cve) => total + cve.Count, 0);
+  };
 
   const handleSort = (columnName: keyof AppSecurityData) => {
     setSort({
@@ -170,7 +161,16 @@ const ApplicationVulnerabilities = () => {
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
+    getVulnerabilitesList();
   }, [currentPage, totalPages, searchTerm]);
+
+  const getVulnerabilitesList = () => {
+    vulnerabilitiesList().then(
+      (res) => {
+        setVulnerabilityData(res.data);
+      }
+    )
+  }
 
   return (
     <Card sx={{ marginTop: "180px" }}>
@@ -277,7 +277,6 @@ const ApplicationVulnerabilities = () => {
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
                       </TableCell>
-
                       {renderOptionsMenuCell()}
                     </TableRow>
                   ))}

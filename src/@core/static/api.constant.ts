@@ -22,5 +22,8 @@ export const APP_API = {
     appMatrix: 'initializ/v1/app/metrics?deployment={appName}',
     approval: 'initializ/v1/changeapprovalstatus',
     appLogs: 'initializ/v1/apps/{appId}/logs',
-    getScans:'/security/v1/vulernabilities/scans'
+
+    // Security 
+    vulernabilities: 'security/v1/vulernabilities',
+    getScans: '/security/v1/vulernabilities/scans'
 }

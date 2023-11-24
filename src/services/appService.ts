@@ -53,10 +53,4 @@ export const appDetails = (id: any) => {
   return get(url).then((response) => response?.data);
 };
 
-export const getScans = () => {
-  setApiBaseUrl("security");
-  const url = APP_API.getScans;
-  return get(url).then((response) => response?.data);
-};
-
 

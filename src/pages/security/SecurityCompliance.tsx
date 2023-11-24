@@ -22,7 +22,7 @@ import ReactApexcharts from "src/@core/components/react-apexcharts";
 
 // ** Util Import
 import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
-import { getScans } from "src/services/appService";
+import { getScans } from "src/services/securityService";
 
 const SecurityCompliance = () => {
   // ** Hook
@@ -119,7 +119,7 @@ const SecurityCompliance = () => {
       getScans()
         .then((response) => {
           setScanData(response?.data || {});
-           console.log(response);
+          console.log(response);
         })
         .catch((error) => {
           console.error(error);
