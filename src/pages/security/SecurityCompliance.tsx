@@ -23,28 +23,6 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
-interface DataType {
-  title: string
-  subtitle: string
-  avatarIcon: string
-  avatarColor?: ThemeColor
-}
-
-const data: DataType[] = [
-  {
-    subtitle: '142',
-    avatarColor: 'info',
-    title: 'Success',
-    avatarIcon: 'tabler:circle-check'
-  },
-  {
-    subtitle: '28',
-    title: 'Failed',
-    avatarColor: 'error',
-    avatarIcon: 'tabler:circle-x'
-}
-]
-
 const SecurityCompliance = () => {
   // ** Hook
   const theme = useTheme()
@@ -146,27 +124,44 @@ const SecurityCompliance = () => {
           <Grid item xs={12} sm={5} style={{ paddingTop: '50px' }}>
             <Typography variant='h4'>164</Typography>
             <Typography sx={{ mb: 6, color: 'text.secondary' }}>Total Scans</Typography>
-            {data.map((item: DataType, index: number) => (
-              <Box
-                key={index}
-                sx={{ display: 'flex', alignItems: 'center', mb: index !== data.length - 1 ? 4 : undefined }}
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', mb: 4 }}
+            >
+              <CustomAvatar
+                skin='light'
+                variant='rounded'
+                color="info"
+                sx={{ mr: 4, width: 34, height: 34 }}
               >
-                <CustomAvatar
-                  skin='light'
-                  variant='rounded'
-                  color={item.avatarColor}
-                  sx={{ mr: 4, width: 34, height: 34 }}
-                >
-                  <Icon icon={item.avatarIcon} />
-                </CustomAvatar>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <Typography sx={{ fontWeight: 500 }}>{item.title}</Typography>
-                  <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                    {item.subtitle}
-                  </Typography>
-                </Box>
+                <Icon icon="tabler:circle-check" />
+              </CustomAvatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Typography sx={{ fontWeight: 500 }}>Success</Typography>
+                <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                  142
+                </Typography>
               </Box>
-            ))}
+            </Box>
+
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', mb: 4 }}
+            >
+              <CustomAvatar
+                skin='light'
+                variant='rounded'
+                color="error"
+                sx={{ mr: 4, width: 34, height: 34 }}
+              >
+                <Icon icon="tabler:circle-x" />
+              </CustomAvatar>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Typography sx={{ fontWeight: 500 }}>Failed</Typography>
+                <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                  123
+                </Typography>
+              </Box>
+            </Box>
+
           </Grid>
           <Grid item xs={12} sm={7} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ReactApexcharts type='radialBar' height={325} options={options} series={[85]} />
