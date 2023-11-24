@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  LinearProgress,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -198,6 +197,7 @@ const ApplicationVulnerabilities = () => {
                 borderRadius: "8px",
                 padding: "8px",
               }}
+              size="small"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -221,7 +221,7 @@ const ApplicationVulnerabilities = () => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell onClick={() => handleSort("WorkspaceId")}>
+                  {/* <TableCell onClick={() => handleSort("WorkspaceId")}>
                     <Box display="flex" alignItems="center">
                       <span>WorkspaceId</span>
                       <Box display="flex" flexDirection="column" ml={6}>
@@ -233,7 +233,7 @@ const ApplicationVulnerabilities = () => {
                         />
                       </Box>
                     </Box>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell onClick={() => handleSort("LastScanned")}>
                     <Box display="flex" alignItems="center">
                       <span>Last Scanned</span>
@@ -247,7 +247,7 @@ const ApplicationVulnerabilities = () => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell onClick={() => handleSort("Cves")}>
+                  <TableCell onClick={() => handleSort("Cves")} style={{ width: 600 }}>
                     <Box display="flex" alignItems="center">
                       <span>CVEs</span>
                       <Box display="flex" flexDirection="column" ml={6}>
@@ -269,21 +269,10 @@ const ApplicationVulnerabilities = () => {
                   .map((row, index) => (
                     <TableRow key={index}>
                       <TableCell>{row.AppName}</TableCell>
-                      <TableCell>{row.WorkspaceId}</TableCell>
+                      {/* <TableCell>{row.WorkspaceId}</TableCell> */}
                       <TableCell>{row.LastScanned}</TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          {/* <LinearProgress
-                            variant="determinate"
-                            value={(calculateTotalCVEs(row.Cves) / 150) * 100}
-                            sx={{
-                              marginRight: "8px",
-                              width: "100%",
-                              height: "20px",
-                              borderRadius: "4px",
-                              background: SeverityColors[row.Cves[0].Severity],
-                            }}
-                          /> */}
                           <MultiStepBarChart Cves={row.Cves} />
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
