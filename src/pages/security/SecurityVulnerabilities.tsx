@@ -68,9 +68,9 @@ const SecurityVulnerabilities = () => {
     getAllvulnerabilities().then((res) => {
       const totalV = res.data.reduce((total: number, cve: any) => total + cve.Count, 0);
       setTotalVulnerabilities(totalV);
-      let newArr: Vulnerability[] = [];
+      const newArr: Vulnerability[] = [];
       res.data.forEach((ele: CVE) => {
-        let obj: Vulnerability = {
+        const obj: Vulnerability = {
           name: ele.Severity,
           value: ele.Count,
           color: getColor(ele.Severity) || 'white'

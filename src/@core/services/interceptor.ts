@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 });
 
 // Changes the base url for the different Services
-export const setApiBaseUrl = (service: string = 'core') => {
+export const setApiBaseUrl = (service = 'core') => {
     let base_url = baseUrl;
     switch (service) {
         case 'core':
