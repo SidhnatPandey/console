@@ -96,7 +96,7 @@ const SecurityVulnerabilities = () => {
   }, [])
 
   return (
-    <Card sx={{ width: '30%', position: 'absolute', right: 25, top: 104 }}>
+    <Card  sx={{ width: "38%" }} >
       <CardHeader
         title='Vulnerabilities'
         subheader='Analysis of Vulnerabilities in Apps'

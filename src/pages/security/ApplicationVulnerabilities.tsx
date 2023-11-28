@@ -173,7 +173,7 @@ const ApplicationVulnerabilities = () => {
   }
 
   return (
-    <Card sx={{ marginTop: "180px" }}>
+    <Card sx={{ marginTop: "20px" }}>
       <Box display="flex" flexDirection="column">
         <Box
           display="flex"

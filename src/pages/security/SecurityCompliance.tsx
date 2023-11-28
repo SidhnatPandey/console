@@ -127,7 +127,7 @@ const SecurityCompliance = () => {
   }, []);
 
   return (
-    <Card sx={{ width: "60%" }}>
+    <Card sx={{ width: "60%", height: "80%" }}>
       <CardHeader
         title="Scan Compliance"
         action={
