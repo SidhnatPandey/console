@@ -203,66 +203,69 @@ const ApplicationVulnerabilities = () => {
             />
           </Box>
         </Box>
-        {filteredData.length > 0 ? (
-          <TableContainer sx={{ width: "100%" }}>
-            <Table sx={{ border: "1px solid #ced4da" }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell onClick={() => handleSort("AppName")}>
-                    <Box display="flex" alignItems="center">
-                      <span>App Name</span>
-                      <Box display="flex" flexDirection="column" ml={6}>
-                        <KeyboardArrowUpIcon
-                          sx={{ color: "gray", marginBottom: "-6px" }}
-                        />
-                        <KeyboardArrowDownIcon
-                          sx={{ color: "gray", marginTop: "-6px" }}
-                        />
-                      </Box>
+        <TableContainer sx={{ width: "100%" }}>
+          <Table sx={{ border: "1px solid #ced4da" }}>
+            <TableHead>
+              <TableRow>
+                <TableCell onClick={() => handleSort("AppName")}>
+                  <Box display="flex" alignItems="center">
+                    <span>App Name</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
                     </Box>
-                  </TableCell>
-                  {/* <TableCell onClick={() => handleSort("WorkspaceId")}>
-                    <Box display="flex" alignItems="center">
-                      <span>WorkspaceId</span>
-                      <Box display="flex" flexDirection="column" ml={6}>
-                        <KeyboardArrowUpIcon
-                          sx={{ color: "gray", marginBottom: "-6px" }}
-                        />
-                        <KeyboardArrowDownIcon
-                          sx={{ color: "gray", marginTop: "-6px" }}
-                        />
-                      </Box>
+                  </Box>
+                </TableCell>
+                {/* <TableCell onClick={() => handleSort("WorkspaceId")}>
+                  <Box display="flex" alignItems="center">
+                    <span>WorkspaceId</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
                     </Box>
-                  </TableCell> */}
-                  <TableCell onClick={() => handleSort("LastScanned")}>
-                    <Box display="flex" alignItems="center">
-                      <span>Last Scanned</span>
-                      <Box display="flex" flexDirection="column" ml={6}>
-                        <KeyboardArrowUpIcon
-                          sx={{ color: "gray", marginBottom: "-6px" }}
-                        />
-                        <KeyboardArrowDownIcon
-                          sx={{ color: "gray", marginTop: "-6px" }}
-                        />
-                      </Box>
+                  </Box>
+                </TableCell> */}
+                <TableCell onClick={() => handleSort("LastScanned")}>
+                  <Box display="flex" alignItems="center">
+                    <span>Last Scanned</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
                     </Box>
-                  </TableCell>
-                  <TableCell onClick={() => handleSort("Cves")} style={{ width: 600 }}>
-                    <Box display="flex" alignItems="center">
-                      <span>CVEs</span>
-                      <Box display="flex" flexDirection="column" ml={6}>
-                        <KeyboardArrowUpIcon
-                          sx={{ color: "gray", marginBottom: "-6px" }}
-                        />
-                        <KeyboardArrowDownIcon
-                          sx={{ color: "gray", marginTop: "-6px" }}
-                        />
-                      </Box>
+                  </Box>
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort("Cves")}
+                  style={{ width: 600 }}
+                >
+                  <Box display="flex" alignItems="center">
+                    <span>CVEs</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
                     </Box>
-                  </TableCell>
-                  {renderOptionsMenuCell()}
-                </TableRow>
-              </TableHead>
+                  </Box>
+                </TableCell>
+                {renderOptionsMenuCell()}
+              </TableRow>
+            </TableHead>
+            {filteredData.length > 0 ? (
               <TableBody>
                 {filteredData
                   .slice(startIndex, endIndex + 1)
@@ -281,13 +284,19 @@ const ApplicationVulnerabilities = () => {
                     </TableRow>
                   ))}
               </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <Box textAlign="center" mt={2}>
-            <span>No Apps</span>
-          </Box>
-        )}
+            ) : (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <Box textAlign="center" mt={2}>
+                      <span>No Apps</span>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
         <Box
           display="flex"
           mt={6}
