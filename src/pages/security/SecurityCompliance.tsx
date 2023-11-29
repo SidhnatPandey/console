@@ -110,12 +110,15 @@ const SecurityCompliance = () => {
     succeeded: 0,
     failed: 0,
   });
+  const [successPercentage, setSuccessPercentage] = useState(0);
 
   useEffect(() => {
     const getScanData = () => {
       getScans()
         .then((response) => {
           setScanData(response?.data || {});
+          const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+          setSuccessPercentage(percentage);
           console.log(response);
         })
         .catch((error) => {
@@ -204,7 +207,7 @@ const SecurityCompliance = () => {
               type="radialBar"
               height={325}
               options={options}
-              series={[85]}
+              series={[successPercentage]}
             />
           </Grid>
         </Grid>
