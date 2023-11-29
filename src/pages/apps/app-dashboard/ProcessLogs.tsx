@@ -102,22 +102,17 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Reset noResult state when search term changes
     setNoResult(false);
-
+  
     const inputValue = e.target.value;
-
-    // Prevent special characters from causing errors
-    const sanitizedValue = inputValue.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
-
-    setSearchTerm(sanitizedValue);
-
+  
+    setSearchTerm(inputValue);
+  
     // Remove noResult message when user starts typing
-    if (sanitizedValue !== "") {
+    if (inputValue !== "") {
       setNoResult(false);
     }
   };
+  
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -226,7 +221,8 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({
   };
 
   const highlightText = (text: string, highlight: string) => {
-    const parts = text.split(new RegExp(`(${highlight})`, "gi"));
+    const escapedHighlight = highlight.replace(/[-.*+?^${}()|[\]\\]/g, "\\$&");
+    const parts = text.split(new RegExp(`(${escapedHighlight})`, "gi"));
     return (
       <span>
         {parts.map((part, i) => (
@@ -244,6 +240,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({
       </span>
     );
   };
+  
 
   function handleTabChange(step: Step, index: number): void {
     throw new Error("Function not implemented.");
