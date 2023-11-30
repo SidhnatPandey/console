@@ -133,7 +133,7 @@ const UserDropdown = (props: Props) => {
           </Box>
         </Box>
         <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/user-profile/MyProfile')}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/myProfile')}>
           <Box sx={styles}>
             <Icon icon='tabler:user-check' />
             My Profile
