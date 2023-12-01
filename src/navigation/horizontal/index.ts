@@ -16,7 +16,7 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Security',
       icon: 'material-symbols:lock-outline',
-      path: '/apps/email'
+      path: '/security'
     },
     {
       sectionTitle: 'MANAGE'
