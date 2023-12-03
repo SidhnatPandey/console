@@ -26,8 +26,8 @@ const ColorMapping = {
   Critical: 'red',
   High: 'orange',
   Medium: '#7353E5',
-  Low: '#D3D3D3',
-  Unknown: 'yellow'
+  Low: 'grey',
+  Unknown: '#D3D3D3'
 }
 
 interface CVE {
@@ -66,10 +66,10 @@ const SecurityVulnerabilities = () => {
 
   const getVulnerabilities = () => {
     getAllvulnerabilities().then((res) => {
-      const totalV = res.data.reduce((total: number, cve: any) => total + cve.Count, 0);
+      const totalV = res?.data.reduce((total: number, cve: any) => total + cve.Count, 0);
       setTotalVulnerabilities(totalV);
       const newArr: Vulnerability[] = [];
-      res.data.forEach((ele: CVE) => {
+      res?.data.forEach((ele: CVE) => {
         const obj: Vulnerability = {
           name: ele.Severity,
           value: ele.Count,
@@ -114,8 +114,8 @@ const SecurityVulnerabilities = () => {
 
               <Tooltip />
               <foreignObject x="-2" y="45%" width="100%" height="100%" style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', color: 'black' }}>CVEs</div>
-                <div style={{ fontSize: '15px', color: 'gray' }}> {totalVulnerabilities}</div>
+                <div style={{ fontSize: '18px', color: 'grey', fontWeight: 'bold' }}>CVEs</div>
+                <div style={{ fontSize: '15px', color: 'grey' }}> {totalVulnerabilities}</div>
               </foreignObject>
             </PieChart>
           </ResponsiveContainer>
