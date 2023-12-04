@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react'
 import { matrixData } from 'src/services/dashboardService'
 
 interface Matrix {
+  CurrentInstance: string,
+  MaxInstance: string,
   CPUPercentage: string,
   MemoryRequestMB: string,
   MemoryUsageMB: string,
@@ -67,7 +69,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                   <Icon icon="tabler:chart-pie-2" />
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant='h5'>3 / 6</Typography>
+                  <Typography variant='h5'>{matrix?.CurrentInstance ? matrix?.CurrentInstance : "?"} / {matrix?.MaxInstance ? matrix?.MaxInstance : "?"}</Typography>
                   <Typography variant='body1'>Instances/Auto Scale</Typography>
                 </Box>
               </Box>

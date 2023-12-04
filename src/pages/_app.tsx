@@ -180,12 +180,12 @@ const App = (props: ExtendedAppProps) => {
 
     <CacheProvider value={emotionCache}>
 <Head>
-<title>{`${themeConfig.templateName} - INIT`}</title>
+<title>{`${themeConfig.templateName} - AI-Driven Unified DevSecOps Platform`}</title>
 <meta
           name='description'
-          content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+          content={`${themeConfig.templateName} – AI-Driven Unified DevSecOps Platform - The most comprehensive Application Development, Security & Operations Platform.`}
         />
-<meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
+<meta name='keywords' content='AI-Driven, Unified DevSecOps Platform, Application Development, Security, Operations Platform, Observability, AIOps, DevOps, DevSecOps' />
 <meta name='viewport' content='initial-scale=1, width=device-width' />
 </Head>
 
