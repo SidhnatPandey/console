@@ -282,13 +282,13 @@ const AppDashboard = () => {
             iconPosition="start"
             data-testid="Overview"
           />
-          <Tab
+          {/* <Tab
             value="2"
             label="Insights"
             icon={<InsightsIcon />}
             iconPosition="start"
             data-testid="Insights"
-          />
+          /> */}
           <Tab
             value="3"
             label="Logs"
