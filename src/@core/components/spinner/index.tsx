@@ -18,7 +18,7 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
         ...sx
       }}
     >
-      <img src={`/images/pages/icon.svg`} width={246} height={169.125} viewBox='0 0 32 22' fill='none' alt="initializ" />
+      <img src={`/images/pages/icon.svg`} width={246} height={169.125} alt="initializ" />
       <CircularProgress sx={{ mt: 20, color: '#aa5fb5' }} size={60} />
     </Box>
   )
