@@ -1,4 +1,3 @@
-// ** MUI Imports
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -11,13 +10,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 interface DestroyAppProps {
     loading: boolean;
-    appName?: string; 
-    metricsTimer?: number; 
+    appName?: string;
+    metricsTimer?: number;
 }
 
 const DestroyApp: React.FC<DestroyAppProps> = ({ loading, appName, metricsTimer }) => {
     return (
-        <Card>
+        <Card sx={{ margin: '-25px' }}>
             {loading ? (
                 <Skeleton width={200} height={20} style={{ margin: "20px" }} />
             ) : (
@@ -26,52 +25,48 @@ const DestroyApp: React.FC<DestroyAppProps> = ({ loading, appName, metricsTimer 
                     sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
                 />
             )}
-            <CardContent sx={{ pt: theme => `${theme.spacing(7)} !important` }}>
+            <CardContent sx={{ pt: (theme) => `${theme.spacing(7)} !important` }}>
                 <Grid container spacing={3}>
                     {loading ? (
                         <Skeleton width={300} height={40} style={{ marginLeft: "20px" }} count={3} inline />
                     ) : (
                         <>
-                            <Grid item xs={6} md={3}>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                        <Typography variant='h5'>Destroy</Typography>
-                                        <Typography variant='body1'>Delete App</Typography>
-                                    </Box>
+                            <Grid item xs={12} md={4}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Typography variant='h5'>Destroy</Typography>
+                                    <Typography variant='body1'>Delete App</Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={6} md={3}>
+                            <Grid item xs={12} md={4}>
                                 <Box
                                     sx={{
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        marginLeft: '300px', // Add margin to shift it to the right
+                                        marginTop: '20px', // Adjust spacing as needed
                                     }}
                                 >
                                     <Typography variant='body1' sx={{ whiteSpace: 'nowrap' }}>
-                                        Destroy App and Associated Components</Typography>
+                                        Destroy App and Associated Components
+                                    </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={6} md={3}>
+                            <Grid item xs={12} md={4}>
                                 <Box
                                     sx={{
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        alignItems: 'flex-end', // Align to the right
+                                        alignItems: 'flex-end',
                                         justifyContent: 'center',
-                                        marginLeft: 'auto', // Set marginLeft to 'auto' to align to the right boundary
                                     }}
                                 >
-                                    <Box sx={{ marginRight: "-300px" }}>
-                                        <Button
-                                            startIcon={<DeleteIcon />}
-                                            style={{ backgroundColor: '#FF0000', color: '#FFFFFF' }}
-                                        >
-                                            Destroy
-                                        </Button>
-                                    </Box>
+                                    <Button
+                                        startIcon={<DeleteIcon />}
+                                        style={{ backgroundColor: '#FF0000', color: '#FFFFFF' }}
+                                    >
+                                        Destroy
+                                    </Button>
                                 </Box>
                             </Grid>
                         </>
@@ -80,6 +75,6 @@ const DestroyApp: React.FC<DestroyAppProps> = ({ loading, appName, metricsTimer 
             </CardContent>
         </Card>
     );
-}
+};
 
 export default DestroyApp;
