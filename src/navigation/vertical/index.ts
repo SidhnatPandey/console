@@ -6,7 +6,8 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
-      path: '/dashboard'
+      path: '/dashboard',
+      disabled: true
     },
     {
       title: 'Apps',
@@ -24,7 +25,8 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Billing',
       icon: 'jam:document',
-      path: '/apps/email'
+      path: '/apps/email',
+      disabled: true
     },
     {
       title: 'Setting',

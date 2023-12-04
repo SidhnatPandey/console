@@ -58,99 +58,34 @@ const defaultSuggestionsData: DefaultSuggestionsType[] = [
     category: 'Popular Searches',
     suggestions: [
       {
-        icon: 'tabler:chart-pie-2',
-        suggestion: 'Analytics',
-        link: '/dashboards/analytics'
+        icon: 'ion:document-outline',
+        suggestion: 'Applications',
+        link: '/apps'
+      },
+      {
+        icon: 'material-symbols:lock-outline',
+        suggestion: 'Security',
+        link: '/security'
       },
       {
         icon: 'tabler:device-analytics',
-        suggestion: 'CRM',
-        link: '/dashboards/crm'
-      },
-      {
-        icon: 'tabler:shopping-cart',
-        suggestion: 'eCommerce',
-        link: '/dashboards/ecommerce'
-      },
-      {
-        icon: 'tabler:users',
-        suggestion: 'User List',
-        link: '/apps/user/list'
+        suggestion: 'Observability',
+        link: '/observability'
       }
     ]
   },
   {
-    category: 'Apps & Pages',
+    category: 'SETTINGS',
     suggestions: [
       {
-        icon: 'tabler:calendar',
-        suggestion: 'Calendar',
-        link: '/apps/calendar'
-      },
-      {
-        icon: 'tabler:list-numbers',
-        suggestion: 'Invoice List',
-        link: '/apps/invoice/list'
-      },
-      {
-        icon: 'tabler:currency-dollar',
-        suggestion: 'Pricing',
-        link: '/pages/pricing'
+        icon: 'tabler:user',
+        suggestion: 'User Profile',
+        link: '/profile'
       },
       {
         icon: 'tabler:settings',
         suggestion: 'Account Settings',
-        link: '/pages/account-settings/account'
-      }
-    ]
-  },
-  {
-    category: 'User Interface',
-    suggestions: [
-      {
-        icon: 'tabler:typography',
-        suggestion: 'Typography',
-        link: '/ui/typography'
-      },
-      {
-        icon: 'tabler:browser',
-        suggestion: 'Tabs',
-        link: '/components/tabs'
-      },
-      {
-        icon: 'tabler:hand-click',
-        suggestion: 'Buttons',
-        link: '/components/buttons'
-      },
-      {
-        icon: 'tabler:id',
-        suggestion: 'Advanced Cards',
-        link: '/ui/cards/advanced'
-      }
-    ]
-  },
-  {
-    category: 'Forms & Tables',
-    suggestions: [
-      {
-        icon: 'tabler:list-check',
-        suggestion: 'Select',
-        link: '/forms/form-elements/select'
-      },
-      {
-        icon: 'tabler:space',
-        suggestion: 'Autocomplete',
-        link: '/forms/form-elements/autocomplete'
-      },
-      {
-        icon: 'tabler:layout-grid',
-        suggestion: 'Table',
-        link: '/tables/mui'
-      },
-      {
-        icon: 'tabler:calendar-event',
-        suggestion: 'Date Pickers',
-        link: '/forms/form-elements/pickers'
+        link: '/settings'
       }
     ]
   }
@@ -261,7 +196,7 @@ const NoResult = ({ value, setOpenDialog }: NoResultProps) => {
         <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
           <Box
             component={Link}
-            href='/dashboards/ecommerce'
+            href='/apps'
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -270,17 +205,17 @@ const NoResult = ({ value, setOpenDialog }: NoResultProps) => {
             }}
           >
             <Box sx={{ mr: 2.5, display: 'flex', color: 'text.primary' }}>
-              <Icon icon='tabler:shopping-cart' fontSize='1.25rem' />
+              <Icon icon='ion:document-outline' fontSize='1.25rem' />
             </Box>
             <Typography variant='body2' sx={{ color: 'text.primary' }}>
-              eCommerce Dashboard
+              Applications
             </Typography>
           </Box>
         </ListItem>
         <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
           <Box
             component={Link}
-            href='/pages/user-profile/profile'
+            href='/profile'
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -299,7 +234,7 @@ const NoResult = ({ value, setOpenDialog }: NoResultProps) => {
         <ListItem sx={{ py: 2 }} disablePadding onClick={() => setOpenDialog(false)}>
           <Box
             component={Link}
-            href='/pages/account-settings/account'
+            href='/settings'
             sx={{
               display: 'flex',
               alignItems: 'center',

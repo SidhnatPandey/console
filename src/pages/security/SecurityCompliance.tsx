@@ -151,7 +151,7 @@ const SecurityCompliance = () => {
               <CustomAvatar
                 skin="light"
                 variant="rounded"
-                color="info"
+                color="success"
                 sx={{ mr: 4, width: 34, height: 34 }}
               >
                 <Icon icon="tabler:circle-check" />
@@ -164,8 +164,8 @@ const SecurityCompliance = () => {
                 }}
               >
                 <Typography sx={{ fontWeight: 500 }}>Success</Typography>
-                <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                  {scanData.succeeded}{" "}
+                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
+                  {scanData.succeeded?scanData.succeeded:0}{" "}
                 </Typography>
               </Box>
             </Box>
@@ -187,8 +187,8 @@ const SecurityCompliance = () => {
                 }}
               >
                 <Typography sx={{ fontWeight: 500 }}>Failed</Typography>
-                <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                  {scanData.failed}
+                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
+                  {scanData.failed?scanData.failed:0}
                 </Typography>
               </Box>
             </Box>

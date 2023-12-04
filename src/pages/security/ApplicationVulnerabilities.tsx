@@ -97,7 +97,7 @@ const ApplicationVulnerabilities = () => {
     column: null,
     direction: "asc",
   });
-  const entriesPerPage = 10;
+  const entriesPerPage = 5;
 
   const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
     return Cves.reduce((total, cve) => total + cve.Count, 0);
@@ -167,7 +167,7 @@ const ApplicationVulnerabilities = () => {
   const getVulnerabilitesList = () => {
     vulnerabilitiesList().then(
       (res) => {
-        setVulnerabilityData(res.data);
+        res?setVulnerabilityData(res.data):{};
       }
     )
   }
@@ -220,7 +220,7 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                {/* <TableCell onClick={() => handleSort("WorkspaceId")}>
+                {/*<TableCell onClick={() => handleSort("WorkspaceId")}>
                   <Box display="flex" alignItems="center">
                     <span>WorkspaceId</span>
                     <Box display="flex" flexDirection="column" ml={6}>

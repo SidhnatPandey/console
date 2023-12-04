@@ -4,8 +4,8 @@ const ColorMapping = {
   Critical: 'red',
   High: 'orange',
   Medium: '#7353E5',
-  Low: '#D3D3D3',
-  Unknown: 'yellow'
+  Low: 'grey',
+  Unknown: '#D3D3D3'
 }
 
 interface CVE {

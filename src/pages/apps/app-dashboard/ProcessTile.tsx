@@ -41,7 +41,7 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
     textAlign: "center",
     padding: "30px 10px 10px 10px",
     border: isSelected
-      ? "2px solid rgb(115, 83, 229)"
+      ? checkApproval() ? "2px solid rgb(157, 141, 211)" : "2px solid rgb(115, 83, 229)"
       : "2px solid transparent",
     cursor: "pointer",
     transform: checkApproval() ? "rotate(-45deg)" : "none",
@@ -98,7 +98,15 @@ const ProcessTile: React.FC<ProcessTileProps> = ({
       case "pending":
         return <PendingIcon fontSize="large" style={dotStyle} />;
       case "approved":
-        return <CheckIcon fontSize="large" style={{ color: "green" }} />;
+        return (
+          <CustomAvatar
+            color={"success"}
+            sx={{ marginTop: -1, width: 42, height: 42 }}
+            style={{ marginLeft: 32, marginBottom: 5 }}
+          >
+            <Icon icon={"ph:check-light"} />
+          </CustomAvatar>
+        );
       case "rejected":
         return <CloseIcon fontSize="large" style={{ color: "red" }} />;
       case "failed":
