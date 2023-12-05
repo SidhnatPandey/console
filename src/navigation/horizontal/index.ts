@@ -6,7 +6,8 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
-      path: '/dashboard'
+      path: '/dashboard',
+      disabled: true
     },
     {
       title: 'Apps',
@@ -16,7 +17,7 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Security',
       icon: 'material-symbols:lock-outline',
-      path: '/apps/email'
+      path: '/security'
     },
     {
       sectionTitle: 'MANAGE'
@@ -24,7 +25,8 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Billing',
       icon: 'jam:document',
-      path: '/apps/email'
+      path: '/apps/email',
+      disabled: true
     },
     {
       title: 'Setting',
