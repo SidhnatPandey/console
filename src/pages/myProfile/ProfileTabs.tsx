@@ -34,22 +34,15 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }));
 
-const ProfileTabs = ({  }: { }) => {
+const ProfileTabs = ( { }) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>('profile');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ** Hooks
   const router = useRouter();
   const hideText = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-  const handleChange = (event: SyntheticEvent, value: string) => {
-    setIsLoading(true);
-    setActiveTab(value);
-    router.push({
-      pathname: `/pages/myProfile/${value.toLowerCase()}`
-    }).then(() => setIsLoading(false));
-  };
+ 
 
   
 
@@ -62,7 +55,6 @@ const ProfileTabs = ({  }: { }) => {
               <TabList
                 variant='scrollable'
                 scrollButtons='auto'
-                onChange={handleChange}
                 aria-label='customized tabs example'
               >
                 <Tab
