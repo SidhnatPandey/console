@@ -11,15 +11,9 @@ import FlagIcon from '@mui/icons-material/Flag';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
-const Profile = () => {
-  const userData = {
-    fullName: 'John Doe',
-    status: 'Active',
-    city: 'New York',
-    country: 'USA',
-    contact: '(123) 456-7890',
-    email: 'example@email.com',
-  };
+const Profile = (user_info:any) => {
+  console.log(user_info);
+  const formatted_number = `(${user_info.user_info?.user_info?.phone_number.toString().slice(0, 3)}) ${user_info.user_info?.user_info?.phone_number.toString().slice(3, 6)}-${user_info.user_info?.user_info?.phone_number.toString().slice(6)}`;
 
   return (
     <Grid container spacing={6} marginTop="10px">
@@ -31,16 +25,16 @@ const Profile = () => {
             </Typography>
             <Box marginBottom="16px">
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-              <PermIdentityIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Full Name:</strong> {userData.fullName}
+              <PermIdentityIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Full Name:</strong> {user_info.user_info?.user_info?.first_name} {user_info.user_info?.user_info?.last_name}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-                <CheckIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Status: </strong> {userData.status}
+                <CheckIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Status: </strong> {user_info.user_info.status}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-                <LocationOnIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>City: </strong> {userData.city}
+                <LocationOnIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>City: </strong> {user_info.user_info?.user_info?.address?.city}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-                <FlagIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Country: </strong> {userData.country}
+                <FlagIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Country: </strong> {user_info.user_info?.user_info?.address?.country}
               </Typography>
             </Box>
 
@@ -49,10 +43,10 @@ const Profile = () => {
             </Typography>
             <Box>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-                <PhoneInTalkIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Contact: </strong> {userData.contact}
+                <PhoneInTalkIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Contact: </strong> {formatted_number}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center">
-                <MailOutlineIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Email: </strong> {userData.email}
+                <MailOutlineIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Email: </strong> {user_info.user_info.email}
               </Typography>
             </Box>
           </CardContent>

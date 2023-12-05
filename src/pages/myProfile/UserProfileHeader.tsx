@@ -30,43 +30,51 @@ const ProfilePicture = styled("img")(({ theme }) => ({
   },
 }));
 
-const UserProfileHeader = () => {
+const UserProfileHeader = ({ setAllUserData }: any) => {
   const [userData, setUserData] = useState({
-    id: 'string',
-    type: 'string',
-    user_id: 'string',
-    role: 'string',
-    org: 'string',
-    org_id: 'string',
-    email: 'string',
-    username: 'string',
-    password: 'string',
-    created_at: 'string',
-    updated_at: 'string',
-    nickname: 'string',
+    id: "string",
+    type: "string",
+    user_id: "string",
+    role: "string",
+    org: "string",
+    org_id: "string",
+    email: "string",
+    username: "string",
+    password: "string",
+    created_at: "string",
+    updated_at: "string",
+    nickname: "string",
     user_info: {
-      first_name: 'string',
-      last_name: 'string',
-      phone_number: 'number',
+      first_name: "string",
+      last_name: "string",
+      phone_number: "number",
       address: {
-        country: 'string',
-        state: 'string',
-        zip_code: 'number',
-        city: 'string',
-        street_address: 'string'
-      }
+        country: "string",
+        state: "string",
+        zip_code: "number",
+        city: "string",
+        street_address: "string",
+      },
     },
-    status: 'string'
-    }
+    status: "string",
+  });
+  const formatDate = (dateString: string | number | Date) => {
+    const options = { month: "long", year: "numeric" } as const;
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      "en-US",
+      options
     );
+    return formattedDate;
+  };
 
   useEffect(() => {
     const getUserData = () => {
       getUserInfo()
         .then((response) => {
-          setUserData(response?.data || {});
-         
-          console.log(response);
+          if (response.status === 200) {
+            setUserData(response?.data || {});
+            setAllUserData(response?.data || {});
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -75,6 +83,7 @@ const UserProfileHeader = () => {
 
     getUserData();
   }, []);
+  console.log(userData);
 
   return (
     <Card>
@@ -135,7 +144,7 @@ const UserProfileHeader = () => {
               >
                 <BusinessCenterIcon />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {"Admin"}
+                  {userData.role}
                 </Typography>
               </Box>
               <Box
@@ -148,7 +157,8 @@ const UserProfileHeader = () => {
               >
                 <LocationOnIcon />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {"Dallas"}
+                  {userData.user_info.address.city},
+                  {userData.user_info.address.country}
                 </Typography>
               </Box>
               <Box
@@ -160,7 +170,7 @@ const UserProfileHeader = () => {
               >
                 <CalendarMonthIcon />{" "}
                 <Typography sx={{ color: "text.secondary" }}>
-                  Joined {userData.created_at}
+                  Joined {formatDate(userData.created_at)}
                 </Typography>
               </Box>
             </Box>

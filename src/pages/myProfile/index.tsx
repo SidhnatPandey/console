@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import UserProfileHeader from "./UserProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import Profile from "./Profile";
 
 function index() {
+  const [allUserData, setAllUserData] = useState({
+  
+  });
+  
   return (
     <div>
-      <UserProfileHeader />
+      <UserProfileHeader  setAllUserData={setAllUserData}/>
       <ProfileTabs />
-      <Profile />
+      <Profile user_info={allUserData} />
     </div>
   );
 }
