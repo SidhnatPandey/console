@@ -925,6 +925,21 @@ const StepperCustomVertical = () => {
                               noWrap
                               sx={{ fontWeight: 500, color: "text.secondary" }}
                             >
+                              Source Code Path
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography sx={{ color: "text.secondary" }}>
+                              {getSoruceCodeValue("src_code_path")}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Typography
+                              noWrap
+                              sx={{ fontWeight: 500, color: "text.secondary" }}
+                            >
                               Env Variables
                             </Typography>
                           </TableCell>
@@ -999,7 +1014,7 @@ const StepperCustomVertical = () => {
                 <img
                   height={230}
                   alt="App-Review-illustration"
-                  src="/images/pages/create-deal-review-complete.png"
+                  src="/images/pages/launch.png"
                 />
               </Box>
             </Grid>

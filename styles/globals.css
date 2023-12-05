@@ -50,6 +50,10 @@ code[class*='language-'] {
   vertical-align: bottom;
 }
 
+a, a:link, a:visited, a:focus, a:hover, a:active {
+  color: #7353e5;
+}
+
 /* Margins */
 
 .mr-1 {

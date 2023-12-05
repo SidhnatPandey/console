@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     if (auth.user) {
-      const homeRoute = '/dashboard';
+      const homeRoute = '/apps';
 
       // Redirect user to Home URL
       router.replace(homeRoute)
