@@ -19,7 +19,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Paper } from "@mui/material";
 import { userProfile } from "src/services/authService";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 
@@ -161,18 +161,27 @@ const TabAccount = () => {
         phone_number: formData.phoneNumber,
       },
     };
-    userProfile(uprofile, "post")
-      .then((response: any) => {
-        console.log(response);
-        setOriginalData({ ...formData });
-        router.push("/myProfile");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    
+      userProfile(uprofile, "post")
+        .then((response: any) => {
+            if (response.status === 200) {
+            toast.success('Profile updated successfully!');
+            setOriginalData({ ...formData });
+            router.push("/myProfile");
+          } else {
+            toast.error('Profile update failed. Please try again.');
+          }
+        })
+        .catch((error) => {  
+          if (error.response && error.response.status === 400) {
+            toast.error('Bad request. Please check your data and try again.');
+          } else {
+            toast.error('An error occurred. Please try again later.');
+          }
+        });
+    };
 
-  const {
+    const {
     control,
     handleSubmit,
     formState: { errors },
@@ -364,6 +373,7 @@ const TabAccount = () => {
                   variant="contained"
                   sx={{ mr: 4 }}
                   onClick={handleSaveChanges}
+
                 >
                   Save Changes
                 </Button>
