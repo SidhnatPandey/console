@@ -19,6 +19,7 @@ import Icon from "src/@core/components/icon";
 // ** Types
 import { ProfileHeaderType } from "src/@fake-db/types";
 import { getUserInfo } from "src/services/userInfo";
+import { useRouter } from "next/router";
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -58,6 +59,12 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
     },
     status: "string",
   });
+
+  const router = useRouter(); // Initialize the useNavigate hook
+  const handleEditProfileClick = () => {
+    // Redirect to the settings page when the "Edit Profile" button is clicked
+    router.push('/settings');
+  };
   const formatDate = (dateString: string | number | Date) => {
     const options = { month: "long", year: "numeric" } as const;
     const formattedDate = new Date(dateString).toLocaleDateString(
@@ -175,7 +182,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               </Box>
             </Box>
           </Box>
-          <Button variant="contained" sx={{ "& svg": { mr: 2 } }}>
+          <Button variant="contained" sx={{ "& svg": { mr: 2 } }} onClick={handleEditProfileClick}>
             Edit Profile
           </Button>
         </Box>
