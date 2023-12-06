@@ -34,7 +34,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }));
 
-const ProfileTabs = ( { }) => {
+const ProfileTabs = () => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>('profile');
 
