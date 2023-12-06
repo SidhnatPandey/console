@@ -31,9 +31,8 @@ const ProfilePicture = styled("img")(({ theme }) => ({
   },
 }));
 
-const UserProfileHeader = ({ setAllUserData }: any) => {
-  const [userData, setUserData] = useState({
-    id: "string",
+interface UserProfile {
+  id: "string",
     type: "string",
     user_id: "string",
     role: "string",
@@ -58,39 +57,45 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
       },
     },
     status: "string",
-  });
+}
+
+const UserProfileHeader = ({ setAllUserData }: any) => {
+  const [userData, setUserData] = useState<UserProfile>();
 
   const router = useRouter(); // Initialize the useNavigate hook
+  
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
     router.push('/settings');
   };
-  const formatDate = (dateString: string | number | Date) => {
+
+  const formatDate = (dateString: string | number | Date | undefined) => {
+   if (dateString){
     const options = { month: "long", year: "numeric" } as const;
     const formattedDate = new Date(dateString).toLocaleDateString(
       "en-US",
       options
     );
     return formattedDate;
+   }
   };
 
   useEffect(() => {
-    const getUserData = () => {
-      getUserInfo()
-        .then((response) => {
-          if (response.status === 200) {
-            setUserData(response?.data || {});
-            setAllUserData(response?.data || {});
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-
-    getUserData();
+      getUserData();
   }, []);
-  console.log(userData);
+
+  const getUserData = () => {
+    getUserInfo()
+      .then((response) => {
+        if (response.status === 200) {
+          setUserData(response?.data || {});
+          setAllUserData(response?.data || {});
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <Card>
@@ -151,7 +156,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <BusinessCenterIcon />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {userData.role}
+                  {userData?.role}
                 </Typography>
               </Box>
               <Box
@@ -164,8 +169,8 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <LocationOnIcon />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {userData.user_info.address.city},
-                  {userData.user_info.address.country}
+                  {userData?.user_info.address.city},
+                  {userData?.user_info.address.country}
                 </Typography>
               </Box>
               <Box
@@ -177,7 +182,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <CalendarMonthIcon />{" "}
                 <Typography sx={{ color: "text.secondary" }}>
-                  Joined {formatDate(userData.created_at)}
+                  Joined {formatDate(userData?.created_at)}
                 </Typography>
               </Box>
             </Box>

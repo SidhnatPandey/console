@@ -5,12 +5,11 @@ import Profile from "./Profile";
 
 function index() {
   const [allUserData, setAllUserData] = useState({
-  
   });
   
   return (
     <div>
-      <UserProfileHeader  setAllUserData={setAllUserData}/>
+      <UserProfileHeader setAllUserData={setAllUserData}/>
       <ProfileTabs />
       <Profile user_info={allUserData} />
     </div>

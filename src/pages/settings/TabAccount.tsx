@@ -304,7 +304,7 @@ const TabAccount = () => {
                                         onChange={e => handleFormChange('country', e.target.value)}
                                     >
                                         {Countries.map(country => (
-                                            <MenuItem key={country.code} value={country.code}>
+                                            <MenuItem key={country.code} value={country.name}>
                                                 {country.name}
                                             </MenuItem>
                                         ))}
