@@ -18,12 +18,11 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
-import Icon from 'src/@core/components/icon';
 import { Paper } from '@mui/material';
 import { userProfile } from 'src/services/authService';
 import { toast } from 'react-toastify';
 import { Countries } from 'src/@core/static/countries';
+import { useRouter } from 'next/router';
 
 interface Data {
     email: string;
@@ -98,6 +97,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 const TabAccount = () => {
     const [formData, setFormData] = useState<Data>(initialData);
     const [imgSrc, setImgSrc] = useState<string>('/images/avatars/15.png');
+    const router = useRouter();
 
     useEffect(() => {
         userProfile("", "get").then((response: any) => {
@@ -143,6 +143,7 @@ const TabAccount = () => {
             }
         };
         userProfile(uprofile, "post").then((response: any) => {
+            console.log(response?.data)
         }).catch(error => {
             console.log(error)
         })
@@ -322,8 +323,10 @@ const TabAccount = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(6.5)} !important` }}>
-                                <Button variant='contained' sx={{ mr: 4 }} type='submit'>
+                                <Button variant='contained' sx={{ mr: 4 }} type='submit' onClick={() => router.push('/myProfile')}>
+                                
                                     Save Changes
+                                    
                                 </Button>
                                 <Button type='reset' variant='outlined' color='secondary' onClick={() => setFormData(initialData)}>
                                     cancel
@@ -340,7 +343,7 @@ const TabAccount = () => {
                 <Card>
                     <CardHeader title="Delete Account" />
                     <CardContent>
-                        <form onSubmit={handleSubmit(() => { })}>
+                        <form onSubmit={handleSubmit(() => {console.log("Delete") })}>
                             <Paper
                                 sx={{
                                     background: 'rgba(255, 165, 0, 0.1)', // Light orange background
