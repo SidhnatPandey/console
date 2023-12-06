@@ -6,6 +6,7 @@ export const APP_API = {
     checkUser: 'checkUser/{username}',
     registerUser: "initializ/v1/registerUser",
     checkAppNameExists: "/initializ/v1/apps/checkAppNameExists?application_name={appName}",
+    userProfile: "http://localhost:8089/initializ/v1/userProfile",
 
     // Create-App
     sendGitCode: 'code?code={code}',
