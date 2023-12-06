@@ -10,6 +10,7 @@ export const signUp = (user: any) => {
   );
 };
 
+
 export const login = (
   loginDetail: any,
   apiFunction: (partialUrl: string, data: any) => Promise<AxiosResponse<any, any>>
@@ -36,4 +37,11 @@ export const forgotPassword = (email: string) => {
     (response) => response?.data
   );
 };
-
+  
+export const userProfile = (uProfile: any,call:string) => {
+  setApiBaseUrl();
+  return call==="post" ? post(APP_API.userProfile,  uProfile ).then(
+    (response) => response?.data
+  ): get(APP_API.userProfile).then(
+      (response) => response?.data)
+};

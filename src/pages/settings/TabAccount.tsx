@@ -1,4 +1,5 @@
-import React, { useState, ChangeEvent } from 'react';
+
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -20,6 +21,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import Icon from 'src/@core/components/icon';
 import { Paper } from '@mui/material';
+import { userProfile } from 'src/services/authService';
+import { toast } from 'react-toastify';
+import { Countries } from 'src/@core/static/countries';
 
 interface Data {
     email: string;
@@ -32,23 +36,31 @@ interface Data {
     timezone: string;
     firstName: string;
     organization: string;
-    number: number | string;
+    phoneNumber: number | string;
     zipCode: number | string;
+    city: string;
+    username: string;
+    user_id: string;
+    role: string;
 }
 
 const initialData: Data = {
+    user_id: '',
     state: '',
-    number: '',
+    phoneNumber: '',
     address: '',
     zipCode: '',
     lastName: 'Doe',
+    city: '',
     currency: 'usd',
     firstName: 'John',
     language: 'arabic',
     timezone: 'gmt-12',
     country: 'australia',
     organization: 'Pixinvent',
-    email: 'john.doe@example.com'
+    email: 'john.doe@example.com',
+    username: '',
+    role: '',
 };
 
 const ImgStyled = styled('img')(({ theme }) => ({
@@ -59,12 +71,20 @@ const ImgStyled = styled('img')(({ theme }) => ({
 }));
 
 const ButtonStyled = styled(Button)(({ theme }) => ({
+    background: theme.palette.primary.main, 
+    color: theme.palette.common.white,
+    padding: ".5rem",
+    borderRadius: "5px",
+    cursor:"pointer",
+    '&:hover': {
+        opacity: "0.9", 
+    },
     [theme.breakpoints.down('sm')]: {
         width: '100%',
-        textAlign: 'center'
-    }
+        textAlign: 'center',
+        marginTop: theme.spacing(2),
+    },
 }));
-
 const ResetButtonStyled = styled(Button)(({ theme }) => ({
     marginLeft: theme.spacing(4),
     [theme.breakpoints.down('sm')]: {
@@ -76,32 +96,85 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }));
 
 const TabAccount = () => {
-    const [inputValue, setInputValue] = useState<string>('');
     const [formData, setFormData] = useState<Data>(initialData);
     const [imgSrc, setImgSrc] = useState<string>('/images/avatars/15.png');
+
+    useEffect(() => {
+        userProfile("", "get").then((response: any) => {
+            const responseData = response?.data;
+            setFormData(
+                {
+                    ...formData,
+                    role: responseData?.role,
+                    user_id: responseData?.user_id,
+                    state: responseData?.user_info?.address?.state,
+                    phoneNumber: responseData?.user_info?.phone_number,
+                    address: responseData?.user_info?.address?.street_address,
+                    zipCode: responseData?.user_info?.address?.zip_code,
+                    lastName: responseData?.user_info?.last_name,
+                    city: responseData?.user_info?.address?.city,
+                    firstName: responseData?.user_info?.first_name,
+                    country: responseData?.user_info?.address?.country,
+                    organization: responseData?.org,
+                    email: responseData?.email,
+                    username: responseData?.username,
+
+                }
+            )
+        }).catch(error => {
+            console.log(error)
+        })
+    }, [])
+
+    const handleSaveChanges = () => {
+        const uprofile: any = {
+            role: formData.role,
+            user_info: {
+                address: {
+                    city: formData.city,
+                    country: formData.country,
+                    state: formData.state,
+                    street_address: formData.address,
+                    zip_code: formData.zipCode
+                },
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                phone_number: formData.phoneNumber
+            }
+        };
+        userProfile(uprofile, "post").then((response: any) => {
+        }).catch(error => {
+            console.log(error)
+        })
+    };
 
     const {
         control,
         handleSubmit,
         formState: { errors }
-    } = useForm({ defaultValues: { checkbox: false } });
+    } = useForm({ defaultValues: { checkbox: true } });
 
-    const handleInputImageChange = (file: ChangeEvent) => {
+    const handleInputImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const reader = new FileReader();
-        const { files } = file.target as HTMLInputElement;
+        const { files } = e.target;
 
-        if (files && files.length !== 0) {
-            reader.onload = () => setImgSrc(reader.result as string);
-            reader.readAsDataURL(files[0]);
+        if (files && files.length > 0) {
+            const selectedFile = files[0];
 
-            if (reader.result !== null) {
-                setInputValue(reader.result as string);
+            if (selectedFile.size <= 800 * 1024) {
+                reader.onload = () => {
+                    setImgSrc(reader.result as string);
+                };
+
+                reader.readAsDataURL(selectedFile);
+
+            } else {
+                alert('Image size exceeds the limit of 800KB. Please choose a smaller image.');
             }
         }
     };
 
     const handleInputImageReset = () => {
-        setInputValue('');
         setImgSrc('');
     };
 
@@ -114,24 +187,18 @@ const TabAccount = () => {
             {/* Account Details Card */}
             <Card>
                 <CardHeader title="Profile Details" />
-                <form>
+                <form onSubmit={handleSubmit(handleSaveChanges)}>
                     <CardContent sx={{ pt: 0 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <ImgStyled src={'/images/avatars/15.png'} alt="Profile Pic" />
+                            <ImgStyled src={'/images/avatars/15.png'} alt="Profile Pic" />
                             <div>
-                                <ButtonStyled
-                                //   component="label"
-                                //   variant="contained"
-                                //   htmlFor="account-settings-upload-image"
-                                >
+                                <ButtonStyled variant="contained" as="label">
                                     Upload New Photo
                                     <input
-                                        hidden
                                         type="file"
-                                        value={inputValue}
-                                        accept="image/png, image/jpeg"
+                                        accept=".jpg, .jpeg, .png"  // Allow only JPEG and PNG files
                                         onChange={handleInputImageChange}
-                                        id="account-settings-upload-image"
+                                        style={{ display: 'none' }}
                                     />
                                 </ButtonStyled>
                                 <ResetButtonStyled
@@ -193,10 +260,10 @@ const TabAccount = () => {
                                     fullWidth
                                     type='number'
                                     label='Phone Number'
-                                    value={formData.number}
+                                    value={formData.phoneNumber}
                                     placeholder='202 555 0111'
-                                    onChange={e => handleFormChange('number', e.target.value)}
-                                    InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                                    onChange={e => handleFormChange('phoneNumber', e.target.value)}
+                                    // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -235,76 +302,27 @@ const TabAccount = () => {
                                         value={formData.country}
                                         onChange={e => handleFormChange('country', e.target.value)}
                                     >
-                                        <MenuItem value='australia'>Australia</MenuItem>
-                                        <MenuItem value='canada'>Canada</MenuItem>
-                                        <MenuItem value='france'>France</MenuItem>
-                                        <MenuItem value='united-kingdom'>United Kingdom</MenuItem>
-                                        <MenuItem value='united-states'>United States</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Language</InputLabel>
-                                    <Select
-                                        label='Language'
-                                        value={formData.language}
-                                        onChange={e => handleFormChange('language', e.target.value)}
-                                    >
-                                        <MenuItem value='arabic'>Arabic</MenuItem>
-                                        <MenuItem value='english'>English</MenuItem>
-                                        <MenuItem value='french'>French</MenuItem>
-                                        <MenuItem value='german'>German</MenuItem>
-                                        <MenuItem value='portuguese'>Portuguese</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Timezone</InputLabel>
-                                    <Select
-                                        label='Timezone'
-                                        value={formData.timezone}
-                                        onChange={e => handleFormChange('timezone', e.target.value)}
-                                    >
-                                        <MenuItem value='gmt-12'>(GMT-12:00) International Date Line West</MenuItem>
-                                        <MenuItem value='gmt-11'>(GMT-11:00) Midway Island, Samoa</MenuItem>
-                                        <MenuItem value='gmt-10'>(GMT-10:00) Hawaii</MenuItem>
-                                        <MenuItem value='gmt-09'>(GMT-09:00) Alaska</MenuItem>
-                                        <MenuItem value='gmt-08'>(GMT-08:00) Pacific Time (US & Canada)</MenuItem>
-                                        <MenuItem value='gmt-08-baja'>(GMT-08:00) Tijuana, Baja California</MenuItem>
-                                        <MenuItem value='gmt-07'>(GMT-07:00) Chihuahua, La Paz, Mazatlan</MenuItem>
-                                        <MenuItem value='gmt-07-mt'>(GMT-07:00) Mountain Time (US & Canada)</MenuItem>
-                                        <MenuItem value='gmt-06'>(GMT-06:00) Central America</MenuItem>
-                                        <MenuItem value='gmt-06-ct'>(GMT-06:00) Central Time (US & Canada)</MenuItem>
-                                        <MenuItem value='gmt-06-mc'>(GMT-06:00) Guadalajara, Mexico City, Monterrey</MenuItem>
-                                        <MenuItem value='gmt-06-sk'>(GMT-06:00) Saskatchewan</MenuItem>
-                                        <MenuItem value='gmt-05'>(GMT-05:00) Bogota, Lima, Quito, Rio Branco</MenuItem>
-                                        <MenuItem value='gmt-05-et'>(GMT-05:00) Eastern Time (US & Canada)</MenuItem>
-                                        <MenuItem value='gmt-05-ind'>(GMT-05:00) Indiana (East)</MenuItem>
-                                        <MenuItem value='gmt-04'>(GMT-04:00) Atlantic Time (Canada)</MenuItem>
-                                        <MenuItem value='gmt-04-clp'>(GMT-04:00) Caracas, La Paz</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Currency</InputLabel>
-                                    <Select
-                                        label='Currency'
-                                        value={formData.currency}
-                                        onChange={e => handleFormChange('currency', e.target.value)}
-                                    >
-                                        <MenuItem value='usd'>USD</MenuItem>
-                                        <MenuItem value='eur'>EUR</MenuItem>
-                                        <MenuItem value='pound'>Pound</MenuItem>
-                                        <MenuItem value='bitcoin'>Bitcoin</MenuItem>
+                                        {Countries.map(country => (
+                                            <MenuItem key={country.code} value={country.code}>
+                                                {country.name}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
 
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    type='string'
+                                    label='City'
+                                    placeholder='City'
+                                    value={formData.city}
+                                    onChange={e => handleFormChange('city', e.target.value)}
+                                />
+                            </Grid>
                             <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(6.5)} !important` }}>
-                                <Button variant='contained' sx={{ mr: 4 }}>
+                                <Button variant='contained' sx={{ mr: 4 }} type='submit'>
                                     Save Changes
                                 </Button>
                                 <Button type='reset' variant='outlined' color='secondary' onClick={() => setFormData(initialData)}>
@@ -341,7 +359,7 @@ const TabAccount = () => {
                                     <Controller
                                         name="checkbox"
                                         control={control}
-                                        rules={{ required: true }}
+                                        rules={{ required: false }}
                                         render={({ field }) => (
                                             <FormControlLabel
                                                 label="I confirm my account deactivation"
