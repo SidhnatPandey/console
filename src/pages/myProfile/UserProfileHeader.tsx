@@ -11,6 +11,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { getUserInfo } from "src/services/userInfo";
 import { useRouter } from "next/router";
+import { getMonthAndYear } from "src/utils/dateUtil";
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -58,17 +59,6 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
     router.push('/settings');
-  };
-
-  const formatDate = (dateString: string | number | Date | undefined) => {
-   if (dateString){
-    const options = { month: "long", year: "numeric" } as const;
-    const formattedDate = new Date(dateString).toLocaleDateString(
-      "en-US",
-      options
-    );
-    return formattedDate;
-   }
   };
 
   useEffect(() => {
@@ -173,7 +163,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <CalendarMonthIcon />{" "}
                 <Typography sx={{ color: "text.secondary" }}>
-                  Joined {formatDate(userData?.created_at)}
+                  Joined {getMonthAndYear(userData?.created_at)}
                 </Typography>
               </Box>
             </Box>
