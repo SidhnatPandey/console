@@ -17,13 +17,13 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Paper, Dialog, DialogActions, DialogContent, DialogTitle, Icon } from "@mui/material";
+import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
 import { userProfile } from "src/services/authService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import { deactivateUser } from "src/services/authService";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
 interface Data {
   email: string;
   state: string;
@@ -84,6 +84,7 @@ const ButtonStyled = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
   },
 }));
+
 const ResetButtonStyled = styled(Button)(({ theme }) => ({
   marginLeft: theme.spacing(4),
   [theme.breakpoints.down("sm")]: {
@@ -166,23 +167,21 @@ const TabAccount = () => {
       },
     };
 
-    
-  
     userProfile(uprofile, "post")
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success('Profile updated successfully!');
+          toast.success("Profile updated successfully!");
           setOriginalData({ ...formData });
           router.push("/myProfile");
         } else {
-          toast.error('Profile update failed. Please try again.');
+          toast.error("Profile update failed. Please try again.");
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
-          toast.error('Bad request. Please check your data and try again.');
+          toast.error("Bad request. Please check your data and try again.");
         } else {
-          toast.error('An error occurred. Please try again later.');
+          toast.error("An error occurred. Please try again later.");
         }
       });
   };
@@ -216,332 +215,355 @@ const TabAccount = () => {
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
   };
+
   const handleCheckboxChange = () => {
     // Toggle the checkbox state
     setIsCheckboxChecked(!isCheckboxChecked);
   };
+
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success('Account deactivated successfully!');
+          toast.success("Account deactivated successfully!");
           // Redirect or perform additional actions after deactivation
         } else {
-          toast.error('Account deactivation failed. Please try again.');
+          toast.error("Account deactivation failed. Please try again.");
         }
       })
       .catch((error) => {
         console.error(error);
-        toast.error('An error occurred during account deactivation. Please try again later.');
+        toast.error(
+          "An error occurred during account deactivation. Please try again later."
+        );
       });
   };
 
-const {
-  control,
-  handleSubmit,
-  formState: { errors },
-} = useForm({ defaultValues: { checkbox: false } });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: { checkbox: false } });
 
-return (
-  <Box>
-    {/* Account Details Card */}
-    <Card>
-      <CardHeader title="Profile Details" />
-      <form onSubmit={handleSubmit(handleSaveChanges)}>
-        <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ImgStyled src={"/images/avatars/15.png"} alt="Profile Pic" />
-            <div>
-              <ButtonStyled variant="contained" as="label">
-                Upload New Photo
-                <input
-                  type="file"
-                  accept=".jpg, .jpeg, .png" // Allow only JPEG and PNG files
-                  onChange={handleInputImageChange}
-                  style={{ display: "none" }}
-                />
-              </ButtonStyled>
-              <ResetButtonStyled
-                color="secondary"
-                variant="outlined"
-                onClick={handleInputImageReset}
-              >
-                Reset
-              </ResetButtonStyled>
-              <Typography sx={{ mt: 4, color: "text.disabled" }}>
-                Allowed PNG or JPEG. Max size of 800K.
-              </Typography>
-            </div>
-          </Box>
-        </CardContent>
-        <Divider />
-        <CardContent>
-          <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="First Name"
-                placeholder="John"
-                value={formData.firstName}
-                onChange={(e) =>
-                  handleFormChange("firstName", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Last Name"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChange={(e) => handleFormChange("lastName", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="email"
-                label="Email"
-                value={formData.email}
-                placeholder="john.doe@example.com"
-                InputProps={{ readOnly: true }}
-                onChange={(e) => handleFormChange("email", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Organization"
-                placeholder="Initialize"
-                value={formData.organization}
-                onChange={(e) =>
-                  handleFormChange("organization", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Phone Number"
-                value={formData.phoneNumber}
-                placeholder="202 555 0111"
-                onChange={(e) =>
-                  handleFormChange("phoneNumber", e.target.value)
-                }
-              // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={(e) => handleFormChange("address", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="State"
-                placeholder="California"
-                value={formData.state}
-                onChange={(e) => handleFormChange("state", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="number"
-                label="Zip Code"
-                placeholder="231465"
-                value={formData.zipCode}
-                onChange={(e) => handleFormChange("zipCode", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Country</InputLabel>
-                <Select
-                  label="Country"
-                  value={formData.country}
-                  onChange={(e) =>
-                    handleFormChange("country", e.target.value)
-                  }
+  return (
+    <Box>
+      {/* Account Details Card */}
+      <Card>
+        <CardHeader title="Profile Details" />
+        <form onSubmit={handleSubmit(handleSaveChanges)}>
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <ImgStyled src={"/images/avatars/15.png"} alt="Profile Pic" />
+              <div>
+                <ButtonStyled variant="contained" as="label">
+                  Upload New Photo
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png" // Allow only JPEG and PNG files
+                    onChange={handleInputImageChange}
+                    style={{ display: "none" }}
+                  />
+                </ButtonStyled>
+                <ResetButtonStyled
+                  color="secondary"
+                  variant="outlined"
+                  onClick={handleInputImageReset}
                 >
-                  {Countries.map((country) => (
-                    <MenuItem key={country.code} value={country.name}>
-                      {country.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
+                  Reset
+                </ResetButtonStyled>
+                <Typography sx={{ mt: 4, color: "text.disabled" }}>
+                  Allowed PNG or JPEG. Max size of 800K.
+                </Typography>
+              </div>
+            </Box>
+          </CardContent>
+          <Divider />
+          <CardContent>
+            <Grid container spacing={5}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    handleFormChange("firstName", e.target.value)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={(e) => handleFormChange("lastName", e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  type="email"
+                  label="Email"
+                  value={formData.email}
+                  placeholder="john.doe@example.com"
+                  InputProps={{ readOnly: true }}
+                  onChange={(e) => handleFormChange("email", e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Organization"
+                  placeholder="Initialize"
+                  value={formData.organization}
+                  onChange={(e) =>
+                    handleFormChange("organization", e.target.value)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Phone Number"
+                  value={formData.phoneNumber}
+                  placeholder="202 555 0111"
+                  onChange={(e) =>
+                    handleFormChange("phoneNumber", e.target.value)
+                  }
+                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Address"
+                  placeholder="Address"
+                  value={formData.address}
+                  onChange={(e) => handleFormChange("address", e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="State"
+                  placeholder="California"
+                  value={formData.state}
+                  onChange={(e) => handleFormChange("state", e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Zip Code"
+                  placeholder="231465"
+                  value={formData.zipCode}
+                  onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Country</InputLabel>
+                  <Select
+                    label="Country"
+                    value={formData.country}
+                    onChange={(e) =>
+                      handleFormChange("country", e.target.value)
+                    }
+                  >
+                    {Countries.map((country) => (
+                      <MenuItem key={country.code} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="string"
-                label="City"
-                placeholder="City"
-                value={formData.city}
-                onChange={(e) => handleFormChange("city", e.target.value)}
-              />
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  type="string"
+                  label="City"
+                  placeholder="City"
+                  value={formData.city}
+                  onChange={(e) => handleFormChange("city", e.target.value)}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{ pt: (theme) => `${theme.spacing(6.5)} !important` }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{ mr: 4 }}
+                  onClick={handleSaveChanges}
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleCancelChanges}
+                >
+                  Cancel
+                </Button>
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{ pt: (theme) => `${theme.spacing(6.5)} !important` }}
+          </CardContent>
+        </form>
+      </Card>
+      <br />
+      {/* Delete Account Card */}
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title="Delete Account" />
+          <CardContent>
+            <form
+              onSubmit={handleSubmit(() => setConfirmationDialogOpen(true))}
             >
+              <Paper
+                sx={{
+                  background: "rgba(255, 165, 0, 0.1)",
+                  p: 2,
+                  mb: 4,
+                  borderRadius: 1,
+                }}
+              >
+                <Typography variant="body1" color="orange">
+                  Are you sure you want to delete your account?
+                  <br />
+                  Once you delete your account, there is no going back. Please
+                  be certain.
+                </Typography>
+              </Paper>
+              <Box sx={{ mb: 4 }}>
+                <FormControl>
+                  <Controller
+                    name="checkbox"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field }) => (
+                      <FormControlLabel
+                        label="I confirm my account deactivation"
+                        sx={
+                          errors.checkbox
+                            ? {
+                                "& .MuiTypography-root": {
+                                  color: "error.main",
+                                },
+                              }
+                            : null
+                        }
+                        control={
+                          <Checkbox
+                            {...field}
+                            size="small"
+                            name="validation-basic-checkbox"
+                            sx={
+                              errors.checkbox ? { color: "error.main" } : null
+                            }
+                            onChange={handleCheckboxChange}
+                          />
+                        }
+                      />
+                    )}
+                  />
+                  {errors.checkbox && (
+                    <FormHelperText
+                      sx={{ color: "error.main" }}
+                      id="validation-basic-checkbox"
+                    >
+                      Please confirm you want to delete the account
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Box>
               <Button
                 variant="contained"
-                sx={{ mr: 4 }}
-                onClick={handleSaveChanges}
-
+                color="error"
+                type="submit"
+                onClick={() => setConfirmationDialogOpen(true)} // Open the confirmation dialog
+                disabled={!isCheckboxChecked}
               >
-                Save Changes
+                Deactivate Account
               </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleCancelChanges}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </form>
-    </Card>
-
-    <br />
-    {/* Delete Account Card */}
-    <Grid item xs={12}>
-      <Card>
-        <CardHeader title="Delete Account" />
-        <CardContent>
-          <form onSubmit={handleSubmit(() => setConfirmationDialogOpen(true))}>
-            <Paper
-              sx={{
-                background: "rgba(255, 165, 0, 0.1)",
-                p: 2,
-                mb: 4,
-                borderRadius: 1,
-              }}
-            >
-              <Typography variant="body1" color="orange">
-                Are you sure you want to delete your account?
-                <br />
-                Once you delete your account, there is no going back. Please
-                be certain.
-              </Typography>
-            </Paper>
-            <Box sx={{ mb: 4 }}>
-              <FormControl>
-                <Controller
-                  name="checkbox"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      label="I confirm my account deactivation"
-                      sx={
-                        errors.checkbox
-                          ? {
-                            "& .MuiTypography-root": {
-                              color: "error.main",
-                            },
-                          }
-                          : null
-                      }
-                      
-                      control={
-                        <Checkbox
-                          {...field}
-                          size="small"
-                          name="validation-basic-checkbox"
-                          sx={
-                            errors.checkbox ? { color: "error.main" } : null
-                          }
-                          onChange={handleCheckboxChange}
-
-                        />
-                      }
-                    />
-                  )}
-                />
-                {errors.checkbox && (
-                  <FormHelperText
-                    sx={{ color: "error.main" }}
-                    id="validation-basic-checkbox"
-                  >
-                    Please confirm you want to delete the account
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Box>
-            <Button
-              variant="contained"
-              color="error"
-              type="submit"
-              onClick={() => setConfirmationDialogOpen(true)} // Open the confirmation dialog
-              disabled={!isCheckboxChecked}
-            >
-              Deactivate Account
-            </Button>
-
-          </form>
-        </CardContent>
-      </Card>
-    </Grid>
-
-    {/* Confirmation Dialog */}
-    <Dialog fullWidth maxWidth="xs" open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
-      <DialogContent
-        sx={{
-          pb: theme => `${theme.spacing(6)} !important`,
-          px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-          pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-        }}
+            </form>
+          </CardContent>
+        </Card>
+      </Grid>
+      {/* Confirmation Dialog */}
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={isConfirmationDialogOpen}
+        onClose={() => setConfirmationDialogOpen(false)}
       >
-        <Box
+        <DialogContent
           sx={{
-            display: 'flex',
-            textAlign: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            '& svg': { mb: 6, color: 'error.main' }
+            pb: (theme) => `${theme.spacing(6)} !important`,
+            px: (theme) => [
+              `${theme.spacing(5)} !important`,
+              `${theme.spacing(15)} !important`,
+            ],
+            pt: (theme) => [
+              `${theme.spacing(8)} !important`,
+              `${theme.spacing(12.5)} !important`,
+            ],
           }}
         >
-          {/* Assuming you have an Icon component */}
-          {/* <Icon icon="tabler:alert-circle" style={{ fontSize: 5.5 }} /> */}
-          <Typography variant="body1" color="textPrimary">
-            Are you sure you want to deactivate your account?
-          </Typography>
-        </Box>
-      </DialogContent>
-      <DialogActions
-        sx={{
-          justifyContent: 'center',
-          px: theme => [`${theme.spacing(5)} !important`, `${theme.spacing(15)} !important`],
-          pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
-        }}
-      >
-        <Button variant="contained" sx={{ mr: 2 }} onClick={() => handleDeactivateAccount()}>
-          Yes
-        </Button>
-        <Button variant="outlined" color="primary" onClick={() => setConfirmationDialogOpen(false)}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-
-  </Box>
-);
+          <Box
+            sx={{
+              display: "flex",
+              textAlign: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              justifyContent: "center",
+              "& svg": { mb: 6, color: "error.main" },
+            }}
+          >
+            {/* Assuming you have an Icon component */}
+            {/* <Icon icon="tabler:alert-circle" style={{ fontSize: 5.5 }} /> */}
+            <Typography variant="body1" color="textPrimary">
+              Are you sure you want to deactivate your account?
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            px: (theme) => [
+              `${theme.spacing(5)} !important`,
+              `${theme.spacing(15)} !important`,
+            ],
+            pb: (theme) => [
+              `${theme.spacing(8)} !important`,
+              `${theme.spacing(12.5)} !important`,
+            ],
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{ mr: 2 }}
+            onClick={() => handleDeactivateAccount()}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setConfirmationDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 };
-
 
 export default TabAccount;
