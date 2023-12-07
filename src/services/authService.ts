@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { get, post } from "../@core/services/masterServices";
+import { deleteCall, get, post } from "../@core/services/masterServices";
 import { APP_API } from "src/@core/static/api.constant";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
 
@@ -44,4 +44,11 @@ export const userProfile = (uProfile: any,call:string) => {
     (response) => response?.data
   ): get(APP_API.userProfile).then(
       (response) => response?.data)
+};
+
+export const deactivateUser = () => {
+  setApiBaseUrl();
+  return deleteCall(APP_API.deactivateUser).then(
+    (response) => response?.data
+  );
 };

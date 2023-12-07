@@ -7,6 +7,7 @@ export const APP_API = {
     registerUser: "initializ/v1/registerUser",
     checkAppNameExists: "/initializ/v1/apps/checkAppNameExists?application_name={appName}",
     userProfile: "initializ/v1/userProfile",
+    deactivateUser: "initializ/v1/deleteUser",
 
     // Create-App
     sendGitCode: 'code?code={code}',
