@@ -35,8 +35,8 @@ interface Data {
   timezone: string;
   firstName: string;
   organization: string;
-  phoneNumber: number | string;
-  zipCode: number | string;
+  phoneNumber: string;
+  zipCode: number;
   city: string;
   username: string;
   user_id: string;
@@ -46,9 +46,9 @@ interface Data {
 const initialData: Data = {
   user_id: "",
   state: "",
-  phoneNumber: "",
+  phoneNumber: "123456788",
   address: "",
-  zipCode: "",
+  zipCode: 305001,
   lastName: "Doe",
   city: "",
   currency: "usd",
@@ -159,7 +159,7 @@ const TabAccount = () => {
           country: formData.country,
           state: formData.state,
           street_address: formData.address,
-          zip_code: formData.zipCode,
+          zip_code: Number(formData.zipCode),
         },
         first_name: formData.firstName,
         last_name: formData.lastName,
