@@ -101,6 +101,7 @@ const TabAccount = () => {
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
   const router = useRouter();
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const fetchData = () => {
     userProfile("", "get")
@@ -165,6 +166,8 @@ const TabAccount = () => {
       },
     };
 
+    
+  
     userProfile(uprofile, "post")
       .then((response: any) => {
         if (response.status === 200) {
@@ -213,7 +216,10 @@ const TabAccount = () => {
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
   };
-
+  const handleCheckboxChange = () => {
+    // Toggle the checkbox state
+    setIsCheckboxChecked(!isCheckboxChecked);
+  };
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
@@ -450,6 +456,7 @@ return (
                           }
                           : null
                       }
+                      
                       control={
                         <Checkbox
                           {...field}
@@ -458,6 +465,8 @@ return (
                           sx={
                             errors.checkbox ? { color: "error.main" } : null
                           }
+                          onChange={handleCheckboxChange}
+
                         />
                       }
                     />
@@ -478,7 +487,7 @@ return (
               color="error"
               type="submit"
               onClick={() => setConfirmationDialogOpen(true)} // Open the confirmation dialog
-              disabled={errors.checkbox !== undefined}
+              disabled={!isCheckboxChecked}
             >
               Deactivate Account
             </Button>
