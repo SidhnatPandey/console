@@ -1,7 +1,4 @@
-// ** React Imports
 import { useEffect, useState } from "react";
-
-// ** MUI Components
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
@@ -12,12 +9,6 @@ import CardContent from "@mui/material/CardContent";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
-// ** Icon Imports
-import Icon from "src/@core/components/icon";
-
-// ** Types
-import { ProfileHeaderType } from "src/@fake-db/types";
 import { getUserInfo } from "src/services/userInfo";
 import { useRouter } from "next/router";
 

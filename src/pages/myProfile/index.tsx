@@ -8,11 +8,11 @@ function index() {
   });
   
   return (
-    <div>
+    <>
       <UserProfileHeader setAllUserData={setAllUserData}/>
       <ProfileTabs />
       <Profile user_info={allUserData} />
-    </div>
+    </>
   );
 }
 
