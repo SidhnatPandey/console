@@ -227,6 +227,7 @@ const TabAccount = () => {
       .then((response: any) => {
         if (response.status === 200) {
           toast.success("Account deactivated successfully!");
+          router.push("/login"); // Update the path to your login page
           // Redirect or perform additional actions after deactivation
         } else {
           toast.error("Account deactivation failed. Please try again.");
