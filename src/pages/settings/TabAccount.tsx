@@ -128,7 +128,12 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
+        setImgSrc(
+          responseData?.user_info?.profile_picture || "/images/avatars/15.png"
+        );
+
         setOriginalData({
           ...formData,
           role: responseData?.role,
@@ -144,6 +149,7 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
       })
       .catch((error) => {
@@ -169,7 +175,7 @@ const TabAccount = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone_number: formData.phoneNumber,
-        profile_picture: formData.user_info.profile_picture, 
+        profile_picture: formData.user_info.profile_picture,
       },
     };
 
@@ -178,6 +184,9 @@ const TabAccount = () => {
         if (response.status === 200) {
           toast.success("Profile updated successfully!");
           setOriginalData({ ...formData });
+          setImgSrc(
+            formData.user_info.profile_picture || "/images/avatars/15.png"
+          );
           router.push("/myProfile");
         } else {
           toast.error("Profile update failed. Please try again.");
@@ -199,17 +208,16 @@ const TabAccount = () => {
       const selectedFile = files[0];
       if (selectedFile.size <= 800 * 1024) {
         reader.onload = () => {
-          const profilePicture:any =  reader.result;  
+          const profilePicture: any = reader.result;
           setImgSrc(reader.result as string);
           setFormData({
             ...formData,
             user_info: {
               ...formData.user_info,
-              profile_picture: profilePicture?.split(',')[1] as string,
+              profile_picture: profilePicture?.split(",")[1] as string,
             },
           });
         };
-
         reader.readAsDataURL(selectedFile);
       } else {
         alert(
@@ -218,16 +226,26 @@ const TabAccount = () => {
       }
     }
   };
-  const handleInputImageReset = () => {
-    setImgSrc("");
-  };
 
+  const handleInputImageReset = () => {
+    setImgSrc("/images/avatars/15.png");
+    setFormData({
+      ...formData,
+      user_info: {
+        ...formData.user_info,
+        profile_picture: "",
+      },
+    });
+  };
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
     setFormData({ ...formData, [field]: value });
   };
 
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
+    setImgSrc(
+      originalData.user_info.profile_picture || "/images/avatars/15.png"
+    );
   };
 
   const handleCheckboxChange = () => {
@@ -235,10 +253,10 @@ const TabAccount = () => {
     setIsCheckboxChecked(!isCheckboxChecked);
   };
 
-  const { logout } = useAuth()
+  const { logout } = useAuth();
   const handleDeactivate = () => {
-    logout()
-  }
+    logout();
+  };
 
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
@@ -274,7 +292,7 @@ const TabAccount = () => {
         <form onSubmit={handleSubmit(handleSaveChanges)}>
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ImgStyled src={imgSrc} alt="Profile Pic" />
+              <ImgStyled src={imgSrc} alt="Profile Pic" />
               <div>
                 <ButtonStyled variant="contained" as="label">
                   Upload New Photo
@@ -353,7 +371,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -473,10 +491,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                              "& .MuiTypography-root": {
-                                color: "error.main",
-                              },
-                            }
+                                "& .MuiTypography-root": {
+                                  color: "error.main",
+                                },
+                              }
                             : null
                         }
                         control={
