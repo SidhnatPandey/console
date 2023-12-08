@@ -23,8 +23,10 @@ import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import { deactivateUser } from "src/services/authService";
+import { useAuth } from "src/hooks/useAuth";
 
 interface Data {
+  user_info: any;
   email: string;
   state: string;
   address: string;
@@ -41,6 +43,7 @@ interface Data {
   username: string;
   user_id: string;
   role: string;
+  profile_picture: string;
 }
 
 const initialData: Data = {
@@ -60,6 +63,8 @@ const initialData: Data = {
   email: "john.doe@example.com",
   username: "",
   role: "",
+  user_info: undefined,
+  profile_picture: "",
 };
 
 const ImgStyled = styled("img")(({ theme }) => ({
@@ -164,6 +169,7 @@ const TabAccount = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone_number: formData.phoneNumber,
+        profile_picture: formData.user_info.profile_picture, 
       },
     };
 
@@ -193,8 +199,17 @@ const TabAccount = () => {
       const selectedFile = files[0];
       if (selectedFile.size <= 800 * 1024) {
         reader.onload = () => {
+          const profilePicture:any =  reader.result;  
           setImgSrc(reader.result as string);
+          setFormData({
+            ...formData,
+            user_info: {
+              ...formData.user_info,
+              profile_picture: profilePicture?.split(',')[1] as string,
+            },
+          });
         };
+
         reader.readAsDataURL(selectedFile);
       } else {
         alert(
@@ -203,7 +218,6 @@ const TabAccount = () => {
       }
     }
   };
-
   const handleInputImageReset = () => {
     setImgSrc("");
   };
@@ -221,13 +235,18 @@ const TabAccount = () => {
     setIsCheckboxChecked(!isCheckboxChecked);
   };
 
+  const { logout } = useAuth()
+  const handleDeactivate = () => {
+    logout()
+  }
+
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
       .then((response: any) => {
         if (response.status === 200) {
           toast.success("Account deactivated successfully!");
-          router.push("/login"); // Update the path to your login page
+          handleDeactivate();
           // Redirect or perform additional actions after deactivation
         } else {
           toast.error("Account deactivation failed. Please try again.");
@@ -255,7 +274,7 @@ const TabAccount = () => {
         <form onSubmit={handleSubmit(handleSaveChanges)}>
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ImgStyled src={"/images/avatars/15.png"} alt="Profile Pic" />
+            <ImgStyled src={imgSrc} alt="Profile Pic" />
               <div>
                 <ButtonStyled variant="contained" as="label">
                   Upload New Photo
@@ -334,7 +353,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -454,10 +473,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                                "& .MuiTypography-root": {
-                                  color: "error.main",
-                                },
-                              }
+                              "& .MuiTypography-root": {
+                                color: "error.main",
+                              },
+                            }
                             : null
                         }
                         control={

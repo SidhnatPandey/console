@@ -40,6 +40,7 @@ interface UserProfile {
       first_name: "string",
       last_name: "string",
       phone_number: "number",
+      profile_picture: "string"
       address: {
         country: "string",
         state: "string",
@@ -98,7 +99,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
           justifyContent: { xs: "center", md: "flex-start" },
         }}
       >
-        <ProfilePicture src={"/images/pages/14.png"} alt="profile-picture" />
+        <ProfilePicture src={"data:image/jpeg;base64,"+userData?.user_info.profile_picture ||"/images/pages/14.png"} alt="profile-picture" />
         <Box
           sx={{
             width: "100%",
