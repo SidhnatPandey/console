@@ -18,3 +18,12 @@ export const post = async (url: string, data: any) => {
   }
 };
 
+export const deleteCall = async (url: string) => {
+  try {
+    const response = await axiosInstance.delete(url);
+    return response;
+  } catch (error) {
+    console.error('Error :', error);
+  }
+};
+

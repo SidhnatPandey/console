@@ -6,7 +6,8 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Dashboards',
       icon: 'tabler:smart-home',
-      path: '/dashboard'
+      path: '/dashboard',
+      disabled: true
     },
     {
       title: 'Apps',
@@ -16,20 +17,20 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Security',
       icon: 'material-symbols:lock-outline',
-      path: '/apps/email'
+      path: '/security'
     },
     {
       sectionTitle: 'MANAGE'
     },
-    {
-      title: 'Billing',
-      icon: 'jam:document',
-      path: '/apps/email'
-    },
+    // {
+    //   title: 'Billing',
+    //   icon: 'jam:document',
+    //   path: '/apps/email'
+    // },
     {
       title: 'Setting',
       icon: 'uil:setting',
-      path: '/apps/email'
+      path: '/settings'
     },
     {
       title: 'Support',

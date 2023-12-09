@@ -244,7 +244,7 @@ const AppDashboard = () => {
                     <span className="mr-2">
                       {" "}
                       <StackedBarChartOutlinedIcon className="icon-bottom" data-testid="stage-icon" />
-                      <b data-testid="stage"> Current Stage : {appData?.stage || "N/A"} </b>
+                      <b data-testid="stage"> Current Stage : {appData?.stage || "Pending"} </b>
                     </span>
                     <span className="mr-2" data-testid="status-icon">
                       {" "}
@@ -282,13 +282,13 @@ const AppDashboard = () => {
             iconPosition="start"
             data-testid="Overview"
           />
-          <Tab
+          {/* <Tab
             value="2"
             label="Insights"
             icon={<InsightsIcon />}
             iconPosition="start"
             data-testid="Insights"
-          />
+          /> */}
           <Tab
             value="3"
             label="Logs"
@@ -321,8 +321,8 @@ const AppDashboard = () => {
             Under Development
           </Typography>
         </TabPanel>
-        <TabPanel value="3" data-testid="tab-panel-3">
-          <AppLogs />
+        <TabPanel value="3" sx={{ p: 0 }} data-testid="tab-panel-3">
+          <AppLogs appName={appData?.id} />
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>

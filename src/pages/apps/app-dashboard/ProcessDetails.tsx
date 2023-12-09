@@ -122,6 +122,12 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
     return date.toDateString() === "Invalid Date" ? value : convertDateFormat(value);
   }
 
+  const getUrl = (value: string) => {
+    return value.toLowerCase().includes("docker.io")? value.replace("docker.io","hub.docker.com/r"): 
+    value.toLowerCase().includes("ssh://git@")? value.replace("ssh://git@","") : 
+    value.toLowerCase().includes("https://")? value.replace("https://","") : value
+  }
+
   return (
     <>
       <Card data-testid="card" sx={{ display: "flex", flexDirection: "row" }}>
@@ -181,7 +187,9 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
                 <Grid item xs={9.5}>
                   {loading ? <Skeleton width={350} height={20} /> :
                     <Typography variant="h5">
-                      {getValue(result.Value)}
+                      {result.Key.toLowerCase().includes("url")?
+                        <a href={"https://"+getUrl(result.Value)} target="_blank" rel="noopener noreferrer">{result.Value}</a> :
+                        getValue(result.Value)}
                     </Typography>}
                 </Grid>
               </Fragment>
@@ -207,7 +215,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
         </Grid>
       </Card >
       <br></br>
-      {supplyChainStepData?.steps?.length > 0 && <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} />}
+      {supplyChainStepData?.steps?.length > 0 && <ProcessLogs steps={supplyChainStepData?.steps} loading={loading} tabHeading="Steps" />}
 
       <Dialog
         open={open}
