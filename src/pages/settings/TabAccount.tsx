@@ -23,8 +23,10 @@ import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import { deactivateUser } from "src/services/authService";
+import { useAuth } from "src/hooks/useAuth";
 
 interface Data {
+  user_info: any;
   email: string;
   state: string;
   address: string;
@@ -41,6 +43,7 @@ interface Data {
   username: string;
   user_id: string;
   role: string;
+  profile_picture: string;
 }
 
 const initialData: Data = {
@@ -60,6 +63,8 @@ const initialData: Data = {
   email: "john.doe@example.com",
   username: "",
   role: "",
+  user_info: undefined,
+  profile_picture: "",
 };
 
 const ImgStyled = styled("img")(({ theme }) => ({
@@ -123,7 +128,12 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
+        setImgSrc(
+          responseData?.user_info?.profile_picture || "/images/avatars/15.png"
+        );
+
         setOriginalData({
           ...formData,
           role: responseData?.role,
@@ -139,6 +149,7 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
       })
       .catch((error) => {
@@ -164,6 +175,7 @@ const TabAccount = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone_number: formData.phoneNumber,
+        profile_picture: formData.user_info.profile_picture,
       },
     };
 
@@ -172,6 +184,9 @@ const TabAccount = () => {
         if (response.status === 200) {
           toast.success("Profile updated successfully!");
           setOriginalData({ ...formData });
+          setImgSrc(
+            formData.user_info.profile_picture || "/images/avatars/15.png"
+          );
           router.push("/myProfile");
         } else {
           toast.error("Profile update failed. Please try again.");
@@ -193,7 +208,15 @@ const TabAccount = () => {
       const selectedFile = files[0];
       if (selectedFile.size <= 800 * 1024) {
         reader.onload = () => {
+          const profilePicture: any = reader.result;
           setImgSrc(reader.result as string);
+          setFormData({
+            ...formData,
+            user_info: {
+              ...formData.user_info,
+              profile_picture: profilePicture?.split(",")[1] as string,
+            },
+          });
         };
         reader.readAsDataURL(selectedFile);
       } else {
@@ -205,20 +228,34 @@ const TabAccount = () => {
   };
 
   const handleInputImageReset = () => {
-    setImgSrc("");
+    setImgSrc("/images/avatars/15.png");
+    setFormData({
+      ...formData,
+      user_info: {
+        ...formData.user_info,
+        profile_picture: "",
+      },
+    });
   };
-
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
     setFormData({ ...formData, [field]: value });
   };
 
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
+    setImgSrc(
+      originalData.user_info.profile_picture || "/images/avatars/15.png"
+    );
   };
 
   const handleCheckboxChange = () => {
     // Toggle the checkbox state
     setIsCheckboxChecked(!isCheckboxChecked);
+  };
+
+  const { logout } = useAuth();
+  const handleDeactivate = () => {
+    logout();
   };
 
   const handleDeactivateAccount = () => {
@@ -227,7 +264,7 @@ const TabAccount = () => {
       .then((response: any) => {
         if (response.status === 200) {
           toast.success("Account deactivated successfully!");
-          router.push("/login"); // Update the path to your login page
+          handleDeactivate();
           // Redirect or perform additional actions after deactivation
         } else {
           toast.error("Account deactivation failed. Please try again.");
@@ -255,7 +292,7 @@ const TabAccount = () => {
         <form onSubmit={handleSubmit(handleSaveChanges)}>
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ImgStyled src={"/images/avatars/15.png"} alt="Profile Pic" />
+              <ImgStyled src={imgSrc} alt="Profile Pic" />
               <div>
                 <ButtonStyled variant="contained" as="label">
                   Upload New Photo
