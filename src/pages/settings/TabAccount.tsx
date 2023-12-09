@@ -220,7 +220,7 @@ const TabAccount = () => {
         };
         reader.readAsDataURL(selectedFile);
       } else {
-        alert(
+        toast.error(
           "Image size exceeds the limit of 800KB. Please choose a smaller image."
         );
       }
