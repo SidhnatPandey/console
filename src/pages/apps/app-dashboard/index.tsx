@@ -326,7 +326,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            <DestroyApp loading={false} appName={undefined} metricsTimer={0} />
+            <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />
           </Typography>
         </TabPanel>
       </TabContext>

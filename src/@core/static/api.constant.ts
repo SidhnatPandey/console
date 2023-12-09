@@ -8,6 +8,7 @@ export const APP_API = {
     checkAppNameExists: "/initializ/v1/apps/checkAppNameExists?application_name={appName}",
     userProfile: "initializ/v1/userProfile",
     deactivateUser: "initializ/v1/deleteUser",
+    destroyApp:"/initializ/v1/apps/{appId}",
 
     // Create-App
     sendGitCode: 'code?code={code}',
