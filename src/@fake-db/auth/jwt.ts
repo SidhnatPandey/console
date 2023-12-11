@@ -1,5 +1,6 @@
 // ** JWT import
 import jwt from 'jsonwebtoken'
+import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant'
 
 // ** Mock Adapter
 import mock from 'src/@fake-db/mock'
@@ -51,7 +52,7 @@ mock.onPost('/jwt/login').reply(request => {
   if (user) {
     const accessToken = jwt.sign({ id: user.id }, jwtConfig.secret as string, { expiresIn: jwtConfig.expirationTime })
 
-    console.log("Access Token: ",accessToken)
+    console.log("Access Token: ", accessToken)
     const response = {
       accessToken,
       userData: { ...user, password: undefined }
@@ -124,7 +125,7 @@ mock.onGet('/auth/me').reply(config => {
     // ** If token is expired
     if (err) {
       // ** If onTokenExpiration === 'logout' then send 401 error
-      if (defaultAuthConfig.onTokenExpiration === 'logout') {
+      if (LOCALSTORAGE_CONSTANTS.refreshToken === 'logout') {
         // ** 401 response will logout user from AuthContext file
         response = [401, { error: { error: 'Invalid User' } }]
       } else {
@@ -144,7 +145,7 @@ mock.onGet('/auth/me').reply(config => {
         })
 
         // ** Set new token in localStorage
-        window.localStorage.setItem(defaultAuthConfig.storageTokenKeyName, accessToken)
+        window.localStorage.setItem(LOCALSTORAGE_CONSTANTS.token, accessToken)
 
         const obj = { userData: { ...user, password: undefined } }
 
