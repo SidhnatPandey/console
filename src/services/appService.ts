@@ -1,5 +1,5 @@
 import { APP_API } from "src/@core/static/api.constant";
-import { get, post } from "../@core/services/masterServices";
+import { deleteCall, get, post } from "../@core/services/masterServices";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 export const appNameExists = (appName: any) => {
@@ -52,5 +52,12 @@ export const appDetails = (id: any) => {
   url = url.replace("{appId}", id);
   return get(url).then((response) => response?.data);
 };
+
+export const destroyApp = (id: string) => {
+  setApiBaseUrl();
+  let url = APP_API.destroyApp;
+  url = url.replace("{appId}", id);
+  return deleteCall(url).then((response) => response?.data);
+}
 
 

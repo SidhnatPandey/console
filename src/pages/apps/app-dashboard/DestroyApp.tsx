@@ -8,7 +8,7 @@ import CardContent from "@mui/material/CardContent";
 import Skeleton from "react-loading-skeleton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-hot-toast";
-import { destroyApp } from "src/services/authService";
+import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
 
 interface DestroyAppProps {

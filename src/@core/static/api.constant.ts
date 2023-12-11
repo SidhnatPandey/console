@@ -16,6 +16,7 @@ export const APP_API = {
     saveApp: `apps`,
     getRepositories: 'repositories?git_user={gituser}',
     getBranches: 'repos/{repoOwner}/{repoName}/branches?git_user={gituser}',
+    destroyApp: 'apps/{appId}',
 
     //app Dashboard
     supplyChainRuns: 'supplychainruns/latest?appid={appId}',
