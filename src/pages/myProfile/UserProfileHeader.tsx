@@ -9,7 +9,7 @@ import CardContent from "@mui/material/CardContent";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { getUserInfo } from "src/services/userInfo";
+import { getUserInfo } from "src/services/userService";
 import { useRouter } from "next/router";
 import { getMonthAndYear } from "src/utils/dateUtil";
 
@@ -25,44 +25,44 @@ const ProfilePicture = styled("img")(({ theme }) => ({
 
 interface UserProfile {
   id: "string",
-    type: "string",
-    user_id: "string",
-    role: "string",
-    org: "string",
-    org_id: "string",
-    email: "string",
-    username: "string",
-    password: "string",
-    created_at: "string",
-    updated_at: "string",
-    nickname: "string",
-    user_info: {
-      first_name: "string",
-      last_name: "string",
-      phone_number: "number",
-      address: {
-        country: "string",
-        state: "string",
-        zip_code: "number",
-        city: "string",
-        street_address: "string",
-      },
+  type: "string",
+  user_id: "string",
+  role: "string",
+  org: "string",
+  org_id: "string",
+  email: "string",
+  username: "string",
+  password: "string",
+  created_at: "string",
+  updated_at: "string",
+  nickname: "string",
+  user_info: {
+    first_name: "string",
+    last_name: "string",
+    phone_number: "number",
+    address: {
+      country: "string",
+      state: "string",
+      zip_code: "number",
+      city: "string",
+      street_address: "string",
     },
-    status: "string",
+  },
+  status: "string",
 }
 
 const UserProfileHeader = ({ setAllUserData }: any) => {
   const [userData, setUserData] = useState<UserProfile>();
 
   const router = useRouter(); // Initialize the useNavigate hook
-  
+
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
     router.push('/settings');
   };
 
   useEffect(() => {
-      getUserData();
+    getUserData();
   }, []);
 
   const getUserData = () => {
@@ -118,7 +118,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
             }}
           >
             <Typography variant="h6" sx={{ mb: 2.5 }}>
-              {}
+              { }
             </Typography>
             <Box
               sx={{

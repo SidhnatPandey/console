@@ -1,4 +1,5 @@
 export const LOCALSTORAGE_CONSTANTS = {
     token: 'accessToken',
-    userInfo: 'userData'
+    userInfo: 'userData',
+    refreshToken: 'refreshToken'
 }

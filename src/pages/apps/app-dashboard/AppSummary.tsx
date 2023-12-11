@@ -80,7 +80,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                   <Icon icon="ph:cpu-bold" />
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant='h5'>{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage) * 100).toFixed(2) : "?"} %</Typography>
+                  <Typography variant='h5'>{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage)).toFixed(2) : "?"} %</Typography>
                   <Typography variant='body1'>CPU</Typography>
                 </Box>
               </Box>

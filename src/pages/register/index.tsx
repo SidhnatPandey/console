@@ -20,8 +20,9 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
-import { signUp, checkUsername, checkEmail } from "src/services/authService";
-import {  successToast } from "src/lib/react-taostify";
+import { signUp } from "src/services/authService";
+import { checkUsername, checkEmail } from "src/services/userService"
+import { successToast } from "src/lib/react-taostify";
 import toast from "react-hot-toast";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
@@ -331,13 +332,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email))
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                    ? "Email Already exists"
-                    : ""
+                      ? "Email Already exists"
+                      : ""
                 }
               />
 
@@ -374,10 +375,10 @@ const Register = () => {
                 helperText={
                   touched.password && !isValidPassword
                     ? "Password does not meet the requirements. Please ensure it has:\n" +
-                      validationRules
-                        .filter((rule) => !rule.regex.test(formData.password))
-                        .map((rule) => rule.message)
-                        .join("\n")
+                    validationRules
+                      .filter((rule) => !rule.regex.test(formData.password))
+                      .map((rule) => rule.message)
+                      .join("\n")
                     : ""
                 }
               />

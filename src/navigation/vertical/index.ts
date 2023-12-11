@@ -28,14 +28,14 @@ const navigation = (): VerticalNavItemsType => {
     //   path: '/apps/email'
     // },
     {
-      title: 'Setting',
+      title: 'Settings',
       icon: 'uil:setting',
       path: '/settings'
     },
     {
       title: 'Support',
       icon: 'ri:headphone-line',
-      path: '/apps/email'
+      path: 'https://initializsupport.zendesk.com/'
     },
     {
       sectionTitle: 'Misc'
