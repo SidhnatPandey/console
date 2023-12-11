@@ -53,12 +53,10 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 
 const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
 
-    const [data, setData] = useState<LogsData[]>();
     const [value, setValue] = useState<string>("1");
     const [logs, setLogs] = useState<string[]>([]);
     const [tabName, setTabName] = useState<string>("Prod");
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedStage, setSelectedStage] = useState('');
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -69,18 +67,10 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
         if (appName) {
             getAppLogs(appName, step).then((res) => {
                 if (res) {
-                    //setConvertedState(res)
+                    setLogs(res.data[`${step}`].log.split('\n'));
                 }
             })
         }
-    }
-
-    const setConvertedState = (data: any) => {
-        const convertedData: LogsData[] = [];
-        convertedData.push({ run_name: 'prod', log: data.prod.log });
-        convertedData.push({ run_name: 'stg', log: data.stg.log })
-        convertedData.push({ run_name: 'test', log: data.test.log })
-        setData(convertedData);
     }
 
     const handleTabChange = (step: string, index: number) => {
