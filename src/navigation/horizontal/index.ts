@@ -29,14 +29,14 @@ const navigation = (): HorizontalNavItemsType => {
       disabled: true
     },
     {
-      title: 'Setting',
+      title: 'Settings',
       icon: 'uil:setting',
       path: '/apps/email'
     },
     {
       title: 'Support',
       icon: 'ri:headphone-line',
-      path: '/apps/email'
+      path: 'https://initializsupport.zendesk.com/'
     },
     {
       sectionTitle: 'Misc'
