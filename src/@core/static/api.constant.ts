@@ -7,6 +7,8 @@ export const APP_API = {
     registerUser: "initializ/v1/registerUser",
     checkAppNameExists: "initializ/v1/apps/checkAppNameExists?application_name={appName}",
     userInfo: 'initializ/v1/userInfo',
+    userProfile: "initializ/v1/userProfile",
+    deactivateUser: "initializ/v1/deleteUser",
 
     // Create-App
     sendGitCode: 'initializ/v1/code?code={code}',
@@ -27,5 +29,5 @@ export const APP_API = {
     // Security 
     vulernabilities: 'security/v1/vulernabilities',
     getScans: '/security/v1/vulernabilities/scans',
-    allVulnerabilities: 'security/v1/vulernabilities/all'
+    allVulnerabilities: 'security/v1/vulernabilities/all',
 }

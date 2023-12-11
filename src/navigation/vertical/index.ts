@@ -22,16 +22,15 @@ const navigation = (): VerticalNavItemsType => {
     {
       sectionTitle: 'MANAGE'
     },
-    {
-      title: 'Billing',
-      icon: 'jam:document',
-      path: '/apps/email',
-      disabled: true
-    },
+    // {
+    //   title: 'Billing',
+    //   icon: 'jam:document',
+    //   path: '/apps/email'
+    // },
     {
       title: 'Settings',
       icon: 'uil:setting',
-      path: '/apps/email'
+      path: '/settings'
     },
     {
       title: 'Support',

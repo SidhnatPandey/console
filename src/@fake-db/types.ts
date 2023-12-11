@@ -68,7 +68,6 @@ export type ProfileHeaderType = {
   profileImg: string
   joiningDate: string
   designation: string
-  designationIcon?: string
 }
 export type ProfileAvatarGroupType = {
   name: string
