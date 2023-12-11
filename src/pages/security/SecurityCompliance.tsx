@@ -110,7 +110,7 @@ const SecurityCompliance = () => {
     succeeded: 0,
     failed: 0,
   });
-  const [successPercentage, setSuccessPercentage] = useState(0);
+  const [successPercentage, setSuccessPercentage] = useState(100);
 
   useEffect(() => {
     const getScanData = () => {
@@ -119,7 +119,6 @@ const SecurityCompliance = () => {
           setScanData(response?.data || {});
           const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
           setSuccessPercentage(percentage);
-          console.log(response);
         })
         .catch((error) => {
           console.error(error);
@@ -165,7 +164,7 @@ const SecurityCompliance = () => {
               >
                 <Typography sx={{ fontWeight: 500 }}>Success</Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
-                  {scanData.succeeded?scanData.succeeded:0}{" "}
+                  {scanData.succeeded ? scanData.succeeded : 0}{" "}
                 </Typography>
               </Box>
             </Box>
@@ -188,7 +187,7 @@ const SecurityCompliance = () => {
               >
                 <Typography sx={{ fontWeight: 500 }}>Failed</Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
-                  {scanData.failed?scanData.failed:0}
+                  {scanData.failed ? scanData.failed : 0}
                 </Typography>
               </Box>
             </Box>

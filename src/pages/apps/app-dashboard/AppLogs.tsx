@@ -66,8 +66,8 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
     const getLogs = (step: string) => {
         if (appName) {
             getAppLogs(appName, step).then((res) => {
-                if (res && res.data && res.data[step]) {
-                    setLogs(res.data[step].log.split('\n'));
+                if (res && res.data) {
+                    setLogs(res.data.log.split('\n'));
                 }
             });
         }
