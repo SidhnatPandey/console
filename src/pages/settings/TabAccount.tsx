@@ -18,11 +18,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { userProfile } from "src/services/authService";
+import { userProfile, deactivateUser } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
-import { deactivateUser } from "src/services/authService";
 
 interface Data {
   email: string;
@@ -334,7 +333,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -454,10 +453,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                                "& .MuiTypography-root": {
-                                  color: "error.main",
-                                },
-                              }
+                              "& .MuiTypography-root": {
+                                color: "error.main",
+                              },
+                            }
                             : null
                         }
                         control={
