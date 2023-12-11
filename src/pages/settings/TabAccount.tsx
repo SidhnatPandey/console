@@ -22,6 +22,7 @@ import { userProfile, deactivateUser } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
+import { useAuth } from "src/hooks/useAuth";
 
 interface Data {
   user_info: any;
@@ -111,6 +112,7 @@ const TabAccount = () => {
     userProfile("", "get")
       .then((response: any) => {
         const responseData = response?.data;
+        const profilePicture = responseData?.user_info?.profile_picture || initialData.profile_picture;
         setFormData({
           ...formData,
           role: responseData?.role,
@@ -126,11 +128,9 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
+          profile_picture: profilePicture,
         });
-        setImgSrc(
-          responseData?.user_info?.profile_picture || "/images/avatars/15.png"
-        );
+        setImgSrc(profilePicture);
 
         setOriginalData({
           ...formData,
@@ -147,7 +147,7 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
+          profile_picture: profilePicture,
         });
       })
       .catch((error) => {
@@ -173,28 +173,29 @@ const TabAccount = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone_number: formData.phoneNumber,
-        profile_picture: formData.user_info.profile_picture,
+        // Check if a new image is selected before updating profile_picture
+        profile_picture: formData.user_info?.profile_picture || undefined,
       },
     };
 
-    userProfile(uprofile, "post")
+    userProfile(uprofile, 'post')
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success("Profile updated successfully!");
+          toast.success('Profile updated successfully!');
           setOriginalData({ ...formData });
-          setImgSrc(
-            formData.user_info.profile_picture || "/images/avatars/15.png"
-          );
-          router.push("/myProfile");
+          const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
+          setImgSrc(updatedProfilePicture);
+
+          router.push('/myProfile');
         } else {
-          toast.error("Profile update failed. Please try again.");
+          toast.error('Profile update failed. Please try again.');
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
-          toast.error("Bad request. Please check your data and try again.");
+          toast.error('Bad request. Please check your data and try again.');
         } else {
-          toast.error("An error occurred. Please try again later.");
+          toast.error('An error occurred. Please try again later.');
         }
       });
   };
@@ -204,23 +205,29 @@ const TabAccount = () => {
     const { files } = e.target;
     if (files && files.length > 0) {
       const selectedFile = files[0];
-      if (selectedFile.size <= 800 * 1024) {
-        reader.onload = () => {
-          const profilePicture: any = reader.result;
-          setImgSrc(reader.result as string);
-          setFormData({
-            ...formData,
-            user_info: {
-              ...formData.user_info,
-              profile_picture: profilePicture?.split(",")[1] as string,
-            },
-          });
-        };
-        reader.readAsDataURL(selectedFile);
+      const allowedExtensions = ['jpeg', 'jpg', 'png'];
+      const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
+      if (fileExtension && allowedExtensions.includes(fileExtension)) {
+        if (selectedFile.size <= 800 * 1024) {
+          reader.onload = () => {
+            const profilePicture: any = reader.result;
+            setImgSrc(reader.result as string);
+            setFormData({
+              ...formData,
+              user_info: {
+                ...formData.user_info,
+                profile_picture: profilePicture?.split(',')[1] as string,
+              },
+            });
+          };
+          reader.readAsDataURL(selectedFile);
+        } else {
+          toast.error(
+            'Image size exceeds the limit of 800KB. Please choose a smaller image.'
+          );
+        }
       } else {
-        toast.error(
-          "Image size exceeds the limit of 800KB. Please choose a smaller image."
-        );
+        toast.error('Only JPEG, JPG, and PNG files are allowed.');
       }
     }
   };
@@ -242,7 +249,7 @@ const TabAccount = () => {
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
     setImgSrc(
-      originalData.user_info.profile_picture || "/images/avatars/15.png"
+      originalData.user_info?.profile_picture
     );
   };
 
