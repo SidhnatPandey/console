@@ -20,7 +20,7 @@ interface Props {
 
 const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
-  let [cveArr, setCveArr] = useState<CVE[]>([]);
+  const [cveArr, setCveArr] = useState<CVE[]>([]);
 
   useEffect(() => {
     let high = 0, low = 0, medium = 0, critical = 0, unknown = 0;
