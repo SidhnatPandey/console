@@ -12,9 +12,11 @@ import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
 const Profile = (user_info:any) => {
-  console.log(user_info);
-  const formatted_number = `(${user_info.user_info?.user_info?.phone_number.toString().slice(0, 3)}) ${user_info.user_info?.user_info?.phone_number.toString().slice(3, 6)}-${user_info.user_info?.user_info?.phone_number.toString().slice(6)}`;
-
+  const formatted_number =
+  user_info.user_info?.user_info?.phone_number
+    ? `(${user_info.user_info?.user_info?.phone_number.toString().slice(0, 3)}) ${user_info.user_info?.user_info?.phone_number.toString().slice(3, 6)}-${user_info.user_info?.user_info?.phone_number.toString().slice(6)}`
+    : null;
+    
   return (
     <Grid container spacing={6} marginTop="10px">
       <Grid item xs={12}>

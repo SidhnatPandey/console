@@ -24,31 +24,32 @@ const ProfilePicture = styled("img")(({ theme }) => ({
 }));
 
 interface UserProfile {
-  id: "string",
-  type: "string",
-  user_id: "string",
-  role: "string",
-  org: "string",
-  org_id: "string",
-  email: "string",
-  username: "string",
-  password: "string",
-  created_at: "string",
-  updated_at: "string",
-  nickname: "string",
+  id: "string";
+  type: "string";
+  user_id: "string";
+  role: "string";
+  org: "string";
+  org_id: "string";
+  email: "string";
+  username: "string";
+  password: "string";
+  created_at: "string";
+  updated_at: "string";
+  nickname: "string";
   user_info: {
-    first_name: "string",
-    last_name: "string",
-    phone_number: "number",
+    first_name: "string";
+    last_name: "string";
+    phone_number: "number";
+    profile_picture: "string";
     address: {
-      country: "string",
-      state: "string",
-      zip_code: "number",
-      city: "string",
-      street_address: "string",
-    },
-  },
-  status: "string",
+      country: "string";
+      state: "string";
+      zip_code: "number";
+      city: "string";
+      street_address: "string";
+    };
+  };
+  status: "string";
 }
 
 const UserProfileHeader = ({ setAllUserData }: any) => {
@@ -58,7 +59,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
 
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
-    router.push('/settings');
+    router.push("/settings");
   };
 
   useEffect(() => {
@@ -98,7 +99,13 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
           justifyContent: { xs: "center", md: "flex-start" },
         }}
       >
-        <ProfilePicture src={"/images/pages/14.png"} alt="profile-picture" />
+        <ProfilePicture
+          src={
+            "data:image/jpeg;base64," + userData?.user_info.profile_picture ||
+            "/images/pages/14.png"
+          }
+          alt="profile-picture"
+        />
         <Box
           sx={{
             width: "100%",
@@ -150,7 +157,8 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <LocationOnIcon />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {userData?.user_info.address.city},
+                  {userData?.user_info.address.city &&
+                    `${userData?.user_info.address.city}, `}
                   {userData?.user_info.address.country}
                 </Typography>
               </Box>
@@ -168,7 +176,11 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               </Box>
             </Box>
           </Box>
-          <Button variant="contained" sx={{ "& svg": { mr: 2 } }} onClick={handleEditProfileClick}>
+          <Button
+            variant="contained"
+            sx={{ "& svg": { mr: 2 } }}
+            onClick={handleEditProfileClick}
+          >
             Edit Profile
           </Button>
         </Box>

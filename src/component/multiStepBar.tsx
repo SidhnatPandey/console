@@ -1,4 +1,5 @@
 import { Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const ColorMapping = {
   Critical: 'red',
@@ -19,6 +20,34 @@ interface Props {
 
 const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
+  const [cveArr, setCveArr] = useState<CVE[]>([]);
+
+  useEffect(() => {
+    let high = 0, low = 0, medium = 0, critical = 0, unknown = 0;
+    Cves.forEach((cve) => {
+      switch (cve.Severity) {
+        case 'High':
+          high += 1; break;
+        case 'Medium':
+          medium += 1; break;
+        case 'Low':
+          low += 1; break;
+        case 'Critical':
+          critical += 1; break;
+        case 'Unknown':
+          unknown += 1; break;
+      }
+    })
+    const arr = [
+      { Count: high, Severity: "High" },
+      { Count: medium, Severity: "Medium" },
+      { Count: low, Severity: "Low" },
+      { Count: critical, Severity: "Critical" },
+      { Count: unknown, Severity: "Unknown" },
+    ]
+    setCveArr(arr);
+  }, [Cves])
+
   const getColor = (severity: string) => {
     switch (severity) {
       case "Critical": return ColorMapping.Critical;
@@ -35,7 +64,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
   return (
     <div style={{ width: "100%", height: '10px', display: "flex", marginRight: "5px" }}>
-      {Cves.map((ele: CVE, index: number) => {
+      {cveArr.map((ele: CVE, index: number) => {
         const percent = (ele.Count / sum) * 100;
         const color = getColor(ele.Severity);
         let borderRadius = "0";

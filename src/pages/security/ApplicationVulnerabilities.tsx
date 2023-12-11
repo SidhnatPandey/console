@@ -18,6 +18,7 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import MultiStepBarChart from "src/component/multiStepBar";
 import { vulnerabilitiesList } from "src/services/securityService";
+import { convertDateFormat } from "src/utils/dateUtil";
 interface AppSecurityData {
   AppName: string;
   WorkspaceId?: string;
@@ -167,7 +168,7 @@ const ApplicationVulnerabilities = () => {
   const getVulnerabilitesList = () => {
     vulnerabilitiesList().then(
       (res) => {
-        res?setVulnerabilityData(res.data):{};
+        res ? setVulnerabilityData(res.data) : {};
       }
     )
   }
@@ -273,7 +274,7 @@ const ApplicationVulnerabilities = () => {
                     <TableRow key={index}>
                       <TableCell>{row.AppName}</TableCell>
                       {/* <TableCell>{row.WorkspaceId}</TableCell> */}
-                      <TableCell>{row.LastScanned}</TableCell>
+                      <TableCell>{convertDateFormat(row.LastScanned)}</TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <MultiStepBarChart Cves={row.Cves} />

@@ -91,9 +91,12 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
             />
           )}
         </React.Fragment>
-      ))}
-    </div> : <div style={{ fontSize: '20px', padding: "40px", margin: "0 auto" }}><Skeleton duration={1} width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div>)
-  }
+       ))}
+       </div> : <div 
+       style={{ fontSize: '20px', padding: "40px", margin: "0 auto", textAlign: 'center' }}> 
+       No Data Available
+       </div>)
+     }
 
   return (
     <div>

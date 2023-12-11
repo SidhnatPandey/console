@@ -168,7 +168,7 @@ const Apps: React.FC<AppListProps> = () => {
   };
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, appListData.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, appListData?.length - page * rowsPerPage);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -189,7 +189,7 @@ const Apps: React.FC<AppListProps> = () => {
             onRequestSort={handleRequestSort}
           />
           <TableBody style={{ height: "100%" }}>
-            {appListData.length > 0 ? (
+            {appListData?.length > 0 ? (
               appListData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any) => (
@@ -201,10 +201,10 @@ const Apps: React.FC<AppListProps> = () => {
                     style={{ cursor: 'pointer', height: '100%' }}
                   >
                     <TableCell style={{
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    color: '#7353e5'
-                  }} >{row?.application_name}</TableCell>
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      color: '#7353e5'
+                    }} >{row?.application_name}</TableCell>
                     <TableCell>{getCurrentEnv(row?.stage)}</TableCell>
                     <TableCell>{convertDateFormat(row?.last_deployed)}</TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
@@ -241,7 +241,7 @@ const Apps: React.FC<AppListProps> = () => {
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
         component="div"
-        count={appListData.length}
+        count={appListData?.length ? appListData.length : 0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

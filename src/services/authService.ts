@@ -5,9 +5,7 @@ import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 export const signUp = (user: any) => {
   setApiBaseUrl();
-  return post(APP_API.registerUser, user).then(
-    (response) => response?.data
-  );
+  return post(APP_API.registerUser, user).then((response) => response?.data);
 };
 
 export const login = (
