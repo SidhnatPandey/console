@@ -13,6 +13,8 @@ import { env } from 'next-runtime-env';
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
+import { APP_API } from 'src/@core/static/api.constant';
+import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -40,7 +42,7 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      const storedToken = window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.token)!
       //setLoading(false)
       if (storedToken) {
         const user = JSON.parse(window.localStorage.getItem('userData')!);
@@ -50,7 +52,7 @@ const AuthProvider = ({ children }: Props) => {
         } else {
           setLoading(true)
           await axios
-            .get(authConfig.meEndpoint, {
+            .get(APP_API.userInfo, {
               headers: {
                 Authorization: `Bearer ${storedToken}`
               }
@@ -65,7 +67,7 @@ const AuthProvider = ({ children }: Props) => {
               localStorage.removeItem('accessToken')
               setUser(null)
               setLoading(false)
-              if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+              if (LOCALSTORAGE_CONSTANTS.refreshToken === 'logout' && !router.pathname.includes('login')) {
                 router.replace('/login')
               }
             })
@@ -81,9 +83,9 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axios
-      .post(env('NEXT_PUBLIC_BASE_URL') + authConfig.loginEndpoint, params)
+      .post(env('NEXT_PUBLIC_BASE_URL') + APP_API.login, params)
       .then(async response => {
-        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.access_token)
+        window.localStorage.setItem(LOCALSTORAGE_CONSTANTS.token, response.data.data.access_token)
         params.rememberMe
           ? window.localStorage.setItem('isRemember', 'true')
           : null
@@ -112,7 +114,8 @@ const AuthProvider = ({ children }: Props) => {
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.token);
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.refreshToken);
     router.push('/login')
   }
 

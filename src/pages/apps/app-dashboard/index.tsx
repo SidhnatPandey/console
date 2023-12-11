@@ -244,7 +244,7 @@ const AppDashboard = () => {
                     <span className="mr-2">
                       {" "}
                       <StackedBarChartOutlinedIcon className="icon-bottom" data-testid="stage-icon" />
-                      <b data-testid="stage"> Current Stage : {appData?.stage || "Pending"} </b>
+                      <b data-testid="stage"> Current Stage : {supplyChainRunData?.current_stage || "N/A"} </b>
                     </span>
                     <span className="mr-2" data-testid="status-icon">
                       {" "}
@@ -256,9 +256,9 @@ const AppDashboard = () => {
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      <a href={appData?.url} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
-                        {appData?.url}
-                      </a>
+                      {supplyChainRunData?.url ? <a href={supplyChainRunData?.url} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
+                        {supplyChainRunData?.url}
+                      </a> : "N/A"}
                     </span>
                   </>
                 )}

@@ -29,9 +29,10 @@ export const approval = (data: any) => {
     return post(APP_API.approval, data).then((response) => response?.data);
 }
 
-export const getAppLogs = (appId: string) => {
+export const getAppLogs = (appId: string, env: string) => {
     setApiBaseUrl();
     let url = APP_API.appLogs;
     url = url.replace('{appId}', appId);
+    url = url + env.toLowerCase();
     return get(url).then((response) => response?.data)
 }

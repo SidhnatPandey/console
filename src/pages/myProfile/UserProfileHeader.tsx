@@ -9,7 +9,7 @@ import CardContent from "@mui/material/CardContent";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { getUserInfo } from "src/services/userInfo";
+import { getUserInfo } from "src/services/userService";
 import { useRouter } from "next/router";
 import { getMonthAndYear } from "src/utils/dateUtil";
 
@@ -125,7 +125,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
             }}
           >
             <Typography variant="h6" sx={{ mb: 2.5 }}>
-              {}
+              { }
             </Typography>
             <Box
               sx={{

@@ -10,27 +10,10 @@ export const signUp = (user: any) => {
 
 export const login = (
   loginDetail: any,
-  apiFunction: (
-    partialUrl: string,
-    data: any
-  ) => Promise<AxiosResponse<any, any>>
+  apiFunction: (partialUrl: string, data: any) => Promise<AxiosResponse<any, any>>
 ) => {
   setApiBaseUrl();
-  return apiFunction(APP_API.login, loginDetail).then(
-    (response) => response?.data
-  );
-};
-
-export const checkUsername = (username: string) => {
-  setApiBaseUrl();
-  const url = APP_API.checkUser.replace("{username}", username);
-  return get(url).then((response) => response?.data);
-};
-
-export const checkEmail = (email: string) => {
-  setApiBaseUrl();
-  const url = APP_API.checkEmail.replace("{email}", email);
-  return get(url).then((response) => response?.data);
+  return apiFunction(APP_API.login, loginDetail).then((response) => response?.data);
 };
 
 export const forgotPassword = (email: string) => {
@@ -38,22 +21,4 @@ export const forgotPassword = (email: string) => {
   return post(APP_API.forgetPassword, { email }).then(
     (response) => response?.data
   );
-};
-
-export const userProfile = (uProfile: any, call: string) => {
-  setApiBaseUrl();
-  return call === "post"
-    ? post(APP_API.userProfile, uProfile).then((response) => response?.data)
-    : get(APP_API.userProfile).then((response) => response?.data);
-};
-
-export const deactivateUser = () => {
-  setApiBaseUrl();
-  return deleteCall(APP_API.deactivateUser).then((response) => response?.data);
-};
-
-export const destroyApp = (appId: string) => {
-  setApiBaseUrl();
-  const url = APP_API.destroyApp.replace("{appId}", appId);
-  return deleteCall(url).then((response) => response?.data);
 };
