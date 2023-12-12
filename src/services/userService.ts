@@ -20,12 +20,17 @@ export const checkEmail = (email: string) => {
 };
 
 
-export const userProfile = (uProfile: any, call: string) => {
+export const getUserProfile = () => {
   setApiBaseUrl();
-  return call === "post" ? post(APP_API.userProfile, uProfile).then(
-    (response) => response?.data
-  ) : get(APP_API.userProfile).then(
+  return get(APP_API.userProfile).then(
     (response) => response?.data)
+};
+
+export const postUserProfile = (profile: any) => {
+  setApiBaseUrl();
+  return post(APP_API.userProfile, profile).then(
+    (response) => response?.data
+  )
 };
 
 export const deactivateUser = () => {

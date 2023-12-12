@@ -18,7 +18,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { userProfile, deactivateUser } from "src/services/userService";
+import { deactivateUser, getUserProfile, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
@@ -48,18 +48,18 @@ interface Data {
 const initialData: Data = {
   user_id: "",
   state: "",
-  phoneNumber: "123456788",
+  phoneNumber: "",
   address: "",
-  zipCode: 305001,
-  lastName: "Doe",
+  zipCode: 0,
+  lastName: "",
   city: "",
-  currency: "usd",
-  firstName: "John",
-  language: "arabic",
-  timezone: "gmt-12",
-  country: "australia",
-  organization: "Pixinvent",
-  email: "john.doe@example.com",
+  currency: "",
+  firstName: "",
+  language: "",
+  timezone: "",
+  country: "",
+  organization: "",
+  email: "",
   username: "",
   role: "",
   user_info: undefined,
@@ -101,18 +101,17 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 
 const TabAccount = () => {
   const [formData, setFormData] = useState<Data>(initialData);
-  const [imgSrc, setImgSrc] = useState<string>("/images/avatars/15.png");
+  const [imgSrc, setImgSrc] = useState<string>('');
   const [originalData, setOriginalData] = useState<Data>(initialData); // Added for storing original data
-  const [isDeactivating, setIsDeactivating] = useState(false);
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
-  const router = useRouter();
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const router = useRouter();
 
   const fetchData = () => {
-    userProfile("", "get")
+    getUserProfile()
       .then((response: any) => {
         const responseData = response?.data;
-        const profilePicture = responseData?.user_info?.profile_picture || initialData.profile_picture;
+        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/15.png";
         setFormData({
           ...formData,
           role: responseData?.role,
@@ -178,14 +177,13 @@ const TabAccount = () => {
       },
     };
 
-    userProfile(uprofile, 'post')
+    postUserProfile(uprofile)
       .then((response: any) => {
         if (response.status === 200) {
           toast.success('Profile updated successfully!');
           setOriginalData({ ...formData });
           const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
           setImgSrc(updatedProfilePicture);
-
           router.push('/myProfile');
         } else {
           toast.error('Profile update failed. Please try again.');
