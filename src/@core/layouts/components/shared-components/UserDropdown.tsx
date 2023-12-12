@@ -117,7 +117,7 @@ const UserDropdown = (props: Props) => {
           horizontal: 'right'
         }}
       >
-        <Avatar
+        <Avatar 
           alt={`${userData?.user_info?.first_name + " " + userData?.user_info?.last_name}`}
           src={
             userData?.user_info.profile_picture
@@ -153,7 +153,7 @@ const UserDropdown = (props: Props) => {
               } sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>{userData?.user_info?.first_name} {userData?.user_info?.last_name}</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{(userData?.user_info?.first_name||userData?.user_info?.last_name)?userData?.user_info?.first_name+" "+userData?.user_info?.last_name:userData?.username}</Typography>
               <Typography variant='body2'>{userData?.role}</Typography>
             </Box>
           </Box>
