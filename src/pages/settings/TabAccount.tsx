@@ -111,7 +111,7 @@ const TabAccount = () => {
     getUserProfile()
       .then((response: any) => {
         const responseData = response?.data;
-        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/15.png";
+        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
         setFormData({
           ...formData,
           role: responseData?.role,
@@ -127,7 +127,7 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
-          profile_picture: profilePicture,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
         setImgSrc(profilePicture);
 
@@ -146,7 +146,7 @@ const TabAccount = () => {
           organization: responseData?.org,
           email: responseData?.email,
           username: responseData?.username,
-          profile_picture: profilePicture,
+          profile_picture: responseData?.user_info?.profile_picture,
         });
       })
       .catch((error) => {
@@ -231,7 +231,7 @@ const TabAccount = () => {
   };
 
   const handleInputImageReset = () => {
-    setImgSrc("/images/avatars/15.png");
+    setImgSrc('data:image/jpeg;base64,' + originalData.profile_picture);
     setFormData({
       ...formData,
       user_info: {
@@ -246,9 +246,7 @@ const TabAccount = () => {
 
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
-    setImgSrc(
-      originalData.user_info?.profile_picture
-    );
+    handleInputImageReset();
   };
 
   const handleCheckboxChange = () => {
