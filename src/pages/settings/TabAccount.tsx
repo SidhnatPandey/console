@@ -246,7 +246,6 @@ const TabAccount = () => {
 
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
-    setImgSrc('data:image/jpeg;base64,' + originalData.profile_picture);
   };
 
   const handleCheckboxChange = () => {
