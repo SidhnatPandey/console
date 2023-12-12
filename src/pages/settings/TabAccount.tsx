@@ -111,7 +111,7 @@ const TabAccount = () => {
     getUserProfile()
       .then((response: any) => {
         const responseData = response?.data;
-        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
+        const profilePicture =  responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
         setFormData({
           ...formData,
           role: responseData?.role,
