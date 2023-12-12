@@ -22,8 +22,7 @@ const ProfilePicture = styled("img")(({ theme }) => ({
     marginBottom: theme.spacing(4),
   },
 }));
-
-interface UserProfile {
+export interface UserProfile {
   id: "string";
   type: "string";
   user_id: "string";

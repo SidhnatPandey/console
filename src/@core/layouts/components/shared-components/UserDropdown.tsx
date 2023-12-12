@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -22,6 +22,8 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
+import { getUserInfo } from 'src/services/userService'
+import { UserProfile } from 'src/pages/myProfile/UserProfileHeader'
 
 interface Props {
   settings: Settings
@@ -45,6 +47,7 @@ const MenuItemStyled = styled(MenuItem)<MenuItemProps>(({ theme }) => ({
 const UserDropdown = (props: Props) => {
   // ** Props
   const { settings } = props
+  const [userData, setUserData] = useState<UserProfile>();
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
@@ -67,6 +70,22 @@ const UserDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
+  useEffect(() => {
+    getUserData();
+  }, [router?.pathname]);
+
+  const getUserData = () => {
+    getUserInfo()
+      .then((response) => {
+        if (response.status === 200) {
+          setUserData(response?.data || {});
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const styles = {
     px: 4,
     py: 1.75,
@@ -86,7 +105,6 @@ const UserDropdown = (props: Props) => {
     logout()
     handleDropdownClose()
   }
-
   return (
     <Fragment>
       <Badge
@@ -100,8 +118,12 @@ const UserDropdown = (props: Props) => {
         }}
       >
         <Avatar
-          alt='John Doe'
-          src='/images/avatars/user-default-avatar.png'
+          alt={`${userData?.user_info?.first_name + " " + userData?.user_info?.last_name}`}
+          src={
+            userData?.user_info.profile_picture
+              ? "data:image/jpeg;base64," + userData?.user_info.profile_picture
+              : "/images/avatars/user-default-avatar.png"
+          }
           onClick={handleDropdownOpen}
           sx={{ width: 38, height: 38 }}
         />
@@ -124,11 +146,15 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/user-default-avatar.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={`${userData?.user_info?.first_name + " " + userData?.user_info?.last_name}`} src={
+                userData?.user_info.profile_picture
+                  ? "data:image/jpeg;base64," + userData?.user_info?.profile_picture
+                  : "/images/avatars/user-default-avatar.png"
+              } sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
-              <Typography variant='body2'>Admin</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{userData?.user_info?.first_name} {userData?.user_info?.last_name}</Typography>
+              <Typography variant='body2'>{userData?.role}</Typography>
             </Box>
           </Box>
         </Box>
