@@ -134,7 +134,7 @@ const AppDashboard = () => {
                 marginBottom: -1,
               }}
             >
-              <Icon icon={"ph:check-light"} />
+              <Icon style={{ fontSize: '1rem', padding: '4px 0 0 3px' }} icon={"ph:check-light"} />
             </CustomAvatar>
           );
         case "inprogress":

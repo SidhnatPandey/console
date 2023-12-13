@@ -72,7 +72,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
               }}
               style={{ marginRight: 10 }}
             >
-              <Icon icon={"ph:check-light"} />
+              <Icon icon={"ph:check-light"} style={{ fontSize: '1rem', padding: '1px 0 0 1px' }} />
             </CustomAvatar>
           );
         case "inprogress":

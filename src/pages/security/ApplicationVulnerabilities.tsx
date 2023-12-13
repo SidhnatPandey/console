@@ -144,19 +144,19 @@ const ApplicationVulnerabilities = () => {
     </TableCell>
   );
 
-  const filteredData = vulnerabilityData.filter((row) =>
+  const filteredData = vulnerabilityData?.filter((row) =>
     Object.values(row).some(
       (value) =>
         value &&
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+  const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
   const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
   const endIndex = Math.min(
     startIndex + entriesPerPage - 1,
-    filteredData.length - 1
+    filteredData?.length - 1
   );
 
   useEffect(() => {
@@ -266,7 +266,7 @@ const ApplicationVulnerabilities = () => {
                 {renderOptionsMenuCell()}
               </TableRow>
             </TableHead>
-            {filteredData.length > 0 ? (
+            {filteredData?.length > 0 ? (
               <TableBody>
                 {filteredData
                   .slice(startIndex, endIndex + 1)
@@ -306,8 +306,8 @@ const ApplicationVulnerabilities = () => {
           alignItems="center"
         >
           <span>
-            Showing {filteredData.length > 0 ? startIndex + 1 : 0} to{" "}
-            {endIndex + 1} of {filteredData.length} entries
+            Showing {filteredData?.length > 0 ? startIndex + 1 : 0} to{" "}
+            {endIndex + 1} of {filteredData?.length} entries
           </span>
           <Stack
             spacing={2}
@@ -316,7 +316,7 @@ const ApplicationVulnerabilities = () => {
             marginBottom={"20px"}
             alignItems="flex-end"
           >
-            {filteredData.length > 0 ? (
+            {filteredData?.length > 0 ? (
               <Pagination
                 {...pagination}
                 shape="rounded"

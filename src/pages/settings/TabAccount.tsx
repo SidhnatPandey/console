@@ -111,7 +111,7 @@ const TabAccount = () => {
     getUserProfile()
       .then((response: any) => {
         const responseData = response?.data;
-        const profilePicture =  responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
+        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
         setFormData({
           ...formData,
           role: responseData?.role,
@@ -246,7 +246,6 @@ const TabAccount = () => {
 
   const handleCancelChanges = () => {
     setFormData({ ...originalData });
-    handleInputImageReset();
   };
 
   const handleCheckboxChange = () => {
@@ -293,7 +292,7 @@ const TabAccount = () => {
         <form onSubmit={handleSubmit(handleSaveChanges)}>
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ImgStyled src={imgSrc} alt="Profile Pic" />
+              <ImgStyled src={imgSrc && imgSrc.split(',')[1] !== "null" ? imgSrc : "/images/avatars/user-default-avatar.png"} alt="Profile Pic" />
               <div>
                 <ButtonStyled variant="contained" as="label">
                   Upload New Photo
