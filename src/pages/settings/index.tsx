@@ -27,7 +27,7 @@ const Settings = () => {
           <Button
             component="a"
             onClick={handleTeamsClick}
-            variant={selectedPage === 'teams'?"contained":undefined}
+            variant={selectedPage === 'teams' ? "contained" : undefined}
             // color={selectedPage === 'teams' ? 'primary' : 'default'}
             startIcon={<TeamsIcon />}
             sx={{ '&:hover': { backgroundColor: "none" } }}
@@ -39,7 +39,7 @@ const Settings = () => {
           <Button
             component="a"
             onClick={handleAccountsClick}
-            variant={selectedPage === 'accounts'?"contained":undefined}
+            variant={selectedPage === 'accounts' ? "contained" : undefined}
             // color={selectedPage === 'accounts' ? 'primary' : 'default'}
             startIcon={<AccountsIcon />}
             sx={{ '&:hover': { backgroundColor: "none" } }}
@@ -49,7 +49,7 @@ const Settings = () => {
         </Link>
       </div>
       <div style={{ marginTop: '16px' }}>
-        {selectedPage === 'teams' ? <h1>Teams Page</h1> : null}
+        {selectedPage === 'teams' ? <p>Under Development</p> : null}
         {selectedPage === 'accounts' ? <TabAccount /> : null}
       </div>
     </>
