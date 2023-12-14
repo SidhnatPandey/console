@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ProcessDetails from 'src/pages/apps/app-dashboard/ProcessDetails';// Adjust the import path based on your project structure
+import '@testing-library/jest-dom';
 
 describe('ProcessDetails component', () => {
   const mockData = {
@@ -18,7 +19,7 @@ describe('ProcessDetails component', () => {
   };
 
   it('renders the component with provided data', () => {
-    render(<ProcessDetails {...mockData} />);
+    render(<ProcessDetails handleTrigger={undefined} {...mockData} />);
 
     expect(screen.getByTestId('stage')).toHaveTextContent('Stage: clone');
     expect(screen.getByTestId('duration')).toHaveTextContent('Duration: 1 hour 29 min 15 sec');
@@ -30,7 +31,7 @@ describe('ProcessDetails component', () => {
 });
 
   it('renders loading state', () => {
-    render(<ProcessDetails {...mockData} loading={true} />);
+    render(<ProcessDetails handleTrigger={undefined} {...mockData} loading={true} />);
 
     expect(screen.queryByTestId('stage')).not.toBeInTheDocument();
     expect(screen.queryByTestId('duration')).not.toBeInTheDocument();

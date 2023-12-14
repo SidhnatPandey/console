@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import ProcessLogs from 'src/pages/apps/app-dashboard/ProcessLogs';
+import '@testing-library/jest-dom';
 
 describe('ProcessLogs component', () => {
   const mockSteps = [
@@ -15,17 +16,17 @@ describe('ProcessLogs component', () => {
   ];
 
   it('renders tab labels correctly', () => {
-    render(<ProcessLogs steps={mockSteps} loading={false} />);
+    render(<ProcessLogs steps={mockSteps} loading={false} tabHeading={''} />);
     expect(screen.getByText('Run 1')).toBeInTheDocument();
   });
 
   it('renders log content when loading is false and steps are provided', () => {
-    render(<ProcessLogs steps={mockSteps} loading={false} />);
+    render(<ProcessLogs steps={mockSteps} loading={false} tabHeading={''} />);
     expect(screen.getByText('Sample log content')).toBeInTheDocument();
   });
 
   it('handles tab change correctly', () => {
-    render(<ProcessLogs steps={mockSteps} loading={false} />);
+    render(<ProcessLogs steps={mockSteps} loading={false} tabHeading={''} />);
     expect(screen.getByText('Sample log content')).toBeInTheDocument();
   });
 
@@ -41,7 +42,7 @@ describe('ProcessLogs component', () => {
         status: 'succeeded',
       },
     ];
-    render(<ProcessLogs steps={mockStepsWithSpecialCharacters} loading={false} />);
+    render(<ProcessLogs steps={mockStepsWithSpecialCharacters} loading={false} tabHeading={''} />);
     // Ensure log content with special characters is rendered correctly
     expect(screen.getByText(specialCharactersLog)).toBeInTheDocument();
   });
@@ -65,7 +66,7 @@ describe('ProcessLogs component', () => {
         status: 'succeeded',
       },
     ];
-    render(<ProcessLogs steps={stepsWithDifferentLogs} loading={false} />);
+    render(<ProcessLogs steps={stepsWithDifferentLogs} loading={false} tabHeading={''} />);
     fireEvent.click(screen.getByText('Run 2'));
     expect(screen.getByText('Log content for Run 2')).toBeInTheDocument();
   });

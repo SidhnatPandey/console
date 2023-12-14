@@ -45,6 +45,7 @@ const ProfileTabs = () => {
               >
                 <Tab
                   value="profile"
+                  data-testId="profile-tab"
                   label={
                     <Box
                       sx={{
