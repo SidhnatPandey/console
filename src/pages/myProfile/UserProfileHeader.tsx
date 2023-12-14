@@ -22,8 +22,7 @@ const ProfilePicture = styled("img")(({ theme }) => ({
     marginBottom: theme.spacing(4),
   },
 }));
-
-interface UserProfile {
+export interface UserProfile {
   id: "string";
   type: "string";
   user_id: "string";
@@ -101,8 +100,9 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
       >
         <ProfilePicture
           src={
-            "data:image/jpeg;base64," + userData?.user_info.profile_picture ||
-            "/images/pages/14.png"
+            userData?.user_info.profile_picture
+            ?"data:image/jpeg;base64," + userData?.user_info.profile_picture 
+            :"/images/avatars/user-default-avatar.png"
           }
           alt="profile-picture"
         />

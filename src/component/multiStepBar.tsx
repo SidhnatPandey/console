@@ -27,15 +27,15 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
     Cves.forEach((cve) => {
       switch (cve.Severity) {
         case 'High':
-          high += 1; break;
+          high += cve.Count; break;
         case 'Medium':
-          medium += 1; break;
+          medium += cve.Count; break;
         case 'Low':
-          low += 1; break;
+          low += cve.Count; break;
         case 'Critical':
-          critical += 1; break;
+          critical += cve.Count; break;
         case 'Unknown':
-          unknown += 1; break;
+          unknown += cve.Count; break;
       }
     })
     const arr = [
