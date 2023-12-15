@@ -26,12 +26,36 @@ describe('TabAccount Component', () => {
     it('handles form changes correctly', async () => {
         render(<TabAccount />);
         await waitFor(() => {
-            const firstNameInput = screen.getByLabelText('First Name') as HTMLInputElement;
-            fireEvent.change(firstNameInput, { target: { value: 'John' } });
-            expect(firstNameInput.value).toBe('John');
+          const firstNameInput = screen.getByLabelText('First Name') as HTMLInputElement;
+          const lastNameInput = screen.getByLabelText('Last Name') as HTMLInputElement;
+          const phoneNumberInput = screen.getByLabelText('Phone Number') as HTMLInputElement;
+          const stateInput = screen.getByLabelText('State') as HTMLInputElement;
+          const cityInput = screen.getByLabelText('City') as HTMLInputElement;
+          const organizationInput = screen.getByLabelText('Organization') as HTMLInputElement;
+          const addressInput = screen.getByLabelText('Address') as HTMLInputElement;
+          const zipCodeInput = screen.getByLabelText('Zip Code') as HTMLInputElement;
+      
+          fireEvent.change(firstNameInput, { target: { value: 'John' } });
+          fireEvent.change(lastNameInput, { target: { value: 'Doe' } });
+          fireEvent.change(phoneNumberInput, { target: { value: '1234567890' } });
+          fireEvent.change(stateInput, { target: { value: 'California' } });
+          fireEvent.change(cityInput, { target: { value: 'Los Angeles' } });
+          fireEvent.change(organizationInput, { target: { value: 'ABC Corp' } });
+          fireEvent.change(addressInput, { target: { value: '123 Main St' } });
+          fireEvent.change(zipCodeInput, { target: { value: '12345' } });
+      
+          expect(firstNameInput.value).toBe('John');
+          expect(lastNameInput.value).toBe('Doe');
+          expect(phoneNumberInput.value).toBe('1234567890');
+          expect(stateInput.value).toBe('California');
+          expect(cityInput.value).toBe('Los Angeles');
+          expect(organizationInput.value).toBe('ABC Corp');
+          expect(addressInput.value).toBe('123 Main St');
+          expect(zipCodeInput.value).toBe('12345');
         });
-    });
-
+      });
+      
+      
     it('handles save changes correctly', async () => {
         render(<TabAccount />);
         await waitFor(() => {
