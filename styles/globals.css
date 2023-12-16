@@ -1,0 +1,119 @@
+html,
+body {
+  min-height: 100%;
+}
+
+#__next {
+  height: 100%;
+}
+
+code {
+  font-family: 'Public Sans', sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue';
+  padding: 0.1rem 0.4rem;
+  font-size: 90%;
+  color: #d400ff;
+  border-radius: 0.1335rem;
+}
+
+code:not([class*='language-']):before,
+code:not([class*='language-']):after {
+  content: '`';
+}
+
+code[class*='language-'] {
+  padding: 0;
+}
+
+/* password validation css */
+
+.password-checklist {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.password-checklist li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.password-checklist .valid {
+  color: green;
+}
+
+.password-checklist .invalid {
+  color: red;
+}
+
+.icon-bottom {
+  vertical-align: bottom;
+}
+
+a, a:link, a:visited, a:focus, a:hover, a:active {
+  color: #7353e5;
+}
+
+/* Margins */
+
+.mr-1 {
+  margin-right: .5rem;
+}
+
+.mr-2 {
+  margin-right: 1rem;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-1 {
+  margin-top: .5rem;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.scroll-container {
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 25px;
+}
+
+
+/* Scroll bar */
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(87, 87, 87, 0.247);
+  border-radius: 10px;
+}
+
+.scroll-container2 {
+  overflow: auto;
+}
+
+.MuiTab-root[title]:hover:after {
+  content: attr(title);
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}

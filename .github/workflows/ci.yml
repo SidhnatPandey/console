@@ -1,0 +1,44 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Console CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.13.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    # Step 1: Checkout Code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      
+    # Step 2: Set up Node.js environment with Yarn  
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+        
+    # Step 3: Install Dependencies    
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+      
+    # Step 4: Build the Next.js application
+    - name: Build Next.js application
+      run: yarn build
+      
+    # Step 5: Code Quality Scan with ESLint
+    - name: Code Quality Scan with ESLint
+      run: yarn lint
