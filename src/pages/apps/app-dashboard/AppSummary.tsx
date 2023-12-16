@@ -21,6 +21,7 @@ interface Matrix {
   CPUPercentage: string,
   MemoryRequestMB: string,
   MemoryUsageMB: string,
+  MemoryLimitMB: string,
   NetworkReceiveBytes: string,
   NetworkTransmitBytes: string,
 }
@@ -92,8 +93,8 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                 </CustomAvatar>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Typography variant='h5'>
-                    {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "?"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "?"}</Typography>
-                  <Typography variant='body1'>Memory/Request (MB)</Typography>
+                    {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : "?"} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : "?"} / {matrix?.MemoryLimitMB ? Number(matrix?.MemoryLimitMB).toFixed(2) : "?"}</Typography>
+                  <Typography variant='body1'>Mem Curr/Req/Limit (MB)</Typography>
                 </Box>
               </Box>
             </Grid>
