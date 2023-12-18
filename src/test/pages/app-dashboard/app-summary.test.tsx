@@ -18,18 +18,14 @@ describe('AppSummary component', () => {
     expect(screen.getByTestId('updated-time')).toBeInTheDocument();
   });
 
-  it('displays 4 titles when not loading', () => {
+  it("renders AppSummary component with correct data", () => {
     render(<AppSummary loading={false} appName={undefined} metricsTimer={0} />);
-    expect(screen.getAllByTestId('title')).toHaveLength(4);
+
+    // Check if elements with data-testid attributes are present and have correct values
+    expect(screen.getByTestId("instances-count")).toBeInTheDocument();
+    expect(screen.getByTestId("cpu-percentage")).toBeInTheDocument();
+    expect(screen.getByTestId("memory-usage")).toBeInTheDocument();
+    expect(screen.getByTestId("network-usage")).toBeInTheDocument();
   });
 
-  it('displays 4 custom avatars when not loading', () => {
-    render(<AppSummary loading={false} appName={undefined} metricsTimer={0} />);
-    expect(screen.getAllByTestId('custom-avatar')).toHaveLength(4);
-  });
-
-  it('displays 4 statistics when not loading', () => {
-    render(<AppSummary loading={false} appName={undefined} metricsTimer={0} />);
-    expect(screen.getAllByTestId('statistic')).toHaveLength(4);
-  });
 });

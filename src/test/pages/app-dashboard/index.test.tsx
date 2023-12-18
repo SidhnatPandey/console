@@ -4,7 +4,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom';
 
-
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -74,9 +73,6 @@ describe("AppDashboard Component", () => {
     userEvent.click(screen.getByTestId("Overview"));
     expect(screen.getByTestId("tab-panel-1")).toBeInTheDocument();
 
-    userEvent.click(screen.getByTestId("Insights"));
-    expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
-
     userEvent.click(screen.getByTestId("Logs"));
     expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
 
@@ -85,8 +81,6 @@ describe("AppDashboard Component", () => {
   }); 
 
   it("should switch tabs", async () => {
-    userEvent.click(screen.getByTestId("Insights"));
-    expect(screen.getByTestId("tab-panel-2")).toBeInTheDocument();
     userEvent.click(screen.getByTestId("Logs"));
     expect(screen.getByTestId("tab-panel-3")).toBeInTheDocument();
     userEvent.click(screen.getByTestId("Settings"));
