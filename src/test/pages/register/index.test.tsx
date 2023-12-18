@@ -1,10 +1,9 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import Register from "../../../pages/register/index";
-import { successToast } from "src/lib/react-taostify";
+import toast from 'react-hot-toast'; // Update import
 import * as authService from "src/services/authService";
 import * as userService from "src/services/userService";
-
 
 jest.mock("next/router", () => ({
   useRouter: () => ({
@@ -22,11 +21,9 @@ jest.mock("src/services/userService", () => ({
   checkUsername: jest.fn(),
   checkEmail: jest.fn(),
 }));
-
-
-
-jest.mock("src/lib/react-taostify", () => ({
-  successToast: jest.fn(),
+jest.mock('react-hot-toast', () => ({
+  ...jest.requireActual('react-hot-toast'),
+  success: jest.fn(),
 }));
 
 describe("Register Component", () => {
@@ -72,7 +69,7 @@ describe("Register Component", () => {
 
     // Wait for the success toast to be triggered
     await waitFor(() => {
-      expect(successToast).toHaveBeenCalled();
+      expect(toast.success).toHaveBeenCalled();
     });
   });
 });
