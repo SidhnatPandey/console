@@ -255,8 +255,11 @@ const LoginPage = () => {
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Typography sx={{ color: 'text.secondary', mr: 2 }}>New on our platform?</Typography>
-                <Typography href='/register' component={LinkStyled}>
+                {/* <Typography href='/register' component={LinkStyled}>
                   Create an account
+                </Typography> */}
+                <Typography href='https://initializ.ai/early-access' rel="noopener noreferrer" component={LinkStyled}>
+                  Request Early Access
                 </Typography>
               </Box>
             </form>

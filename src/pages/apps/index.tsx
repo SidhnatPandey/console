@@ -207,7 +207,7 @@ const Apps: React.FC<AppListProps> = () => {
                     }} >{row?.application_name}</TableCell>
                     <TableCell>{getCurrentEnv(row?.stage)}</TableCell>
                     <TableCell>{convertDateFormat(row?.last_deployed)}</TableCell>
-                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url.startsWith('http://') || row?.url.startsWith('https://') ? row?.url : `https://${row?.url}`} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
                     <TableCell>
                       <CustomChip
                         rounded
