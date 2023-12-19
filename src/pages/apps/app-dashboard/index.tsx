@@ -10,7 +10,6 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
 import GridViewIcon from "@mui/icons-material/GridView";
 import SettingsIcon from "@mui/icons-material/Settings";
-import InsightsIcon from "@mui/icons-material/Insights";
 import AppsIcon from "@mui/icons-material/Apps";
 import Skeleton from "react-loading-skeleton";
 

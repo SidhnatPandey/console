@@ -87,6 +87,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
         sx={{
           height: { xs: 150, md: 250 },
         }}
+        data-testid="profile-banner"
       />
       <CardContent
         sx={{
@@ -101,10 +102,11 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
         <ProfilePicture
           src={
             userData?.user_info.profile_picture
-            ?"data:image/jpeg;base64," + userData?.user_info.profile_picture 
-            :"/images/avatars/user-default-avatar.png"
+              ? "data:image/jpeg;base64," + userData?.user_info.profile_picture
+              : "/images/avatars/user-default-avatar.png"
           }
           alt="profile-picture"
+          data-testid="profile-picture"
         />
         <Box
           sx={{
@@ -115,6 +117,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
             flexWrap: ["wrap", "nowrap"],
             justifyContent: ["center", "space-between"],
           }}
+          data-testid="box-container"
         >
           <Box
             sx={{
@@ -123,9 +126,10 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               flexDirection: "column",
               alignItems: ["center", "flex-start"],
             }}
+            data-testid="info-box"
           >
             <Typography variant="h6" sx={{ mb: 2.5 }}>
-              { }
+              {}
             </Typography>
             <Box
               sx={{
@@ -143,7 +147,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
                 }}
               >
                 <BusinessCenterIcon />
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography data-testid="role" sx={{ color: "text.secondary" }}>
                   {userData?.role}
                 </Typography>
               </Box>
@@ -156,7 +160,10 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
                 }}
               >
                 <LocationOnIcon />
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography
+                  data-testid="address"
+                  sx={{ color: "text.secondary" }}
+                >
                   {userData?.user_info.address.city &&
                     `${userData?.user_info.address.city}, `}
                   {userData?.user_info.address.country}
@@ -170,7 +177,10 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
                 }}
               >
                 <CalendarMonthIcon />{" "}
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography
+                  sx={{ color: "text.secondary" }}
+                  data-testid="joined-date"
+                >
                   Joined {getMonthAndYear(userData?.created_at)}
                 </Typography>
               </Box>
@@ -180,6 +190,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
             variant="contained"
             sx={{ "& svg": { mr: 2 } }}
             onClick={handleEditProfileClick}
+            data-testid="edit-profile-button"
           >
             Edit Profile
           </Button>
