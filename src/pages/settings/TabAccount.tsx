@@ -23,7 +23,7 @@ import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import { useAuth } from "src/hooks/useAuth";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../../component/ConfirmationDialog";
 
 interface Data {
   user_info: any;

@@ -11,7 +11,7 @@ import { toast } from "react-hot-toast";
 import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import ConfirmationDialog from "src/pages/ConfirmationDialog";
+import ConfirmationDialog from "src/component/ConfirmationDialog";
 
 interface DestroyAppProps {
   loading: boolean;
