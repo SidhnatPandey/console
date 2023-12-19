@@ -401,17 +401,20 @@ const TabAccount = () => {
                   placeholder="231465"
                   value={formData.zipCode}
                   onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                  id="zipCode"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Country</InputLabel>
+                  <InputLabel id="country-label" htmlFor="country">
+                    Country
+                  </InputLabel>
                   <Select
+                    id="country"
+                    labelId="country-label"  // Added labelId to associate with the label
                     label="Country"
                     value={formData.country}
-                    onChange={(e) =>
-                      handleFormChange("country", e.target.value)
-                    }
+                    onChange={(e) => handleFormChange("country", e.target.value)}
                   >
                     {Countries.map((country) => (
                       <MenuItem key={country.code} value={country.name}>
@@ -420,6 +423,7 @@ const TabAccount = () => {
                     ))}
                   </Select>
                 </FormControl>
+
               </Grid>
 
               <Grid item xs={12} sm={6}>

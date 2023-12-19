@@ -3,9 +3,9 @@
 
 
 "@adobe/css-tools@^4.3.1":
-  version "4.3.2"
-  resolved "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.3.2.tgz"
-  integrity sha512-DA5a1C0gD/pLOvhv33YMrbf2FK3oUzwNl9oOJqE4XVjuEtt6XIakRcsd7eLiOSPkp1kTRQGICTA8cKra/vFbjw==
+  version "4.3.1"
+  resolved "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.3.1.tgz"
+  integrity sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==
 
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
@@ -1616,10 +1616,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^29.5.6":
-  version "29.5.6"
-  resolved "https://registry.npmjs.org/@types/jest/-/jest-29.5.6.tgz"
-  integrity sha512-/t9NnzkOpXb4Nfvg17ieHE6EeSjDS2SGSpNYfoLbUAeL/EOueU/RSdOWFpfQTXBEM7BguYW1XQ0EbM+6RlIh6w==
+"@types/jest@^29.5.6", "@types/jest@>= 28":
+  version "29.5.7"
+  resolved "https://registry.npmjs.org/@types/jest/-/jest-29.5.7.tgz"
+  integrity sha512-HLyetab6KVPSiF+7pFcUyMeLsx25LDNDemw9mGsJBkai/oouwrjTycocSDYopMEwFhN2Y4s9oPyOCZNofgSt2g==
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
