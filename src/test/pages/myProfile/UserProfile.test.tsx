@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Profile from 'src/pages/myProfile/Profile';
 import ProfileTabs from 'src/pages/myProfile/ProfileTabs';
 import '@testing-library/jest-dom';
@@ -29,13 +29,13 @@ describe('Profile Component', () => {
   test('renders user information correctly', async () => {
     render(<Profile user_info={user_info} />);
     
-    expect(screen.getByTestId('about-section')).toBeInTheDocument();;
-    expect(screen.getByTestId('full-name')).toBeInTheDocument();;
-    expect(screen.getByTestId('status')).toBeInTheDocument();;
-    expect(screen.getByTestId('city')).toBeInTheDocument();;
-    expect(screen.getByTestId('country')).toBeInTheDocument();;
-    expect(screen.getByTestId('contacts-section')).toBeInTheDocument();;
-    expect(screen.getByTestId('contact')).toBeInTheDocument();;
-    expect(screen.getByTestId('email')).toBeInTheDocument();;
+    expect(screen.getByTestId('about-section')).toBeInTheDocument();
+    expect(screen.getByTestId('full-name')).toBeInTheDocument();
+    expect(screen.getByTestId('status')).toBeInTheDocument();
+    expect(screen.getByTestId('city')).toBeInTheDocument();
+    expect(screen.getByTestId('country')).toBeInTheDocument();
+    expect(screen.getByTestId('contacts-section')).toBeInTheDocument();
+    expect(screen.getByTestId('contact')).toBeInTheDocument();
+    expect(screen.getByTestId('email')).toBeInTheDocument();
   });
 });

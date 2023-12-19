@@ -2,7 +2,7 @@ import UserProfileHeader from "src/pages/myProfile/UserProfileHeader";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { getUserInfo } from "src/services/userService";
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 jest.mock("next/router", () => ({
   useRouter: () => ({
@@ -54,15 +54,15 @@ describe("UserProfileHeader", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("profile-picture")).toBeInTheDocument();
-      expect(screen.getByTestId("profile-banner")).toBeInTheDocument();
-      expect(screen.getByTestId("box-container")).toBeInTheDocument();
-      expect(screen.getByTestId("info-box")).toBeInTheDocument();
-      expect(screen.getByTestId("role")).toBeInTheDocument();
-      expect(screen.getByTestId("address")).toBeInTheDocument();
-      expect(screen.getByTestId("joined-date")).toBeInTheDocument();
-
-      const editProfileButton = screen.getByTestId("edit-profile-button");
-      userEvent.click(editProfileButton);
     });
+    expect(screen.getByTestId("profile-banner")).toBeInTheDocument();
+    expect(screen.getByTestId("box-container")).toBeInTheDocument();
+    expect(screen.getByTestId("info-box")).toBeInTheDocument();
+    expect(screen.getByTestId("role")).toBeInTheDocument();
+    expect(screen.getByTestId("address")).toBeInTheDocument();
+    expect(screen.getByTestId("joined-date")).toBeInTheDocument();
+
+    const editProfileButton = screen.getByTestId("edit-profile-button");
+    userEvent.click(editProfileButton);
   });
 });
