@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import ConfirmationDialog from "src/pages/ConfirmationDialog";
 
 interface DestroyAppProps {
   loading: boolean;
@@ -36,12 +37,10 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
   };
 
   const confirmDestroyApp = () => {
-    // Close the confirmation dialog
-    setConfirmationDialogOpen(false);
-
     if (appId) {
       destroyApp(appId)
         .then((response: any) => {
+          setConfirmationDialogOpen(false); 
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
             router.push("/apps");
@@ -50,6 +49,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
           }
         })
         .catch((error) => {
+          setConfirmationDialogOpen(false);  
           console.error(error);
           toast.error(
             "An error occurred during App deletion. Please try again later."
@@ -57,10 +57,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
         });
     }
   };
-
-  const cancelDestroyApp = () => {
-    setConfirmationDialogOpen(false);
-  };
+  
 
   return (
     <Card sx={{ margin: "-25px" }}>
@@ -129,69 +126,12 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
       </CardContent>
 
       {/* Confirmation Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth="xs"
+       <ConfirmationDialog
         open={isConfirmationDialogOpen}
-        onClose={cancelDestroyApp}
-      >
-        <DialogContent
-          sx={{
-            pb: (theme) => `${theme.spacing(6)} !important`,
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pt: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              textAlign: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              justifyContent: "center",
-              "& svg": { mb: 6, color: "error.main" },
-            }}
-          >
-            <Typography variant="body1" color="textPrimary">
-              Are you sure you want to Delete this App?
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pb: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{ mr: 2 }}
-            onClick={confirmDestroyApp}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={cancelDestroyApp}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={confirmDestroyApp}
+        onCancel={() => setConfirmationDialogOpen(false)}
+        message="Are you sure you want to Delete this App?"
+      />
     </Card>
   );
 };

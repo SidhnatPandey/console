@@ -23,6 +23,7 @@ import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import { useAuth } from "src/hooks/useAuth";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 interface Data {
   user_info: any;
@@ -534,72 +535,13 @@ const TabAccount = () => {
           </CardContent>
         </Card>
       </Grid>
-      {/* Confirmation Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth="xs"
+       {/* Confirmation Dialog */}
+       <ConfirmationDialog
         open={isConfirmationDialogOpen}
-        onClose={() => setConfirmationDialogOpen(false)}
-      >
-        <DialogContent
-          sx={{
-            pb: (theme) => `${theme.spacing(6)} !important`,
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pt: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              textAlign: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              justifyContent: "center",
-              "& svg": { mb: 6, color: "error.main" },
-            }}
-          >
-            {/* Assuming you have an Icon component */}
-            {/* <Icon icon="tabler:alert-circle" style={{ fontSize: 5.5 }} /> */}
-            <Typography variant="body1" color="textPrimary">
-              Are you sure you want to deactivate your account?
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pb: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{ mr: 2 }}
-            onClick={() => handleDeactivateAccount()}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setConfirmationDialogOpen(false)}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleDeactivateAccount}
+        onCancel={() => setConfirmationDialogOpen(false)}
+        message="Are you sure you want to deactivate your account?"
+      />
     </Box>
   );
 };
