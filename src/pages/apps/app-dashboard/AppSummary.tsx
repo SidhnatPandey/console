@@ -64,7 +64,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
       <CardContent sx={{ pt: theme => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={6}>
           {loading ? <Skeleton width={300} height={40} style={{ marginLeft: "20px" }} count={4} inline /> : <>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} data-testid="instances-count">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CustomAvatar skin='light' color="primary" sx={{ mr: 4, width: 42, height: 42 }}>
                   <Icon icon="tabler:chart-pie-2" />
@@ -75,7 +75,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} data-testid="cpu-percentage">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CustomAvatar skin='light' color="info" sx={{ mr: 4, width: 42, height: 42 }}>
                   <Icon icon="ph:cpu-bold" />
@@ -86,7 +86,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} data-testid="memory-usage">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CustomAvatar skin='light' color="error" sx={{ mr: 4, width: 42, height: 42 }}>
                   <Icon icon="icon-park-outline:memory-one" />
@@ -98,7 +98,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} data-testid="network-usage">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CustomAvatar skin='light' color="success" sx={{ mr: 4, width: 42, height: 42 }}>
                   <Icon icon="ooui:network" />

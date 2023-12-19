@@ -17,6 +17,7 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import Apps from 'src/pages/apps';
 import { screen } from '@testing-library/react'; 
+import '@testing-library/jest-dom';
 
 
 

@@ -147,17 +147,18 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
       <CardContent sx={{ padding: "10px", flex: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={2} textAlign="center" marginLeft={"-5px"}>
-            <Typography variant="h4">
+            <Typography variant="h4" data-testid="tabHeading">
               <b>{tabHeading}</b>
             </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h4">
+            <Typography variant="h4" data-testid="tabName">
               <b style={{ textTransform: 'capitalize' }}>{tabName} Logs</b>
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth />
+            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth               data-testid="searchInput"
+ />
           </Grid>
         </Grid>
       </CardContent>
@@ -169,11 +170,12 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
               paddingLeft: '10px'
             }}
           >
-            {loading ? <Skeleton width={100} height={20} /> :
+            {loading ? <Skeleton width={100} height={20} data-testid="loadingSkeleton" /> :
               <TabContext value={value}>
                 <TabList
                   orientation="vertical"
                   aria-label="vertical tabs example"
+                  data-testid="tabList"
                 >
                   {steps?.map((step, index) => {
                     return (
@@ -185,7 +187,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step?.status)}
-                      />
+                        data-testid={`tab-${index}`}                      />
                     );
                   })}
                 </TabList>
@@ -200,11 +202,14 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
             width: '100%',
             overflow: 'auto',
             padding: '10px',
-          }}>
+          }}
+          data-testid="logsContainer"
+          >
             {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{highlightText(log, searchTerm)}</p>
+              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}                     data-testid={`log-${index}`}
+              >{highlightText(log, searchTerm)}</p>
             })}
-            {loading && <Skeleton width={600} height={10} />}
+            {loading && <Skeleton width={600} height={10}  />}
             {loading && <Skeleton width={400} height={10} />}
             {loading && <Skeleton width={800} height={10} />}
             {loading && <Skeleton width={500} height={10} />}
