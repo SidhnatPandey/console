@@ -255,7 +255,7 @@ const AppDashboard = () => {
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      {supplyChainRunData?.url ? <a href={supplyChainRunData?.url} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
+                      {supplyChainRunData?.url ? <a href={supplyChainRunData?.url.startsWith('http://') || supplyChainRunData?.url.startsWith('https://') ? supplyChainRunData?.url : `https://${supplyChainRunData?.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
                         {supplyChainRunData?.url}
                       </a> : "N/A"}
                     </span>

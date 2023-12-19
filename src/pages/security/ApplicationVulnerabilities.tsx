@@ -30,7 +30,7 @@ interface AppSecurityData {
 }
 const ApplicationVulnerabilities = () => {
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
-    {
+/*     {
       AppName: "App 1",
       WorkspaceId: "WorkspaceId A",
       LastScanned: "2023-01-15",
@@ -87,7 +87,7 @@ const ApplicationVulnerabilities = () => {
       WorkspaceId: "WorkspaceId A",
       LastScanned: "2023-01-15",
       Cves: [{ Count: 3, Severity: "Medium" }],
-    },
+    }, */
   ]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");

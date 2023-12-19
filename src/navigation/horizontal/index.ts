@@ -36,7 +36,7 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Support',
       icon: 'ri:headphone-line',
-      path: 'https://initializsupport.zendesk.com/'
+      path: 'https://support.initializ.ai/'
     },
     {
       sectionTitle: 'Misc'
@@ -44,7 +44,7 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Documentation',
       icon: 'carbon:document',
-      path: '/apps/email'
+      path: 'https://docs.initializ.ai/'
     },
   ]
 }
