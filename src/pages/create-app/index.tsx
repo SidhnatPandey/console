@@ -257,7 +257,7 @@ const StepperCustomVertical = () => {
   });
 
   const router = useRouter();
-  if (router.query?.code && !gitUser) {
+  if (router.query?.code) {
     sendCode(router.query?.code as string)
       .then((response) => {
         if (response?.git_user) {

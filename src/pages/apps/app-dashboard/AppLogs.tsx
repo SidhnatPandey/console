@@ -10,28 +10,13 @@ import TabContext from "@mui/lab/TabContext";
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Input, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import useSWR from 'swr';
+import { APP_API } from "src/@core/static/api.constant";
 
 
 interface AppLogsProps {
     appName: string | undefined,
-}
-
-interface LogsData {
-    run_name: string;
-    log: string;
-}
-
-interface ProcessLogsProps {
-    steps: Step[] | undefined;
-    loading: boolean;
-    tabHeading: string;
-}
-
-interface Step {
-    log: string;
-    run_name: string;
-    status?: string;
 }
 
 // Styled TabList component
@@ -58,6 +43,8 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
     const [tabName, setTabName] = useState<string>("Prod");
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState<boolean>(false);
+
+    //const { data, error } = useSWR(APP_API.appLogs, getAppLogs('657d201b0650a224a9fe20bb', tabName))
 
     useEffect(() => {
         if (appName) { getLogs(tabName) }
