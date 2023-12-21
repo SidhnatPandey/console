@@ -1,4 +1,4 @@
-import { Key, useState } from "react";
+import { Key, useRef, useState } from "react";
 import { getAppLogs } from "src/services/dashboardService";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -36,11 +36,12 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 }));
 
 const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
-
-  //states
   const [value, setValue] = useState<string>("1");
   const [tabName, setTabName] = useState<string>("Prod");
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Ref for the scroll container
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   // creating the url for getting the logs
   let key = APP_API.appLogs;
@@ -48,7 +49,14 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
   key = key + tabName.toLowerCase();
 
   // making api call with SWR
-  const { data, isLoading } = useSWR(key, getAppLogs);
+  const { data, isValidating } = useSWR(key, getAppLogs, {
+    onSuccess: () => {
+      // Scroll to the bottom when new logs are loaded
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      }
+    },
+  });
 
   const handleTabChange = (step: string, index: number) => {
     setValue(index.toString());
@@ -99,7 +107,7 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
               paddingLeft: '10px'
             }}
           >
-            {isLoading ? <Skeleton width={100} height={20} /> :
+            {isValidating ? <Skeleton width={100} height={20} /> :
               <TabContext value={value}>
                 <TabList
                   orientation="vertical"
@@ -113,7 +121,7 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
           </Box>
         </Grid>
         <Grid item xs={10}>
-          <div className="scroll-container-logs" style={{
+          <div className="scroll-container-logs" ref={scrollContainerRef} style={{
             height: '500px',
             backgroundColor: 'black',
             color: 'white',
@@ -121,25 +129,30 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
             overflow: 'auto',
             padding: '10px',
           }}>
-            {!isLoading && data?.data.data.log.split('\n').map((log: string, index: Key | null | undefined) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{highlightText(log, searchTerm)}</p>
-            })}
-            {isLoading && <Skeleton width={600} height={10} />}
-            {isLoading && <Skeleton width={400} height={10} />}
-            {isLoading && <Skeleton width={800} height={10} />}
-            {isLoading && <Skeleton width={500} height={10} />}
-            {isLoading && <Skeleton width={600} height={10} />}
-            {isLoading && <Skeleton width={300} height={10} />}
-            {isLoading && <Skeleton width={400} height={10} />}
-            {isLoading && <Skeleton width={800} height={10} />}
-            {isLoading && <Skeleton width={600} height={10} />}
-            {isLoading && <Skeleton width={400} height={10} />}
-            {isLoading && <Skeleton width={800} height={10} />}
-            {isLoading && <Skeleton width={500} height={10} />}
-            {isLoading && <Skeleton width={600} height={10} />}
-            {isLoading && <Skeleton width={300} height={10} />}
-            {isLoading && <Skeleton width={400} height={10} />}
-            {isLoading && <Skeleton width={800} height={10} />}
+            {!isValidating &&
+              data?.data?.data?.log?.split('\n').map((log: string, index: Key | null | undefined) => (
+                <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>
+                  {highlightText(log, searchTerm)}
+                </p>
+              ))
+            }
+
+            {isValidating && <Skeleton width={600} height={10} />}
+            {isValidating && <Skeleton width={400} height={10} />}
+            {isValidating && <Skeleton width={800} height={10} />}
+            {isValidating && <Skeleton width={500} height={10} />}
+            {isValidating && <Skeleton width={600} height={10} />}
+            {isValidating && <Skeleton width={300} height={10} />}
+            {isValidating && <Skeleton width={400} height={10} />}
+            {isValidating && <Skeleton width={800} height={10} />}
+            {isValidating && <Skeleton width={600} height={10} />}
+            {isValidating && <Skeleton width={400} height={10} />}
+            {isValidating && <Skeleton width={800} height={10} />}
+            {isValidating && <Skeleton width={500} height={10} />}
+            {isValidating && <Skeleton width={600} height={10} />}
+            {isValidating && <Skeleton width={300} height={10} />}
+            {isValidating && <Skeleton width={400} height={10} />}
+            {isValidating && <Skeleton width={800} height={10} />}
           </div>
         </Grid>
       </Grid>
