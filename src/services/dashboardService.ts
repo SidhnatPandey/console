@@ -29,10 +29,19 @@ export const approval = (data: any) => {
     return post(APP_API.approval, data).then((response) => response?.data);
 }
 
-export const getAppLogs = (appId: string, env: string) => {
+export const getAppLogs = async (url: string) => {
     setApiBaseUrl();
-    let url = APP_API.appLogs;
-    url = url.replace('{appId}', appId);
-    url = url + env.toLowerCase();
-    return get(url).then((response) => response?.data)
+    const response = await get(url);
+    return response;
 }
+
+/* const mockFetchData = () => {
+    console.log('Mocked API Response: { "dummy": "data" }');
+    return Promise.resolve({ "log": number.toString() });
+};
+
+let number = Math.random();
+
+setInterval(() => {
+    number = Math.random();
+}, 2000) */

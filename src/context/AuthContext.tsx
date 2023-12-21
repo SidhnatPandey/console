@@ -84,25 +84,27 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(env('NEXT_PUBLIC_BASE_URL') + APP_API.login, params)
       .then(async response => {
-        window.localStorage.setItem(LOCALSTORAGE_CONSTANTS.token, response.data.data.access_token)
-        params.rememberMe
-          ? window.localStorage.setItem('isRemember', 'true')
-          : null
-        const returnUrl = router.query.returnUrl
-        const user: UserDataType = {
-          id: 0,
-          role: response.data.data.user_data?.role,
-          email: response.data.data.user_data?.email,
-          fullName: response.data.data.user_data?.user_name,
-          username: response.data.data.user_data?.user_name,
-          org: response.data.data.user_data?.org
+        if (response) {
+          window.localStorage.setItem(LOCALSTORAGE_CONSTANTS.token, response.data.data.access_token)
+          params.rememberMe
+            ? window.localStorage.setItem('isRemember', 'true')
+            : null
+          const returnUrl = router.query.returnUrl
+          const user: UserDataType = {
+            id: 0,
+            role: response.data.data.user_data?.role,
+            email: response.data.data.user_data?.email,
+            fullName: response.data.data.user_data?.user_name,
+            username: response.data.data.user_data?.user_name,
+            org: response.data.data.user_data?.org
+          }
+          setUser({ ...user })
+          params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
+
+          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
+
+          router.replace(redirectURL as string)
         }
-        setUser({ ...user })
-        params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
-
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
-
-        router.replace(redirectURL as string)
       })
 
       .catch(err => {

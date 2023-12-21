@@ -157,8 +157,8 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth               data-testid="searchInput"
- />
+            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth data-testid="searchInput"
+            />
           </Grid>
         </Grid>
       </CardContent>
@@ -187,7 +187,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step?.status)}
-                        data-testid={`tab-${index}`}                      />
+                        data-testid={`tab-${index}`} />
                     );
                   })}
                 </TabList>
@@ -195,7 +195,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
           </Box>
         </Grid>
         <Grid item xs={10}>
-          <div className="scroll-container2" style={{
+          <div className="scroll-container-logs" style={{
             height: '400px',
             backgroundColor: 'black',
             color: 'white',
@@ -203,13 +203,13 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
             overflow: 'auto',
             padding: '10px',
           }}
-          data-testid="logsContainer"
+            data-testid="logsContainer"
           >
             {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}                     data-testid={`log-${index}`}
+              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index} data-testid={`log-${index}`}
               >{highlightText(log, searchTerm)}</p>
             })}
-            {loading && <Skeleton width={600} height={10}  />}
+            {loading && <Skeleton width={600} height={10} />}
             {loading && <Skeleton width={400} height={10} />}
             {loading && <Skeleton width={800} height={10} />}
             {loading && <Skeleton width={500} height={10} />}

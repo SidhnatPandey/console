@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Key, useState } from "react";
 import { getAppLogs } from "src/services/dashboardService";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,7 +16,7 @@ import { APP_API } from "src/@core/static/api.constant";
 
 
 interface AppLogsProps {
-    appName: string | undefined,
+    appId: string,
 }
 
 // Styled TabList component
@@ -36,34 +36,24 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     }
 }))
 
-const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
+const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
 
+    //states
     const [value, setValue] = useState<string>("1");
-    const [logs, setLogs] = useState<string[]>([]);
     const [tabName, setTabName] = useState<string>("Prod");
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState<boolean>(false);
 
-    //const { data, error } = useSWR(APP_API.appLogs, getAppLogs('657d201b0650a224a9fe20bb', tabName))
+    // creating the url for getting the logs
+    let key = APP_API.appLogs;
+    key = key.replace('{appId}', appId);
+    key = key + tabName.toLowerCase();
 
-    useEffect(() => {
-        if (appName) { getLogs(tabName) }
-    }, [appName])
-
-    const getLogs = (step: string) => {
-        if (appName) {
-            getAppLogs(appName, step).then((res) => {
-                if (res && res.data) {
-                    setLogs(res.data.log.split('\n'));
-                }
-            });
-        }
-    };
+    // making api call with SWR
+    const { data, isLoading } = useSWR(key, getAppLogs);
 
     const handleTabChange = (step: string, index: number) => {
         setValue(index.toString());
-        setTabName((preStep) => { return step });
-        getLogs(step);
+        setTabName(() => { return step });
     };
 
     const highlightText = (text: string, highlight: string) => {
@@ -110,7 +100,7 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
                             paddingLeft: '10px'
                         }}
                     >
-                        {loading ? <Skeleton width={100} height={20} /> :
+                        {isLoading ? <Skeleton width={100} height={20} /> :
                             <TabContext value={value}>
                                 <TabList
                                     orientation="vertical"
@@ -124,33 +114,33 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
                     </Box>
                 </Grid>
                 <Grid item xs={10}>
-                    <div className="scroll-container2" style={{
-                        height: '400px',
+                    <div className="scroll-container-logs" style={{
+                        height: '500px',
                         backgroundColor: 'black',
                         color: 'white',
                         width: '100%',
                         overflow: 'auto',
                         padding: '10px',
                     }}>
-                        {!loading && logs.map((log, index) => {
+                        {!isLoading && data?.data.data.log.split('\n').map((log: string, index: Key | null | undefined) => {
                             return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{highlightText(log, searchTerm)}</p>
                         })}
-                        {loading && <Skeleton width={600} height={10} />}
-                        {loading && <Skeleton width={400} height={10} />}
-                        {loading && <Skeleton width={800} height={10} />}
-                        {loading && <Skeleton width={500} height={10} />}
-                        {loading && <Skeleton width={600} height={10} />}
-                        {loading && <Skeleton width={300} height={10} />}
-                        {loading && <Skeleton width={400} height={10} />}
-                        {loading && <Skeleton width={800} height={10} />}
-                        {loading && <Skeleton width={600} height={10} />}
-                        {loading && <Skeleton width={400} height={10} />}
-                        {loading && <Skeleton width={800} height={10} />}
-                        {loading && <Skeleton width={500} height={10} />}
-                        {loading && <Skeleton width={600} height={10} />}
-                        {loading && <Skeleton width={300} height={10} />}
-                        {loading && <Skeleton width={400} height={10} />}
-                        {loading && <Skeleton width={800} height={10} />}
+                        {isLoading && <Skeleton width={600} height={10} />}
+                        {isLoading && <Skeleton width={400} height={10} />}
+                        {isLoading && <Skeleton width={800} height={10} />}
+                        {isLoading && <Skeleton width={500} height={10} />}
+                        {isLoading && <Skeleton width={600} height={10} />}
+                        {isLoading && <Skeleton width={300} height={10} />}
+                        {isLoading && <Skeleton width={400} height={10} />}
+                        {isLoading && <Skeleton width={800} height={10} />}
+                        {isLoading && <Skeleton width={600} height={10} />}
+                        {isLoading && <Skeleton width={400} height={10} />}
+                        {isLoading && <Skeleton width={800} height={10} />}
+                        {isLoading && <Skeleton width={500} height={10} />}
+                        {isLoading && <Skeleton width={600} height={10} />}
+                        {isLoading && <Skeleton width={300} height={10} />}
+                        {isLoading && <Skeleton width={400} height={10} />}
+                        {isLoading && <Skeleton width={800} height={10} />}
                     </div>
                 </Grid>
             </Grid>
