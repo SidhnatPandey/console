@@ -1,8 +1,9 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import Register from "../../../pages/register/index";
-import { successToast } from "src/lib/react-taostify";
+import toast from 'react-hot-toast'; // Update import
 import * as authService from "src/services/authService";
+import * as userService from "src/services/userService";
 
 jest.mock("next/router", () => ({
   useRouter: () => ({
@@ -13,12 +14,16 @@ jest.mock("next/router", () => ({
 // Mock functions from authService
 jest.mock("src/services/authService", () => ({
   signUp: jest.fn(),
+ 
+}));
+// Mock functions from authService
+jest.mock("src/services/userService", () => ({
   checkUsername: jest.fn(),
   checkEmail: jest.fn(),
 }));
-
-jest.mock("src/lib/react-taostify", () => ({
-  successToast: jest.fn(),
+jest.mock('react-hot-toast', () => ({
+  ...jest.requireActual('react-hot-toast'),
+  success: jest.fn(),
 }));
 
 describe("Register Component", () => {
@@ -28,14 +33,14 @@ describe("Register Component", () => {
     mockSignUp.mockResolvedValue({status: 201, message: "Registered successfully"});
 
     // Mock the checkUsername function
-    const mockCheckUsername = authService.checkUsername as jest.Mock;
+    const mockCheckUsername = userService.checkUsername as jest.Mock;
     mockCheckUsername.mockResolvedValue({
       available: true,
       message: "Username is available",
     });
 
     // Mock the checkEmail function
-    const mockCheckEmail = authService.checkEmail as jest.Mock;
+    const mockCheckEmail = userService.checkEmail as jest.Mock;
     mockCheckEmail.mockResolvedValue({
       available: true,
       message: "Email is available",
@@ -64,7 +69,7 @@ describe("Register Component", () => {
 
     // Wait for the success toast to be triggered
     await waitFor(() => {
-      expect(successToast).toHaveBeenCalled();
+      expect(toast.success).toHaveBeenCalled();
     });
   });
 });
