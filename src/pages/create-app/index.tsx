@@ -205,12 +205,6 @@ const StepperCustomVertical = () => {
       //setSourceCodeValue();
     }
   };
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
-    }
-  };
 
   // Source Code
   const [repo, setRepo] = useState<string>("");

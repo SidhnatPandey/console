@@ -29,7 +29,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import useBgColor from 'src/@core/hooks/useBgColor'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Configs
@@ -77,7 +76,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   '& .MuiFormControlLabel-label': {
     color: theme.palette.text.secondary
   }
-})) 
+}))
 
 const schema = yup.object().shape({
   email: yup.string().required('Email is a required field').email('Email is Invalid'),
@@ -174,7 +173,7 @@ const LoginPage = () => {
                 Please sign-in to your account and start the adventure
               </Typography>
             </Box>
-    
+
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
                 <Controller
@@ -241,7 +240,7 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
-                
+
                 <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}

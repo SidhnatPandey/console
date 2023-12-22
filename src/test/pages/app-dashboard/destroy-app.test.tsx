@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { destroyApp } from 'src/services/appService';
 import DestroyApp from 'src/pages/apps/app-dashboard/DestroyApp';
 import userEvent from '@testing-library/user-event';
@@ -46,10 +46,11 @@ describe('DestroyApp Component', () => {
 
     test('clicking the Destroy button opens the confirmation dialog', async () => {
         render(<DestroyApp loading={false} appId="testAppId" />);
+
         waitFor(() => {
             expect(screen.getByText('Destroy')).toBeInTheDocument();
         });
-        await userEvent.click(screen.getByText(/Destroy App and Associated Components/i));
+        userEvent.click(screen.getByText(/Destroy App and Associated Components/i));
         waitFor(() => {
             expect(screen.getByText('Are you sure you want to Delete this App?')).toBeInTheDocument();
         });
