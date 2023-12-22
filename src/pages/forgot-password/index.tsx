@@ -2,7 +2,6 @@
 import { FormEvent, ReactNode, useState } from "react";
 // ** Next Import
 import Link from "next/link";
-import forgotpasswordPage from "src/pages/forgot-password";
 // ** MUI Components
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -33,10 +32,6 @@ const ForgotPasswordIllustration = styled("img")(({ theme }) => ({
     maxHeight: 500,
   },
 }));
-
-const ForgotPasswordPage = () => {
-  return <ForgotPassword />;
-};
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: "100%",
@@ -110,8 +105,8 @@ const ForgotPassword = () => {
         >
           <ForgotPasswordIllustration
             alt="forgot-password-illustration"
-           // src={`/images/pages/auth-v2-forgot-password-illustration-${theme.palette.mode}.png`}
-           src={`/images/pages/auth-v2-login-illustration-${theme.palette.mode}.png`}
+            // src={`/images/pages/auth-v2-forgot-password-illustration-${theme.palette.mode}.png`}
+            src={`/images/pages/auth-v2-login-illustration-${theme.palette.mode}.png`}
           />
           <FooterIllustrationsV2 />
         </Box>
@@ -186,7 +181,7 @@ const ForgotPassword = () => {
                 sx={{ display: "flex", mb: 4 }}
                 // You should provide a name attribute to the input field
                 name="email"
-                // Add a ref attribute to access the input's value
+              // Add a ref attribute to access the input's value
               />
               <Button
                 fullWidth

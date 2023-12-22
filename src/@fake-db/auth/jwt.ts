@@ -5,9 +5,6 @@ import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant'
 // ** Mock Adapter
 import mock from 'src/@fake-db/mock'
 
-// ** Default AuthConfig
-import defaultAuthConfig from 'src/configs/auth'
-
 // ** Types
 import { UserDataType } from 'src/context/types'
 
