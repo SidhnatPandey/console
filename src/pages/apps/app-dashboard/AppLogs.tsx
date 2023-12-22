@@ -1,4 +1,4 @@
-import { Key, useRef, useState } from "react";
+import { Key, useEffect, useRef, useState } from "react";
 import { getAppLogs } from "src/services/dashboardService";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 import { TextField } from "@mui/material";
@@ -49,14 +48,16 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
   key = key + tabName.toLowerCase();
 
   // making api call with SWR
-  const { data, isValidating } = useSWR(key, getAppLogs, {
-    onSuccess: () => {
-      // Scroll to the bottom when new logs are loaded
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-      }
-    },
-  });
+  const { data } = useSWR(key, getAppLogs);
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scroll({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }, [data]);
 
   const handleTabChange = (step: string, index: number) => {
     setValue(index.toString());
@@ -107,17 +108,16 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
               paddingLeft: '10px'
             }}
           >
-            {isValidating ? <Skeleton width={100} height={20} /> :
-              <TabContext value={value}>
-                <TabList
-                  orientation="vertical"
-                  aria-label="vertical tabs example"
-                >
-                  <Tab value='1' label='Prod' onClick={() => handleTabChange('Prod', 1)} />
-                  <Tab value='2' label='Stg' onClick={() => handleTabChange('Stg', 2)} />
-                  <Tab value='3' label='Test' onClick={() => handleTabChange('Test', 3)} />
-                </TabList>
-              </TabContext>}
+            <TabContext value={value}>
+              <TabList
+                orientation="vertical"
+                aria-label="vertical tabs example"
+              >
+                <Tab value='1' label='Prod' onClick={() => handleTabChange('Prod', 1)} />
+                <Tab value='2' label='Stg' onClick={() => handleTabChange('Stg', 2)} />
+                <Tab value='3' label='Test' onClick={() => handleTabChange('Test', 3)} />
+              </TabList>
+            </TabContext>
           </Box>
         </Grid>
         <Grid item xs={10}>
@@ -129,30 +129,13 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
             overflow: 'auto',
             padding: '10px',
           }}>
-            {!isValidating &&
+            {
               data?.data?.data?.log?.split('\n').map((log: string, index: Key | null | undefined) => (
                 <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>
                   {highlightText(log, searchTerm)}
                 </p>
               ))
             }
-
-            {isValidating && <Skeleton width={600} height={10} />}
-            {isValidating && <Skeleton width={400} height={10} />}
-            {isValidating && <Skeleton width={800} height={10} />}
-            {isValidating && <Skeleton width={500} height={10} />}
-            {isValidating && <Skeleton width={600} height={10} />}
-            {isValidating && <Skeleton width={300} height={10} />}
-            {isValidating && <Skeleton width={400} height={10} />}
-            {isValidating && <Skeleton width={800} height={10} />}
-            {isValidating && <Skeleton width={600} height={10} />}
-            {isValidating && <Skeleton width={400} height={10} />}
-            {isValidating && <Skeleton width={800} height={10} />}
-            {isValidating && <Skeleton width={500} height={10} />}
-            {isValidating && <Skeleton width={600} height={10} />}
-            {isValidating && <Skeleton width={300} height={10} />}
-            {isValidating && <Skeleton width={400} height={10} />}
-            {isValidating && <Skeleton width={800} height={10} />}
           </div>
         </Grid>
       </Grid>
