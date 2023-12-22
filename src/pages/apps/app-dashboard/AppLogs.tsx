@@ -43,12 +43,10 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   // creating the url for getting the logs
-  let key = APP_API.appLogs;
-  key = key.replace('{appId}', appId);
-  key = key + tabName.toLowerCase();
-
-  // making api call with SWR
-  const { data } = useSWR(key, getAppLogs);
+    let key = APP_API.appLogs;
+    key = key.replace('{appId}', appId);
+    key = key + tabName.toLowerCase();
+    const { data } = useSWR(key, getAppLogs);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
