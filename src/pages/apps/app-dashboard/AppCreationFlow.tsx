@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import ProcessDetails from "./ProcessDetails";
 import ProcessTile from "./ProcessTile";
@@ -26,20 +26,19 @@ interface AppCreationFlow {
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch, hanldeChildTrigger }) => {
-  const [selectedTile, setSelectedTile] = useState<string>("clone"); 
-  const [stepLoading, setStepLoading] = useState<boolean>(false);
+  const [selectedTile, setSelectedTile] = useState<string>("clone");
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem('cStage', stage);
     setSelectedTile(stage);
   };
 
-  let key = supplyChainData?.id && selectedTile ? APP_API.supplyChainSteps : undefined;
+  let key = supplyChainData?.id ? APP_API.supplyChainSteps : undefined;
   key = key?.replace('{runId}', supplyChainData?.id);
   key = key?.replace('{stage}', selectedTile);
   const { data: supplyChainStepData } = useSWR(key, getFetcher);
 
-  const handleDetailsTrigger = (stage: string) => {
+  const handleDetailsTrigger = () => {
     hanldeChildTrigger();
   };
 
@@ -95,7 +94,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         </CardContent>
       </Card>
       <br></br>
-      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={handleDetailsTrigger} supplyChainStepData={supplyChainStepData?.data} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading || stepLoading} />}
+      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={handleDetailsTrigger} supplyChainStepData={supplyChainStepData?.data} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading} />}
     </div>
   );
 };

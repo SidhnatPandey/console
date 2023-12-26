@@ -32,8 +32,8 @@ interface AppSummaryProps {
 const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer }) => {
 
   let key = appName ? APP_API.appMatrix : undefined;
-  if(appName){ key = key?.replace('{appName}', appName);}
-  const { data: matrix } = useSWR(key, getFetcher);   
+  if (appName) { key = key?.replace('{appName}', appName); }
+  const { data: matrix } = useSWR<Matrix>(key, getFetcher);
 
   return (
     <Card>
