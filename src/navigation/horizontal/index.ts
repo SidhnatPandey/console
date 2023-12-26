@@ -10,6 +10,26 @@ const navigation = (): HorizontalNavItemsType => {
       disabled: true
     },
     {
+      icon: 'tabler:smart-home',
+      badgeContent: '2',
+      title: 'Workspaces',
+      children: [
+        {
+          title: 'Project X',
+          path: '/dashboards/analytics'
+        },
+        {
+          title: 'Project Y',
+          path: '/dashboards/crm'
+        },
+        {
+          icon: 'fluent:add-28-regular',
+          title: 'New Workspace',
+          path: '/dashboards/ecommerce'
+        }
+      ]
+    },
+    {
       title: 'Apps',
       icon: 'ion:document-outline',
       path: '/apps'
