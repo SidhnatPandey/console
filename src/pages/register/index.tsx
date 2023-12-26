@@ -22,7 +22,6 @@ import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp } from "src/services/authService";
 import { checkUsername, checkEmail } from "src/services/userService"
-import { successToast } from "src/lib/react-taostify";
 import toast from "react-hot-toast";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
@@ -111,15 +110,7 @@ const Register = () => {
   const [emailExist, setEmailExist] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const theme = useTheme(); // ** Hooks
-  const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
-  const { skin } = settings; // ** Vars
-
-  const imageSource =
-    skin === "bordered"
-      ? "auth-v2-register-illustration-bordered"
-      : "auth-v2-register-illustration";
-
   const router = useRouter(); // ** Router instance
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Use a regular expression or any other email validation logic

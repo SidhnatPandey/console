@@ -5,22 +5,23 @@ it('Loads the login page', () => {
 
 it('After click create button , three landing screens are opened', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jsb@gmail.com');
-    cy.get('input[id=auth-login-v2-password]').clear().type('Jaggu@123');
+    cy.get('input[id=user-email-input]').clear().type('clouduser@initializ.io');
+    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/app');
-    // cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(1)').click()
+    cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(1)').click()
     // cy.get('.layout-page-content').click();
     cy.get('.MuiButton-root').click();
     cy.get(':nth-child(1) > .MuiStepLabel-root > .MuiStepLabel-labelContainer > .MuiStepLabel-label > .step-label').click();
-    cy.get('input[placeholder="carterLeonard"]').type('Jazz5');
+    cy.get('input[placeholder="carterLeonard"]').type('test5');
     cy.get('input[value="primary"]').click();
     cy.get('.MuiSelect-select').click();
-    cy.get('[data-value="Jagpreetbhatia/Demo"]').click()
+    cy.get('[data-value="initializ/api"]').click()
     // cy.get(':nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiSelect-select')
     // cy.get('.MuiList-root > .MuiButtonBase-root').click();
     cy.get(':nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiSelect-select').click()
-    cy.get('.MuiList-root > .MuiButtonBase-root').click({ force: true });
+    cy.get('[data-value="develop"]').click()
+    // cy.get('.MuiList-root > .MuiButtonBase-root').click({ force: true });
     // cy.get('input[placeholder="Application Name"]').should('have.value', );
     cy.get('button[type="submit"]').contains('Next').click();
 
@@ -39,4 +40,9 @@ it('After click create button , three landing screens are opened', () => {
     cy.get('.css-16w9rr2-MuiGrid-root > .MuiButton-contained').click()
     cy.url().should('include', '/app-dashboard');
 
+    cy.get('[data-testid="Overview"]').click()
+    cy.get('[data-testid="Logs"]').click()
+    cy.get('[data-testid="Settings"]').click()
 });
+
+
