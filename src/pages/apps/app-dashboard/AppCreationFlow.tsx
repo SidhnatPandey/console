@@ -26,7 +26,7 @@ interface AppCreationFlow {
 }
 
 const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch, hanldeChildTrigger }) => {
-  const [selectedTile, setSelectedTile] = useState<string>("");
+  const [selectedTile, setSelectedTile] = useState<string>("clone"); 
   const [stepLoading, setStepLoading] = useState<boolean>(false);
 
   const handleTileClick = (stage: string) => {
@@ -34,10 +34,10 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
     setSelectedTile(stage);
   };
 
-  let key =supplyChainData?.id && selectedTile? APP_API.supplyChainSteps: undefined;
+  let key = supplyChainData?.id && selectedTile ? APP_API.supplyChainSteps : undefined;
   key = key?.replace('{runId}', supplyChainData?.id);
   key = key?.replace('{stage}', selectedTile);
-  const { data: supplyChainStepData} = useSWR(key,  getFetcher);
+  const { data: supplyChainStepData } = useSWR(key, getFetcher);
 
   const handleDetailsTrigger = (stage: string) => {
     hanldeChildTrigger();
