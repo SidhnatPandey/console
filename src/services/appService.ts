@@ -60,4 +60,11 @@ export const destroyApp = (id: string) => {
   return deleteCall(url).then((response) => response?.data);
 }
 
+export const workspace = (workspace: any) => {
+  setApiBaseUrl();
+  return post(APP_API.createWorkspace, workspace).then(
+    (response) => response?.data
+  )
+}
+
 
