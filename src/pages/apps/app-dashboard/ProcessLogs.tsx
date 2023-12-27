@@ -121,6 +121,12 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
     }
   };
 
+  const scrollToBottom = () => {
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
     const cStage = localStorage.getItem('cStage') || '';
     if (steps && steps.length > 0 && steps[0].log) {
@@ -129,6 +135,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
         setLogs(steps[0].log.split('\n'));
         setTabName(steps[0].run_name);
         setSelectedStage(cStage);
+        scrollToBottom();
       }
     } else {
       setLogs([]);
@@ -150,6 +157,20 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
     setLogs(step.log.split('\n'));
     setTabName(step.run_name);
   };
+
+  useEffect(() => {
+    // Attach an event listener for new logs
+    // Adjust this based on how you receive new logs (socket, polling, etc.)
+    // For example, if you use WebSocket:
+    // socket.on('newLogs', handleNewLogs);
+
+    return () => {
+      // Cleanup the event listener when the component unmounts
+      // For example, if you use WebSocket:
+      // socket.off('newLogs', handleNewLogs);
+    };
+  }, [logs]);
+
 
   const highlightText = (text: string, highlight: string) => {
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
