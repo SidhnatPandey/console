@@ -1,5 +1,5 @@
-// ** Type import
-import { VerticalNavItemsType } from 'src/@core/layouts/types'
+// navigation.js
+import { VerticalNavItemsType } from 'src/@core/layouts/types';
 
 const navigation = (): VerticalNavItemsType => {
   return [
@@ -16,11 +16,11 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: 'Project X',
-          path: '/workspace'
+          path: '/workspace?project=project-x'  // Use a query parameter
         },
         {
           title: 'Project Y',
-          path: '/workspace'
+          path: '/workspace?project=project-y'  
         },
         {
           icon: 'fluent:add-28-regular',
@@ -42,11 +42,6 @@ const navigation = (): VerticalNavItemsType => {
     {
       sectionTitle: 'MANAGE'
     },
-    // {
-    //   title: 'Billing',
-    //   icon: 'jam:document',
-    //   path: '/apps/email'
-    // },
     {
       title: 'Settings',
       icon: 'uil:setting',
@@ -65,7 +60,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'carbon:document',
       path: 'https://docs.initializ.ai/'
     },
-  ]
-}
+  ];
+};
 
-export default navigation
+export default navigation;
