@@ -12,6 +12,7 @@ import MuiTabList, { TabListProps } from '@mui/lab/TabList'
 import { TextField } from "@mui/material";
 import useSWR from 'swr';
 import { APP_API } from "src/@core/static/api.constant";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 interface AppLogsProps {
   appId: string,
@@ -43,10 +44,11 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   // creating the url for getting the logs
-    let key = APP_API.appLogs;
-    key = key.replace('{appId}', appId);
-    key = key + tabName.toLowerCase();
-    const { data } = useSWR(key, getAppLogs);
+  let key = APP_API.appLogs;
+  key = key.replace('{appId}', appId);
+  key = key + tabName.toLowerCase();
+  setApiBaseUrl();
+  const { data } = useSWR(key, getAppLogs);
 
   useEffect(() => {
     if (scrollContainerRef.current) {

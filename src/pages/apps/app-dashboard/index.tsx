@@ -28,6 +28,7 @@ import DestroyApp from "./DestroyApp";
 import { APP_API } from "src/@core/static/api.constant";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -60,7 +61,7 @@ interface App {
   last_deployed: string
 }
 
-const AppDashboard: React.FC<{ appId: string }> = ({ appId }) => {
+const AppDashboard: React.FC<{ appId: string }> = () => {
   const router = useRouter();
   const timer = Number(env("NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER")) || 60000;
 
@@ -72,6 +73,7 @@ const AppDashboard: React.FC<{ appId: string }> = ({ appId }) => {
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
+  setApiBaseUrl();
   const { data: supplyChainRunsData } = useSWR(key, getFetcher);
 
   useEffect(() => {

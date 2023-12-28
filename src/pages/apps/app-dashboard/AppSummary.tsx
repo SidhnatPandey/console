@@ -11,6 +11,7 @@ import Icon from 'src/@core/components/icon';
 import CustomAvatar from 'src/@core/components/mui/avatar';
 import { APP_API } from 'src/@core/static/api.constant';
 import { getFetcher } from 'src/services/fetcherService';
+import { setApiBaseUrl } from 'src/@core/services/interceptor';
 
 interface Matrix {
   CurrentInstance: string;
@@ -33,6 +34,7 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
 
   let key = appName ? APP_API.appMatrix : undefined;
   if (appName) { key = key?.replace('{appName}', appName); }
+  setApiBaseUrl();
   const { data: matrix } = useSWR<Matrix>(key, getFetcher);
 
   return (

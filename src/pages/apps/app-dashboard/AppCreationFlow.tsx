@@ -7,6 +7,7 @@ import { getFetcher } from "src/services/fetcherService";
 import Skeleton from 'react-loading-skeleton';
 import { Card, CardHeader, CardContent, Typography } from "@mui/material";
 import { APP_API } from "src/@core/static/api.constant";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 interface AppCreationFlow {
   supplyChainData: {
@@ -36,6 +37,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   let key = supplyChainData?.id ? APP_API.supplyChainSteps : undefined;
   key = key?.replace('{runId}', supplyChainData?.id);
   key = key?.replace('{stage}', selectedTile);
+  setApiBaseUrl();
   const { data: supplyChainStepData } = useSWR(key, getFetcher);
 
   const handleDetailsTrigger = () => {
