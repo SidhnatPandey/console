@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
@@ -9,9 +9,9 @@ import CardContent from "@mui/material/CardContent";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { getUserInfo } from "src/services/userService";
 import { useRouter } from "next/router";
 import { getMonthAndYear } from "src/utils/dateUtil";
+import { UserProfile } from './index';
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -22,60 +22,18 @@ const ProfilePicture = styled("img")(({ theme }) => ({
     marginBottom: theme.spacing(4),
   },
 }));
-export interface UserProfile {
-  id: "string";
-  type: "string";
-  user_id: "string";
-  role: "string";
-  org: "string";
-  org_id: "string";
-  email: "string";
-  username: "string";
-  password: "string";
-  created_at: "string";
-  updated_at: "string";
-  nickname: "string";
-  user_info: {
-    first_name: "string";
-    last_name: "string";
-    phone_number: "number";
-    profile_picture: "string";
-    address: {
-      country: "string";
-      state: "string";
-      zip_code: "number";
-      city: "string";
-      street_address: "string";
-    };
-  };
-  status: "string";
+
+interface ProfileProps {
+  profileData: UserProfile,
 }
 
-const UserProfileHeader = ({ setAllUserData }: any) => {
-  const [userData, setUserData] = useState<UserProfile>();
+const UserProfileHeader: React.FC<ProfileProps> = ({ profileData }) => {
 
   const router = useRouter(); // Initialize the useNavigate hook
 
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
     router.push("/settings");
-  };
-
-  useEffect(() => {
-    getUserData();
-  }, []);
-
-  const getUserData = () => {
-    getUserInfo()
-      .then((response) => {
-        if (response.status === 200) {
-          setUserData(response?.data || {});
-          setAllUserData(response?.data || {});
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   return (
@@ -101,8 +59,8 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
       >
         <ProfilePicture
           src={
-            userData?.user_info.profile_picture
-              ? "data:image/jpeg;base64," + userData?.user_info.profile_picture
+            profileData?.user_info.profile_picture
+              ? "data:image/jpeg;base64," + profileData?.user_info.profile_picture
               : "/images/avatars/user-default-avatar.png"
           }
           alt="profile-picture"
@@ -129,7 +87,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
             data-testid="info-box"
           >
             <Typography variant="h6" sx={{ mb: 2.5 }}>
-              {}
+              { }
             </Typography>
             <Box
               sx={{
@@ -148,7 +106,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
               >
                 <BusinessCenterIcon />
                 <Typography data-testid="role" sx={{ color: "text.secondary" }}>
-                  {userData?.role}
+                  {profileData?.role}
                 </Typography>
               </Box>
               <Box
@@ -164,9 +122,9 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
                   data-testid="address"
                   sx={{ color: "text.secondary" }}
                 >
-                  {userData?.user_info.address.city &&
-                    `${userData?.user_info.address.city}, `}
-                  {userData?.user_info.address.country}
+                  {profileData?.user_info.address.city &&
+                    `${profileData?.user_info.address.city}, `}
+                  {profileData?.user_info.address.country}
                 </Typography>
               </Box>
               <Box
@@ -181,7 +139,7 @@ const UserProfileHeader = ({ setAllUserData }: any) => {
                   sx={{ color: "text.secondary" }}
                   data-testid="joined-date"
                 >
-                  Joined {getMonthAndYear(userData?.created_at)}
+                  Joined {getMonthAndYear(profileData?.created_at)}
                 </Typography>
               </Box>
             </Box>
