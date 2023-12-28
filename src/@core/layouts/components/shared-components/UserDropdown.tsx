@@ -25,6 +25,7 @@ import { Settings } from 'src/@core/context/settingsContext'
 import useSWR from 'swr'
 import { APP_API } from 'src/@core/static/api.constant'
 import { getFetcher } from 'src/services/fetcherService'
+import { setApiBaseUrl } from 'src/@core/services/interceptor'
 
 interface Props {
   settings: Settings
@@ -71,6 +72,7 @@ const UserDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
+  setApiBaseUrl();
   const { data } = useSWR(APP_API.userProfile, getFetcher);
 
   const styles = {

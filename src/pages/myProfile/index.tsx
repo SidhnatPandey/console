@@ -5,6 +5,7 @@ import Profile from "./Profile";
 import { APP_API } from "src/@core/static/api.constant";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 export interface UserProfile {
   id: "string";
@@ -37,6 +38,7 @@ export interface UserProfile {
 
 const Index = () => {
   // making api call with SWR
+  setApiBaseUrl();
   const { data } = useSWR(APP_API.userProfile, getFetcher);
 
   return (
