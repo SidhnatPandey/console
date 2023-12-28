@@ -24,14 +24,3 @@ export const getAppLogs = async (url: string) => {
     const response = await get(url);
     return response;
 }
-
-/* const mockFetchData = () => {
-    console.log('Mocked API Response: { "dummy": "data" }');
-    return Promise.resolve({ "log": number.toString() });
-};
-
-let number = Math.random();
-
-setInterval(() => {
-    number = Math.random();
-}, 2000) */
