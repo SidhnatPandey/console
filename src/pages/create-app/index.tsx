@@ -251,7 +251,7 @@ const StepperCustomVertical = () => {
   });
 
   const router = useRouter();
-  if (router.query?.code && !gitUser) {
+  if (router.query?.code) {
     sendCode(router.query?.code as string)
       .then((response) => {
         if (response?.git_user) {
@@ -440,7 +440,7 @@ const StepperCustomVertical = () => {
                         onBlur={() => {
                           checkAppNameExists(value);
                         }}
-                        placeholder="carterLeonard"
+                        placeholder="Name your app"
                         error={
                           (Boolean(sourceCodeErrors.application_name) || appNameExist) &&
                           !(sourceCodeErrors.application_name === undefined && !appNameExist)

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -22,9 +22,7 @@ interface DestroyAppProps {
 
 const DestroyApp: React.FC<DestroyAppProps> = ({
   loading,
-  appName,
   appId,
-  metricsTimer,
 }) => {
   const router = useRouter();
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -40,7 +38,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
     if (appId) {
       destroyApp(appId)
         .then((response: any) => {
-          setConfirmationDialogOpen(false); 
+          setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
             router.push("/apps");
@@ -49,7 +47,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
           }
         })
         .catch((error) => {
-          setConfirmationDialogOpen(false);  
+          setConfirmationDialogOpen(false);
           console.error(error);
           toast.error(
             "An error occurred during App deletion. Please try again later."
@@ -57,7 +55,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
         });
     }
   };
-  
+
 
   return (
     <Card sx={{ margin: "-25px" }}>
@@ -126,7 +124,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
       </CardContent>
 
       {/* Confirmation Dialog */}
-       <ConfirmationDialog
+      <ConfirmationDialog
         open={isConfirmationDialogOpen}
         onConfirm={confirmDestroyApp}
         onCancel={() => setConfirmationDialogOpen(false)}

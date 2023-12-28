@@ -46,11 +46,11 @@ const FooterContent = () => {
           <Typography
             target='_blank'
             component={LinkStyled}
-            href='https://docs.initializ.io'
+            href='https://docs.initializ.ai'
           >
             Documentation
           </Typography>
-          <Typography target='_blank' component={LinkStyled} href='https://support.initializ.io'>
+          <Typography target='_blank' component={LinkStyled} href='https://support.initializ.ai'>
             Support
           </Typography>
         </Box>

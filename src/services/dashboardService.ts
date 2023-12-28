@@ -9,30 +9,18 @@ export const supplyChainRuns = (appId: string) => {
     return get(url).then((response) => response?.data);
 };
 
-export const supplyChainSteps = (runId: string, runStep: string) => {
+export const supplyChainSteps = (url: string) => {
     setApiBaseUrl();
-    let url = APP_API.supplyChainSteps;
-    url = url.replace('{runId}', runId)
-    url = url.replace('{stage}', runStep)
     return get(url).then((response) => response?.data);
 };
-
-export const matrixData = (appName: string) => {
-    setApiBaseUrl();
-    let url = APP_API.appMatrix;
-    url = url.replace('{appName}', appName);
-    return get(url).then((response) => response?.data);
-}
 
 export const approval = (data: any) => {
     setApiBaseUrl();
     return post(APP_API.approval, data).then((response) => response?.data);
 }
 
-export const getAppLogs = (appId: string, env: string) => {
+export const getAppLogs = async (url: string) => {
     setApiBaseUrl();
-    let url = APP_API.appLogs;
-    url = url.replace('{appId}', appId);
-    url = url + env.toLowerCase();
-    return get(url).then((response) => response?.data)
+    const response = await get(url);
+    return response;
 }

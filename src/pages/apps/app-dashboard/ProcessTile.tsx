@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, Typography } from "@mui/material";
 import PendingIcon from "@mui/icons-material/Pending";
 // ** Custom Components Imports
@@ -10,7 +10,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Skeleton from 'react-loading-skeleton';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface ProcessTileProps {
