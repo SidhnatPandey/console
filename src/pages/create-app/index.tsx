@@ -440,7 +440,7 @@ const StepperCustomVertical = () => {
                         onBlur={() => {
                           checkAppNameExists(value);
                         }}
-                        placeholder="carterLeonard"
+                        placeholder="Name your app"
                         error={
                           (Boolean(sourceCodeErrors.application_name) || appNameExist) &&
                           !(sourceCodeErrors.application_name === undefined && !appNameExist)

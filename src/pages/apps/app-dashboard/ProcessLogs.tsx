@@ -15,7 +15,7 @@ import TabContext from "@mui/lab/TabContext";
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Input, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
 interface ProcessLogsProps {
   steps: Step[] | undefined;
@@ -157,20 +157,6 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
     setLogs(step.log.split('\n'));
     setTabName(step.run_name);
   };
-
-  useEffect(() => {
-    // Attach an event listener for new logs
-    // Adjust this based on how you receive new logs (socket, polling, etc.)
-    // For example, if you use WebSocket:
-    // socket.on('newLogs', handleNewLogs);
-
-    return () => {
-      // Cleanup the event listener when the component unmounts
-      // For example, if you use WebSocket:
-      // socket.off('newLogs', handleNewLogs);
-    };
-  }, [logs]);
-
 
   const highlightText = (text: string, highlight: string) => {
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
