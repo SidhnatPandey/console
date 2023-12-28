@@ -15,14 +15,6 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Workspaces',
       children: [
         {
-          title: 'Project X',
-          path: '/workspace?project=project-x'  // Use a query parameter
-        },
-        {
-          title: 'Project Y',
-          path: '/workspace?project=project-y'
-        },
-        {
           icon: 'fluent:add-28-regular',
           title: 'New Workspace',
           path: '/workspace/create'
