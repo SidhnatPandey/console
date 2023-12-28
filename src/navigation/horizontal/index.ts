@@ -42,12 +42,12 @@ const navigation = (): HorizontalNavItemsType => {
     {
       sectionTitle: 'MANAGE'
     },
-    {
+    /* {
       title: 'Billing',
       icon: 'jam:document',
       path: '/apps/email',
       disabled: true
-    },
+    }, */
     {
       title: 'Settings',
       icon: 'uil:setting',

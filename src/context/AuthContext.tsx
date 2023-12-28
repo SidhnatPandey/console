@@ -96,7 +96,8 @@ const AuthProvider = ({ children }: Props) => {
             email: response.data.data.user_data?.email,
             fullName: response.data.data.user_data?.user_name,
             username: response.data.data.user_data?.user_name,
-            org: response.data.data.user_data?.org
+            org: response.data.data.user_data?.org,
+            default_org: response.data.data.user_data?.default_org
           }
           setUser({ ...user })
           params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null

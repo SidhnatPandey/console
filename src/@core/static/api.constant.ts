@@ -33,5 +33,6 @@ export const APP_API = {
     allVulnerabilities: 'vulernabilities/all',
 
     //Workspace
-    createWorkspace: 'workspace'
+    createWorkspace: 'workspace',
+    getListOfWorkspaces: 'workspace'
 }

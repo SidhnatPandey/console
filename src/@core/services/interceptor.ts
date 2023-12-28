@@ -31,7 +31,10 @@ axiosInstance.interceptors.request.use(
         const user = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.userInfo)!);
 
         if (jwtToken) { config.headers["Authorization"] = `Bearer ${jwtToken}` }
-        if (user) { config.headers["App-User"] = user.username }
+        if (user) {
+            config.headers["App-User"] = user.username
+            config.headers["org_id"] = user.default_org
+        }
         return config;
     },
     (error) => {

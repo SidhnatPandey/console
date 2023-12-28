@@ -20,7 +20,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: 'Project Y',
-          path: '/workspace?project=project-y'  
+          path: '/workspace?project=project-y'
         },
         {
           icon: 'fluent:add-28-regular',
@@ -42,6 +42,12 @@ const navigation = (): VerticalNavItemsType => {
     {
       sectionTitle: 'MANAGE'
     },
+    /* {
+      title: 'Billing',
+      icon: 'jam:document',
+      path: '/apps/email',
+      disabled: true
+    }, */
     {
       title: 'Settings',
       icon: 'uil:setting',
