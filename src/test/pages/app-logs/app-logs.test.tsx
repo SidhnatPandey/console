@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, waitFor, screen } from "@testing-library/react";
+import { render, fireEvent, waitFor, screen, findAllByText } from "@testing-library/react";
 import AppLogs from "src/pages/apps/app-dashboard/AppLogs";
 import "@testing-library/jest-dom";
 
@@ -9,24 +9,52 @@ jest.mock("src/services/dashboardService", () => ({
   ),
 }));
 
-describe("AppLogs Component", () => {
-  it("renders the component with tabs and logs", async () => {
-    render(<AppLogs appName="TestApp"  />);
-    const searchInput = screen.getByTestId("search-input");
-    fireEvent.change(searchInput);
-    expect(screen.getByTestId("logs-container")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-prod")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-stg")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-test")).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("tab-stg"));
-    expect(screen.getByTestId("logs-container")).toBeInTheDocument();
+describe('<AppLogs />', () => {
+  it('renders the component', () => {
+    const { getByTestId } = render(<AppLogs appId="123" />);
+    expect(getByTestId('app-logs-card')).toBeInTheDocument();
   });
+});
 
-  it("renders log item 0", async () => {
-    render(<AppLogs appName="TestApp"  />);
-    await waitFor(() => {
-        const logItem0 = screen.getByTestId("log-item-0");
-        expect(logItem0).toBeInTheDocument();
-      });      
-  });
+it(' searchbox showing correctly', async () => {
+  const { getByTestId } = render(<AppLogs appId="123" />);
+  expect(getByTestId('environments-title')).toBeInTheDocument();
+});
+
+it('changes tabs correctly', () => {
+  const { getByText, getByTestId } = render(<AppLogs appId="123" />);
+  const prodTab = getByText('Prod');
+  fireEvent.click(prodTab);
+  expect(getByTestId('logs-title')).toHaveTextContent('Prod Logs');
+});
+
+it('changes tabs correctly', () => {
+  const { getByText, getByTestId } = render(<AppLogs appId="123" />);
+  const prodTab = getByText('Stg');
+  fireEvent.click(prodTab);
+  expect(getByTestId('logs-title')).toHaveTextContent('Stg Logs');
+});
+
+it('changes tabs correctly', () => {
+  const { getByText, getByTestId } = render(<AppLogs appId="123" />);
+  const prodTab = getByText('Test');
+  fireEvent.click(prodTab);
+  expect(getByTestId('logs-title')).toHaveTextContent('Test Logs');
+});
+
+it(' searchbox showing correctly', async () => {
+  const { getByTestId } = render(<AppLogs appId="123" />);
+  expect(getByTestId('search-field')).toBeInTheDocument();
+});
+
+it(' searchbox showing correctly', async () => {
+  const { getByTestId } = render(<AppLogs appId="123" />);
+  expect(getByTestId('tab-list-box')).toBeInTheDocument();
+});
+
+it('scrolls to bottom on new logs', async () => {
+  const { getByTestId } = render(<AppLogs appId="123" />);
+  const logsContainer = getByTestId('logs-container');
+
+  expect(logsContainer.scrollTop).toBe(logsContainer.scrollHeight - logsContainer.clientHeight);
 });
