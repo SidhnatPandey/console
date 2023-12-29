@@ -10,21 +10,16 @@ const navigation = (): VerticalNavItemsType => {
       disabled: true
     },
     {
-      icon: 'tabler:smart-home',
-      badgeContent: '2',
+      icon: 'ion:document-outline',
+      badgeContent: '0',
       title: 'Workspaces',
-      children: [
+      children: [ 
         {
           icon: 'fluent:add-28-regular',
           title: 'New Workspace',
           path: '/workspace/create'
         }
       ]
-    },
-    {
-      title: 'Apps',
-      icon: 'ion:document-outline',
-      path: '/apps'
     },
     {
       title: 'Security',

@@ -11,7 +11,7 @@ const ServerSideNavItems = () => {
   const { data } = useSWR(key, getFetcher);
 
   const WorkspaceObj: NavGroup = {
-    icon: 'tabler:smart-home',
+    icon: 'ion:document-outline',
     badgeContent: '0',
     title: 'Workspaces',
     children: []
