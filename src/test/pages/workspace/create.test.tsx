@@ -16,7 +16,7 @@ jest.mock("react-hot-toast", () => ({
 describe("<CreateWorkspace />", () => {
   it("renders the component", () => {
     render(<CreateWorkspace />);
-
+    expect(screen.getByTestId("card")).toBeInTheDocument();
     expect(screen.getByText("Create New Workspace")).toBeInTheDocument();
     expect(
       screen.getByText("Add Details To Create a New Workspace")

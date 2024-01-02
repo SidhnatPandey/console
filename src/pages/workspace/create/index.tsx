@@ -29,7 +29,7 @@ const CreateWorkspace: React.FC = () => {
   };
 
   return (
-    <Card sx={{ p: 7, pt: 1 }}>
+    <Card sx={{ p: 7, pt: 1 }} data-testid="card">
       <h2>Create New Workspace</h2>
       <p>Add Details To Create a New Workspace</p>
       <form onSubmit={handleSubmit(onSubmit)}>
