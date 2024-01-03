@@ -107,7 +107,6 @@ const AuthProvider = ({ children }: Props) => {
           router.replace(redirectURL as string)
         }
       })
-
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
