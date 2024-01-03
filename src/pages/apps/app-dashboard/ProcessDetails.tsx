@@ -59,7 +59,6 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   const [open, setOpen] = useState<boolean>(false);
   const [action, setAction] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [approved, setApproved] = useState<boolean>(false);
 
   const handleClickOpen = () => setOpen(true);
 
@@ -102,7 +101,6 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
         if (response.status === 200) {
           setTimeout(() => {
             handleTrigger();
-            setApproved(true);
             toast.success("Approved Successfully");
             setSubmitted(false);
             handleClose();
@@ -271,7 +269,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item xs={12}>
             {supplyChainStepData?.stage?.toLowerCase().includes("approval") &&
-              supplyChainStepData.status === "Pending" && !approved && (
+              supplyChainStepData.status === "Pending" && (
                 <>
                   <Grid
                     item
