@@ -23,10 +23,9 @@ interface AppCreationFlow {
   timer: number;
   gitRepo: string | undefined;
   gitBranch: string | undefined;
-  hanldeChildTrigger: any;
 }
 
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch, hanldeChildTrigger }) => {
+const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
   const [selectedTile, setSelectedTile] = useState<string>("clone");
 
   const handleTileClick = (stage: string) => {
@@ -38,11 +37,9 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
   key = key?.replace('{runId}', supplyChainData?.id);
   key = key?.replace('{stage}', selectedTile);
   setApiBaseUrl();
-  const { data: supplyChainStepData } = useSWR(key, getFetcher);
-
-  const handleDetailsTrigger = () => {
-    hanldeChildTrigger();
-  };
+  const { data: supplyChainStepData, mutate: getStepData } = useSWR(key, getFetcher, {
+    refreshInterval: timer
+  });
 
   const getSupplyChainStep = (step: string) => {
     handleTileClick(step);
@@ -96,7 +93,7 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         </CardContent>
       </Card>
       <br></br>
-      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={handleDetailsTrigger} supplyChainStepData={supplyChainStepData?.data} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading} />}
+      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={getStepData} supplyChainStepData={supplyChainStepData?.data} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading} />}
     </div>
   );
 };

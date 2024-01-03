@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -26,6 +26,7 @@ import useSWR from 'swr'
 import { APP_API } from 'src/@core/static/api.constant'
 import { getFetcher } from 'src/services/fetcherService'
 import { setApiBaseUrl } from 'src/@core/services/interceptor'
+import { AuthContext } from 'src/context/AuthContext'
 
 interface Props {
   settings: Settings
@@ -52,7 +53,8 @@ const UserDropdown = (props: Props) => {
   //const [userData, setUserData] = useState<UserProfile>();
 
   // ** States
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+  const authContext = useContext(AuthContext);
 
   // ** Hooks
   const router = useRouter()
@@ -71,9 +73,6 @@ const UserDropdown = (props: Props) => {
     }
     setAnchorEl(null)
   }
-
-  setApiBaseUrl();
-  const { data } = useSWR(APP_API.userProfile, getFetcher);
 
   const styles = {
     px: 4,
@@ -107,10 +106,10 @@ const UserDropdown = (props: Props) => {
         }}
       >
         <Avatar
-          alt={`${data?.data?.user_info?.first_name + " " + data?.data?.user_info?.last_name}`}
+          alt={`${authContext.user?.user_info?.first_name + " " + authContext.user?.user_info?.last_name}`}
           src={
-            data?.data?.user_info?.profile_picture
-              ? "data:image/jpeg;base64," + data?.data?.user_info?.profile_picture
+            authContext.user?.user_info?.profile_picture
+              ? "data:image/jpeg;base64," + authContext.user?.user_info?.profile_picture
               : "/images/avatars/user-default-avatar.png"
           }
           onClick={handleDropdownOpen}
@@ -135,15 +134,15 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt={`${data?.data?.user_info?.first_name + " " + data?.data?.user_info?.last_name}`} src={
-                data?.data?.user_info?.profile_picture
-                  ? "data:image/jpeg;base64," + data?.data?.user_info?.profile_picture
+              <Avatar alt={`${authContext.user?.user_info?.first_name + " " + authContext.user?.user_info?.last_name}`} src={
+                authContext.user?.user_info?.profile_picture
+                  ? "data:image/jpeg;base64," + authContext.user?.user_info?.profile_picture
                   : "/images/avatars/user-default-avatar.png"
               } sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>{(data?.data?.user_info?.first_name || data?.data?.user_info?.last_name) ? data?.data?.user_info?.first_name + " " + data?.data?.user_info?.last_name : data?.data?.username}</Typography>
-              <Typography variant='body2'>{data?.data?.role}</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{(authContext.user?.user_info?.first_name || authContext.user?.user_info?.last_name) ? authContext.user?.user_info?.first_name + " " + authContext.user?.user_info?.last_name : authContext.user?.username}</Typography>
+              <Typography variant='body2'>{authContext.user?.role}</Typography>
             </Box>
           </Box>
         </Box>

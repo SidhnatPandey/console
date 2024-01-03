@@ -17,7 +17,7 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
+import { Paper } from "@mui/material";
 import { deactivateUser, getUserProfile, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
@@ -539,8 +539,8 @@ const TabAccount = () => {
           </CardContent>
         </Card>
       </Grid>
-       {/* Confirmation Dialog */}
-       <ConfirmationDialog
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
         open={isConfirmationDialogOpen}
         onConfirm={handleDeactivateAccount}
         onCancel={() => setConfirmationDialogOpen(false)}

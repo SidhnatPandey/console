@@ -59,6 +59,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
   const [open, setOpen] = useState<boolean>(false);
   const [action, setAction] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [approved, setApproved] = useState<boolean>(false);
 
   const handleClickOpen = () => setOpen(true);
 
@@ -100,17 +101,18 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
       .then((response) => {
         if (response.status === 200) {
           setTimeout(() => {
-            handleTrigger(supplyChainStepData.stage);
+            handleTrigger();
+            setApproved(true);
             toast.success("Approved Successfully");
             setSubmitted(false);
             handleClose();
-          }, 5000);
+          }, 5000)
         } else {
           handleClose();
           toast.error("Some Error Occured");
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Some Error Occured");
       });
   };
@@ -133,10 +135,10 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
     return value.toLowerCase().includes("docker.io")
       ? value.replace("docker.io", "hub.docker.com/r")
       : value.toLowerCase().includes("ssh://git@")
-      ? value.replace("ssh://git@", "")
-      : value.toLowerCase().includes("https://")
-      ? value.replace("https://", "")
-      : value;
+        ? value.replace("ssh://git@", "")
+        : value.toLowerCase().includes("https://")
+          ? value.replace("https://", "")
+          : value;
   };
 
   return (
@@ -167,7 +169,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
               <Typography variant="h5" data-testid="duration">
                 <b>Duration:</b>{" "}
                 {duration &&
-                !supplyChainStepData?.stage?.toLowerCase().includes("approval")
+                  !supplyChainStepData?.stage?.toLowerCase().includes("approval")
                   ? duration
                   : "N/A"}
               </Typography>
@@ -212,7 +214,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
               <Typography data-testid="date" variant="h5">
                 <b>Date:</b>{" "}
                 {supplyChainStepData?.started_at &&
-                !supplyChainStepData?.stage?.toLowerCase().includes("approval")
+                  !supplyChainStepData?.stage?.toLowerCase().includes("approval")
                   ? convertDateFormat(supplyChainStepData?.started_at)
                   : "N/A"}
               </Typography>
@@ -269,7 +271,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 
           <Grid item xs={12}>
             {supplyChainStepData?.stage?.toLowerCase().includes("approval") &&
-              supplyChainStepData.status === "Pending" && (
+              supplyChainStepData.status === "Pending" && !approved && (
                 <>
                   <Grid
                     item
@@ -309,7 +311,7 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
                         handleClickOpen();
                       }}
                       data-testid="reject"
-                   >
+                    >
                       Reject
                     </Button>
                   </div>
