@@ -161,7 +161,7 @@ const AuthProvider = ({ children }: Props) => {
   const getUser = () => {
     getUserInfo().then(response => {
       setLoading(false)
-      setUser({ ...response.data })
+      setUser({ ...response?.data })
     })
   }
 

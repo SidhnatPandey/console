@@ -1,16 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Grid, Card, Button, TextField, CircularProgress } from "@mui/material";
+import { Grid, Card, Button, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ProcessLogs from "./ProcessLogs";
 import Skeleton from "react-loading-skeleton";
 import { approval } from "src/services/dashboardService";
 import toast from "react-hot-toast";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
-import { Box } from "@mui/system";
 import { convertDateFormat } from "src/utils/dateUtil";
+import ConfirmationDialog from "src/component/ConfirmationDialog";
 
 interface ProcessDetailsProps {
   supplyChainStepData: {
@@ -56,13 +52,9 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
 }) => {
   const [duration, setDuration] = useState<string | undefined>();
   const [comment, setComment] = useState<string>("");
-  const [open, setOpen] = useState<boolean>(false);
   const [action, setAction] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
-
-  const handleClickOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
+  const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
 
   const calcDuration = () => {
     const sDate = new Date(supplyChainStepData.started_at);
@@ -103,10 +95,10 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
             handleTrigger();
             toast.success("Approved Successfully");
             setSubmitted(false);
-            handleClose();
-          }, 5000)
+            setConfirmationDialogOpen(false);
+          }, 7000)
         } else {
-          handleClose();
+          setConfirmationDialogOpen(false);
           toast.error("Some Error Occured");
         }
       })
@@ -292,9 +284,9 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
                       variant="contained"
                       color="success"
                       size="large"
-                      onClick={(e) => {
+                      onClick={() => {
                         setAction("Approve");
-                        handleClickOpen();
+                        setConfirmationDialogOpen(true);
                       }}
                       data-testid="approve"
                     >
@@ -304,9 +296,9 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
                       variant="contained"
                       color="error"
                       size="large"
-                      onClick={(e) => {
+                      onClick={() => {
                         setAction("Reject");
-                        handleClickOpen();
+                        setConfirmationDialogOpen(true);
                       }}
                       data-testid="reject"
                     >
@@ -326,53 +318,14 @@ const ProcessDetails: React.FC<ProcessDetailsProps> = ({
           tabHeading="Steps"
         />
       )}
-      <Dialog
-        open={open}
-        disableEscapeKeyDown
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        onClose={(event, reason) => {
-          if (reason !== "backdropClick") {
-            handleClose();
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {!submitted ? (
-              <p style={{ fontSize: "25px" }}>
-                Are you sure you want to <b>{action}</b>
-              </p>
-            ) : (
-              <>
-                Submitting...{" "}
-                <Box sx={{ display: "flex" }}>
-                  <CircularProgress />
-                </Box>{" "}
-              </>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className="dialog-actions-dense">
-          <Button
-            onClick={handleClose}
-            disabled={submitted}
-            style={{ fontSize: "18px" }}
-            data-testid="cancel"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={submitApproval}
-            disabled={submitted}
-            style={{ fontSize: "18px", marginLeft: "15px" }}
-            variant="contained"
-            data-testid="ok"
-          >
-            Ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+      <ConfirmationDialog
+        open={isConfirmationDialogOpen}
+        onConfirm={submitApproval}
+        onCancel={() => setConfirmationDialogOpen(false)}
+        message={`Are you sure you want to ${action} ?`}
+        loading={submitted}
+      />
     </>
   );
 };
