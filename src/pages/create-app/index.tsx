@@ -305,8 +305,6 @@ const StepperCustomVertical = () => {
       const response = await getRepositories(user);
       if (response.data) {
         setRepositories(response.data);
-      } else {
-        toast.error("Some Error Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Could not fetch repositories.");
@@ -321,8 +319,6 @@ const StepperCustomVertical = () => {
       const response = await getBranch(repo, gitUser);
       if (response.data) {
         setBranches(response.data);
-      } else {
-        toast.error("Some Error Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
