@@ -108,12 +108,12 @@ const AuthProvider = ({ children }: Props) => {
             user_info: {
               first_name: '',
               last_name: '',
-              phone_number: 0,
+              phone_number: '',
               profile_picture: '',
               address: {
                 country: '',
                 state: '',
-                zip_code: 'number',
+                zip_code: 0,
                 city: '',
                 street_address: ''
               }

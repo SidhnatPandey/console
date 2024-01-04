@@ -22,7 +22,6 @@ import { deactivateUser, getUserProfile, postUserProfile } from "src/services/us
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
-import { useAuth } from "src/hooks/useAuth";
 import ConfirmationDialog from "../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
 
@@ -278,11 +277,6 @@ const TabAccount = () => {
     setIsCheckboxChecked(!isCheckboxChecked);
   };
 
-  const { logout } = useAuth();
-  const handleDeactivate = () => {
-    logout();
-  };
-
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
@@ -294,7 +288,7 @@ const TabAccount = () => {
           toast.error('Account deactivation failed. Please try again.');
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('An error occurred. Please try again later.');
       });
   };

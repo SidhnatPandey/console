@@ -20,13 +20,8 @@ export type UserDataType = {
   updated_at: string;
   nickname: string;
   user_info: {
-    email: string; 
-    username: string;
-    user_id: string;
-    role: string;
-
     first_name: string;
-    last_name: string;  
+    last_name: string;
     phone_number: string;
     profile_picture: string;
     address: {
