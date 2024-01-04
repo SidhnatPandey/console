@@ -141,7 +141,7 @@ const Register = () => {
     }
     const user = {
       type: "organisation",
-      role: "Admin",
+      role: "admin",
       org: formData.org,
       email: formData.email,
       password: formData.password,
