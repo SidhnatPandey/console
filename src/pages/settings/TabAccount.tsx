@@ -18,30 +18,31 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Paper } from "@mui/material";
-import { deactivateUser, getUserProfile, postUserProfile } from "src/services/userService";
+import { deactivateUser, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import ConfirmationDialog from "../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
+import { CircularProgress } from '@mui/material';
 
 
 interface Data {
-  user_info: any;
-  email: string;
-  state: string;
-  address: string;
-  country: string;
-  lastName: string;
-  firstName: string;
-  organization: string;
-  phoneNumber: string;
-  zipCode: number;
-  city: string;
-  username: string;
-  user_id: string;
-  role: string;
-  profile_picture: string;
+  user_info?: any;
+  email?: string;
+  state?: string;
+  address?: string;
+  country?: string;
+  lastName?: string;
+  firstName?: string;
+  organization?: string;
+  phoneNumber?: string;
+  zipCode?: number;
+  city?: string;
+  username?: string;
+  user_id?: string;
+  role?: string;
+  profile_picture?: string;
 }
 
 const initialData: Data = {
@@ -102,60 +103,41 @@ const TabAccount = () => {
   const [originalData, setOriginalData] = useState<Data>(initialData); // Added for storing original data
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
 
-  const fetchData = () => {
-    getUserProfile()
-      .then((response: any) => {
-        const responseData = response?.data;
-        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
-        setFormData({
-          ...formData,
-          role: responseData?.role,
-          user_id: responseData?.user_id,
-          state: responseData?.user_info?.address?.state,
-          phoneNumber: responseData?.user_info?.phone_number,
-          address: responseData?.user_info?.address?.street_address,
-          zipCode: responseData?.user_info?.address?.zip_code,
-          lastName: responseData?.user_info?.last_name,
-          city: responseData?.user_info?.address?.city,
-          firstName: responseData?.user_info?.first_name,
-          country: responseData?.user_info?.address?.country,
-          organization: responseData?.org,
-          email: responseData?.email,
-          username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
-        });
-        setImgSrc(profilePicture);
+  const setData = () => {
+    const userData = authContext?.user;
+    const profilePicture = 'data:image/jpeg;base64,' + userData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
+    const data: Data = {
+      ...formData,
+      role: userData?.role,
+      user_id: userData?.user_id,
+      state: userData?.user_info?.address?.state,
+      phoneNumber: userData?.user_info?.phone_number,
+      address: userData?.user_info?.address?.street_address,
+      zipCode: userData?.user_info?.address?.zip_code,
+      lastName: userData?.user_info?.last_name,
+      city: userData?.user_info?.address?.city,
+      firstName: userData?.user_info?.first_name,
+      country: userData?.user_info?.address?.country,
+      organization: userData?.org,
+      email: userData?.email,
+      username: userData?.username,
+      profile_picture: userData?.user_info?.profile_picture,
+    }
 
-        setOriginalData({
-          ...formData,
-          role: responseData?.role,
-          user_id: responseData?.user_id,
-          state: responseData?.user_info?.address?.state,
-          phoneNumber: responseData?.user_info?.phone_number,
-          address: responseData?.user_info?.address?.street_address,
-          zipCode: responseData?.user_info?.address?.zip_code,
-          lastName: responseData?.user_info?.last_name,
-          city: responseData?.user_info?.address?.city,
-          firstName: responseData?.user_info?.first_name,
-          country: responseData?.user_info?.address?.country,
-          organization: responseData?.org,
-          email: responseData?.email,
-          username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    setFormData(data);
+    setOriginalData(data);
+    setImgSrc(profilePicture);
+  }
 
   useEffect(() => {
-    fetchData();
+    setData();
   }, []);
 
   const handleSaveChanges = () => {
+    setIsSubmitting(true);
     const uprofile = {
       role: formData.role,
       user_info: {
@@ -176,29 +158,18 @@ const TabAccount = () => {
 
     postUserProfile(uprofile)
       .then((response: any) => {
+        setIsSubmitting(false);
         if (response.status === 200) {
           // Update the user context immediately after a successful profile update
-          if (authContext.user) {
-            const updatedUser = {
-              ...authContext.user,
-              user_info: {
-                ...authContext.user.user_info,
-                ...uprofile.user_info,
-              },
-            };
-            authContext.setUser(updatedUser);
-
-            toast.success('Profile updated successfully!');
-            setOriginalData({ ...formData });
-            const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
-            setImgSrc(updatedProfilePicture);
-            router.push('/myProfile');
-          }
+          authContext.setUser(response.data);
+          toast.success('Profile updated successfully!');
+          router.push('/myProfile');
         } else {
           toast.error('Profile update failed. Please try again.');
         }
       })
       .catch((error) => {
+        setIsSubmitting(false);
         if (error.response && error.response.status === 400) {
           toast.error('Bad request. Please check your data and try again.');
         } else {
@@ -460,6 +431,7 @@ const TabAccount = () => {
                   sx={{ mr: 4 }}
                   onClick={handleSaveChanges}
                 >
+                  {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                   Save Changes
                 </Button>
                 <Button
