@@ -74,7 +74,9 @@ const AppDashboard: React.FC<{ appId: string }> = () => {
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
   setApiBaseUrl();
-  const { data: supplyChainRunsData } = useSWR(key, getFetcher);
+  const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
+    refreshInterval: timer
+  });
 
   useEffect(() => {
     if (router?.query?.appId) {
@@ -298,7 +300,6 @@ const AppDashboard: React.FC<{ appId: string }> = () => {
             supplyChainData={supplyChainRunsData?.data}
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
-            hanldeChildTrigger={handleTriggerFromChild}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">

@@ -127,9 +127,9 @@ const LoginPage = () => {
       setIsSubmitting(true);
       const { email, password } = data;
       const loginSuccess: any = auth.login({ email, password, rememberMe }, (err: any) => {
+        setIsSubmitting(false);
         if (err.response.data.code) {
           setError('email', { type: 'manual', message: "" });
-          setIsSubmitting(false);
           switch (err.response.data.code) {
             case 101:
               setError('password', { type: 'manual', message: "Wrong email or password" })
@@ -144,6 +144,9 @@ const LoginPage = () => {
               setError('password', { type: 'manual', message: "Wrong email or password" })
               break;
           }
+        } else {
+          setError('email', { type: 'manual', message: "" });
+          setError('password', { type: 'manual', message: "Some error occured. Please try after some time" })
         }
       })
     }

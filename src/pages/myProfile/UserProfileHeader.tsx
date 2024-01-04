@@ -11,7 +11,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useRouter } from "next/router";
 import { getMonthAndYear } from "src/utils/dateUtil";
-import { UserProfile } from './index';
+import { UserDataType } from "src/context/types";
+
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -24,7 +25,7 @@ const ProfilePicture = styled("img")(({ theme }) => ({
 }));
 
 interface ProfileProps {
-  profileData: UserProfile,
+  profileData: UserDataType | null,
 }
 
 const UserProfileHeader: React.FC<ProfileProps> = ({ profileData }) => {
@@ -122,8 +123,8 @@ const UserProfileHeader: React.FC<ProfileProps> = ({ profileData }) => {
                   data-testid="address"
                   sx={{ color: "text.secondary" }}
                 >
-                  {profileData?.user_info.address.city &&
-                    `${profileData?.user_info.address.city}, `}
+                  {profileData?.user_info.address.city}
+                  {profileData?.user_info.address.city && profileData?.user_info.address.country && ', '}
                   {profileData?.user_info.address.country}
                 </Typography>
               </Box>

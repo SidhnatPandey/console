@@ -9,22 +9,7 @@ import mock from 'src/@fake-db/mock'
 import { UserDataType } from 'src/context/types'
 
 const users: UserDataType[] = [
-  {
-    id: 1,
-    role: 'admin',
-    password: 'admin',
-    fullName: 'John Doe',
-    username: 'johndoe',
-    email: 'admin@initializ.ai'
-  },
-  {
-    id: 2,
-    role: 'client',
-    password: 'client',
-    fullName: 'Jane Doe',
-    username: 'janedoe',
-    email: 'client@vuexy.com'
-  }
+
 ]
 
 // ! These two secrets should be in .env file and not in any other file
@@ -77,9 +62,9 @@ mock.onPost('/jwt/register').reply(request => {
 
     if (!error.username && !error.email) {
       const { length } = users
-      let lastIndex = 0
+      const lastIndex = 0
       if (length) {
-        lastIndex = users[length - 1].id
+        // lastIndex = users[length - 1].id
       }
       const userData = {
         id: lastIndex + 1,
@@ -91,7 +76,7 @@ mock.onPost('/jwt/register').reply(request => {
         role: 'admin'
       }
 
-      users.push(userData)
+      //users.push(userData)
 
       const accessToken = jwt.sign({ id: userData.id }, jwtConfig.secret as string)
 
