@@ -35,7 +35,9 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
   let key = appName ? APP_API.appMatrix : undefined;
   if (appName) { key = key?.replace('{appName}', appName); }
   setApiBaseUrl();
-  const { data: matrix } = useSWR<Matrix>(key, getFetcher);
+  const { data: matrix } = useSWR<Matrix>(key, getFetcher, {
+    refreshInterval: metricsTimer
+  });
 
   return (
     <Card>

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect, useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -17,13 +17,14 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
+import { Paper } from "@mui/material";
 import { deactivateUser, getUserProfile, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
-import { useAuth } from "src/hooks/useAuth";
 import ConfirmationDialog from "../../component/ConfirmationDialog";
+import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
+
 
 interface Data {
   user_info: any;
@@ -32,9 +33,6 @@ interface Data {
   address: string;
   country: string;
   lastName: string;
-  currency: string;
-  language: string;
-  timezone: string;
   firstName: string;
   organization: string;
   phoneNumber: string;
@@ -54,10 +52,7 @@ const initialData: Data = {
   zipCode: 0,
   lastName: "",
   city: "",
-  currency: "",
   firstName: "",
-  language: "",
-  timezone: "",
   country: "",
   organization: "",
   email: "",
@@ -101,6 +96,7 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }));
 
 const TabAccount = () => {
+  const authContext = useContext(AuthContext); // Access the auth context
   const [formData, setFormData] = useState<Data>(initialData);
   const [imgSrc, setImgSrc] = useState<string>('');
   const [originalData, setOriginalData] = useState<Data>(initialData); // Added for storing original data
@@ -181,11 +177,23 @@ const TabAccount = () => {
     postUserProfile(uprofile)
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success('Profile updated successfully!');
-          setOriginalData({ ...formData });
-          const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
-          setImgSrc(updatedProfilePicture);
-          router.push('/myProfile');
+          // Update the user context immediately after a successful profile update
+          if (authContext.user) {
+            const updatedUser = {
+              ...authContext.user,
+              user_info: {
+                ...authContext.user.user_info,
+                ...uprofile.user_info,
+              },
+            };
+            authContext.setUser(updatedUser);
+
+            toast.success('Profile updated successfully!');
+            setOriginalData({ ...formData });
+            const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
+            setImgSrc(updatedProfilePicture);
+            router.push('/myProfile');
+          }
         } else {
           toast.error('Profile update failed. Please try again.');
         }
@@ -242,7 +250,22 @@ const TabAccount = () => {
     });
   };
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value,
+    }));
+
+    // Update user context
+    if (authContext.user) {
+      const updatedUser = {
+        ...authContext.user,
+        user_info: {
+          ...authContext.user.user_info,
+          [field]: value,
+        },
+      };
+      authContext.setUser(updatedUser);
+    }
   };
 
   const handleCancelChanges = () => {
@@ -254,28 +277,19 @@ const TabAccount = () => {
     setIsCheckboxChecked(!isCheckboxChecked);
   };
 
-  const { logout } = useAuth();
-  const handleDeactivate = () => {
-    logout();
-  };
-
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success("Account deactivated successfully!");
-          handleDeactivate();
-          // Redirect or perform additional actions after deactivation
+          toast.success('Account deactivated successfully!');
+          authContext.logout(); // Assuming you have a logout method in your auth context
         } else {
-          toast.error("Account deactivation failed. Please try again.");
+          toast.error('Account deactivation failed. Please try again.');
         }
       })
-      .catch((error) => {
-        console.error(error);
-        toast.error(
-          "An error occurred during account deactivation. Please try again later."
-        );
+      .catch(() => {
+        toast.error('An error occurred. Please try again later.');
       });
   };
 
@@ -539,8 +553,8 @@ const TabAccount = () => {
           </CardContent>
         </Card>
       </Grid>
-       {/* Confirmation Dialog */}
-       <ConfirmationDialog
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
         open={isConfirmationDialogOpen}
         onConfirm={handleDeactivateAccount}
         onCancel={() => setConfirmationDialogOpen(false)}

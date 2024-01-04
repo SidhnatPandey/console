@@ -10,10 +10,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlagIcon from '@mui/icons-material/Flag';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { UserProfile } from './index';
+import { UserDataType } from 'src/context/types';
+
 
 interface ProfileProps {
-  profileData: UserProfile,
+  profileData: UserDataType | null,
 }
 
 const Profile: React.FC<ProfileProps> = ({ profileData }) => {

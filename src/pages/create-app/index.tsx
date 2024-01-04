@@ -254,7 +254,7 @@ const StepperCustomVertical = () => {
   if (router.query?.code) {
     sendCode(router.query?.code as string)
       .then((response) => {
-        if (response?.git_user) {
+        if (response?.data.git_user) {
           setGitUser(response.git_user);
           fetchUserRepositories(response.git_user as string);
         }
