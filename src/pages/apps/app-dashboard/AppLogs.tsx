@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Key, useEffect, useRef, useState } from "react";
 import { getAppLogs } from "src/services/dashboardService";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -7,30 +7,15 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import Skeleton from "react-loading-skeleton";
 import { styled } from "@mui/material/styles";
 import MuiTabList, { TabListProps } from "@mui/lab/TabList";
-import { Input, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import useSWR from "swr";
+import { APP_API } from "src/@core/static/api.constant";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 interface AppLogsProps {
-  appName: string | undefined;
-}
-
-interface LogsData {
-  run_name: string;
-  log: string;
-}
-
-interface ProcessLogsProps {
-  steps: Step[] | undefined;
-  loading: boolean;
-  tabHeading: string;
-}
-
-interface Step {
-  log: string;
-  run_name: string;
-  status?: string;
+  appId: string;
 }
 
 // Styled TabList component
@@ -50,35 +35,34 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   },
 }));
 
-const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
+const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
   const [value, setValue] = useState<string>("1");
-  const [logs, setLogs] = useState<string[]>([]);
   const [tabName, setTabName] = useState<string>("Prod");
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
+
+  // Ref for the scroll container
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // creating the url for getting the logs
+  let key = APP_API.appLogs;
+  key = key.replace("{appId}", appId);
+  key = key + tabName.toLowerCase();
+  setApiBaseUrl();
+  const { data } = useSWR(key, getAppLogs);
 
   useEffect(() => {
-    if (appName) {
-      getLogs(tabName);
+    if (scrollContainerRef.current) {
+      const element = scrollContainerRef.current;
+      element.scrollTop = element.scrollHeight;
     }
-  }, [appName]);
-
-  const getLogs = (step: string) => {
-    if (appName) {
-      getAppLogs(appName, step).then((res) => {
-        if (res && res.data) {
-          setLogs(res.data.log.split("\n"));
-        }
-      });
-    }
-  };
+  }, [data]);
+  
 
   const handleTabChange = (step: string, index: number) => {
     setValue(index.toString());
-    setTabName((preStep) => {
+    setTabName(() => {
       return step;
     });
-    getLogs(step);
   };
 
   const highlightText = (text: string, highlight: string) => {
@@ -107,30 +91,36 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
 
   return (
     <Card
-      data-testid="app-logs"
       sx={{ height: "auto", display: "flex", flexDirection: "column" }}
+      data-testid="app-logs-card"
     >
       <CardContent sx={{ padding: "10px", flex: 1 }}>
         <Grid container spacing={2}>
-          <Grid item xs={2} textAlign="center" marginLeft={"-5px"}>
-            <Typography data-testid="environments-heading" variant="h4">
+          <Grid
+            item
+            xs={2}
+            textAlign="center"
+            marginLeft={"-5px"}
+            data-testid="environments-title"
+          >
+            <Typography variant="h4">
               <b>Environments</b>
             </Typography>
           </Grid>
-          <Grid item xs={8}>
-            <Typography data-testid="logs-heading" variant="h4">
+          <Grid item xs={8} data-testid="logs-title">
+            <Typography variant="h4">
               <b style={{ textTransform: "capitalize" }}>{tabName} Logs</b>
             </Typography>
           </Grid>
           <Grid item xs={2}>
             <TextField
-              data-testid="search-input"
               label="Search"
               size="small"
               variant="outlined"
               value={searchTerm}
               onChange={handleSearchChange}
               fullWidth
+              data-testid="search-field"
             />
           </Grid>
         </Grid>
@@ -142,49 +132,38 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
             sx={{
               paddingLeft: "10px",
             }}
-            data-testid="tab-list-container"
+            data-testid="tab-list-box"
           >
-            {loading ? (
-              <Skeleton
-                width={100}
-                height={20}
-                data-testid="loading-skeleton"
-              />
-            ) : (
-              <TabContext value={value}>
-                <TabList
-                  orientation="vertical"
-                  aria-label="vertical tabs example"
-                  data-testid="tab-list"
-                >
-                  <Tab
-                    value="1"
-                    label="Prod"
-                    onClick={() => handleTabChange("Prod", 1)}
-                    data-testid="tab-prod"
-                  />
-                  <Tab
-                    value="2"
-                    label="Stg"
-                    onClick={() => handleTabChange("Stg", 2)}
-                    data-testid="tab-stg"
-                  />
-                  <Tab
-                    value="3"
-                    label="Test"
-                    onClick={() => handleTabChange("Test", 3)}
-                    data-testid="tab-test"
-                  />
-                </TabList>
-              </TabContext>
-            )}
+            <TabContext value={value}>
+              <TabList
+                orientation="vertical"
+                aria-label="vertical tabs example"
+              >
+                <Tab
+                  value="1"
+                  label="Prod"
+                  onClick={() => handleTabChange("Prod", 1)}
+                />
+                <Tab
+                  value="2"
+                  label="Stg"
+                  onClick={() => handleTabChange("Stg", 2)}
+                />
+                <Tab
+                  value="3"
+                  label="Test"
+                  onClick={() => handleTabChange("Test", 3)}
+                />
+              </TabList>
+            </TabContext>
           </Box>
         </Grid>
         <Grid item xs={10}>
           <div
-            className="scroll-container2"
+            className="scroll-container-logs"
+            ref={scrollContainerRef}
             style={{
-              height: "400px",
+              height: "500px",
               backgroundColor: "black",
               color: "white",
               width: "100%",
@@ -193,39 +172,21 @@ const AppLogs: React.FC<AppLogsProps> = ({ appName }) => {
             }}
             data-testid="logs-container"
           >
-            {!loading &&
-              logs.map((log, index) => {
-                return (
-                  <p
-                    style={{
-                      color: "white",
-                      margin: 0,
-                      fontFamily: "monospace",
-                      whiteSpace: "pre-wrap",
-                    }}
-                    key={index}
-                    data-testid={`log-item-${index}`}
-                  >
-                    {highlightText(log, searchTerm)}
-                  </p>
-                );
-              })}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={500} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={300} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
-            {loading && <Skeleton width={500} height={10} />}
-            {loading && <Skeleton width={600} height={10} />}
-            {loading && <Skeleton width={300} height={10} />}
-            {loading && <Skeleton width={400} height={10} />}
-            {loading && <Skeleton width={800} height={10} />}
+            {data?.data?.data?.log
+              ?.split("\n")
+              .map((log: string, index: Key | null | undefined) => (
+                <p
+                  style={{
+                    color: "white",
+                    margin: 0,
+                    fontFamily: "monospace",
+                    whiteSpace: "pre-wrap",
+                  }}
+                  key={index}
+                >
+                  {highlightText(log, searchTerm)}
+                </p>
+              ))}
           </div>
         </Grid>
       </Grid>

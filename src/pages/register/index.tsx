@@ -18,11 +18,11 @@ import { FormControl } from "@mui/material";
 import CustomTextField from "src/@core/components/mui/text-field"; // ** Custom Component Import
 import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
-import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp } from "src/services/authService";
 import { checkUsername, checkEmail } from "src/services/userService"
 import toast from "react-hot-toast";
+import { CircularProgress } from '@mui/material';
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -104,11 +104,14 @@ const Register = () => {
     password: false,
     org: false,
   });
+
   const [submit, setSubmit] = useState(false);
   const [userNameExist, setUserNameExist] = useState(false);
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [emailExist, setEmailExist] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const theme = useTheme(); // ** Hooks
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
   const router = useRouter(); // ** Router instance
@@ -138,7 +141,7 @@ const Register = () => {
     }
     const user = {
       type: "organisation",
-      role: "Admin",
+      role: "admin",
       org: formData.org,
       email: formData.email,
       password: formData.password,
@@ -146,8 +149,10 @@ const Register = () => {
     };
 
     setError(null);
+    setIsSubmitting(true);
     signUp(user)
       .then((response) => {
+        setIsSubmitting(false);
         if (response?.status === 201) {
           toast.success("Registered successfully");
           router.push("/login");
@@ -158,8 +163,7 @@ const Register = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
-
+        setIsSubmitting(false);
         toast.error(error.message);
       });
   };
@@ -444,6 +448,7 @@ const Register = () => {
                 variant="contained"
                 sx={{ mb: 4 }}
               >
+                {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                 Sign up
               </Button>
               <Box

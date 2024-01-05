@@ -50,7 +50,12 @@ code[class*='language-'] {
   vertical-align: bottom;
 }
 
-a, a:link, a:visited, a:focus, a:hover, a:active {
+a,
+a:link,
+a:visited,
+a:focus,
+a:hover,
+a:active {
   color: #7353e5;
 }
 
@@ -101,7 +106,7 @@ a, a:link, a:visited, a:focus, a:hover, a:active {
   border-radius: 10px;
 }
 
-.scroll-container2 {
+.scroll-container-logs {
   overflow: auto;
 }
 

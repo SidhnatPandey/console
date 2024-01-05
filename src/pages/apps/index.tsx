@@ -8,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
-import Chip from '@mui/material/Chip'; // Import Chip component
 import { useRouter } from 'next/router';
 import { appList } from 'src/services/appService';
 import { convertDateFormat } from 'src/utils/dateUtil';
@@ -101,10 +100,10 @@ const Apps: React.FC<AppListProps> = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [apiData, setApiData] = useState<Row[]>([]); // State to store API data
   const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
 
@@ -113,12 +112,15 @@ const Apps: React.FC<AppListProps> = () => {
   }, []);
 
   const getAppList = () => {
+    setLoading(true);
     appList()
       .then((response: { data: Row[] }) => {
         const data = response.data
         setAppListData(data);
+        setLoading(false);
       })
       .catch((error: any) => {
+        setLoading(false);
         console.log(error);
       });
   }
@@ -230,7 +232,7 @@ const Apps: React.FC<AppListProps> = () => {
                     paddingBottom: '50px', // Increase the bottom padding
                   }}
                 >
-                  No Apps
+                  {loading ? 'Loading ...' : 'No Apps'}
                 </TableCell>
 
               </TableRow>
