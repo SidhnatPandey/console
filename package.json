@@ -62,7 +62,7 @@
     "next-runtime-env": "^1.7.1",
     "nprogress": "0.2.0",
     "payment": "2.4.6",
-    "prismjs": "1.29.0",
+    "prismjs": "^1.29.0",
     "react": "18.2.0",
     "react-apexcharts": "1.4.0",
     "react-chartjs-2": "5.2.0",
