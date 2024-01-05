@@ -34,5 +34,8 @@ export const APP_API = {
 
     //Workspace
     createWorkspace: 'workspace',
-    getListOfWorkspaces: 'workspace'
+    getListOfWorkspaces: 'workspace',
+
+    //Organisation
+    OrgList: 'organization',
 }
