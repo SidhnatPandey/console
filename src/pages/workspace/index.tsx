@@ -1,10 +1,10 @@
-import { Card, Button, Box, Tabs } from '@mui/material';
-import { useRouter } from 'next/router';
-import { useState, useEffect, SetStateAction } from 'react';
-import Skeleton from 'react-loading-skeleton';
-import IconifyIcon from 'src/@core/components/icon';
-import Apps from '../apps';
-import { Icon } from '@iconify/react';
+import { Card, Button, Box, Tabs } from "@mui/material";
+import { useRouter } from "next/router";
+import { useState, useEffect, SetStateAction } from "react";
+import Skeleton from "react-loading-skeleton";
+import IconifyIcon from "src/@core/components/icon";
+import Apps from "../apps";
+import { Icon } from "@iconify/react";
 
 const Workspace = () => {
   const router = useRouter();
@@ -14,10 +14,14 @@ const Workspace = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   // Extract project identifier from the query parameter
-  const projectId = Array.isArray(query.project) ? query.project[0] : query.project;
+  const projectId = Array.isArray(query.project)
+    ? query.project[0]
+    : query.project;
 
   // State to manage the current project
-  const [currentProject, setCurrentProject] = useState<string | null>(projectId || null);
+  const [currentProject, setCurrentProject] = useState<string | null>(
+    projectId || null
+  );
 
   useEffect(() => {
     // Update the current project when the query parameter changes
@@ -77,7 +81,10 @@ const Workspace = () => {
                 />
               ) : (
                 <>
-                  <span style={{ marginTop: "3.5rem" }}>
+                  <span
+                    data-testid="description"
+                    style={{ marginTop: "3.5rem" }}
+                  >
                     {loading ? (
                       <Skeleton
                         width={400}
@@ -85,9 +92,7 @@ const Workspace = () => {
                         style={{ marginBottom: "35px" }}
                       />
                     ) : (
-                      <>
-                        This workspace is for {currentProject}
-                      </>
+                      <>This workspace is for {currentProject}</>
                     )}
                   </span>
                 </>
@@ -97,26 +102,31 @@ const Workspace = () => {
           <br />
           <Tabs
             value={selectedTab}
+            data-testid="tabs"
             aria-label="workspace tabs"
             TabIndicatorProps={{
               style: {
-                display: 'none',              },
+                display: "none",
+              },
             }}
           >
             <Button
+              data-testid="button"
               value={0}
               variant="text"
               onClick={handleShowApps}
               sx={{
-                backgroundColor: selectedTab === 0 ? 'primary.main' : 'inherit',
-                color: selectedTab === 0 ? 'white' : 'primary.main',
-                fontWeight: selectedTab === 0 ? 'bold' : 'normal',
-                '&:hover': {
-                  backgroundColor: selectedTab === 0 ? 'primary.dark' : 'inherit',
+                backgroundColor: selectedTab === 0 ? "primary.main" : "inherit",
+                color: selectedTab === 0 ? "white" : "primary.main",
+                fontWeight: selectedTab === 0 ? "bold" : "normal",
+                "&:hover": {
+                  backgroundColor:
+                    selectedTab === 0 ? "primary.dark" : "inherit",
                 },
               }}
             >
               <Icon
+                data-testid="apps"
                 icon={"uit:create-dashboard"}
                 style={{
                   fontSize: "20px", // Adjust the size as needed
@@ -128,23 +138,26 @@ const Workspace = () => {
             </Button>
 
             <Button
+              data-testid="button2"
               value={1}
               variant="text"
               onClick={handleShowSettings}
               sx={{
-                backgroundColor: selectedTab === 1 ? 'primary.main' : 'inherit',
-                color: selectedTab === 1 ? 'white' : 'primary.main',
-                fontWeight: selectedTab === 1 ? 'bold' : 'normal',
-                '&:hover': {
-                  backgroundColor: selectedTab === 1 ? 'primary.dark' : 'inherit',
+                backgroundColor: selectedTab === 1 ? "primary.main" : "inherit",
+                color: selectedTab === 1 ? "white" : "primary.main",
+                fontWeight: selectedTab === 1 ? "bold" : "normal",
+                "&:hover": {
+                  backgroundColor:
+                    selectedTab === 1 ? "primary.dark" : "inherit",
                 },
               }}
             >
               <Icon
+                data-testid="settings"
                 icon={"uil:setting"}
                 style={{
-                  fontSize: "20px", 
-                  marginRight: "8px", 
+                  fontSize: "20px",
+                  marginRight: "8px",
                 }}
               />
               Settings
@@ -154,19 +167,22 @@ const Workspace = () => {
           {/* Show/Hide Apps or Settings component based on state */}
           {showApps && (
             <Box mt={4}>
-              <Apps selectedRow={null} setSelectedRow={(value: SetStateAction<number | null>) => { }} />
+              <Apps
+                selectedRow={null}
+                setSelectedRow={(value: SetStateAction<number | null>) => {}}
+              />
             </Box>
           )}
           {!showApps && (
             <Box mt={4}>
               {/* Render Settings component */}
-              <h2>Settings Content</h2>
+              <h2 data-testid="settingsContent">Settings Content</h2>
               {/* Add your Settings component content here */}
             </Box>
           )}
         </>
       ) : (
-        <h1>Workspace Component</h1>
+        <h1 data-testid="workspaceComponent">Workspace Component</h1>
       )}
     </div>
   );

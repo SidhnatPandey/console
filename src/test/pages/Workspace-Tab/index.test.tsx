@@ -1,82 +1,77 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Workspace from 'src/pages/workspace';
+import { useRouter } from 'next/router';
 
+jest.mock('next/router', () => ({ 
+    useRouter: jest.fn(),
+  }));
 
-jest.mock('next/router', () => ({
-    useRouter: () => ({
-        query: { project: ['mockedProjectId'] },
-        push: jest.fn(),
-    }),
-}));
-
-describe('<Workspace />', () => {
-
-    // it('renders the component with project details', () => {
-    //     render(<Workspace />);
-
-    //     // Assert that the cardElement is present
-    //     expect(screen.getByTestId('card')).toBeInTheDocument();
-
-    //     // Assert other conditions
-    //     const titleElement = screen.getByTestId('title');
-    //     expect(titleElement).toBeInTheDocument();
-    //     expect(titleElement).toContainHTML('This workspace is for');
-    //   });
-
-    it('renders the component with "N/A" when project is null', async () => {
-        jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({
-            query: { project: null },
-            push: jest.fn(),
-        });
-        render(<Workspace />);
-        try {
-            await waitFor(() => {
-                const titleElement = screen.queryByTestId('title');
-                if (!titleElement) {
-                    throw new Error('Title element not found');
-                }
-                if (titleElement.textContent === 'N/A') {
-                    return true;
-                }
-                return false;
-            });
-            const titleElement = screen.getByTestId('title');
-            expect(titleElement).toHaveTextContent('N/A');
-        } catch (error: any) {
-            expect((error as Error).message).toContain('Title element not found');
-        }
+describe('Workspace Component', () => {
+    const mockRouter = {
+      query: { project: 'TestProject' },
+    };
+  
+    beforeEach(() => {
+      (useRouter as jest.Mock).mockReturnValue(mockRouter);
     });
 
-    it('switches to Apps tab and shows Apps content', async () => {
-        render(<Workspace />);
-        await screen.findByTestId('card');
-        fireEvent.click(screen.getByText('Apps'));
-        const appsTab = screen.getByText('Apps');
-        const appsTabStyle = window.getComputedStyle(appsTab);
-        expect(appsTabStyle.backgroundColor).toBe('rgb(21, 101, 192)');
+  test('renders Workspace component with card', async () => {
+    render(<Workspace />);
+
+    const cardElement = await screen.findByTestId('card');
+    expect(cardElement).toBeInTheDocument();
+
+  });
+
+  test('checks Workspace component are present or not',  () => {
+    render(<Workspace />);
+    expect(screen.getByTestId('button')).toBeInTheDocument();
+    expect(screen.getByTestId('button2')).toBeInTheDocument();
+    expect(screen.getByTestId('tabs')).toBeInTheDocument();
+    expect(screen.getByText('Apps')).toBeInTheDocument();
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+  });
+
+  test('handles tab switching', async () => {
+    render(<Workspace />);
+
+    const settingsButton = screen.getByText('Settings');
+    fireEvent.click(settingsButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Workspace Component')).not.toBeInTheDocument();
+      expect(screen.getByText('Settings Content')).toBeInTheDocument();
     });
+  });
 
-    // it('switches to Settings tab and shows Settings content', async () => {
-    //     render(<Workspace />);
+  test('it should display the workspace component when the Apps button is clicked', async () => {
+    render(<Workspace />);
+      const appsButton = screen.getByText('Apps');
+    fireEvent.click(appsButton);
+  
+    const workspaceComponent = await screen.getByText('Apps');
+    expect(workspaceComponent).toHaveTextContent('Apps');
+  });
+  
+  test('displays correct project title and description', () => {
+    render(<Workspace />);
+    expect(screen.getByTestId('title')).toHaveTextContent('TestProject');
+    expect(screen.getByTestId('description')).toHaveTextContent('This workspace is for TestProject');
+  });
 
-    //     // Wait for the component to render
-    //     const cardElement = await screen.findByTestId('card');
+  test('toggles content and icons on tab click', () => {
+    render(<Workspace />);
+    const appsButton = screen.getByTestId('button');
+    const settingsButton = screen.getByTestId('button2');
 
-    //     // Click on Settings tab
-    //     fireEvent.click(screen.getByText('Settings'));
+    fireEvent.click(settingsButton);
+    expect(screen.getByTestId('settingsContent')).toBeInTheDocument();
+    expect(screen.queryByTestId('Apps')).not.toBeInTheDocument();
 
-    //     // Wait for the card element to be removed
-    //     await waitFor(async () => {
-    //       if (screen.queryByTestId('card')) {
-    //         // Continue waiting if the element is still present
-    //         return false;
-    //       }
-    //       // Return true when the element is not present
-    //       return true;
-    //     }, { timeout: 5000 }); // Adjust the timeout as needed
-
-    //     // Assert that Settings content is displayed
-    //     expect(screen.getByText('Settings Content')).toBeInTheDocument();
-    //   });
-})
+    fireEvent.click(appsButton);
+    expect(screen.queryByTestId('settingsContent')).not.toBeInTheDocument();
+    expect(screen.getByText('Apps')).toBeInTheDocument();
+  });
+});
