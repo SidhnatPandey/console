@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment, useContext } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -73,6 +73,10 @@ const UserDropdown = (props: Props) => {
     }
     setAnchorEl(null)
   }
+
+  useEffect(() => {
+    console.log(authContext.user)
+  }, [authContext])
 
   const styles = {
     px: 4,

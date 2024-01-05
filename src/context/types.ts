@@ -19,6 +19,7 @@ export type UserDataType = {
   created_at: string;
   updated_at: string;
   nickname: string;
+  default_org?: string;
   user_info: {
     first_name: string;
     last_name: string;

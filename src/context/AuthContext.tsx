@@ -122,7 +122,8 @@ const AuthProvider = ({ children }: Props) => {
           }
           setUser({ ...user })
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.userName, JSON.stringify(user.username))
-          params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
+          localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
+          params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
 
           const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
           getUser();
@@ -150,13 +151,6 @@ const AuthProvider = ({ children }: Props) => {
     login: handleLogin,
     logout: handleLogout
   }
-
-  /* setApiBaseUrl();
-  const { data, mutate: getUser } = useSWR(APP_API.userProfile, getFetcher, {
-    onSuccess: () => {
-      setUser(data);
-    }
-  }); */
 
   const getUser = () => {
     getUserInfo().then(response => {
