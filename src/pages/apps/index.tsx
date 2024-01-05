@@ -115,7 +115,7 @@ const Apps: React.FC<AppListProps> = () => {
     setLoading(true);
     appList()
       .then((response: { data: Row[] }) => {
-        const data = response.data
+        const data = response?.data
         setAppListData(data);
         setLoading(false);
       })
