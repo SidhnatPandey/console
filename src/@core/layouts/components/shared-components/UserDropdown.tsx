@@ -74,10 +74,6 @@ const UserDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
-  useEffect(() => {
-    console.log(authContext.user)
-  }, [authContext])
-
   const styles = {
     px: 4,
     py: 1.75,

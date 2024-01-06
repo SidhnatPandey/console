@@ -1,10 +1,12 @@
 import { Card, Button, Box, Tabs } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
 import Apps from "../../apps";
 import { Icon } from "@iconify/react";
+import { AuthContext } from "src/context/AuthContext";
+import { Workspace } from "src/context/types";
 
 const Workspace = () => {
   const router = useRouter();
@@ -12,6 +14,8 @@ const Workspace = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showApps, setShowApps] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const authContext = useContext(AuthContext);
+  const [workspace, setWorkspace] = useState<Workspace>();
 
   // State to manage the current project
   const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
@@ -19,6 +23,7 @@ const Workspace = () => {
   useEffect(() => {
     // Update the current project when the query parameter changes
     setCurrentProject(slug);
+    setWorkspace(authContext.workspaces.filter((workspace) => workspace.name === slug)?.[0])
   }, [slug]);
 
   const handleShowApps = () => {
@@ -162,6 +167,7 @@ const Workspace = () => {
             <Box mt={4}>
               <Apps
                 selectedRow={null}
+                workspaceId={workspace?.id}
               />
             </Box>
           )}

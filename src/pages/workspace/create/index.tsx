@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { Card, Grid, TextField, Button } from "@mui/material";
 import toast from "react-hot-toast";
 import { workspace } from "src/services/appService";
+import { AuthContext } from "src/context/AuthContext";
 
 type FormData = {
   workspace_name: string;
@@ -17,10 +18,13 @@ const CreateWorkspace: React.FC = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const authContext = useContext(AuthContext);
+
   const onSubmit = (data: FormData) => {
     workspace(data)
       .then((response) => {
         toast.success("Workspace Created Successfully");
+        authContext.fetchWorkspcaes(data.workspace_name);
         reset();
       })
       .catch((error) => {

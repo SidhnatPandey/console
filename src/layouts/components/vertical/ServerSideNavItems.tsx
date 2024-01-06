@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NavGroup, VerticalNavItemsType } from 'src/@core/layouts/types'
-import { APP_API } from 'src/@core/static/api.constant'
+import { AuthContext } from 'src/context/AuthContext'
 import VerticalNavItems from 'src/navigation/vertical'
-import { getFetcher } from 'src/services/fetcherService'
-import useSWR from 'swr'
 
 const ServerSideNavItems = () => {
 
-  const key = APP_API.getListOfWorkspaces;
-  const { data } = useSWR(key, getFetcher);
+  const authContext = useContext(AuthContext);
 
   const WorkspaceObj: NavGroup = {
     icon: 'ion:document-outline',
@@ -28,20 +25,20 @@ const ServerSideNavItems = () => {
 
   useEffect(() => {
     setMenuItems(VerticalNavItems());
-    if (data) {
+    if (authContext.workspaces) {
       const navItems = VerticalNavItems();
-      data.data.workspaces.forEach((workspace: any) => {
+      authContext?.workspaces.forEach((workspace: any) => {
         WorkspaceObj.children?.push({
           title: workspace.name,
-          path: `/workspace?/${workspace.name}`
+          path: `/workspace/${workspace.name}`
         })
       });
-      WorkspaceObj.badgeContent = data.data.workspaces.length;
+      WorkspaceObj.badgeContent = authContext.workspaces.length.toString();
       WorkspaceObj.children?.push(AddWorkspaceObj);
       navItems[1] = WorkspaceObj;
       setMenuItems(navItems);
     }
-  }, [data])
+  }, [authContext.workspaces])
 
   return { menuItems }
 }

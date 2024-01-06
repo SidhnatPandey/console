@@ -25,6 +25,7 @@ interface Row {
 interface AppListProps {
   selectedRow: number | null;
   setSelectedRow?: React.Dispatch<React.SetStateAction<number | null>>;
+  workspaceId: string | undefined;
 }
 
 const createData = ({
@@ -96,7 +97,7 @@ const EnhancedTableHead: React.FC<{
 
 const rowsPerPageOptions = [5, 10, 25]; // Options for rows per page
 
-const Apps: React.FC<AppListProps> = () => {
+const Apps: React.FC<AppListProps> = ({ workspaceId }) => {
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
@@ -113,16 +114,18 @@ const Apps: React.FC<AppListProps> = () => {
 
   const getAppList = () => {
     setLoading(true);
-    appList()
-      .then((response: { data: Row[] }) => {
-        const data = response?.data
-        setAppListData(data);
-        setLoading(false);
-      })
-      .catch((error: any) => {
-        setLoading(false);
-        console.log(error);
-      });
+    if (workspaceId) {
+      appList(workspaceId)
+        .then((response: { data: Row[] }) => {
+          const data = response?.data
+          setAppListData(data);
+          setLoading(false);
+        })
+        .catch((error: any) => {
+          setLoading(false);
+          console.log(error);
+        });
+    }
   }
 
   const getStatusChipColor = (status: any) => {

@@ -17,15 +17,12 @@ import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/s
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import { Button } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import { APP_API } from 'src/@core/static/api.constant'
-import useSWR from 'swr'
-import { getFetcher } from 'src/services/fetcherService'
-import { setApiBaseUrl } from 'src/@core/services/interceptor'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant'
+import { AuthContext } from 'src/context/AuthContext'
 
 interface Props {
   hidden: boolean
@@ -45,11 +42,10 @@ const notifications: NotificationsType[] = [];
 const AppBarContent = (props: Props) => {
 
   const router = useRouter()
+  const authContext = useContext(AuthContext);
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props;
 
-  setApiBaseUrl();
-  const { data: organizationData } = useSWR<{ data: Organization[] }>(APP_API.OrgList, getFetcher);
 
   // State for selected organization
   const [organizationAnchorEl, setOrganizationAnchorEl] = useState<null | HTMLElement>(null);
@@ -69,11 +65,11 @@ const AppBarContent = (props: Props) => {
     const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!)
     if (orgId) {
       // Set the default organization to the first one in the list
-      organizationData?.data.forEach(org => {
+      authContext.organisations.forEach(org => {
         if (org.org_id === orgId) { setSelectedOrganization(org) }
       });
     }
-  }, [organizationData]);
+  }, [authContext.organisations]);
 
   // Handler for selecting an organization
   const handleOrganizationSelection = (organization: Organization) => {
@@ -114,7 +110,7 @@ const AppBarContent = (props: Props) => {
           open={organizationOpen}
           onClose={handleOrganizationClose}
         >
-          {organizationData?.data && organizationData.data.map((orgData: any, index: any) => (
+          {authContext.organisations && authContext.organisations.map((orgData: any, index: any) => (
             <MenuItem key={index} onClick={() => handleOrganizationSelection(orgData)}>
               {orgData.org_name}
             </MenuItem>
