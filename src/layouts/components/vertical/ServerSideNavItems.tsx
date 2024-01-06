@@ -33,7 +33,7 @@ const ServerSideNavItems = () => {
       data.data.workspaces.forEach((workspace: any) => {
         WorkspaceObj.children?.push({
           title: workspace.name,
-          path: `/workspace?project=${workspace.name}`
+          path: `/workspace?/${workspace.name}`
         })
       });
       WorkspaceObj.badgeContent = data.data.workspaces.length;

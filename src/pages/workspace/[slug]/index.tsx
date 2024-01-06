@@ -3,30 +3,23 @@ import { useRouter } from "next/router";
 import { useState, useEffect, SetStateAction } from "react";
 import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
-import Apps from "../apps";
+import Apps from "../../apps";
 import { Icon } from "@iconify/react";
 
 const Workspace = () => {
   const router = useRouter();
-  const { query } = router;
+  const { slug } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
   const [showApps, setShowApps] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
-  // Extract project identifier from the query parameter
-  const projectId = Array.isArray(query.project)
-    ? query.project[0]
-    : query.project;
-
   // State to manage the current project
-  const [currentProject, setCurrentProject] = useState<string | null>(
-    projectId || null
-  );
+  const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
 
   useEffect(() => {
     // Update the current project when the query parameter changes
-    setCurrentProject(projectId || null);
-  }, [projectId]);
+    setCurrentProject(slug);
+  }, [slug]);
 
   const handleShowApps = () => {
     setShowApps(true);
@@ -169,7 +162,6 @@ const Workspace = () => {
             <Box mt={4}>
               <Apps
                 selectedRow={null}
-                setSelectedRow={(value: SetStateAction<number | null>) => {}}
               />
             </Box>
           )}

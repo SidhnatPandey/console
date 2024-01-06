@@ -24,7 +24,7 @@ interface Row {
 
 interface AppListProps {
   selectedRow: number | null;
-  setSelectedRow: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedRow?: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const createData = ({
