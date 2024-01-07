@@ -10,15 +10,12 @@ import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 
-
-
 interface DestroyWorkspaceProps {
   loading: boolean;
   onConfirmDestroy: () => void; // Callback for confirming destruction
 }
 
 const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ loading, onConfirmDestroy }) => {
-//   const classes = useStyles();
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
 
   const handleDestroyWorkspace = () => {
@@ -33,16 +30,15 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ loading, onConfirmD
   };
 
   return (
-    <Card sx={{ margin: '-25px' }}>
+    <Card sx={{ margin: '-25px 0 0' }}>
       {loading ? (
         <CircularProgress /> // Replace with your loading/skeleton component
       ) : (
         <CardHeader
-          title="Workspace Settings"
           sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
         />
       )}
-      <CardContent sx={{ pt: (theme: { spacing: (arg0: number) => any; }) => `${theme.spacing(7)} !important` }}>
+      <CardContent sx={{ pt: (theme: { spacing: (arg0: number) => any; }) => `${theme.spacing(2)} !important` }}>
         <Grid container spacing={3}>
           {loading ? (
             <CircularProgress /> // Replace with your loading/skeleton component
@@ -80,7 +76,7 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ loading, onConfirmD
                 >
                   <Button
                     startIcon={<DeleteIcon />}
-                    // className={classes.destroyButton}
+                    style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
                     onClick={handleDestroyWorkspace}
                   >
                     Destroy

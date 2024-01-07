@@ -5,6 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
 import Apps from "../apps";
 import { Icon } from "@iconify/react";
+import WorkspaceSettings from "./WorkspaceSettings";
 
 const Workspace = () => {
   const router = useRouter();
@@ -101,6 +102,7 @@ const Workspace = () => {
           </Card>
           <br />
           <Tabs
+          sx={{ borderBottom: 'none' }}
             value={selectedTab}
             data-testid="tabs"
             aria-label="workspace tabs"
@@ -176,7 +178,7 @@ const Workspace = () => {
           {!showApps && (
             <Box mt={4}>
               {/* Render Settings component */}
-              <h2 data-testid="settingsContent">Settings Content</h2>
+              <h2 data-testid="settingsContent"><WorkspaceSettings/></h2>
               {/* Add your Settings component content here */}
             </Box>
           )}
