@@ -40,9 +40,9 @@ export const saveApp = (app: any) => {
   )
 }
 
-export const appList = () => {
+export const appList = (workspaceId: string) => {
   setApiBaseUrl();
-  const url = APP_API.appList;
+  const url = APP_API.appList + '?workspaceId=' + workspaceId;
   return get(url).then((response) => response?.data);
 };
 

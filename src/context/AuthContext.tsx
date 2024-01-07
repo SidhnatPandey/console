@@ -11,10 +11,10 @@ import axios from 'axios'
 import { env } from 'next-runtime-env';
 
 // ** Types
-import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
+import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation } from './types'
 import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
-import { getUserInfo } from 'src/services/userService';
+import { getOrganisations, getUserInfo, getWorkspcaes } from 'src/services/userService';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -23,7 +23,12 @@ const defaultProvider: AuthValuesType = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
-  logout: () => Promise.resolve()
+  logout: () => Promise.resolve(),
+  workspaces: [],
+  organisations: [],
+  setWorkspaces: () => null,
+  setOrganisations: () => null,
+  fetchWorkspcaes: () => null,
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -36,6 +41,9 @@ const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(defaultProvider.workspaces);
+  const [organisations, setOrganisations] = useState<Organisation[]>(defaultProvider.organisations);
+
 
   // ** Hooks
   const router = useRouter()
@@ -47,6 +55,8 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
         getUser();
+        fetchWorkspcaes(null);
+        fetchOrganisation();
         /* if (user) {
           setLoading(false)
           setUser({ ...user })
@@ -91,7 +101,6 @@ const AuthProvider = ({ children }: Props) => {
           params.rememberMe
             ? window.localStorage.setItem('isRemember', 'true')
             : null
-          const returnUrl = router.query.returnUrl
           const user: UserDataType = {
             id: '',
             role: response.data.data.user_data?.role,
@@ -124,15 +133,20 @@ const AuthProvider = ({ children }: Props) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.userName, JSON.stringify(user.username))
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
           params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
-
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
+          await fetchWorkspcaes(null);
+          fetchOrganisation();
           getUser();
-          router.replace(redirectURL as string)
         }
       })
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
+  }
+
+  const redirect = (name: string) => {
+    const returnUrl = router.query.returnUrl
+    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${name}`
+    router.replace(redirectURL as string)
   }
 
   const handleLogout = () => {
@@ -143,22 +157,42 @@ const AuthProvider = ({ children }: Props) => {
     router.push('/login')
   }
 
-  const values = {
-    user,
-    loading,
-    setUser,
-    setLoading,
-    login: handleLogin,
-    logout: handleLogout
-  }
-
   const getUser = () => {
+    setLoading(true)
     getUserInfo().then(response => {
       setLoading(false)
       setUser({ ...response?.data })
     })
   }
 
+  const fetchWorkspcaes = (name: string | null) => {
+    getWorkspcaes().then(response => {
+      setLoading(false);
+      setWorkspaces(response?.data.workspaces)
+      name ? redirect(name) : redirect(response?.data.workspaces[0].name);
+    })
+  }
+
+  const fetchOrganisation = () => {
+    getOrganisations().then(response => {
+      setLoading(false)
+      setOrganisations(response?.data)
+    })
+  }
+
+  const values = {
+    user,
+    loading,
+    setUser,
+    setLoading,
+    login: handleLogin,
+    logout: handleLogout,
+    workspaces,
+    setWorkspaces,
+    organisations,
+    setOrganisations,
+    fetchWorkspcaes
+  }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }

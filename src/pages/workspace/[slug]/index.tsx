@@ -1,33 +1,31 @@
 import { Card, Button, Box, Tabs } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
-import Apps from "../apps";
+import Apps from "../../apps";
 import { Icon } from "@iconify/react";
-import WorkspaceSettings from "./WorkspaceSettings";
+import WorkspaceSettings from "../WorkspaceSettings";
+import { AuthContext } from "src/context/AuthContext";
+import { Workspace } from "src/context/types";
 
 const Workspace = () => {
   const router = useRouter();
-  const { query } = router;
+  const { slug } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
   const [showApps, setShowApps] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-
-  // Extract project identifier from the query parameter
-  const projectId = Array.isArray(query.project)
-    ? query.project[0]
-    : query.project;
+  const authContext = useContext(AuthContext);
+  const [workspace, setWorkspace] = useState<Workspace>();
 
   // State to manage the current project
-  const [currentProject, setCurrentProject] = useState<string | null>(
-    projectId || null
-  );
+  const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
 
   useEffect(() => {
     // Update the current project when the query parameter changes
-    setCurrentProject(projectId || null);
-  }, [projectId]);
+    setCurrentProject(slug);
+    setWorkspace(authContext.workspaces.filter((workspace) => workspace.name === slug)?.[0])
+  }, [slug]);
 
   const handleShowApps = () => {
     setShowApps(true);
@@ -171,7 +169,7 @@ const Workspace = () => {
             <Box mt={4}>
               <Apps
                 selectedRow={null}
-                setSelectedRow={(value: SetStateAction<number | null>) => {}}
+                workspaceId={workspace?.id}
               />
             </Box>
           )}

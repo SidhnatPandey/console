@@ -38,7 +38,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Settings',
       icon: 'uil:setting',
-      path: '/settings'
+      path: '/user-list'
     },
     {
       title: 'Support',

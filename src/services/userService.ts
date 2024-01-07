@@ -39,3 +39,15 @@ export const deactivateUser = () => {
     (response) => response?.data
   );
 };
+
+export const getWorkspcaes = () => {
+  setApiBaseUrl();
+  return get(APP_API.getListOfWorkspaces).then(
+    (response) => response?.data)
+}
+
+export const getOrganisations = () => {
+  setApiBaseUrl();
+  return get(APP_API.OrgList).then(
+    (response) => response?.data)
+}

@@ -1,21 +1,21 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Workspace from 'src/pages/workspace';
+import Workspace from 'src/pages/workspace/[slug]';
 import { useRouter } from 'next/router';
 
-jest.mock('next/router', () => ({ 
-    useRouter: jest.fn(),
-  }));
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
 
 describe('Workspace Component', () => {
-    const mockRouter = {
-      query: { project: 'TestProject' },
-    };
-  
-    beforeEach(() => {
-      (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    });
+  const mockRouter = {
+    query: { project: 'TestProject' },
+  };
+
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue(mockRouter);
+  });
 
   test('renders Workspace component with card', async () => {
     render(<Workspace />);
@@ -25,7 +25,7 @@ describe('Workspace Component', () => {
 
   });
 
-  test('checks Workspace component are present or not',  () => {
+  test('checks Workspace component are present or not', () => {
     render(<Workspace />);
     expect(screen.getByTestId('button')).toBeInTheDocument();
     expect(screen.getByTestId('button2')).toBeInTheDocument();
@@ -48,13 +48,13 @@ describe('Workspace Component', () => {
 
   test('it should display the workspace component when the Apps button is clicked', async () => {
     render(<Workspace />);
-      const appsButton = screen.getByText('Apps');
+    const appsButton = screen.getByText('Apps');
     fireEvent.click(appsButton);
-  
+
     const workspaceComponent = await screen.getByText('Apps');
     expect(workspaceComponent).toHaveTextContent('Apps');
   });
-  
+
   test('displays correct project title and description', () => {
     render(<Workspace />);
     expect(screen.getByTestId('title')).toHaveTextContent('TestProject');
