@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -21,11 +21,15 @@ import TextField from "@mui/material/TextField";
 import { Avatar, FormControl, InputLabel, Select } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CustomChip from "src/@core/components/mui/chip";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from '@mui/icons-material/Close';
+import { getOrganisationsUserList, inviteUser, removeUserFromOrg } from "src/services/userService";
+import toast from "react-hot-toast";
 
-const WorkspaceSettings: React.FC = () => {
-  const workspaceSettingsData = [
+const UserList: React.FC = () => {
+
+  const users = [
     {
       id: 1,
       profileImageUrl: "../images/avatars/15.png",
@@ -49,7 +53,50 @@ const WorkspaceSettings: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formValues, setFormValues] = useState({ email: '', username: '', organization: '', role: '', workspace: '' });
+  // const [users, setUsers] = useState([]);
 
+  useEffect(() => {
+    settingsData();
+  }, []);
+
+  const settingsData = () => {
+    getOrganisationsUserList()
+      .then((response) => {
+        // setUsers(response.data); 
+      })
+      .catch((error) => {
+        
+      });
+  };
+
+  const removeOrgUsers = (userId: number) => {
+    removeUserFromOrg(userId)
+      .then((response) => {
+      })
+      .catch((error) => {
+      });
+  };
+    
+  const handleAddUserClick = () => {
+    setIsEditMode(false);
+    setFormValues({ email: '', username: '', organization: '', role: '', workspace: '' });
+    setAddUserDialogOpen(true);
+  };
+
+  const handleEditUser = (user: { emailAddress: any; userFullName: any; role: string; }) => {
+    setIsEditMode(true);
+    setFormValues({ 
+      email: user.emailAddress, 
+      username: user.userFullName, 
+      organization: '', 
+      role: user.role.toLowerCase(), 
+      workspace: '' 
+    });
+    setAddUserDialogOpen(true);
+  };
+  
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
     rowId: number
@@ -64,23 +111,52 @@ const WorkspaceSettings: React.FC = () => {
   };
 
   const handleOptionClick = (option: string) => {
-    console.log(`Option '${option}' clicked for row ${selectedRow}`);
+    if (selectedRow != null) {
+      const user = users.find(u => u.id === selectedRow);
+      if (user) {
+        if (option === "edit") {
+          handleEditUser(user);
+        } else if (option === "remove") {
+          removeOrgUsers(user.id); 
+        }
+      }
+    }
     handleMenuClose();
   };
-
-  const handleAddUserClick = () => {
-    setAddUserDialogOpen(true);
-  };
+  
 
   const handleAddUserDialogClose = () => {
     setAddUserDialogOpen(false);
   };
 
+  const onSubmit = (user: any) => {
+    inviteUser(user)
+      .then((response) => {
+        const message = response.message || "User added Successfully";
+        toast.success(message);
+      })
+      .catch((error) => {
+        if (error.response) {
+         
+          toast.error(error.response.data.message || "An error occurred on the server");
+        } else if (error.request) {
+          toast.error("No response was received from the server");
+        } else {
+          toast.error(error.message || "An error occurred while making the request");
+        }
+      });
+};
+
+
   const handleAddUser = () => {
-    console.log("User added");
+    const userData = {
+      email: formValues.email,
+      username: formValues.username,
+    };
+
+    onSubmit(userData); 
     handleAddUserDialogClose();
   };
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -150,11 +226,11 @@ const WorkspaceSettings: React.FC = () => {
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
-                ? workspaceSettingsData.slice(
+                ? users.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : workspaceSettingsData
+                : users
               ).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>
@@ -203,11 +279,11 @@ const WorkspaceSettings: React.FC = () => {
                       open={Boolean(anchorEl && selectedRow === row.id)}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem onClick={() => handleOptionClick("a")}>
-                        <VisibilityIcon style={{ marginRight: "10px" }} />
-                        View
+                      <MenuItem onClick={() => handleOptionClick("edit")}>
+                        <EditIcon style={{ marginRight: "10px" }} />
+                        Edit
                       </MenuItem>
-                      <MenuItem onClick={() => handleOptionClick("b")}>
+                      <MenuItem onClick={() => handleOptionClick("remove")}>
                         <DeleteIcon style={{ marginRight: "10px" }} />
                         Remove
                       </MenuItem>
@@ -221,7 +297,7 @@ const WorkspaceSettings: React.FC = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={workspaceSettingsData.length}
+          count={users.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -239,13 +315,28 @@ const WorkspaceSettings: React.FC = () => {
           },
         }}
       >
-        <DialogTitle>Add New User</DialogTitle>
+        <DialogTitle>{isEditMode ? 'Edit User' : 'Add/Invite New User'}
+          <IconButton
+            aria-label="close"
+            onClick={handleAddUserDialogClose}
+            style={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
           <TextField
             label="Email Address"
             fullWidth
+            value={formValues.email}
+            onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
             placeholder="Enter email address"
             style={{ marginBottom: "20px" }}
+            disabled={isEditMode}
           />
           <TextField
             label="Username"
@@ -289,15 +380,6 @@ const WorkspaceSettings: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={handleAddUserDialogClose}
-            color="primary"
-            size="large"
-            variant="contained"
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button
             onClick={handleAddUser}
             color="primary"
             size="large"
@@ -312,4 +394,4 @@ const WorkspaceSettings: React.FC = () => {
   );
 };
 
-export default WorkspaceSettings;
+export default UserList;
