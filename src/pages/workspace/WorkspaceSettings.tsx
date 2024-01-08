@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
@@ -72,11 +74,20 @@ const WorkspaceSettings: React.FC = () => {
     return (
         <>
             <Card sx={{ margin: '0 0 30px 0' }}>
-                <Typography variant="h3" gutterBottom>Workspace Settings</Typography>
+                <br />
+                <Typography variant="h3" gutterBottom sx={{ marginLeft: '25px', marginRight: '25px' }}>
+                    Workspace Settings
+                </Typography>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <Typography variant="h5">Workspace Users</Typography>
-                    <Button variant="contained" color="primary" onClick={handleAddUserClick} sx={{ marginLeft: 'auto' }}>Add User</Button>
+                    <Typography variant="h5" sx={{ marginLeft: '25px', color: 'rgba(0, 0, 0, 0.5)', fontWeight: 'normal' }}>
+                        Workspace Users
+                    </Typography>
+
+                    <Button variant="contained" color="primary" onClick={handleAddUserClick} sx={{ marginLeft: 'auto', marginRight: '20px' }}>
+                        Add User
+                    </Button>
                 </div>
+                <br />
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -135,6 +146,7 @@ const WorkspaceSettings: React.FC = () => {
                                             open={Boolean(anchorEl && selectedRow === row.id)}
                                             onClose={handleMenuClose}
                                         >
+                                            <MenuItem onClick={() => handleOptionClick('b')}>Edit</MenuItem>
                                             <MenuItem onClick={() => handleOptionClick('b')}>Remove</MenuItem>
                                         </Menu>
                                     </TableCell>
@@ -160,31 +172,38 @@ const WorkspaceSettings: React.FC = () => {
             <Dialog open={isAddUserDialogOpen} onClose={handleAddUserDialogClose} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        Add User
                         <IconButton onClick={handleAddUserDialogClose} sx={{ marginLeft: 'auto' }}>
                             <CloseIcon />
                         </IconButton>
                     </Typography>
                 </DialogTitle>
-                <DialogContent> 
+                <DialogContent>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Invite User</Typography>
                     <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>Add User to the workspace</Typography>
-                    <TextField label="User Email" fullWidth sx={{ marginTop: '16px' }} />
-                    <TextField
-                        label="Role"
-                        fullWidth
-                        select
-                        SelectProps={{
-                            native: false, // Set to true for using native select
-                        }}
-                        sx={{ marginTop: '16px', display: 'inline-block', width: 'calc(50% - 8px)', marginRight: '8px' }}
-                    >
-                        <MenuItem value="admin">Admin</MenuItem>
-                        <MenuItem value="workspaceAdmin">Workspace Admin</MenuItem>
-                        <MenuItem value="developer">Developer</MenuItem>
-                    </TextField>
-                    <Button onClick={handleAddUser} color="primary" sx={{ marginTop: '16px', display: 'inline-block' }}>Add</Button>
+                    <br />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <TextField label="User Email" fullWidth sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }} />
+                        <TextField
+                            label="Role"
+                            fullWidth
+                            select
+                            SelectProps={{
+                                native: false, // Set to true for using native select
+                            }}
+                            sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
+                        >
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="workspaceAdmin">Workspace Admin</MenuItem>
+                            <MenuItem value="developer">Developer</MenuItem>
+                        </TextField>
+                    </div>
+
+                    <Button variant="contained" onClick={handleAddUser} color="primary" sx={{ marginTop: '16px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
+                        Save
+                    </Button>
                 </DialogContent>
+
+
                 <DialogActions></DialogActions>
             </Dialog>
         </>

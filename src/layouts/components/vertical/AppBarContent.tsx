@@ -65,7 +65,7 @@ const AppBarContent = (props: Props) => {
     const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!)
     if (orgId) {
       // Set the default organization to the first one in the list
-      authContext.organisations.forEach(org => {
+      authContext.organisations?.forEach(org => {
         if (org.org_id === orgId) { setSelectedOrganization(org) }
       });
     }

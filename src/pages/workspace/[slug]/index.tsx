@@ -1,22 +1,23 @@
-import { Card, Button, Box, Tabs } from "@mui/material";
+import { Card, Button } from "@mui/material";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
 import { useRouter } from "next/router";
-import { useState, useEffect, SetStateAction, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
 import Apps from "../../apps";
-import { Icon } from "@iconify/react";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
 import { Workspace } from "src/context/types";
+import { Icon } from "@iconify/react";
 
 const Workspace = () => {
   const router = useRouter();
   const { slug } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
-  const [showApps, setShowApps] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const authContext = useContext(AuthContext);
-  const [workspace, setWorkspace] = useState<Workspace>();
+  const [workspace, setWorkspace] = useState<Workspace | undefined>();
 
   // State to manage the current project
   const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
@@ -24,16 +25,14 @@ const Workspace = () => {
   useEffect(() => {
     // Update the current project when the query parameter changes
     setCurrentProject(slug);
-    setWorkspace(authContext.workspaces.filter((workspace) => workspace.name === slug)?.[0])
+    setWorkspace(authContext.workspaces.find((workspace) => workspace.name === slug));
   }, [slug]);
 
   const handleShowApps = () => {
-    setShowApps(true);
     setSelectedTab(0);
   };
 
   const handleShowSettings = () => {
-    setShowApps(false);
     setSelectedTab(1);
   };
 
@@ -100,7 +99,7 @@ const Workspace = () => {
           </Card>
           <br />
           <Tabs
-          sx={{ borderBottom: 'none' }}
+            sx={{ borderBottom: 'none !important' }}
             value={selectedTab}
             data-testid="tabs"
             aria-label="workspace tabs"
@@ -111,7 +110,6 @@ const Workspace = () => {
             }}
           >
             <Button
-              data-testid="button"
               value={0}
               variant="text"
               onClick={handleShowApps}
@@ -120,8 +118,7 @@ const Workspace = () => {
                 color: selectedTab === 0 ? "white" : "primary.main",
                 fontWeight: selectedTab === 0 ? "bold" : "normal",
                 "&:hover": {
-                  backgroundColor:
-                    selectedTab === 0 ? "primary.dark" : "inherit",
+                  backgroundColor: selectedTab === 0 ? "primary.dark" : "inherit",
                 },
               }}
             >
@@ -129,16 +126,15 @@ const Workspace = () => {
                 data-testid="apps"
                 icon={"uit:create-dashboard"}
                 style={{
-                  fontSize: "20px", // Adjust the size as needed
-                  marginRight: "8px", // Add some spacing between the icon and text
-                  transform: "rotate(-90deg)", // Rotate the icon 90 degrees to the right
+                  fontSize: "20px",
+                  marginRight: "8px",
+                  transform: "rotate(-90deg)",
                 }}
               />
               Apps
             </Button>
 
             <Button
-              data-testid="button2"
               value={1}
               variant="text"
               onClick={handleShowSettings}
@@ -147,8 +143,7 @@ const Workspace = () => {
                 color: selectedTab === 1 ? "white" : "primary.main",
                 fontWeight: selectedTab === 1 ? "bold" : "normal",
                 "&:hover": {
-                  backgroundColor:
-                    selectedTab === 1 ? "primary.dark" : "inherit",
+                  backgroundColor: selectedTab === 1 ? "primary.dark" : "inherit",
                 },
               }}
             >
@@ -165,7 +160,7 @@ const Workspace = () => {
           </Tabs>
 
           {/* Show/Hide Apps or Settings component based on state */}
-          {showApps && (
+          {selectedTab === 0 && (
             <Box mt={4}>
               <Apps
                 selectedRow={null}
@@ -173,7 +168,7 @@ const Workspace = () => {
               />
             </Box>
           )}
-          {!showApps && (
+          {selectedTab === 1 && (
             <Box mt={4}>
               {/* Render Settings component */}
               <h2 data-testid="settingsContent"><WorkspaceSettings/></h2>
