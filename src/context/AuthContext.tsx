@@ -143,9 +143,9 @@ const AuthProvider = ({ children }: Props) => {
       })
   }
 
-  const redirect = (name: string) => {
+  const redirect = (id: string) => {
     const returnUrl = router.query.returnUrl
-    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${name}`
+    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
     router.replace(redirectURL as string)
   }
 
@@ -168,8 +168,9 @@ const AuthProvider = ({ children }: Props) => {
   const fetchWorkspaces = (name: string | null) => {
     getWorkspaces().then(response => {
       setLoading(false);
-      setWorkspaces(response?.data.workspaces)
-      name ? redirect(name) : redirect(response?.data.workspaces[0].name);
+      setWorkspaces(response?.data.workspaces);
+      const newWorkspcae = response?.data.workspaces.find((workspace: { name: string | null; }) => workspace.name === name);
+      name ? redirect(newWorkspcae.id) : redirect(response?.data.workspaces[0].id);
     })
   }
 

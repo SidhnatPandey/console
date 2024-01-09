@@ -24,8 +24,9 @@ const Workspace = () => {
 
   useEffect(() => {
     // Update the current project when the query parameter changes
-    setCurrentProject(slug);
-    setWorkspace(authContext.workspaces.find((workspace) => workspace.name === slug));
+    const workspace = authContext.workspaces.find((workspace) => workspace.id === slug);
+    setWorkspace(workspace);
+    setCurrentProject(workspace?.name);
   }, [slug]);
 
   const handleShowApps = () => {
@@ -171,7 +172,7 @@ const Workspace = () => {
           {selectedTab === 1 && (
             <Box mt={4}>
               {/* Render Settings component */}
-              <h2 data-testid="settingsContent"><WorkspaceSettings/></h2>
+              <h2 data-testid="settingsContent"><WorkspaceSettings /></h2>
               {/* Add your Settings component content here */}
             </Box>
           )}
