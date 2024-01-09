@@ -438,7 +438,7 @@ const UserList: React.FC = () => {
           />
 
           <FormControl fullWidth style={{ marginBottom: "20px" }}>
-            <InputLabel id="role-select-label">Role</InputLabel>
+            <InputLabel id="role-select-label">Select Role</InputLabel>
             <Select
               labelId="role-select-label"
               id="role-select"
@@ -451,7 +451,7 @@ const UserList: React.FC = () => {
           </FormControl>
 
           <FormControl fullWidth>
-            <InputLabel id="workspace-select-label">Workspace</InputLabel>
+            <InputLabel id="workspace-select-label">Select Workspace</InputLabel>
             <Select
               labelId="workspace-select-label"
               id="workspace-select"
