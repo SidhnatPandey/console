@@ -169,8 +169,8 @@ const AuthProvider = ({ children }: Props) => {
     getWorkspaces().then(response => {
       setLoading(false);
       setWorkspaces(response?.data.workspaces);
-      const newWorkspcae = response?.data.workspaces.find((workspace: { name: string | null; }) => workspace.name === name);
-      name ? redirect(newWorkspcae.id) : redirect(response?.data.workspaces[0].id);
+      const newWorkspace = response?.data.workspaces.find((workspace: { name: string | null; }) => workspace.name === name);
+      name ? redirect(newWorkspace.id) : redirect(response?.data.workspaces[0].id);
     })
   }
 

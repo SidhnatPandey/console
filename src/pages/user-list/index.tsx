@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -38,9 +38,17 @@ import {
 import toast from "react-hot-toast";
 import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
+import { AuthContext } from "src/context/AuthContext";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 const UserList: React.FC = () => {
 
+  const authContext = useContext(AuthContext);
+
+  const [org, setOrg] = useState<{
+    org_id: string,
+    org_name: string
+  }>();
   const [isRemoveConfirmationOpen, setRemoveConfirmationOpen] = useState(false);
   const [userToRemove, setUserToRemove] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -58,6 +66,13 @@ const UserList: React.FC = () => {
     workspace: "",
   });
   const [users, setUsers] = useState<UserDataType[]>([]);
+
+  useEffect(() => {
+    const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
+    const org = authContext.organisations.filter((org) => org.org_id === orgId)[0];
+    setOrg(org);
+    console.log(org);
+  }, [authContext])
 
   useEffect(() => {
     settingsData();
@@ -403,8 +418,10 @@ const UserList: React.FC = () => {
           <TextField
             label="Organization"
             fullWidth
+            disabled
             placeholder="Enter organization"
             style={{ marginBottom: "20px" }}
+            value={org?.org_name}
           />
 
           <FormControl fullWidth style={{ marginBottom: "20px" }}>
@@ -430,9 +447,10 @@ const UserList: React.FC = () => {
               label="Workspace"
               placeholder="Select workspace"
             >
-              <MenuItem value="workspace1">Workspace 1</MenuItem>
-              <MenuItem value="workspace2">Workspace 2</MenuItem>
-              <MenuItem value="workspace3">Workspace 3</MenuItem>
+              {authContext.workspaces.length && authContext.workspaces.map((workspace) => (
+                <MenuItem value={workspace.id} key={workspace.id}>{workspace.name}</MenuItem>
+              ))}
+
             </Select>
           </FormControl>
         </DialogContent>
