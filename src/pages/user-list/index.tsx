@@ -18,6 +18,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
+import ConfirmationDialog from "src/component/ConfirmationDialog";
 import {
   Avatar,
   DialogContentText,
@@ -181,7 +182,7 @@ const UserList: React.FC = () => {
     onSubmit(formValues);
     handleAddUserDialogClose();
   };
-  
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -336,41 +337,19 @@ const UserList: React.FC = () => {
                       <MenuItem onClick={() => handleOptionClick("remove")}>
                         <DeleteIcon style={{ marginRight: "10px" }} />
                         Remove
-                        <Dialog
-                          open={isRemoveConfirmationOpen}
-                          onClose={() => setRemoveConfirmationOpen(false)}
-                          aria-labelledby="alert-dialog-title"
-                          aria-describedby="alert-dialog-description"
-                        >
-                          <DialogTitle id="alert-dialog-title">
-                            {"Remove User"}
-                          </DialogTitle>
-                          <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                              Are you sure you want to remove this user?
-                            </DialogContentText>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button
-                              onClick={() => setRemoveConfirmationOpen(false)}
-                              color="primary"
-                            >
-                              No
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                if (userToRemove) removeOrgUsers(userToRemove);
-                                setRemoveConfirmationOpen(false);
-                              }}
-                              color="primary"
-                              autoFocus
-                            >
-                              Yes
-                            </Button>
-                          </DialogActions>
-                        </Dialog>
                       </MenuItem>
                     </Menu>
+                    <ConfirmationDialog
+                          open={isRemoveConfirmationOpen}
+                          onConfirm={() => {
+                            if (userToRemove !== null) {
+                              removeOrgUsers(userToRemove);
+                              setRemoveConfirmationOpen(false);
+                            }
+                          }}
+                          onCancel={() => setRemoveConfirmationOpen(false)}
+                          message="Are you sure you want to remove this user?"
+                        />
                   </TableCell>
                 </TableRow>
               ))}
@@ -451,7 +430,9 @@ const UserList: React.FC = () => {
           </FormControl>
 
           <FormControl fullWidth>
-            <InputLabel id="workspace-select-label">Select Workspace</InputLabel>
+            <InputLabel id="workspace-select-label">
+              Select Workspace
+            </InputLabel>
             <Select
               labelId="workspace-select-label"
               id="workspace-select"
