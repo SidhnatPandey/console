@@ -42,7 +42,7 @@ export const saveApp = (app: any) => {
 
 export const appList = (workspaceId: string) => {
   setApiBaseUrl();
-  const url = APP_API.appList + '?workspaceId=' + workspaceId;
+  const url = APP_API.appList + '?workspace_id=' + workspaceId;
   return get(url).then((response) => response?.data);
 };
 

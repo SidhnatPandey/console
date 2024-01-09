@@ -14,7 +14,7 @@ import { env } from 'next-runtime-env';
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation } from './types'
 import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
-import { getOrganisations, getUserInfo, getWorkspcaes } from 'src/services/userService';
+import { getOrganisations, getUserInfo, getWorkspaces } from 'src/services/userService';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -28,7 +28,7 @@ const defaultProvider: AuthValuesType = {
   organisations: [],
   setWorkspaces: () => null,
   setOrganisations: () => null,
-  fetchWorkspcaes: () => null,
+  fetchWorkspaces: () => null,
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
         getUser();
-        fetchWorkspcaes(null);
+        fetchWorkspaces(null);
         fetchOrganisation();
         /* if (user) {
           setLoading(false)
@@ -133,7 +133,7 @@ const AuthProvider = ({ children }: Props) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.userName, JSON.stringify(user.username))
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
           params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
-          await fetchWorkspcaes(null);
+          await fetchWorkspaces(null);
           fetchOrganisation();
           getUser();
         }
@@ -165,8 +165,8 @@ const AuthProvider = ({ children }: Props) => {
     })
   }
 
-  const fetchWorkspcaes = (name: string | null) => {
-    getWorkspcaes().then(response => {
+  const fetchWorkspaces = (name: string | null) => {
+    getWorkspaces().then(response => {
       setLoading(false);
       setWorkspaces(response?.data.workspaces)
       name ? redirect(name) : redirect(response?.data.workspaces[0].name);
@@ -191,7 +191,7 @@ const AuthProvider = ({ children }: Props) => {
     setWorkspaces,
     organisations,
     setOrganisations,
-    fetchWorkspcaes
+    fetchWorkspaces
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

@@ -24,7 +24,7 @@ const CreateWorkspace: React.FC = () => {
     workspace(data)
       .then((response) => {
         toast.success("Workspace Created Successfully");
-        authContext.fetchWorkspcaes(data.workspace_name);
+        authContext.fetchWorkspaces(data.workspace_name);
         reset();
       })
       .catch((error) => {
