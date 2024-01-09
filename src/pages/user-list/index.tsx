@@ -18,17 +18,26 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
-import { Avatar, FormControl, InputLabel, Select } from "@mui/material";
+import {
+  Avatar,
+  DialogContentText,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CustomChip from "src/@core/components/mui/chip";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from '@mui/icons-material/Close';
-import { getOrganisationsUserList, inviteUser, removeUserFromOrg } from "src/services/userService";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  getOrganisationsUserList,
+  inviteUser,
+  removeUserFromOrg,
+} from "src/services/userService";
 import toast from "react-hot-toast";
 
 const UserList: React.FC = () => {
-
   const users = [
     {
       id: 1,
@@ -39,23 +48,31 @@ const UserList: React.FC = () => {
       status: "Active",
     },
     {
-        id: 2,
-        profileImageUrl: "../images/avatars/1.png",
-        userFullName: "Shivani Shekhawat",
-        role: "User",
-        emailAddress: "shivani@example.com",
-        status: "Inactive",
-      },
+      id: 2,
+      profileImageUrl: "../images/avatars/1.png",
+      userFullName: "Shivani Shekhawat",
+      role: "User",
+      emailAddress: "shivani@example.com",
+      status: "Inactive",
+    },
   ];
 
+  const [isRemoveConfirmationOpen, setRemoveConfirmationOpen] = useState(false);
+  const [userToRemove, setUserToRemove] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedRow, setSelectedRow] = React.useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [formValues, setFormValues] = useState({ email: '', username: '', organization: '', role: '', workspace: '' });
-  // const [users, setUsers] = useState([]);
+  const [formValues, setFormValues] = useState({
+    email: "",
+    username: "",
+    organization: "",
+    role: "",
+    workspace: "",
+  });
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     settingsData();
@@ -64,39 +81,45 @@ const UserList: React.FC = () => {
   const settingsData = () => {
     getOrganisationsUserList()
       .then((response) => {
-        // setUsers(response.data); 
+        setUser(response.data);
       })
-      .catch((error) => {
-        
-      });
+      .catch((error) => {});
   };
 
   const removeOrgUsers = (userId: number) => {
     removeUserFromOrg(userId)
-      .then((response) => {
-      })
-      .catch((error) => {
-      });
-  };
-    
-  const handleAddUserClick = () => {
-    setIsEditMode(false);
-    setFormValues({ email: '', username: '', organization: '', role: '', workspace: '' });
-    setAddUserDialogOpen(true);
+      .then((response) => {})
+      .catch((error) => {});
   };
 
-  const handleEditUser = (user: { emailAddress: any; userFullName: any; role: string; }) => {
-    setIsEditMode(true);
-    setFormValues({ 
-      email: user.emailAddress, 
-      username: user.userFullName, 
-      organization: '', 
-      role: user.role.toLowerCase(), 
-      workspace: '' 
+  const handleAddUserClick = () => {
+    setIsEditMode(false);
+    setFormValues({
+      email: "",
+      username: "",
+      organization: "",
+      role: "",
+      workspace: "",
     });
     setAddUserDialogOpen(true);
   };
-  
+
+  const handleEditUser = (user: {
+    emailAddress: any;
+    userFullName: any;
+    role: string;
+  }) => {
+    setIsEditMode(true);
+    setFormValues({
+      email: user.emailAddress,
+      username: user.userFullName,
+      organization: "",
+      role: user.role.toLowerCase(),
+      workspace: "",
+    });
+    setAddUserDialogOpen(true);
+  };
+
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
     rowId: number
@@ -112,18 +135,17 @@ const UserList: React.FC = () => {
 
   const handleOptionClick = (option: string) => {
     if (selectedRow != null) {
-      const user = users.find(u => u.id === selectedRow);
+      const user = users.find((u) => u.id === selectedRow);
       if (user) {
         if (option === "edit") {
           handleEditUser(user);
         } else if (option === "remove") {
-          removeOrgUsers(user.id); 
+          handleRemoveConfirmation(selectedRow);
         }
       }
     }
     handleMenuClose();
   };
-  
 
   const handleAddUserDialogClose = () => {
     setAddUserDialogOpen(false);
@@ -137,26 +159,29 @@ const UserList: React.FC = () => {
       })
       .catch((error) => {
         if (error.response) {
-         
-          toast.error(error.response.data.message || "An error occurred on the server");
+          toast.error(
+            error.response.data.message || "An error occurred on the server"
+          );
         } else if (error.request) {
           toast.error("No response was received from the server");
         } else {
-          toast.error(error.message || "An error occurred while making the request");
+          toast.error(
+            error.message || "An error occurred while making the request"
+          );
         }
       });
-};
+  };
 
+  const handleRemoveConfirmation = (userId: number) => {
+    setUserToRemove(userId);
+    setRemoveConfirmationOpen(true);
+  };
 
   const handleAddUser = () => {
-    const userData = {
-      email: formValues.email,
-      username: formValues.username,
-    };
-
-    onSubmit(userData); 
+    onSubmit(formValues);
     handleAddUserDialogClose();
   };
+  
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -208,19 +233,44 @@ const UserList: React.FC = () => {
                 }}
               >
                 <TableCell>
-                  <Typography variant="subtitle1" style={{ textTransform: "none" }}>User Full Name</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ textTransform: "none" }}
+                  >
+                    User Full Name
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle1"style={{ textTransform: "none" }}>Role</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ textTransform: "none" }}
+                  >
+                    Role
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle1"style={{ textTransform: "none" }}>Email Address</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ textTransform: "none" }}
+                  >
+                    Email Address
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle1"style={{ textTransform: "none" }}>Status</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ textTransform: "none" }}
+                  >
+                    Status
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle1"style={{ textTransform: "none" }}>Action</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ textTransform: "none" }}
+                  >
+                    Action
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -286,6 +336,39 @@ const UserList: React.FC = () => {
                       <MenuItem onClick={() => handleOptionClick("remove")}>
                         <DeleteIcon style={{ marginRight: "10px" }} />
                         Remove
+                        <Dialog
+                          open={isRemoveConfirmationOpen}
+                          onClose={() => setRemoveConfirmationOpen(false)}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            {"Remove User"}
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              Are you sure you want to remove this user?
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => setRemoveConfirmationOpen(false)}
+                              color="primary"
+                            >
+                              No
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                if (userToRemove) removeOrgUsers(userToRemove);
+                                setRemoveConfirmationOpen(false);
+                              }}
+                              color="primary"
+                              autoFocus
+                            >
+                              Yes
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
                       </MenuItem>
                     </Menu>
                   </TableCell>
@@ -315,12 +398,13 @@ const UserList: React.FC = () => {
           },
         }}
       >
-        <DialogTitle>{isEditMode ? 'Edit User' : 'Add/Invite New User'}
+        <DialogTitle>
+          {isEditMode ? "Edit User" : "Add/Invite New User"}
           <IconButton
             aria-label="close"
             onClick={handleAddUserDialogClose}
             style={{
-              position: 'absolute',
+              position: "absolute",
               right: 8,
               top: 8,
             }}
@@ -333,7 +417,9 @@ const UserList: React.FC = () => {
             label="Email Address"
             fullWidth
             value={formValues.email}
-            onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
+            onChange={(e) =>
+              setFormValues({ ...formValues, email: e.target.value })
+            }
             placeholder="Enter email address"
             style={{ marginBottom: "20px" }}
             disabled={isEditMode}
