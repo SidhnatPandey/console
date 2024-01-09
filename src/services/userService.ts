@@ -60,7 +60,7 @@ export const getOrganisationsUserList = () => {
 
 export const removeUserFromOrg = (userId: any) => {
   setApiBaseUrl();
-  const urlWithUserId = `${APP_API.removeOrgUser}/${userId}`;
+  const urlWithUserId = APP_API.removeOrgUser + userId;
   return get(urlWithUserId).then(response => response?.data);
 };
 
