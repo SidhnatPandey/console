@@ -25,7 +25,7 @@ const Workspace = () => {
   useEffect(() => {
     // Update the current project when the query parameter changes
     setCurrentProject(slug);
-    setWorkspace(authContext.workspaces.find((workspace) => workspace.name === slug));
+    setWorkspace(authContext.workspaces?.find((workspace) => workspace.name === slug));
   }, [slug]);
 
   const handleShowApps = () => {
