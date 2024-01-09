@@ -40,7 +40,7 @@ export const deactivateUser = () => {
   );
 };
 
-export const getWorkspcaes = () => {
+export const getWorkspaces = () => {
   setApiBaseUrl();
   return get(APP_API.getListOfWorkspaces).then(
     (response) => response?.data)
