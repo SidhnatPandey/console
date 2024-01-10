@@ -22,6 +22,7 @@ import ConfirmationDialog from "src/component/ConfirmationDialog";
 import {
   Avatar,
   FormControl,
+  FormHelperText,
   InputLabel,
   Select,
 } from "@mui/material";
@@ -40,14 +41,21 @@ import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
 import { AuthContext } from "src/context/AuthContext";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { useForm, Controller } from "react-hook-form";
 
 const UserList: React.FC = () => {
-
   const authContext = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const [org, setOrg] = useState<{
-    org_id: string,
-    org_name: string
+    org_id: string;
+    org_name: string;
   }>();
   const [isRemoveConfirmationOpen, setRemoveConfirmationOpen] = useState(false);
   const [userToRemove, setUserToRemove] = useState<string | null>(null);
@@ -58,21 +66,18 @@ const UserList: React.FC = () => {
   const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState({
-    email: "",
-    username: "",
-    organization: "",
-    role: "",
-    workspace: "",
-  });
   const [users, setUsers] = useState<UserDataType[]>([]);
 
   useEffect(() => {
-    const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
-    const org = authContext.organisations.filter((org) => org.org_id === orgId)[0];
+    const orgId = JSON.parse(
+      localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
+    );
+    const org = authContext.organisations.filter(
+      (org) => org.org_id === orgId
+    )[0];
     setOrg(org);
     console.log(org);
-  }, [authContext])
+  }, [authContext]);
 
   useEffect(() => {
     settingsData();
@@ -80,11 +85,10 @@ const UserList: React.FC = () => {
 
   const settingsData = () => {
     setLoading(true);
-    getOrganisationsUserList()
-      .then((response) => {
-        setUsers(response.data.users);
-        setLoading(false);
-      })
+    getOrganisationsUserList().then((response) => {
+      setUsers(response.data.users);
+      setLoading(false);
+    });
   };
 
   const removeOrgUsers = () => {
@@ -104,7 +108,7 @@ const UserList: React.FC = () => {
 
   const handleAddUserClick = () => {
     setIsEditMode(false);
-    setFormValues({
+    reset({
       email: "",
       username: "",
       organization: "",
@@ -114,12 +118,11 @@ const UserList: React.FC = () => {
     setAddUserDialogOpen(true);
   };
 
-  const handleEditUser = (user: UserDataType) => {
+  const handleEditUserClick = (user: UserDataType) => {
     setIsEditMode(true);
-    setFormValues({
+    reset({
       email: user.email,
       username: user.username,
-      organization: "",
       role: user.role.toLowerCase(),
       workspace: "",
     });
@@ -139,16 +142,6 @@ const UserList: React.FC = () => {
     setSelectedRow(null);
   };
 
-  const handleOptionClick = (option: string) => {
-    if (selectedRow != null) {
-      const user = users.find((u) => u.id === selectedRow);
-      if (user) {
-        handleEditUser(user);
-      }
-    }
-    handleMenuClose();
-  };
-
   const handleAddUserDialogClose = () => {
     setAddUserDialogOpen(false);
   };
@@ -158,6 +151,8 @@ const UserList: React.FC = () => {
       .then((response) => {
         const message = response.message || "User added Successfully";
         toast.success(message);
+        setAddUserDialogOpen(false);
+        settingsData();
       })
       .catch((error) => {
         if (error.response) {
@@ -177,11 +172,6 @@ const UserList: React.FC = () => {
   const handleRemoveConfirmation = (userId: string) => {
     setUserToRemove(userId);
     setRemoveConfirmationOpen(true);
-  };
-
-  const handleAddUser = () => {
-    onSubmit(formValues);
-    handleAddUserDialogClose();
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -277,23 +267,48 @@ const UserList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {(users.length > 0
-                ? (
-                  users.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  ).map((row) => (
+              {users.length > 0 ? (
+                users
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
                     <TableRow key={row.id}>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <Avatar
-                            alt={toTitleCase(row.user_info.first_name)}
-                            src={"data:image/jpeg;base64," + row.user_info.profile_picture}
-                            sx={{ marginRight: 2 }}
-                          />
+                            alt={toTitleCase(
+                              row.user_info.first_name || row.username
+                            )}
+                            src={
+                              row.user_info.profile_picture
+                                ? `data:image/jpeg;base64,${row.user_info.profile_picture}`
+                                : undefined
+                            }
+                            sx={{ marginRight: 2, fontSize: "2rem" }}
+                          >
+                            {!row.user_info.profile_picture &&
+                              (row.user_info.first_name ||
+                              row.user_info.last_name
+                                ? `${
+                                    row.user_info.first_name
+                                      ? row.user_info.first_name[0]
+                                      : ""
+                                  }${
+                                    row.user_info.last_name
+                                      ? row.user_info.last_name[0]
+                                      : ""
+                                  }`
+                                : row.username
+                                ? row.username[0]
+                                : "")}
+                          </Avatar>
+
                           <div>
-                            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                              {toTitleCase(row.user_info.first_name)} {toTitleCase(row.user_info.last_name)}
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              {toTitleCase(row.user_info.first_name)}{" "}
+                              {toTitleCase(row.user_info.last_name)}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
                               @{row.username}
@@ -317,9 +332,9 @@ const UserList: React.FC = () => {
                           aria-label="more"
                           aria-controls="long-menu"
                           aria-haspopup="true"
-                          onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                            handleMenuClick(e, row.id)
-                          }
+                          onClick={(
+                            e: React.MouseEvent<HTMLElement, MouseEvent>
+                          ) => handleMenuClick(e, row.id)}
                         >
                           <MoreVertIcon />
                         </IconButton>
@@ -330,11 +345,15 @@ const UserList: React.FC = () => {
                           open={Boolean(anchorEl && selectedRow === row.id)}
                           onClose={handleMenuClose}
                         >
-                          <MenuItem onClick={() => handleOptionClick("edit")}>
+                          <MenuItem onClick={() => handleEditUserClick(row)}>
                             <EditIcon style={{ marginRight: "10px" }} />
                             Edit
                           </MenuItem>
-                          <MenuItem onClick={() => handleRemoveConfirmation(row.user_id)}>
+                          <MenuItem
+                            onClick={() =>
+                              handleRemoveConfirmation(row.user_id)
+                            }
+                          >
                             <DeleteIcon style={{ marginRight: "10px" }} />
                             Remove
                           </MenuItem>
@@ -342,22 +361,20 @@ const UserList: React.FC = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                )
-                : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      style={{
-                        textAlign: 'center',
-                        fontSize: '18px',
-                        paddingTop: '50px', // Increase the top padding
-                        paddingBottom: '50px', // Increase the bottom padding
-                      }}
-                    >
-                      {loading ? 'Loading ...' : 'No Users'}
-                    </TableCell>
-
-                  </TableRow>)
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    style={{
+                      textAlign: "center",
+                      fontSize: "18px",
+                      paddingTop: "50px",
+                      paddingBottom: "50px",
+                    }}
+                  >
+                    {loading ? "Loading ..." : "No Users"}
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
@@ -377,94 +394,107 @@ const UserList: React.FC = () => {
       <Dialog
         open={isAddUserDialogOpen}
         onClose={handleAddUserDialogClose}
-        PaperProps={{
-          style: {
-            width: "30%",
-          },
-        }}
+        PaperProps={{ style: { width: "30%" } }}
       >
-        <DialogTitle>
-          {isEditMode ? "Edit User" : "Add/Invite New User"}
-          <IconButton
-            aria-label="close"
-            onClick={handleAddUserDialogClose}
-            style={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Email Address"
-            fullWidth
-            value={formValues.email}
-            onChange={(e) =>
-              setFormValues({ ...formValues, email: e.target.value })
-            }
-            placeholder="Enter email address"
-            style={{ marginBottom: "20px" }}
-            disabled={isEditMode}
-          />
-          <TextField
-            label="Username"
-            fullWidth
-            placeholder="Enter username"
-            style={{ marginBottom: "20px" }}
-          />
-          <TextField
-            label="Organization"
-            fullWidth
-            disabled
-            placeholder="Enter organization"
-            style={{ marginBottom: "20px" }}
-            value={org?.org_name}
-          />
-
-          <FormControl fullWidth style={{ marginBottom: "20px" }}>
-            <InputLabel id="role-select-label">Select Role</InputLabel>
-            <Select
-              labelId="role-select-label"
-              id="role-select"
-              label="Role"
-              placeholder="Select role"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle>
+            {isEditMode ? "Edit User" : "Add/Invite New User"}
+            <IconButton
+              aria-label="close"
+              onClick={handleAddUserDialogClose}
+              style={{ position: "absolute", right: 8, top: 8 }}
             >
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="user">User</MenuItem>
-            </Select>
-          </FormControl>
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Email Address"
+              fullWidth
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+              placeholder="Enter Valid email address"
+              style={{ marginBottom: "20px" }}
+              disabled={isEditMode}
+              error={!!errors.email}
+            />
+            <TextField
+              label="Username"
+              fullWidth
+              {...register("username")}
+              placeholder="Enter username"
+              style={{ marginBottom: "20px" }}
+              disabled={isEditMode}
+            />
+            <TextField
+              label="Organization"
+              fullWidth
+              disabled
+              placeholder="Enter organization"
+              style={{ marginBottom: "20px" }}
+              value={org?.org_name}
+            />
 
-          <FormControl fullWidth>
-            <InputLabel id="workspace-select-label">
-              Select Workspace
-            </InputLabel>
-            <Select
-              labelId="workspace-select-label"
-              id="workspace-select"
-              label="Workspace"
-              placeholder="Select workspace"
+            <FormControl fullWidth style={{ marginBottom: "20px" }}>
+              <InputLabel id="role-select-label">Select Role</InputLabel>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="role-select-label"
+                    id="role-select"
+                    label="Role"
+                  >
+                    <MenuItem value="admin">Admin</MenuItem>
+                    <MenuItem value="user">User</MenuItem>
+                  </Select>
+                )}
+              />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel id="workspace-select-label">
+                Select Workspace
+              </InputLabel>
+              <Controller
+                name="workspace"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="workspace-select-label"
+                    id="workspace-select"
+                    label="Workspace"
+                  >
+                    {authContext.workspaces.length &&
+                      authContext.workspaces.map((workspace) => (
+                        <MenuItem value={workspace.id} key={workspace.id}>
+                          {workspace.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="primary"
+              size="large"
+              variant="contained"
+              type="submit"
             >
-              {authContext.workspaces.length && authContext.workspaces.map((workspace) => (
-                <MenuItem value={workspace.id} key={workspace.id}>{workspace.name}</MenuItem>
-              ))}
-
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleAddUser}
-            color="primary"
-            size="large"
-            variant="contained"
-            type="submit"
-          >
-            Save
-          </Button>
-        </DialogActions>
+              Save
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
 
       <ConfirmationDialog
