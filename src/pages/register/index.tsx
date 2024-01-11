@@ -86,6 +86,11 @@ const validationRules = [
     regex: /^.{8,}$/,
     message: "Minimum length of 8 characters",
   },
+  {
+    regex: /^[!@$%&*?]+$/,
+    message: "only (@, $, !, %, *, ?, or &) as the special characters",
+  }
+
 ];
 
 const Register = () => {
@@ -370,7 +375,7 @@ const Register = () => {
                 error={touched.password && !isValidPassword}
                 helperText={
                   touched.password && !isValidPassword
-                    ? "Password does not meet the requirements. Please ensure it has:\n" +
+                    ? "Password does not meet the requirements. Please ensure it contains:\n" +
                     validationRules
                       .filter((rule) => !rule.regex.test(formData.password))
                       .map((rule) => rule.message)
