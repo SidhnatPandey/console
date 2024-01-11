@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -22,8 +22,7 @@ import ConfirmationDialog from "src/component/ConfirmationDialog";
 import {
   Avatar,
   FormControl,
-  FormHelperText,
-  InputLabel,
+    InputLabel,
   Select,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -129,13 +128,18 @@ const UserList: React.FC = () => {
     setAddUserDialogOpen(true);
   };
 
-  const handleMenuClick = (
-    event: React.MouseEvent<HTMLElement>,
-    rowId: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedRow(rowId);
-  };
+  const handleMenuClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>, rowId: string) => {
+      setAnchorEl(event.currentTarget);
+      setSelectedRow(rowId);
+    },
+    []
+  );
+
+  const handleRemoveConfirmation = useCallback((userId: string) => {
+    setUserToRemove(userId);
+    setRemoveConfirmationOpen(true);
+  }, []);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -149,9 +153,14 @@ const UserList: React.FC = () => {
   const onSubmit = (user: any) => {
     inviteUser(user)
       .then((response) => {
-        const message = response.message || "User added Successfully";
+        const successMessage = isEditMode
+          ? "User edited successfully"
+          : "User invited successfully";
+
+        const message = response.message || successMessage;
         toast.success(message);
         setAddUserDialogOpen(false);
+        handleMenuClose();
         settingsData();
       })
       .catch((error) => {
@@ -167,11 +176,6 @@ const UserList: React.FC = () => {
           );
         }
       });
-  };
-
-  const handleRemoveConfirmation = (userId: string) => {
-    setUserToRemove(userId);
-    setRemoveConfirmationOpen(true);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -288,17 +292,19 @@ const UserList: React.FC = () => {
                           >
                             {!row.user_info.profile_picture &&
                               (row.user_info.first_name ||
-                                row.user_info.last_name
-                                ? `${row.user_info.first_name
-                                  ? row.user_info.first_name[0]
-                                  : ""
-                                }${row.user_info.last_name
-                                  ? row.user_info.last_name[0]
-                                  : ""
-                                }`
+                              row.user_info.last_name
+                                ? `${
+                                    row.user_info.first_name
+                                      ? row.user_info.first_name[0]
+                                      : ""
+                                  }${
+                                    row.user_info.last_name
+                                      ? row.user_info.last_name[0]
+                                      : ""
+                                  }`
                                 : row.username
-                                  ? row.username[0]
-                                  : "")}
+                                ? row.username[0]
+                                : "")}
                           </Avatar>
 
                           <div>
@@ -400,7 +406,9 @@ const UserList: React.FC = () => {
             {isEditMode ? "Edit User" : "Add/Invite New User"}
             <IconButton
               aria-label="close"
-              onClick={handleAddUserDialogClose}
+              onClick={() => {
+                handleAddUserDialogClose(), handleMenuClose();
+              }}
               style={{ position: "absolute", right: 8, top: 8 }}
             >
               <CloseIcon />
@@ -451,6 +459,8 @@ const UserList: React.FC = () => {
                     id="role-select"
                     label="Role"
                   >
+                    <MenuItem value="admin"> Workspace Admin</MenuItem>
+
                     <MenuItem value="admin">Admin</MenuItem>
                     <MenuItem value="user">User</MenuItem>
                   </Select>
@@ -499,7 +509,9 @@ const UserList: React.FC = () => {
       <ConfirmationDialog
         open={isRemoveConfirmationOpen}
         onConfirm={removeOrgUsers}
-        onCancel={() => { setRemoveConfirmationOpen(false), handleMenuClose() }}
+        onCancel={() => {
+          setRemoveConfirmationOpen(false), handleMenuClose();
+        }}
         message="Are you sure you want to remove this user?"
       />
     </>
