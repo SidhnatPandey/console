@@ -133,7 +133,7 @@ const AuthProvider = ({ children }: Props) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.userName, JSON.stringify(user.username))
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
           params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
-          await fetchWorkspaces(null);
+          await fetchWorkspaces(null, true);
           fetchOrganisation();
           getUser();
         }
@@ -165,12 +165,14 @@ const AuthProvider = ({ children }: Props) => {
     })
   }
 
-  const fetchWorkspaces = (name: string | null) => {
+  const fetchWorkspaces = (name: string | null, navigate = false) => {
     getWorkspaces().then(response => {
       setLoading(false);
       setWorkspaces(response?.data.workspaces);
-      const newWorkspace = response?.data.workspaces.find((workspace: { name: string | null; }) => workspace.name === name);
-      name ? redirect(newWorkspace.id) : redirect(response?.data.workspaces[0].id);
+      const newWorkspace = response?.data.workspaces?.find((workspace: { name: string | null; }) => workspace.name === name);
+      if (navigate || name) {
+        name ? redirect(newWorkspace.id) : redirect(response?.data?.workspaces[0].id);
+      }
     })
   }
 

@@ -284,22 +284,21 @@ const UserList: React.FC = () => {
                                 : undefined
                             }
                             sx={{ marginRight: 2, fontSize: "2rem" }}
+                            style={{ alignItems: "normal" }}
                           >
                             {!row.user_info.profile_picture &&
                               (row.user_info.first_name ||
-                              row.user_info.last_name
-                                ? `${
-                                    row.user_info.first_name
-                                      ? row.user_info.first_name[0]
-                                      : ""
-                                  }${
-                                    row.user_info.last_name
-                                      ? row.user_info.last_name[0]
-                                      : ""
-                                  }`
+                                row.user_info.last_name
+                                ? `${row.user_info.first_name
+                                  ? row.user_info.first_name[0]
+                                  : ""
+                                }${row.user_info.last_name
+                                  ? row.user_info.last_name[0]
+                                  : ""
+                                }`
                                 : row.username
-                                ? row.username[0]
-                                : "")}
+                                  ? row.username[0]
+                                  : "")}
                           </Avatar>
 
                           <div>
@@ -500,7 +499,7 @@ const UserList: React.FC = () => {
       <ConfirmationDialog
         open={isRemoveConfirmationOpen}
         onConfirm={removeOrgUsers}
-        onCancel={() => setRemoveConfirmationOpen(false)}
+        onCancel={() => { setRemoveConfirmationOpen(false), handleMenuClose() }}
         message="Are you sure you want to remove this user?"
       />
     </>
