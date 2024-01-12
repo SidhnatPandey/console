@@ -4,6 +4,7 @@ import { Card, Grid, TextField, Button } from "@mui/material";
 import toast from "react-hot-toast";
 import { workspace } from "src/services/appService";
 import { AuthContext } from "src/context/AuthContext";
+import Toaster from "src/utils/toaster";
 
 type FormData = {
   workspace_name: string;
@@ -23,12 +24,18 @@ const CreateWorkspace: React.FC = () => {
   const onSubmit = (data: FormData) => {
     workspace(data)
       .then((response) => {
-        toast.success("Workspace Created Successfully");
-        authContext.fetchWorkspcaes(data.workspace_name);
-        reset();
+        if (response.status === 201) {
+          Toaster.successToast("Workspace created successfully");
+          authContext.fetchWorkspaces(data.workspace_name); 
+          reset(); 
+        } else if (response.status === 409) {
+          Toaster.infoToast("Workspace name already exists for current organization");
+        } else {
+          toast.error("An unexpected error occurred");
+        }
       })
       .catch((error) => {
-        toast.error(error.message || "An error occurred");
+        Toaster.errorToast(error.message || "An error occurred");
       });
   };
 

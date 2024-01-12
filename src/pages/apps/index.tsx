@@ -104,7 +104,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
   const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -117,9 +117,9 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
     if (workspace_id) {
       appList(workspace_id)
         .then((response: { data: Row[] }) => {
+          setLoading(false);
           const data = response?.data
           setAppListData(data);
-          setLoading(false);
         })
         .catch((error: any) => {
           setLoading(false);

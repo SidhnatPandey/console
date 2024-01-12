@@ -97,6 +97,6 @@ export const deleteUserFromWorkspace = (workspaceId: string) => {
 
 export const orguser = () => {
   setApiBaseUrl();
-  const url = `${APP_API.OrgUser}` ;
+  const url = `${APP_API.orgUserList}` ;
   return get(url).then(response => response?.data);
 }

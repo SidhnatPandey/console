@@ -73,13 +73,12 @@ const AppBarContent = (props: Props) => {
 
   // Handler for selecting an organization
   const handleOrganizationSelection = (organization: Organization) => {
-    // Update the selected organization
+    handleOrganizationClose();
+   if(selectedOrganization?.org_id !== organization.org_id){
     setSelectedOrganization(organization);
     localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(organization.org_id))
     window.location.reload();
-    // Close the dropdown
-    handleOrganizationClose();
-    // Additional actions if needed
+   }
   };
 
   return (

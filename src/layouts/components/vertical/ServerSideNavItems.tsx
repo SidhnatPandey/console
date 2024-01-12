@@ -30,7 +30,7 @@ const ServerSideNavItems = () => {
       authContext?.workspaces.forEach((workspace: any) => {
         WorkspaceObj.children?.push({
           title: workspace.name,
-          path: `/workspace/${workspace.name}`
+          path: `/workspace/${workspace.id}`
         })
       });
       WorkspaceObj.badgeContent = authContext.workspaces.length.toString();
