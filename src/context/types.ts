@@ -43,14 +43,14 @@ export type AuthValuesType = {
   setLoading: (value: boolean) => void
   setUser: (value: UserDataType | null) => void
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void,
-  workspaces: WorkspaceType[],
+  workspaces: Workspace[],
   organisations: Organisation[],
-  setWorkspaces: (value: WorkspaceType[]) => void,
+  setWorkspaces: (value: Workspace[]) => void,
   setOrganisations: (value: Organisation[]) => void,
   fetchWorkspaces: (value: string | null) => void
 }
 
-export type WorkspaceType = {
+export type Workspace = {
   id: string,
   role: string,
   name: string
