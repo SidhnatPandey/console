@@ -8,7 +8,6 @@ import IconifyIcon from "src/@core/components/icon";
 import Apps from "../../apps";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
-import { Workspace } from "src/context/types";
 import { Icon } from "@iconify/react";
 
 const Workspace = () => {
@@ -17,8 +16,7 @@ const Workspace = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const authContext = useContext(AuthContext);
-  const [workspace, setWorkspace] = useState<Workspace | undefined>();
-
+  const [workspace, setWorkspace] = useState<any>();
   // State to manage the current project
   const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
 
@@ -79,18 +77,17 @@ const Workspace = () => {
                 />
               ) : (
                 <>
-                  <span
-                    data-testid="description"
-                    style={{ marginTop: "3.5rem" }}
-                  >
+                  <span data-testid="description" style={{ marginTop: "3.5rem" }}>
                     {loading ? (
-                      <Skeleton
-                        width={400}
-                        height={20}
-                        style={{ marginBottom: "35px" }}
-                      />
+                      <Skeleton width={400} height={20} style={{ marginBottom: "35px" }} />
                     ) : (
-                      <>This workspace is for {currentProject}</>
+                      <>
+                        {workspace && workspace.description ? (
+                          <p>{workspace.description}</p>
+                        ) : (
+                         <> No description available for this workspace.</>
+                        )}
+                      </>
                     )}
                   </span>
                 </>
@@ -164,14 +161,14 @@ const Workspace = () => {
             <Box mt={4}>
               <Apps
                 selectedRow={null}
-                workspaceId={workspace?.id}
+                workspace_id={workspace?.id}
               />
             </Box>
           )}
           {selectedTab === 1 && (
             <Box mt={4}>
               {/* Render Settings component */}
-              <h2 data-testid="settingsContent"><WorkspaceSettings/></h2>
+              <h2 data-testid="settingsContent"><WorkspaceSettings workspaceId={workspace}  /></h2>
               {/* Add your Settings component content here */}
             </Box>
           )}

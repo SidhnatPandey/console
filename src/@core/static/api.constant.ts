@@ -35,7 +35,12 @@ export const APP_API = {
     //Workspace
     createWorkspace: 'workspace',
     getListOfWorkspaces: 'workspace',
+    getListOfUsersWorkspaces: 'workspace/all',
+    addUser: 'workspace/addUser',
+    removeUser: 'workspace/removeUser',
+    delete: 'workspace/delete',
 
     //Organisation
     OrgList: 'organization',
+    OrgUser: 'organization/users'
 }

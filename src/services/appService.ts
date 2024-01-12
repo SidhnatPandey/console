@@ -42,7 +42,7 @@ export const saveApp = (app: any) => {
 
 export const appList = (workspaceId: string) => {
   setApiBaseUrl();
-  const url = APP_API.appList + '?workspaceId=' + workspaceId;
+  const url = APP_API.appList + '?workspace_id=' + workspaceId;
   return get(url).then((response) => response?.data);
 };
 
@@ -60,11 +60,43 @@ export const destroyApp = (id: string) => {
   return deleteCall(url).then((response) => response?.data);
 }
 
-export const workspace = (workspace: any) => {
+export const workspace = (workspace: any) => {  
   setApiBaseUrl();
   return post(APP_API.createWorkspace, workspace).then(
     (response) => response?.data
   )
 }
 
+export const getListOfUsersWorkspaces = (workspaceId: string) => {
+  setApiBaseUrl(); 
+  const url = `${APP_API.getListOfUsersWorkspaces}?workspace_id=${workspaceId}`;
+  return get(url).then((response) => response?.data);
+};
 
+export const addUserToWorkspace = (payload: any) => {
+  setApiBaseUrl();
+  const url = `${APP_API.addUser  }`;
+  return post(url, payload  ).then(
+    (response) => response?.data
+  );
+};
+
+export const removeUserFromWorkspace = (payload: any ) => {
+  setApiBaseUrl();
+  const url = `${APP_API.removeUser  }`;
+  return post(url, payload).then(
+    (response) => response?.data
+  );
+};
+
+export const deleteUserFromWorkspace = (workspaceId: string) => {
+  setApiBaseUrl();
+  const url = `${APP_API.delete}?workspace_id=${workspaceId}` ;
+  return get(url).then(response => response?.data);
+};
+
+export const orguser = () => {
+  setApiBaseUrl();
+  const url = `${APP_API.OrgUser}` ;
+  return get(url).then(response => response?.data);
+}

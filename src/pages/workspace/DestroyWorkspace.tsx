@@ -9,30 +9,41 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import ConfirmationDialog from "src/component/ConfirmationDialog";
+import { deleteUserFromWorkspace } from 'src/services/appService';
+
 
 interface DestroyWorkspaceProps {
   loading: boolean;
-  onConfirmDestroy: () => void; // Callback for confirming destruction
+  onConfirmDestroy: () => void; 
+  workspaceId: any
 }
 
-const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ loading, onConfirmDestroy }) => {
+const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId , onConfirmDestroy , loading  }) => {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
 
+
   const handleDestroyWorkspace = () => {
-    // Open the confirmation dialog
     setConfirmationDialogOpen(true);
   };
 
   const confirmDestroyWorkspace = () => {
-    // Implement any necessary logic on confirmation
-    onConfirmDestroy();
-    setConfirmationDialogOpen(false);
+    deleteUserFromWorkspace(workspaceId.id) 
+      .then((response) => {
+        console.log("Workspace deleted successfully:", response);
+        onConfirmDestroy();
+        setConfirmationDialogOpen(false);
+      })
+      .catch((error) => {
+        // Handle error response (if needed)
+        console.error("Error deleting workspace:", error);
+        setConfirmationDialogOpen(false);
+      });
   };
 
   return (
     <Card sx={{ margin: '-25px 0 0' }}>
       {loading ? (
-        <CircularProgress /> // Replace with your loading/skeleton component
+        <CircularProgress /> 
       ) : (
         <CardHeader
           sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
