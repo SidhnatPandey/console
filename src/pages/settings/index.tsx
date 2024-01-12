@@ -132,7 +132,8 @@ const UserList: React.FC = () => {
     control,
     formState: { errors },
     reset,
-    setValue
+    setValue,
+    getValues
   } = useForm();
 
   const [org, setOrg] = useState<{
@@ -263,7 +264,7 @@ const UserList: React.FC = () => {
     switch (status) {
       case "Active":
         return "success";
-      case "Inactive":
+      case "Deleted":
         return "error";
       default:
         return "warning";
@@ -476,6 +477,7 @@ const UserList: React.FC = () => {
               placeholder="Enter username"
               style={{ marginBottom: "20px" }}
               disabled={isEditMode || existingUser}
+              value={isEditMode || existingUser ? getValues("username") : ""}
             />
             <TextField
               label="Organization"
