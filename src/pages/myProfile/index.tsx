@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import UserProfileHeader from "./UserProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import Profile from "./Profile";
+import { AuthContext } from "src/context/AuthContext";
 
-function index() {
-  const [allUserData, setAllUserData] = useState({
-  });
-  
+const Index = () => {
+  const authContext = useContext(AuthContext);
+
   return (
     <>
-      <UserProfileHeader setAllUserData={setAllUserData}/>
+      <UserProfileHeader profileData={authContext.user} />
       <ProfileTabs />
-      <Profile user_info={allUserData} />
+      <Profile profileData={authContext.user} />
     </>
   );
 }
 
-export default index;
+export default Index;

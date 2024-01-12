@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import ProcessDetails from "./ProcessDetails";
-import ProcessTile from "./ProcessTile"; // Import the ProcessTile component
-import { supplyChainSteps } from "src/services/dashboardService";
+import ProcessTile from "./ProcessTile";
+import useSWR from "swr";
+import { getFetcher } from "src/services/fetcherService";
 import Skeleton from 'react-loading-skeleton';
 import { Card, CardHeader, CardContent, Typography } from "@mui/material";
+import { APP_API } from "src/@core/static/api.constant";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 interface AppCreationFlow {
   supplyChainData: {
@@ -17,56 +20,29 @@ interface AppCreationFlow {
     steps: { status: string; step_name: string }[];
   };
   loading: boolean;
-  timer: number,
-  gitRepo: string | undefined,
-  gitBranch: string | undefined,
-  hanldeChildTrigger: any
+  timer: number;
+  gitRepo: string | undefined;
+  gitBranch: string | undefined;
 }
 
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch, hanldeChildTrigger }) => {
-  const [selectedTile, setSelectedTile] = useState<string>(""); // Set the initial value to "Clone"
-  const [supplyChainStepData, setSupplyChainStepData] = useState<any>(null); // State to hold the fetched data
-  const [stepLoading, setStepLoading] = useState<boolean>(false); // State to hold the loading status
+const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
+  const [selectedTile, setSelectedTile] = useState<string>("clone");
+
   const handleTileClick = (stage: string) => {
     localStorage.setItem('cStage', stage);
     setSelectedTile(stage);
   };
-  const handleDetailsTrigger = (stage: string) => {
-    getSupplyChainStep(
-      supplyChainData.id,
-      stage
-    );
-    hanldeChildTrigger();
-  }
 
-  useEffect(() => {
-    if (supplyChainData) {
-      setStepLoading(true);
-      getSupplyChainStep(
-        supplyChainData.id,
-        supplyChainData.steps[0].step_name
-      );
-      const intervalId = setInterval(() => {
-        const stage = localStorage.getItem('cStage') || '';
-        getSupplyChainStep(
-          supplyChainData.id,
-          stage
-        );
-      }, timer);
-      return () => clearInterval(intervalId);
-    }
-  }, [loading]);
+  let key = supplyChainData?.id ? APP_API.supplyChainSteps : undefined;
+  key = key?.replace('{runId}', supplyChainData?.id);
+  key = key?.replace('{stage}', selectedTile);
+  setApiBaseUrl();
+  const { data: supplyChainStepData, mutate: getStepData } = useSWR(key, getFetcher, {
+    refreshInterval: timer
+  });
 
-  const getSupplyChainStep = (id: string, step: string) => {
+  const getSupplyChainStep = (step: string) => {
     handleTileClick(step);
-    supplyChainSteps(id, step)
-      .then((response: any) => {
-        setSupplyChainStepData(response.data);
-        setStepLoading(false);
-      })
-      .catch((error) => {
-        setStepLoading(false);
-      });
   };
 
   const getSupplyChain = () => {
@@ -77,8 +53,8 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
             stage={process.step_name}
             status={process.status}
             onClick={() => {
-              if (process.status.toLowerCase() != "waiting") {
-                getSupplyChainStep(supplyChainData.id, process.step_name);
+              if (process.status.toLowerCase() !== "waiting") {
+                getSupplyChainStep(process.step_name);
               }
             }}
             isSelected={selectedTile === process.step_name}
@@ -91,12 +67,12 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
             />
           )}
         </React.Fragment>
-       ))}
-       </div> : <div 
-       style={{ fontSize: '20px', padding: "40px", margin: "0 auto", textAlign: 'center' }}> 
-       No Data Available
-       </div>)
-     }
+      ))}
+    </div> : <div
+      style={{ fontSize: '20px', padding: "40px", margin: "0 auto", textAlign: 'center' }}>
+      No Data Available
+    </div>)
+  };
 
   return (
     <div>
@@ -112,13 +88,12 @@ const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, 
         />}
 
         <CardContent sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }} style={{ paddingBottom: '0px' }}>
-
           {loading ? <div className={`scroll-container`}>
             <Skeleton width={120} height={120} style={{ margin: '5px', marginRight: '80px', borderRadius: '30px' }} count={6} inline /></div> : getSupplyChain()}
         </CardContent>
       </Card>
       <br></br>
-      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={handleDetailsTrigger} supplyChainStepData={supplyChainStepData} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading || stepLoading} />}
+      {(loading || (!loading && supplyChainData)) && <ProcessDetails handleTrigger={getStepData} supplyChainStepData={supplyChainStepData?.data} gitRepo={gitRepo} gitBranch={gitBranch} loading={loading} />}
     </div>
   );
 };

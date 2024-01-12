@@ -4,34 +4,31 @@ import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import MuiTabList, { TabListProps } from "@mui/lab/TabList";
 import { styled } from "@mui/material/styles";
-
-//icons
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
 import GridViewIcon from "@mui/icons-material/GridView";
 import SettingsIcon from "@mui/icons-material/Settings";
-import InsightsIcon from "@mui/icons-material/Insights";
 import AppsIcon from "@mui/icons-material/Apps";
 import Skeleton from "react-loading-skeleton";
-
-// ** Custom Components Imports
 import Icon from "src/@core/components/icon";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import PendingIcon from "@mui/icons-material/Pending";
 import LoopIcon from "@mui/icons-material/Loop";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-
 import { SyntheticEvent, useEffect, useState } from "react";
 import AppSummary from "./AppSummary";
 import AppCreationFlow from "./AppCreationFlow";
-import { supplyChainRuns } from "src/services/dashboardService";
 import { useRouter } from "next/router";
 import { appDetails } from "src/services/appService";
 import { env } from "next-runtime-env";
 import "react-loading-skeleton/dist/skeleton.css";
 import AppLogs from "./AppLogs";
 import DestroyApp from "./DestroyApp";
+import { APP_API } from "src/@core/static/api.constant";
+import useSWR from "swr";
+import { getFetcher } from "src/services/fetcherService";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -64,26 +61,29 @@ interface App {
   last_deployed: string
 }
 
-const AppDashboard = () => {
+const AppDashboard: React.FC<{ appId: string }> = () => {
   const router = useRouter();
   const timer = Number(env("NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER")) || 60000;
 
-  //states
   const [value, setValue] = useState<string>("1");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
+  const [loading, setLoading] = useState<boolean>(false);
+  // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
+
+  let key = APP_API.supplyChainRuns;
+  const updatedAppId: any = router?.query?.appId;
+  key = key?.replace('{appId}', updatedAppId)
+  setApiBaseUrl();
+  const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
+    refreshInterval: timer
+  });
 
   useEffect(() => {
     if (router?.query?.appId) {
       getAppDetails(router?.query?.appId);
-      getSupplyChainRun(router?.query?.appId);
     }
-    const intervalId = setInterval(() => {
-      getSupplyChainRun(router.query.appId);
-    }, timer); // Call every 60 seconds (adjust as needed)
-    return () => clearInterval(intervalId);
-  }, [router]);
+  }, [router]
+  );
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -91,25 +91,12 @@ const AppDashboard = () => {
 
   const handleTriggerFromChild = () => {
     getAppDetails(router?.query?.appId);
-    getSupplyChainRun(router?.query?.appId);
   }
 
   const getAppDetails = (id: any) => {
     appDetails(id)
       .then((response: any) => {
         setAppData(response.data);
-        //setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-      });
-  };
-
-  const getSupplyChainRun = (id: any) => {
-    supplyChainRuns(id)
-      .then((response: any) => {
-        setSupplyChainRunData(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -244,20 +231,20 @@ const AppDashboard = () => {
                     <span className="mr-2">
                       {" "}
                       <StackedBarChartOutlinedIcon className="icon-bottom" data-testid="stage-icon" />
-                      <b data-testid="stage"> Current Stage : {supplyChainRunData?.current_stage || "N/A"} </b>
+                      <b data-testid="stage"> Current Stage : {supplyChainRunsData?.data?.current_stage || "N/A"} </b>
                     </span>
                     <span className="mr-2" data-testid="status-icon">
                       {" "}
-                      {getIcon(supplyChainRunData?.status)}{" "}
+                      {getIcon(supplyChainRunsData?.data?.status)}{" "}
                       <b data-testid="status">
-                        {supplyChainRunData?.status || "N/A"}
+                        {supplyChainRunsData?.data?.status || "N/A"}
                       </b>
                     </span>
                     <span className="mr-2" data-testid="website-link">
                       {" "}
                       <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      {supplyChainRunData?.url ? <a href={supplyChainRunData?.url.startsWith('http://') || supplyChainRunData?.url.startsWith('https://') ? supplyChainRunData?.url : `https://${supplyChainRunData?.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
-                        {supplyChainRunData?.url}
+                      {supplyChainRunsData?.data?.url ? <a href={supplyChainRunsData?.data?.url.startsWith('http://') || supplyChainRunsData?.data?.url.startsWith('https://') ? supplyChainRunsData?.data?.url : `https://${supplyChainRunsData?.data?.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
+                        {supplyChainRunsData?.data?.url}
                       </a> : "N/A"}
                     </span>
                   </>
@@ -310,10 +297,9 @@ const AppDashboard = () => {
           <AppCreationFlow
             loading={loading}
             timer={timer}
-            supplyChainData={supplyChainRunData}
+            supplyChainData={supplyChainRunsData?.data}
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
-            hanldeChildTrigger={handleTriggerFromChild}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
@@ -322,7 +308,7 @@ const AppDashboard = () => {
           </Typography>
         </TabPanel>
         <TabPanel value="3" sx={{ p: 0 }} data-testid="tab-panel-3">
-          <AppLogs appName={appData?.id} />
+          <AppLogs appId={appData?.id ? appData.id : '0'} />
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>

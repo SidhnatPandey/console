@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect, useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -17,32 +17,32 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Paper, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { deactivateUser, getUserProfile, postUserProfile } from "src/services/userService";
+import { Paper } from "@mui/material";
+import { deactivateUser, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
-import { useAuth } from "src/hooks/useAuth";
+import ConfirmationDialog from "../../component/ConfirmationDialog";
+import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
+import { CircularProgress } from '@mui/material';
+
 
 interface Data {
-  user_info: any;
-  email: string;
-  state: string;
-  address: string;
-  country: string;
-  lastName: string;
-  currency: string;
-  language: string;
-  timezone: string;
-  firstName: string;
-  organization: string;
-  phoneNumber: string;
-  zipCode: number;
-  city: string;
-  username: string;
-  user_id: string;
-  role: string;
-  profile_picture: string;
+  user_info?: any;
+  email?: string;
+  state?: string;
+  address?: string;
+  country?: string;
+  lastName?: string;
+  firstName?: string;
+  organization?: string;
+  phoneNumber?: string;
+  zipCode?: number;
+  city?: string;
+  username?: string;
+  user_id?: string;
+  role?: string;
+  profile_picture?: string;
 }
 
 const initialData: Data = {
@@ -53,10 +53,7 @@ const initialData: Data = {
   zipCode: 0,
   lastName: "",
   city: "",
-  currency: "",
   firstName: "",
-  language: "",
-  timezone: "",
   country: "",
   organization: "",
   email: "",
@@ -100,65 +97,47 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }));
 
 const TabAccount = () => {
+  const authContext = useContext(AuthContext); // Access the auth context
   const [formData, setFormData] = useState<Data>(initialData);
   const [imgSrc, setImgSrc] = useState<string>('');
   const [originalData, setOriginalData] = useState<Data>(initialData); // Added for storing original data
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
 
-  const fetchData = () => {
-    getUserProfile()
-      .then((response: any) => {
-        const responseData = response?.data;
-        const profilePicture = 'data:image/jpeg;base64,' + responseData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
-        setFormData({
-          ...formData,
-          role: responseData?.role,
-          user_id: responseData?.user_id,
-          state: responseData?.user_info?.address?.state,
-          phoneNumber: responseData?.user_info?.phone_number,
-          address: responseData?.user_info?.address?.street_address,
-          zipCode: responseData?.user_info?.address?.zip_code,
-          lastName: responseData?.user_info?.last_name,
-          city: responseData?.user_info?.address?.city,
-          firstName: responseData?.user_info?.first_name,
-          country: responseData?.user_info?.address?.country,
-          organization: responseData?.org,
-          email: responseData?.email,
-          username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
-        });
-        setImgSrc(profilePicture);
+  const setData = () => {
+    const userData = authContext?.user;
+    const profilePicture = 'data:image/jpeg;base64,' + userData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
+    const data: Data = {
+      ...formData,
+      role: userData?.role,
+      user_id: userData?.user_id,
+      state: userData?.user_info?.address?.state,
+      phoneNumber: userData?.user_info?.phone_number,
+      address: userData?.user_info?.address?.street_address,
+      zipCode: userData?.user_info?.address?.zip_code,
+      lastName: userData?.user_info?.last_name,
+      city: userData?.user_info?.address?.city,
+      firstName: userData?.user_info?.first_name,
+      country: userData?.user_info?.address?.country,
+      organization: userData?.org,
+      email: userData?.email,
+      username: userData?.username,
+      profile_picture: userData?.user_info?.profile_picture,
+    }
 
-        setOriginalData({
-          ...formData,
-          role: responseData?.role,
-          user_id: responseData?.user_id,
-          state: responseData?.user_info?.address?.state,
-          phoneNumber: responseData?.user_info?.phone_number,
-          address: responseData?.user_info?.address?.street_address,
-          zipCode: responseData?.user_info?.address?.zip_code,
-          lastName: responseData?.user_info?.last_name,
-          city: responseData?.user_info?.address?.city,
-          firstName: responseData?.user_info?.first_name,
-          country: responseData?.user_info?.address?.country,
-          organization: responseData?.org,
-          email: responseData?.email,
-          username: responseData?.username,
-          profile_picture: responseData?.user_info?.profile_picture,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    setFormData(data);
+    setOriginalData(data);
+    setImgSrc(profilePicture);
+  }
 
   useEffect(() => {
-    fetchData();
+    setData();
   }, []);
 
   const handleSaveChanges = () => {
+    setIsSubmitting(true);
     const uprofile = {
       role: formData.role,
       user_info: {
@@ -179,17 +158,18 @@ const TabAccount = () => {
 
     postUserProfile(uprofile)
       .then((response: any) => {
+        setIsSubmitting(false);
         if (response.status === 200) {
+          // Update the user context immediately after a successful profile update
+          authContext.setUser(response.data);
           toast.success('Profile updated successfully!');
-          setOriginalData({ ...formData });
-          const updatedProfilePicture = uprofile.user_info?.profile_picture || imgSrc;
-          setImgSrc(updatedProfilePicture);
           router.push('/myProfile');
         } else {
           toast.error('Profile update failed. Please try again.');
         }
       })
       .catch((error) => {
+        setIsSubmitting(false);
         if (error.response && error.response.status === 400) {
           toast.error('Bad request. Please check your data and try again.');
         } else {
@@ -241,7 +221,22 @@ const TabAccount = () => {
     });
   };
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value,
+    }));
+
+    // Update user context
+    if (authContext.user) {
+      const updatedUser = {
+        ...authContext.user,
+        user_info: {
+          ...authContext.user.user_info,
+          [field]: value,
+        },
+      };
+      authContext.setUser(updatedUser);
+    }
   };
 
   const handleCancelChanges = () => {
@@ -253,28 +248,19 @@ const TabAccount = () => {
     setIsCheckboxChecked(!isCheckboxChecked);
   };
 
-  const { logout } = useAuth();
-  const handleDeactivate = () => {
-    logout();
-  };
-
   const handleDeactivateAccount = () => {
     setConfirmationDialogOpen(false);
     deactivateUser()
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success("Account deactivated successfully!");
-          handleDeactivate();
-          // Redirect or perform additional actions after deactivation
+          toast.success('Account deactivated successfully!');
+          authContext.logout(); // Assuming you have a logout method in your auth context
         } else {
-          toast.error("Account deactivation failed. Please try again.");
+          toast.error('Account deactivation failed. Please try again.');
         }
       })
-      .catch((error) => {
-        console.error(error);
-        toast.error(
-          "An error occurred during account deactivation. Please try again later."
-        );
+      .catch(() => {
+        toast.error('An error occurred. Please try again later.');
       });
   };
 
@@ -400,17 +386,20 @@ const TabAccount = () => {
                   placeholder="231465"
                   value={formData.zipCode}
                   onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                  id="zipCode"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Country</InputLabel>
+                  <InputLabel id="country-label" htmlFor="country">
+                    Country
+                  </InputLabel>
                   <Select
+                    id="country"
+                    labelId="country-label"  // Added labelId to associate with the label
                     label="Country"
                     value={formData.country}
-                    onChange={(e) =>
-                      handleFormChange("country", e.target.value)
-                    }
+                    onChange={(e) => handleFormChange("country", e.target.value)}
                   >
                     {Countries.map((country) => (
                       <MenuItem key={country.code} value={country.name}>
@@ -419,6 +408,7 @@ const TabAccount = () => {
                     ))}
                   </Select>
                 </FormControl>
+
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -441,6 +431,7 @@ const TabAccount = () => {
                   sx={{ mr: 4 }}
                   onClick={handleSaveChanges}
                 >
+                  {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                   Save Changes
                 </Button>
                 <Button
@@ -535,71 +526,12 @@ const TabAccount = () => {
         </Card>
       </Grid>
       {/* Confirmation Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth="xs"
+      <ConfirmationDialog
         open={isConfirmationDialogOpen}
-        onClose={() => setConfirmationDialogOpen(false)}
-      >
-        <DialogContent
-          sx={{
-            pb: (theme) => `${theme.spacing(6)} !important`,
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pt: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              textAlign: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              justifyContent: "center",
-              "& svg": { mb: 6, color: "error.main" },
-            }}
-          >
-            {/* Assuming you have an Icon component */}
-            {/* <Icon icon="tabler:alert-circle" style={{ fontSize: 5.5 }} /> */}
-            <Typography variant="body1" color="textPrimary">
-              Are you sure you want to deactivate your account?
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            px: (theme) => [
-              `${theme.spacing(5)} !important`,
-              `${theme.spacing(15)} !important`,
-            ],
-            pb: (theme) => [
-              `${theme.spacing(8)} !important`,
-              `${theme.spacing(12.5)} !important`,
-            ],
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{ mr: 2 }}
-            onClick={() => handleDeactivateAccount()}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setConfirmationDialogOpen(false)}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleDeactivateAccount}
+        onCancel={() => setConfirmationDialogOpen(false)}
+        message="Are you sure you want to deactivate your account?"
+      />
     </Box>
   );
 };

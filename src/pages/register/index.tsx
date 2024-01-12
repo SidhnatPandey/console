@@ -18,12 +18,11 @@ import { FormControl } from "@mui/material";
 import CustomTextField from "src/@core/components/mui/text-field"; // ** Custom Component Import
 import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
-import { useSettings } from "src/@core/hooks/useSettings"; // ** Hooks
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp } from "src/services/authService";
 import { checkUsername, checkEmail } from "src/services/userService"
-import { successToast } from "src/lib/react-taostify";
 import toast from "react-hot-toast";
+import { CircularProgress } from '@mui/material';
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -105,21 +104,16 @@ const Register = () => {
     password: false,
     org: false,
   });
+
   const [submit, setSubmit] = useState(false);
   const [userNameExist, setUserNameExist] = useState(false);
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [emailExist, setEmailExist] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const theme = useTheme(); // ** Hooks
-  const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
-  const { skin } = settings; // ** Vars
-
-  const imageSource =
-    skin === "bordered"
-      ? "auth-v2-register-illustration-bordered"
-      : "auth-v2-register-illustration";
-
   const router = useRouter(); // ** Router instance
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Use a regular expression or any other email validation logic
@@ -147,7 +141,7 @@ const Register = () => {
     }
     const user = {
       type: "organisation",
-      role: "Admin",
+      role: "admin",
       org: formData.org,
       email: formData.email,
       password: formData.password,
@@ -155,10 +149,12 @@ const Register = () => {
     };
 
     setError(null);
+    setIsSubmitting(true);
     signUp(user)
       .then((response) => {
+        setIsSubmitting(false);
         if (response?.status === 201) {
-          successToast("Registered successfully");
+          toast.success("Registered successfully");
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
@@ -167,8 +163,7 @@ const Register = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
-
+        setIsSubmitting(false);
         toast.error(error.message);
       });
   };
@@ -453,6 +448,7 @@ const Register = () => {
                 variant="contained"
                 sx={{ mb: 4 }}
               >
+                {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                 Sign up
               </Button>
               <Box

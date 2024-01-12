@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -15,7 +15,7 @@ import TabContext from "@mui/lab/TabContext";
 import Skeleton from 'react-loading-skeleton';
 import { styled } from '@mui/material/styles'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Input, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
 interface ProcessLogsProps {
   steps: Step[] | undefined;
@@ -53,6 +53,7 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
   const [tabName, setTabName] = useState<string>();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStage, setSelectedStage] = useState('');
+  const logsContainerRef = useRef<HTMLDivElement | null>(null);
 
   const icon = (status: string | undefined) => {
     if (status) {
@@ -80,7 +81,6 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
             <>
               <LoopIcon
                 style={{ animation: "spin 4s linear infinite", marginLeft: "5px" }}
-
                 color="primary"
                 fontSize="medium"
               />
@@ -109,19 +109,48 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
     setSearchTerm(e.target.value);
   };
 
+  const scrollToFirstOccurrence = () => {
+    if (logsContainerRef.current && searchTerm) {
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      const match = logs.find(log => regex.test(log));
+
+      if (match) {
+        const index = logs.indexOf(match);
+        logsContainerRef.current.scrollTop = index * 20; // Adjust the value based on your use case
+      }
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
     const cStage = localStorage.getItem('cStage') || '';
     if (steps && steps.length > 0 && steps[0].log) {
-      if ((selectedStage === '') || (cStage != selectedStage)) {
+      if ((selectedStage === '') || (cStage !== selectedStage)) {
         setValue("0");
         setLogs(steps[0].log.split('\n'));
         setTabName(steps[0].run_name);
         setSelectedStage(cStage);
+        scrollToBottom();
       }
     } else {
       setLogs([]);
     }
   }, [steps, loading]);
+
+  useEffect(() => {
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  useEffect(() => {
+    scrollToFirstOccurrence();
+  }, [searchTerm]);
 
   const handleTabChange = (step: Step, index: number) => {
     setValue(index.toString());
@@ -147,17 +176,17 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
       <CardContent sx={{ padding: "10px", flex: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={2} textAlign="center" marginLeft={"-5px"}>
-            <Typography variant="h4">
+            <Typography variant="h4" data-testid="tabHeading">
               <b>{tabHeading}</b>
             </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h4">
+            <Typography variant="h4" data-testid="tabName">
               <b style={{ textTransform: 'capitalize' }}>{tabName} Logs</b>
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth />
+            <TextField label="Search" size="small" variant="outlined" value={searchTerm} onChange={handleSearchChange} fullWidth data-testid="searchInput" />
           </Grid>
         </Grid>
       </CardContent>
@@ -169,23 +198,23 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
               paddingLeft: '10px'
             }}
           >
-            {loading ? <Skeleton width={100} height={20} /> :
+            {loading ? <Skeleton width={100} height={20} data-testid="loadingSkeleton" /> :
               <TabContext value={value}>
                 <TabList
                   orientation="vertical"
                   aria-label="vertical tabs example"
+                  data-testid="tabList"
                 >
                   {steps?.map((step, index) => {
                     return (
                       <Tab
                         iconPosition="end"
                         value={index.toString()}
-                        // label={step.run_name.length > 9 ? step.run_name.substring(0, 8) + "..." : step.run_name}
                         label={step.run_name}
                         key={index}
                         onClick={() => handleTabChange(step, index)}
                         icon={icon(step?.status)}
-                      />
+                        data-testid={`tab-${index}`} />
                     );
                   })}
                 </TabList>
@@ -200,10 +229,15 @@ const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading })
             width: '100%',
             overflow: 'auto',
             padding: '10px',
-          }}>
-            {!loading && logs.map((log, index) => {
-              return <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index}>{highlightText(log, searchTerm)}</p>
-            })}
+          }}
+            data-testid="logsContainer"
+            ref={logsContainerRef}
+          >
+            {!loading && logs.map((log, index) => (
+              <p style={{ color: 'white', margin: 0, fontFamily: "monospace", whiteSpace: "pre-wrap" }} key={index} data-testid={`log-${index}`}>
+                {highlightText(log, searchTerm)}
+              </p>
+            ))}
             {loading && <Skeleton width={600} height={10} />}
             {loading && <Skeleton width={400} height={10} />}
             {loading && <Skeleton width={800} height={10} />}

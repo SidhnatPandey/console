@@ -43,6 +43,7 @@ module.exports = {
         "react/prop-types": "off",
         "testing-library/no-render-in-setup": "off",
         "jest-dom/prefer-to-have-text-content": "off",
-        "testing-library/no-debugging-utils": "off"
+        "testing-library/no-debugging-utils": "off",
+        "testing-library/await-async-utils": "off"
     }
 }

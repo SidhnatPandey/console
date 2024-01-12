@@ -10,6 +10,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-hot-toast";
 import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import ConfirmationDialog from "src/component/ConfirmationDialog";
 
 interface DestroyAppProps {
   loading: boolean;
@@ -20,16 +22,23 @@ interface DestroyAppProps {
 
 const DestroyApp: React.FC<DestroyAppProps> = ({
   loading,
-  appName,
   appId,
-  metricsTimer,
 }) => {
   const router = useRouter();
+  const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
 
   const handleDestroyApp = () => {
     if (appId) {
+      // Open the confirmation dialog
+      setConfirmationDialogOpen(true);
+    }
+  };
+
+  const confirmDestroyApp = () => {
+    if (appId) {
       destroyApp(appId)
         .then((response: any) => {
+          setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
             router.push("/apps");
@@ -38,6 +47,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
           }
         })
         .catch((error) => {
+          setConfirmationDialogOpen(false);
           console.error(error);
           toast.error(
             "An error occurred during App deletion. Please try again later."
@@ -45,6 +55,7 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
         });
     }
   };
+
 
   return (
     <Card sx={{ margin: "-25px" }}>
@@ -111,6 +122,14 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
           )}
         </Grid>
       </CardContent>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        open={isConfirmationDialogOpen}
+        onConfirm={confirmDestroyApp}
+        onCancel={() => setConfirmationDialogOpen(false)}
+        message="Are you sure you want to Delete this App?"
+      />
     </Card>
   );
 };

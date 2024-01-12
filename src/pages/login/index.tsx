@@ -29,7 +29,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import useBgColor from 'src/@core/hooks/useBgColor'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Configs
@@ -40,6 +39,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { CircularProgress } from '@mui/material';
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -77,7 +77,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   '& .MuiFormControlLabel-label': {
     color: theme.palette.text.secondary
   }
-})) 
+}))
 
 const schema = yup.object().shape({
   email: yup.string().required('Email is a required field').email('Email is Invalid'),
@@ -97,6 +97,7 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
 
 
@@ -122,14 +123,33 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
   const onSubmit = (data: FormData) => {
-    const { email, password } = data;
-
-    const loginSuccess: any = auth.login({ email, password, rememberMe }, () => {
-      setError('email', {
-        type: 'manual',
-        message: 'Email or Password is invalid'
+    if (!isSubmitting) {
+      setIsSubmitting(true);
+      const { email, password } = data;
+      const loginSuccess: any = auth.login({ email, password, rememberMe }, (err: any) => {
+        setIsSubmitting(false);
+        if (err.response.data.code) {
+          setError('email', { type: 'manual', message: "" });
+          switch (err.response.data.code) {
+            case 101:
+              setError('password', { type: 'manual', message: "Wrong email or password" })
+              break;
+            case 102:
+              setError('password', { type: 'manual', message: "Email not verified" })
+              break;
+            case 103:
+              setError('password', { type: 'manual', message: "User is blocked" })
+              break;
+            default:
+              setError('password', { type: 'manual', message: "Wrong email or password" })
+              break;
+          }
+        } else {
+          setError('email', { type: 'manual', message: "" });
+          setError('password', { type: 'manual', message: "Some error occured. Please try after some time" })
+        }
       })
-    })
+    }
   }
 
 
@@ -174,7 +194,7 @@ const LoginPage = () => {
                 Please sign-in to your account and start the adventure
               </Typography>
             </Box>
-    
+
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
                 <Controller
@@ -241,7 +261,7 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
-                
+
                 <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
@@ -251,6 +271,7 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
+                {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                 Login
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

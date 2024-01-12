@@ -205,12 +205,6 @@ const StepperCustomVertical = () => {
       //setSourceCodeValue();
     }
   };
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
-    }
-  };
 
   // Source Code
   const [repo, setRepo] = useState<string>("");
@@ -257,10 +251,10 @@ const StepperCustomVertical = () => {
   });
 
   const router = useRouter();
-  if (router.query?.code && !gitUser) {
+  if (router.query?.code) {
     sendCode(router.query?.code as string)
       .then((response) => {
-        if (response?.git_user) {
+        if (response?.data.git_user) {
           setGitUser(response.git_user);
           fetchUserRepositories(response.git_user as string);
         }
@@ -311,8 +305,6 @@ const StepperCustomVertical = () => {
       const response = await getRepositories(user);
       if (response.data) {
         setRepositories(response.data);
-      } else {
-        toast.error("Some Error Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Could not fetch repositories.");
@@ -327,8 +319,6 @@ const StepperCustomVertical = () => {
       const response = await getBranch(repo, gitUser);
       if (response.data) {
         setBranches(response.data);
-      } else {
-        toast.error("Some Error Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
@@ -446,7 +436,7 @@ const StepperCustomVertical = () => {
                         onBlur={() => {
                           checkAppNameExists(value);
                         }}
-                        placeholder="carterLeonard"
+                        placeholder="Name your app"
                         error={
                           (Boolean(sourceCodeErrors.application_name) || appNameExist) &&
                           !(sourceCodeErrors.application_name === undefined && !appNameExist)

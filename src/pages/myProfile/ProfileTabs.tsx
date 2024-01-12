@@ -1,13 +1,15 @@
 // ** React Imports
 import { useState } from "react";
-import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import { styled, Theme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import MuiTabList, { TabListProps } from "@mui/lab/TabList";
+import { styled } from "@mui/material/styles";
+
+// ** Custom Components Imports
 import Icon from "src/@core/components/icon";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -28,9 +30,10 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 
 const ProfileTabs = () => {
   const [activeTab, setActiveTab] = useState<string>("profile");
-  const hideText = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
-  );
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <Grid container spacing={6} marginTop={"10px"}>
@@ -42,19 +45,21 @@ const ProfileTabs = () => {
                 variant="scrollable"
                 scrollButtons="auto"
                 aria-label="customized tabs example"
+                onChange={handleChange} // Add onChange handler
               >
                 <Tab
                   value="profile"
+                  data-testid="profile-tab"
                   label={
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        ...(!hideText && { "& svg": { mr: 2 } }),
+                        "& svg": { mr: 2 },
                       }}
                     >
                       <Icon fontSize="1.125rem" icon="tabler:user-check" />
-                      {!hideText && "Profile"}
+                      Profile
                     </Box>
                   }
                 />
