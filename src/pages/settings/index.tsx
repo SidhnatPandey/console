@@ -46,10 +46,11 @@ import { useForm, Controller } from "react-hook-form";
 interface RowOptionsProps {
   user: UserDataType,
   editClickHandler: any,
-  refreshData: any
+  refreshData: any,
+  orgName: string | undefined
 }
 
-const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refreshData }) => {
+const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refreshData, orgName }) => {
   // ** Hooks
   // const dispatch = useDispatch<AppDispatch>()
 
@@ -117,7 +118,7 @@ const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refresh
         onCancel={() => {
           setRemoveConfirmationOpen(false), handleRowOptionsClose();
         }}
-        message="Are you sure you want to remove this user?"
+        message={`Are you sure you want to remove ${user.user_info.first_name && user.user_info.last_name ? `${user.user_info.first_name} ${user.user_info.last_name}` : user.username} from ${orgName} ?`}
       />
     </>
   )
@@ -359,20 +360,20 @@ const UserList: React.FC = () => {
                                 : undefined
                             }
                             sx={{ marginRight: 2, fontSize: "2rem" }}
-                            style={{ alignItems: "normal" }}
+                            style={{ alignItems: "center", fontSize: '20px' }}
                           >
                             {!row.user_info.profile_picture &&
                               (row.user_info.first_name ||
                                 row.user_info.last_name
                                 ? `${row.user_info.first_name
-                                  ? row.user_info.first_name[0]
+                                  ? toTitleCase(row.user_info.first_name[0])
                                   : ""
                                 }${row.user_info.last_name
-                                  ? row.user_info.last_name[0]
+                                  ? toTitleCase(row.user_info.last_name[0])
                                   : ""
                                 }`
                                 : row.username
-                                  ? row.username[0]
+                                  ? toTitleCase(row.username[0])
                                   : "")}
                           </Avatar>
 
@@ -402,7 +403,7 @@ const UserList: React.FC = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        <RowOptions user={row} editClickHandler={handleEditUserClick} refreshData={settingsData}></RowOptions>
+                        <RowOptions user={row} editClickHandler={handleEditUserClick} refreshData={settingsData} orgName={org?.org_name}></RowOptions>
                       </TableCell>
                     </TableRow>
                   })
