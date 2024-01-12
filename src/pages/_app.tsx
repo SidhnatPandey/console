@@ -81,23 +81,14 @@ import 'prismjs/themes/prism-tomorrow.css'
 import 'prismjs/components/prism-jsx'
 import 'prismjs/components/prism-tsx'
 
-
-
 // ** React Perfect Scrollbar Style
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
-
-
 import 'src/iconify-bundle/icons-bundle-react'
-
-
 
 // ** Global css styles
 import '../../styles/globals.css'
 import { ToastContainer } from 'react-toastify'
-import { WorkspaceProvider } from 'src/context/WorkspaceContext'
-
-
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {

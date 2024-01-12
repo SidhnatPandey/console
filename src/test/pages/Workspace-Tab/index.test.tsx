@@ -42,6 +42,10 @@ describe('Workspace Component', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Workspace Component')).not.toBeInTheDocument();
+
+    });
+
+    await waitFor(() => {
       expect(screen.getByText('Settings Content')).toBeInTheDocument();
     });
   });
@@ -51,7 +55,7 @@ describe('Workspace Component', () => {
     const appsButton = screen.getByText('Apps');
     fireEvent.click(appsButton);
 
-    const workspaceComponent = await screen.getByText('Apps');
+    const workspaceComponent = screen.getByText('Apps');
     expect(workspaceComponent).toHaveTextContent('Apps');
   });
 
