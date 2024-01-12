@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment, useContext, useEffect } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -22,10 +22,6 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
-import useSWR from 'swr'
-import { APP_API } from 'src/@core/static/api.constant'
-import { getFetcher } from 'src/services/fetcherService'
-import { setApiBaseUrl } from 'src/@core/services/interceptor'
 import { AuthContext } from 'src/context/AuthContext'
 
 interface Props {
