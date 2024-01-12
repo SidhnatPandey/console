@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -23,7 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CustomChip from "src/@core/components/mui/chip";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { getListOfUsersWorkspaces, addUserToWorkspace, removeUserFromWorkspace, orguser } from 'src/services/appService';
-import { setApiBaseUrl } from 'src/@core/services/interceptor'; 
+import { setApiBaseUrl } from 'src/@core/services/interceptor';
 import toast from 'react-hot-toast';
 import { Avatar } from '@mui/material';
 
@@ -38,11 +38,6 @@ interface WorkspaceSettingsDataItem {
     profileImageUrl: string;
 }
 
-interface fetchedUsersItem {
-    email: string;
-    id: number;
-}
-
 interface WorkspaceSettingsComponent {
     workspaceId: any;
 }
@@ -54,8 +49,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
-    const [fetchedUsers, setFetchedUsers] = useState<fetchedUsersItem[]>([]);
-    const [selectedUserEmail, setSelectedUserEmail] = useState<string>("");
+    const [fetchedUsers, setFetchedUsers] = useState<WorkspaceSettingsDataItem[]>([]);
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [selectedUserRole, setSelectedUserRole] = useState<string>("");
     const [isValidationError, setIsValidationError] = useState(false);
 
@@ -127,7 +122,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                     setWorkspaceSettingsData((prevData) => {
                         const updatedData = prevData.filter((user) => user.id !== selectedRow);
                         return updatedData;
-                    });                })
+                    });
+                })
                 .catch((error) => {
                     console.error('Error removing user:', error);
                 });
@@ -140,19 +136,19 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
 
     const handleAddUserDialogClose = () => {
         setAddUserDialogOpen(false);
-        setSelectedUserEmail("");
+        setSelectedUserId("");
         setSelectedUserRole("");
         setIsValidationError(false);
 
     };
 
     const handleAddUser = () => {
-        if (selectedUserEmail && selectedUserRole) {
+        if (selectedUserId && selectedUserRole) {
             setIsValidationError(false);
             handleAddUserDialogClose();
             const payload = {
-                role: workspaceSettingsData[0]?.role,
-                user_id: workspaceSettingsData[0]?.user_id,
+                role: selectedUserRole,
+                user_id: selectedUserId,
                 workspace_id: workspaceId?.id
             }
             addUserToWorkspace(payload)
@@ -225,21 +221,21 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                                 <TableRow key={row.id}>
                                     <TableCell>
                                         <div style={{ display: "flex", alignItems: "center" }}>
-                                        <Avatar
+                                            <Avatar
                                                 alt={row.user_full_name}
                                                 src={row.profileImageUrl}
                                                 sx={{ marginRight: 2 }}
                                             />
-                                            <div> 
-                                            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                                           
-                                                {row?.user_full_name} 
-                                            </Typography>
-                                            <Typography variant="body2" color="textSecondary" component="div">
-                                                @{row.user_full_name?.split(' ')[0]} 
-                                            </Typography>
+                                            <div>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+
+                                                    {row?.user_full_name}
+                                                </Typography>
+                                                <Typography variant="body2" color="textSecondary" component="div">
+                                                    @{row.user_full_name?.split(' ')[0]}
+                                                </Typography>
                                             </div>
-                                            </div>
+                                        </div>
 
 
                                     </TableCell>
@@ -325,14 +321,14 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             }}
                             sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
                             id="userEmail"
-                            value={selectedUserEmail}
-                            onChange={(e) => setSelectedUserEmail(e.target.value)}
-                            error={isValidationError && !selectedUserEmail}
-                            helperText={isValidationError && !selectedUserEmail ? "Email is required" : ""}
+                            value={selectedUserId}
+                            onChange={(e) => setSelectedUserId(e.target.value)}
+                            error={isValidationError && !selectedUserId}
+                            helperText={isValidationError && !selectedUserId ? "Email is required" : ""}
                         >
                             {Array.isArray(fetchedUsers)
                                 ? fetchedUsers.map((user) => (
-                                    <MenuItem key={user.id} value={user.email}>
+                                    <MenuItem key={user.id} value={user.user_id}>
                                         {user.email}
                                     </MenuItem>
                                 ))
