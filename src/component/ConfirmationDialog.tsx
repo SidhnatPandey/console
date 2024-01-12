@@ -19,12 +19,12 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onConfirm
         </Typography>
       </DialogContent>
       <DialogActions>
+        <Button variant="outlined" color="primary" onClick={onCancel}>
+          Cancel
+        </Button>
         <Button variant="contained" sx={{ mr: 2 }} onClick={onConfirm}>
           {loading && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
           Yes
-        </Button>
-        <Button variant="outlined" color="primary" onClick={onCancel}>
-          Cancel
         </Button>
       </DialogActions>
     </Dialog>

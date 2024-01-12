@@ -29,9 +29,11 @@ axiosInstance.interceptors.request.use(
         // You can modify headers, add authentication tokens, etc.
         const jwtToken = window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.token);
         const username = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.userName)!);
+        const orgId = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
 
         if (jwtToken) { config.headers["Authorization"] = `Bearer ${jwtToken}` }
         if (username) { config.headers["App-User"] = username }
+        if (orgId) { config.headers["org_id"] = orgId }
         return config;
     },
     (error) => {

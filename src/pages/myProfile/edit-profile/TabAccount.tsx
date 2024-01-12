@@ -22,7 +22,7 @@ import { deactivateUser, postUserProfile } from "src/services/userService";
 import { toast } from "react-hot-toast";
 import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
-import ConfirmationDialog from "../../component/ConfirmationDialog";
+import ConfirmationDialog from "../../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
 import { CircularProgress } from '@mui/material';
 

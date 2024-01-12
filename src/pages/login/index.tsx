@@ -128,7 +128,7 @@ const LoginPage = () => {
       const { email, password } = data;
       const loginSuccess: any = auth.login({ email, password, rememberMe }, (err: any) => {
         setIsSubmitting(false);
-        if (err.response.data.code) {
+        if (err.response?.data.code) {
           setError('email', { type: 'manual', message: "" });
           switch (err.response.data.code) {
             case 101:

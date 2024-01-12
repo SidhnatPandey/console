@@ -19,6 +19,7 @@ export type UserDataType = {
   created_at: string;
   updated_at: string;
   nickname: string;
+  default_org?: string;
   user_info: {
     first_name: string;
     last_name: string;
@@ -41,5 +42,22 @@ export type AuthValuesType = {
   user: UserDataType | null
   setLoading: (value: boolean) => void
   setUser: (value: UserDataType | null) => void
-  login: (params: LoginParams, errorCallback?: ErrCallbackType) => void
+  login: (params: LoginParams, errorCallback?: ErrCallbackType) => void,
+  workspaces: Workspace[],
+  organisations: Organisation[],
+  setWorkspaces: (value: Workspace[]) => void,
+  setOrganisations: (value: Organisation[]) => void,
+  fetchWorkspaces: (value: string | null) => void
 }
+
+export type Workspace = {
+  id: string,
+  role: string,
+  name: string
+}
+
+export type Organisation = {
+  org_id: string,
+  org_name: string
+}
+

@@ -31,4 +31,18 @@ export const APP_API = {
     vulernabilities: 'vulernabilities',
     getScans: 'vulernabilities/scans',
     allVulnerabilities: 'vulernabilities/all',
+
+    //Workspace
+    createWorkspace: 'workspace',
+    getListOfWorkspaces: 'workspace',
+    getListOfUsersWorkspaces: 'workspace/all',
+    addUser: 'workspace/addUser',
+    removeUser: 'workspace/removeUser',
+    delete: 'workspace/delete',
+
+    //Organisation
+    OrgList: 'organization',
+    orgUserList: 'organization/users',
+    removeOrgUser: 'organization/removeUserFromOrg?user_id=',
+    inviteUser: 'inviteUser'
 }

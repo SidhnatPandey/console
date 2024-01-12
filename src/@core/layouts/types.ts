@@ -35,6 +35,7 @@ export type NavSectionTitle = {
   auth?: boolean
   action?: string
   subject?: string
+  children?: (NavGroup | NavLink)[]
   sectionTitle: string
 }
 

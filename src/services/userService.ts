@@ -39,3 +39,38 @@ export const deactivateUser = () => {
     (response) => response?.data
   );
 };
+
+export const getWorkspaces = () => {
+  setApiBaseUrl();
+  return get(APP_API.getListOfWorkspaces).then(
+    (response) => response?.data)
+}
+
+export const getOrganisations = () => {
+  setApiBaseUrl();
+  return get(APP_API.OrgList).then(
+    (response) => response?.data)
+}
+
+export const getOrganisationsUserList = () => {
+  setApiBaseUrl();
+  return get(APP_API.orgUserList).then(
+    (response) => response?.data)
+}
+
+export const removeUserFromOrg = (userId: any) => {
+  setApiBaseUrl();
+  const urlWithUserId = APP_API.removeOrgUser + userId;
+  return get(urlWithUserId).then(response => response?.data);
+};
+
+
+export const inviteUser = (user: any) => {
+  setApiBaseUrl();
+  return post(APP_API.inviteUser, user).then(
+    (response) => response?.data
+  )
+}
+
+
+

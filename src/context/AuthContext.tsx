@@ -11,10 +11,10 @@ import axios from 'axios'
 import { env } from 'next-runtime-env';
 
 // ** Types
-import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
+import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation } from './types'
 import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
-import { getUserInfo } from 'src/services/userService';
+import { getOrganisations, getUserInfo, getWorkspaces } from 'src/services/userService';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -23,7 +23,12 @@ const defaultProvider: AuthValuesType = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
-  logout: () => Promise.resolve()
+  logout: () => Promise.resolve(),
+  workspaces: [],
+  organisations: [],
+  setWorkspaces: () => null,
+  setOrganisations: () => null,
+  fetchWorkspaces: () => null,
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -36,6 +41,9 @@ const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(defaultProvider.workspaces);
+  const [organisations, setOrganisations] = useState<Organisation[]>(defaultProvider.organisations);
+
 
   // ** Hooks
   const router = useRouter()
@@ -47,6 +55,8 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
         getUser();
+        fetchWorkspaces(null);
+        fetchOrganisation();
         /* if (user) {
           setLoading(false)
           setUser({ ...user })
@@ -91,7 +101,6 @@ const AuthProvider = ({ children }: Props) => {
           params.rememberMe
             ? window.localStorage.setItem('isRemember', 'true')
             : null
-          const returnUrl = router.query.returnUrl
           const user: UserDataType = {
             id: '',
             role: response.data.data.user_data?.role,
@@ -122,16 +131,22 @@ const AuthProvider = ({ children }: Props) => {
           }
           setUser({ ...user })
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.userName, JSON.stringify(user.username))
-          params.rememberMe ? localStorage.setItem('userData', JSON.stringify(user)) : null
-
-          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/apps'
+          localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
+          params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
+          await fetchWorkspaces(null, true, true);
+          fetchOrganisation();
           getUser();
-          router.replace(redirectURL as string)
         }
       })
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
+  }
+
+  const redirect = (id: string) => {
+    const returnUrl = router.query.returnUrl
+    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
+    router.replace(redirectURL as string)
   }
 
   const handleLogout = () => {
@@ -142,29 +157,46 @@ const AuthProvider = ({ children }: Props) => {
     router.push('/login')
   }
 
-  const values = {
-    user,
-    loading,
-    setUser,
-    setLoading,
-    login: handleLogin,
-    logout: handleLogout
-  }
-
-  /* setApiBaseUrl();
-  const { data, mutate: getUser } = useSWR(APP_API.userProfile, getFetcher, {
-    onSuccess: () => {
-      setUser(data);
-    }
-  }); */
-
   const getUser = () => {
+    setLoading(true)
     getUserInfo().then(response => {
       setLoading(false)
       setUser({ ...response?.data })
     })
   }
 
+  const fetchWorkspaces = (name: string | null, navigate = false, homeRoute = false) => {
+    getWorkspaces().then(response => {
+      setLoading(false);
+      setWorkspaces(response?.data.workspaces);
+      const newWorkspace = response?.data.workspaces?.find((workspace: { name: string | null; }) => workspace.name === name);
+      if (homeRoute) { localStorage.setItem(LOCALSTORAGE_CONSTANTS.homeRoute, `/workspace/${response?.data.workspaces[0].id}`) }
+      if (navigate || name) {
+        name ? redirect(newWorkspace.id) : redirect(response?.data?.workspaces[0].id);
+      }
+    })
+  }
+
+  const fetchOrganisation = () => {
+    getOrganisations().then(response => {
+      setLoading(false)
+      setOrganisations(response?.data)
+    })
+  }
+
+  const values = {
+    user,
+    loading,
+    setUser,
+    setLoading,
+    login: handleLogin,
+    logout: handleLogout,
+    workspaces,
+    setWorkspaces,
+    organisations,
+    setOrganisations,
+    fetchWorkspaces
+  }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
