@@ -3,5 +3,6 @@ export const LOCALSTORAGE_CONSTANTS = {
     userInfo: 'userData',
     refreshToken: 'refreshToken',
     userName: 'username',
-    ogrId: 'orgId'
+    ogrId: 'orgId',
+    homeRoute: 'default_route'
 }

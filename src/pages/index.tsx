@@ -9,6 +9,7 @@ import Spinner from 'src/@core/components/spinner'
 
 // ** Hook Imports
 import { useAuth } from 'src/hooks/useAuth'
+import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant'
 
 /**
  *  Set Home URL based on User Roles
@@ -24,7 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     if (auth.user) {
-      const homeRoute = '/apps';
+      const homeRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
 
       // Redirect user to Home URL
       router.replace(homeRoute)
