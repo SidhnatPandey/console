@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import TabAccount from 'src/pages/settings/TabAccount'; // Assuming the component is in the same directory
+import TabAccount from 'src/pages/myProfile/edit-profile/TabAccount'; // Assuming the component is in the same directory
 import { deactivateUser, postUserProfile } from 'src/services/userService';
 import { act } from 'react-dom/test-utils';
 

@@ -51,7 +51,7 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Settings',
       icon: 'uil:setting',
-      path: '/user-list'
+      path: '/settings'
     },
     {
       title: 'Support',

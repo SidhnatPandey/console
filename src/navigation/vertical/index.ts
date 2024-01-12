@@ -13,7 +13,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ion:document-outline',
       badgeContent: '0',
       title: 'Workspaces',
-      children: [ 
+      children: [
         {
           icon: 'fluent:add-28-regular',
           title: 'New Workspace',
@@ -38,7 +38,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Settings',
       icon: 'uil:setting',
-      path: '/user-list'
+      path: '/settings'
     },
     {
       title: 'Support',
