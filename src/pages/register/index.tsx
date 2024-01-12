@@ -134,7 +134,8 @@ const Register = () => {
       formData.org.trim() === "" ||
       userNameExist ||
       emailExist ||
-      !isValidEmail(formData.email)
+      !isValidEmail(formData.email) ||
+      usernameError
     ) {
       setError("Please fill in all the fields.");
       return; // Exit early if the form is not valid
@@ -195,6 +196,8 @@ const Register = () => {
       setUsernameError("Username must be at least 3 characters.");
     } else if (inputUsername.length > 15) {
       setUsernameError("Username must be a maximum of 15 characters.");
+    } else if (inputUsername.includes(" ")) {
+      setUsernameError("Username can't have space.");
     } else {
       setUsernameError(null);
       const truncatedUsername = inputUsername;
