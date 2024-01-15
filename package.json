@@ -58,7 +58,7 @@
     "i18next-http-backend": "2.2.0",
     "jsonwebtoken": "9.0.0",
     "keen-slider": "6.8.5",
-    "next": "^13.5.6",
+    "next": "13.3.2",
     "next-runtime-env": "^1.7.1",
     "nprogress": "0.2.0",
     "payment": "2.4.6",
@@ -66,7 +66,6 @@
     "react": "18.2.0",
     "react-apexcharts": "1.4.0",
     "react-chartjs-2": "5.2.0",
-    "react-credit-cards": "0.8.3",
     "react-datepicker": "4.11.0",
     "react-dom": "18.2.0",
     "react-draft-wysiwyg": "1.15.0",
@@ -78,7 +77,6 @@
     "react-perfect-scrollbar": "1.5.8",
     "react-popper": "2.3.0",
     "react-redux": "8.0.5",
-    "react-router-dom": "^6.21.1",
     "react-toastify": "^9.1.3",
     "recharts": "2.5.0",
     "stylis": "4.1.4",
@@ -106,7 +104,6 @@
     "@types/payment": "2.1.4",
     "@types/prismjs": "1.26.0",
     "@types/react": "18.2.0",
-    "@types/react-credit-cards": "0.8.1",
     "@types/react-datepicker": "4.11.2",
     "@types/react-draft-wysiwyg": "1.13.4",
     "@types/react-redux": "7.1.25",
@@ -132,7 +129,6 @@
   "resolutions": {
     "minipass": "5.0.0",
     "@mui/x-data-grid/@mui/system": "5.12.1",
-    "react-credit-cards/prop-types": "15.7.2",
     "react-hot-toast/goober/csstype": "3.1.2",
     "recharts/react-smooth/prop-types": "15.6.0",
     "react-draft-wysiwyg/html-to-draftjs/immutable": "4.3.0",
@@ -141,10 +137,5 @@
     "@emotion/react/@emotion/babel-plugin/@babel/plugin-syntax-jsx/@babel/core": "7.21.5",
     "resolve": "v2.0.0-next.5",
     "node-fetch": "2.6.9"
-  },
-  "overrides": {
-    "react-credit-cards": {
-      "react": "$react"
-    }
   }
 }
