@@ -168,7 +168,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
 
   const handleRowClick = (rowId: number) => {
     setSelectedRow(rowId);
-    router.push({ pathname: '/apps/app-dashboard', query: { appId: rowId } });
+    router.push({ pathname: '/workspace/app-dashboard', query: { appId: rowId } });
     // Render your component here based on the selected row ID
   };
 

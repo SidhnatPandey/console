@@ -25,7 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     if (auth.user) {
-      const homeRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+      const homeRoute = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute)!) || '/';
 
       // Redirect user to Home URL
       router.replace(homeRoute)
