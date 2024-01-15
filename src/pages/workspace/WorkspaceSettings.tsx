@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -26,8 +26,10 @@ import { getListOfUsersWorkspaces, addUserToWorkspace, removeUserFromWorkspace, 
 import { setApiBaseUrl } from 'src/@core/services/interceptor';
 import toast from 'react-hot-toast';
 import { Avatar } from '@mui/material';
+import { UserDataType } from 'src/context/types';
 
 interface WorkspaceSettingsDataItem {
+    username: ReactNode;
     id: number;
     user_full_name: string;
     role: string;
@@ -35,7 +37,7 @@ interface WorkspaceSettingsDataItem {
     status: string;
     org_id: string;
     user_id: string;
-    profileImageUrl: string;
+    user: UserDataType;
 }
 
 interface WorkspaceSettingsComponent {
@@ -50,14 +52,22 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
     const [fetchedUsers, setFetchedUsers] = useState<WorkspaceSettingsDataItem[]>([]);
-    const [selectedUserId, setSelectedUserId] = useState<string>("");
-    const [selectedUserRole, setSelectedUserRole] = useState<string>("");
+    const [selectedUserId, setSelectedUserId] = useState("");
+    const [selectedUserRole, setSelectedUserRole] = useState("");
     const [isValidationError, setIsValidationError] = useState(false);
+    const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+    const [selectedUserForEdit, setSelectedUserForEdit] = useState<WorkspaceSettingsDataItem | null>(null);
 
     useEffect(() => {
         fetchWorkspaces();
         fetchUsers();
     }, []);
+
+    useEffect(()=>{
+        if (isEditDialogOpen){
+            setSelectedUserId(selectedUserForEdit?.user_id||"")
+        }
+    },[selectedUserForEdit,isEditDialogOpen])
 
     const fetchWorkspaces = () => {
         setApiBaseUrl();
@@ -76,7 +86,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
             if (users) {
                 const filteredUsers = users?.data?.users?.filter((user: any) => user.email);
                 setFetchedUsers(filteredUsers);
-                console.log(filteredUsers, 'Jagpreet ')
             } else {
                 console.error('Invalid data format received from orguser API');
             }
@@ -84,7 +93,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
             console.error('Error fetching users:', error);
         }
     };
-
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>, rowId: number) => {
         setAnchorEl(event.currentTarget);
@@ -107,29 +115,48 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
         }
     };
 
-    const handleOptionClick = (option: string) => {
+    const handleOptionClick = (option: string, id?: string, role?: string) => {
         handleMenuClose();
-
-        if (option === 'Remove' && selectedRow !== null) {
-            const payload = {
-                user_id: workspaceSettingsData[0].user_id,
-                workspace_id: workspaceId.id
-            }
-            removeUserFromWorkspace(payload)
-                .then((response) => {
-                    console.log('User removed successfully:', response);
-                    toast.success('User removed successfully');
-                    setWorkspaceSettingsData((prevData) => {
-                        const updatedData = prevData.filter((user) => user.id !== selectedRow);
-                        return updatedData;
+        if (option === 'Remove' && selectedRow) {
+            const userToRemove = workspaceSettingsData.find((user, key) => key === selectedRow);
+            if (userToRemove && id && role && workspaceId.id) {
+                const payload = {
+                    role: role,
+                    user_id: id,
+                    workspace_id: workspaceId.id
+                }
+                removeUserFromWorkspace(payload)
+                    .then((response) => {
+                        console.log('User removed successfully:', response);
+                        toast.success('User removed successfully');
+                        setWorkspaceSettingsData((prevData) => {
+                            const updatedData = prevData.filter((user, key) => key !== selectedRow);
+                            return updatedData;
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error removing user:', error);
                     });
-                })
-                .catch((error) => {
-                    console.error('Error removing user:', error);
-                });
+            }
+        } else if (option === 'Edit' && selectedRow) {
+            const userToEdit = workspaceSettingsData.find((user, key) => key === selectedRow);
+            if (userToEdit) {
+                const updatedUsers = workspaceSettingsData.map((user, key) => ({
+                    ...user,
+                    isEdit: key === selectedRow,
+                }));
+                setWorkspaceSettingsData(updatedUsers);
+                setSelectedUserForEdit(userToEdit);
+                setSelectedUserRole(userToEdit.role); 
+                setEditDialogOpen(true);
+            }
         }
     };
 
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+        setSelectedUserForEdit(null);
+    };
     const handleAddUserClick = () => {
         setAddUserDialogOpen(true);
     };
@@ -173,6 +200,12 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
         setPage(0);
     };
 
+    const handleRemove = (row: any) => {
+        setSelectedUserRole(row.role)
+        setSelectedUserId(row.user_id)
+        handleOptionClick('Remove', row.user_id, row.role)
+
+    }
     return (
         <>
             <Card sx={{ margin: '0 0 30px 0' }}>
@@ -217,67 +250,73 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             {(rowsPerPage > 0
                                 ? workspaceSettingsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : workspaceSettingsData
-                            ).map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell>
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <Avatar
-                                                alt={row.user_full_name}
-                                                src={row.profileImageUrl}
-                                                sx={{ marginRight: 2 }}
-                                            />
-                                            <div>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            ).map((row, key) => {
+                                return (
+                                    <TableRow key={key}>
+                                        <TableCell>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <Avatar
+                                                    alt={row.user_full_name}
+                                                    src={
+                                                        row.user?.user_info.profile_picture
+                                                          ? `data:image/jpeg;base64,${row.user.user_info.profile_picture}`
+                                                          : undefined
+                                                      }                                                
+                                                      sx={{ marginRight: 2, fontSize: "2rem" }}
+                                                      style={{ alignItems: "center", fontSize: '20px' }}
 
-                                                    {row?.user_full_name}
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary" component="div">
-                                                    @{row.user_full_name?.split(' ')[0]}
-                                                </Typography>
+                                                />      
+                                                <div>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                        {row?.user_full_name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="textSecondary" component="div">
+                                                        @{row.username}
+                                                    </Typography>
+                                                </div>
                                             </div>
-                                        </div>
-
-
-                                    </TableCell>
-                                    <TableCell>{row.role}</TableCell>
-                                    <TableCell>{row.email}</TableCell>
-                                    <TableCell>
-                                        <CustomChip
-                                            rounded
-                                            skin="light"
-                                            label={row.status ? row.status : "Pending"}
-                                            color={getStatusChipColor(row.status)}
-                                            variant="outlined"
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            aria-label="more"
-                                            aria-controls="long-menu"
-                                            aria-haspopup="true"
-                                            onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => handleMenuClick(e, row.id)}
-                                        >
-                                            <MoreVertIcon />
-                                        </IconButton>
-                                        <Menu
-                                            id="long-menu"
-                                            anchorEl={anchorEl}
-                                            keepMounted
-                                            open={Boolean(anchorEl && selectedRow === row.id)}
-                                            onClose={handleMenuClose}
-                                        >
-                                            <MenuItem onClick={() => handleOptionClick('Edit')}>
-                                                <EditIcon fontSize="small" style={{ marginRight: '4.5px' }} />
-                                                Edit
-                                            </MenuItem>
-                                            <MenuItem onClick={() => handleOptionClick('Remove')}>
-                                                <DeleteForeverIcon fontSize="small" sx={{ marginRight: 1 }} />
-                                                Remove
-                                            </MenuItem>
-                                        </Menu>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                            
+                                        </TableCell>
+                                        <TableCell>{row.role}</TableCell>
+                                        <TableCell>{row.email}</TableCell>
+                                        <TableCell>
+                                            <CustomChip
+                                                rounded
+                                                skin="light"
+                                                label={row.status ? row.status : "Pending"}
+                                                color={getStatusChipColor(row.status)}
+                                                variant="outlined"
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton
+                                                aria-label="more"
+                                                aria-controls="long-menu"
+                                                aria-haspopup="true"
+                                                onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => handleMenuClick(e, key)}
+                                            >
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <Menu
+                                                id="long-menu"
+                                                anchorEl={anchorEl}
+                                                keepMounted
+                                                open={Boolean(anchorEl && selectedRow === key)}
+                                                onClose={handleMenuClose}
+                                            >
+                                                <MenuItem onClick={() => handleOptionClick('Edit')}>
+                                                    <EditIcon fontSize="small" style={{ marginRight: '4.5px' }} />
+                                                    Edit
+                                                </MenuItem>
+                                                <MenuItem onClick={() => handleRemove(row)}>
+                                                    <DeleteForeverIcon fontSize="small" sx={{ marginRight: 1 }} />
+                                                    Remove
+                                                </MenuItem>
+                                            </Menu>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -323,6 +362,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             id="userEmail"
                             value={selectedUserId}
                             onChange={(e) => setSelectedUserId(e.target.value)}
+
                             error={isValidationError && !selectedUserId}
                             helperText={isValidationError && !selectedUserId ? "Email is required" : ""}
                         >
@@ -358,6 +398,66 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                     <Button
                         variant="contained"
                         onClick={handleAddUser}
+                        color="primary"
+                        sx={{ marginTop: '16px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
+                    >
+                        Save
+                    </Button>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={isEditDialogOpen} onClose={handleEditDialogClose} maxWidth="sm" fullWidth>
+                <DialogTitle>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <IconButton onClick={handleEditDialogClose} sx={{ marginLeft: 'auto' }}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Typography>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+                        Edit User
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
+                        Update User details
+                    </Typography>
+                    <br />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                        {/* Display existing user details for editing */}
+                        <TextField
+                            label="User Email"
+                            fullWidth
+                            value={selectedUserForEdit?.email || ''}
+                            onChange={(e) =>{
+                                 setSelectedUserId(e.target.value)}}
+                            disabled
+                            sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
+                        />
+                        <TextField
+                            label="Role"
+                            fullWidth
+                            select
+                            SelectProps={{
+                                native: false,
+                            }}
+                            sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
+                            id="roleSelect"
+                            value={selectedUserRole}
+                            onChange={(e) => {setSelectedUserRole(e.target.value)                            }}
+                            error={isValidationError && !selectedUserRole}
+                            helperText={isValidationError && !selectedUserRole ? "Role is required" : ""}
+                        >
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="workspace-admin">Workspace Admin</MenuItem>
+                            <MenuItem value="developer">Developer</MenuItem>
+                        </TextField>
+                    </div>
+
+                    <Button
+                        variant="contained"
+                        onClick={()=>{
+                            handleAddUser()
+                            handleEditDialogClose();
+                            console.log("lund")}}
                         color="primary"
                         sx={{ marginTop: '16px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
                     >

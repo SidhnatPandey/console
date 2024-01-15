@@ -143,12 +143,6 @@ const AuthProvider = ({ children }: Props) => {
       })
   }
 
-  const redirect = (id: string) => {
-    const returnUrl = router.query.returnUrl
-    const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
-    router.replace(redirectURL as string)
-  }
-
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('userData')
@@ -172,7 +166,10 @@ const AuthProvider = ({ children }: Props) => {
       const newWorkspace = response?.data.workspaces?.find((workspace: { name: string | null; }) => workspace.name === name);
       if (homeRoute) { localStorage.setItem(LOCALSTORAGE_CONSTANTS.homeRoute, `/workspace/${response?.data.workspaces[0].id}`) }
       if (navigate || name) {
-        name ? redirect(newWorkspace.id) : redirect(response?.data?.workspaces[0].id);
+        const returnUrl = router.query.returnUrl;
+        const id = name ? newWorkspace.id : response?.data?.workspaces[0].id;
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
+        router.replace(redirectURL as string)
       }
     })
   }

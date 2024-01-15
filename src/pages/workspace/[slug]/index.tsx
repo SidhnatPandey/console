@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import IconifyIcon from "src/@core/components/icon";
-import Apps from "../../apps";
+import Apps from "../apps";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
 import { Icon } from "@iconify/react";
@@ -86,7 +86,7 @@ const Workspace = () => {
                         {workspace && workspace.description ? (
                           <p>{workspace.description}</p>
                         ) : (
-                         <> No description available for this workspace.</>
+                          <> No description available for this workspace.</>
                         )}
                       </>
                     )}
@@ -169,7 +169,7 @@ const Workspace = () => {
           {selectedTab === 1 && (
             <Box mt={4}>
               {/* Render Settings component */}
-              <h2 data-testid="settingsContent"><WorkspaceSettings workspaceId={workspace}  /></h2>
+              <h2 data-testid="settingsContent"><WorkspaceSettings workspaceId={workspace} /></h2>
               {/* Add your Settings component content here */}
             </Box>
           )}
@@ -180,5 +180,10 @@ const Workspace = () => {
     </div>
   );
 };
+
+Workspace.acl = {
+  action: 'manage',
+  subject: 'workspace'
+}
 
 export default Workspace;
