@@ -89,10 +89,10 @@ export const removeUserFromWorkspace = (payload: any ) => {
   );
 };
 
-export const deleteUserFromWorkspace = (workspaceId: string) => {
+export const deleteWorkspace = (workspaceId: string) => {
   setApiBaseUrl();
   const url = `${APP_API.delete}?workspace_id=${workspaceId}` ;
-  return get(url).then(response => response?.data);
+  return deleteCall(url).then(response => response?.data);
 };
 
 export const orguser = () => {
