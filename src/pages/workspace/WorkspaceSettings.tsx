@@ -63,6 +63,12 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
         fetchUsers();
     }, []);
 
+    useEffect(()=>{
+        if (isEditDialogOpen){
+            setSelectedUserId(selectedUserForEdit?.user_id||"")
+        }
+    },[selectedUserForEdit,isEditDialogOpen])
+
     const fetchWorkspaces = () => {
         setApiBaseUrl();
         getListOfUsersWorkspaces(workspaceId?.id)
@@ -87,7 +93,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
             console.error('Error fetching users:', error);
         }
     };
-
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>, rowId: number) => {
         setAnchorEl(event.currentTarget);
@@ -152,11 +157,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
         setEditDialogOpen(false);
         setSelectedUserForEdit(null);
     };
-
-    const handleEditUser = () => {
-        handleEditDialogClose();
-    };
-
     const handleAddUserClick = () => {
         setAddUserDialogOpen(true);
     };
@@ -362,6 +362,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             id="userEmail"
                             value={selectedUserId}
                             onChange={(e) => setSelectedUserId(e.target.value)}
+
                             error={isValidationError && !selectedUserId}
                             helperText={isValidationError && !selectedUserId ? "Email is required" : ""}
                         >
@@ -426,6 +427,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             label="User Email"
                             fullWidth
                             value={selectedUserForEdit?.email || ''}
+                            onChange={(e) =>{
+                                 setSelectedUserId(e.target.value)}}
                             disabled
                             sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
                         />
@@ -439,7 +442,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             sx={{ marginTop: '16px', width: 'calc(50% - 8px)' }}
                             id="roleSelect"
                             value={selectedUserRole}
-                            onChange={(e) => setSelectedUserRole(e.target.value)}
+                            onChange={(e) => {setSelectedUserRole(e.target.value)                            }}
                             error={isValidationError && !selectedUserRole}
                             helperText={isValidationError && !selectedUserRole ? "Role is required" : ""}
                         >
@@ -451,7 +454,10 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
 
                     <Button
                         variant="contained"
-                        onClick={handleEditUser}
+                        onClick={()=>{
+                            handleAddUser()
+                            handleEditDialogClose();
+                            console.log("lund")}}
                         color="primary"
                         sx={{ marginTop: '16px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
                     >
