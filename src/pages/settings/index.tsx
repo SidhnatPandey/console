@@ -22,6 +22,7 @@ import ConfirmationDialog from "src/component/ConfirmationDialog";
 import {
   Avatar,
   FormControl,
+  FormHelperText,
   InputLabel,
   Select,
 } from "@mui/material";
@@ -32,47 +33,53 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   checkEmail,
+  checkUsername,
   getOrganisationsUserList,
   inviteUser,
   removeUserFromOrg,
 } from "src/services/userService";
-import toast from "react-hot-toast";
 import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
 import { AuthContext } from "src/context/AuthContext";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import { useForm, Controller } from "react-hook-form";
+import Toaster from "src/utils/toaster";
 
 interface RowOptionsProps {
-  user: UserDataType,
-  editClickHandler: any,
-  refreshData: any,
-  orgName: string | undefined
+  user: UserDataType;
+  editClickHandler: any;
+  refreshData: any;
+  orgName: string | undefined;
 }
 
-const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refreshData, orgName }) => {
+const RowOptions: React.FC<RowOptionsProps> = ({
+  user,
+  editClickHandler,
+  refreshData,
+  orgName,
+}) => {
   // ** Hooks
   // const dispatch = useDispatch<AppDispatch>()
 
   // ** State
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isRemoveConfirmationOpen, setRemoveConfirmationOpen] = useState(false);
   const [userToRemove, setUserToRemove] = useState<string>();
 
-
-  const rowOptionsOpen = Boolean(anchorEl)
+  const rowOptionsOpen = Boolean(anchorEl);
 
   const handleRowOptionsClick = (event: any) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
   const handleRowOptionsClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const removeOrgUsers = () => {
     if (userToRemove) {
       removeUserFromOrg(userToRemove)
         .then(() => {
+          Toaster.successToast("User Removed successfully");
           setRemoveConfirmationOpen(false);
           refreshData();
         })
@@ -92,7 +99,6 @@ const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refresh
       >
         <MoreVertIcon />
       </IconButton>
-
       <Menu
         id="long-menu"
         anchorEl={anchorEl}
@@ -100,12 +106,18 @@ const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refresh
         open={rowOptionsOpen}
         onClose={handleRowOptionsClose}
       >
-        <MenuItem onClick={() => { editClickHandler(user), handleRowOptionsClose() }}>
+        <MenuItem
+          onClick={() => {
+            editClickHandler(user), handleRowOptionsClose();
+          }}
+        >
           <EditIcon style={{ marginRight: "10px" }} />
           Edit
         </MenuItem>
         <MenuItem
-          onClick={() => { setRemoveConfirmationOpen(true), setUserToRemove(user.user_id) }}
+          onClick={() => {
+            setRemoveConfirmationOpen(true), setUserToRemove(user.user_id);
+          }}
         >
           <DeleteIcon style={{ marginRight: "10px" }} />
           Remove
@@ -118,23 +130,35 @@ const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refresh
         onCancel={() => {
           setRemoveConfirmationOpen(false), handleRowOptionsClose();
         }}
-        message={`Are you sure you want to remove ${user.user_info.first_name && user.user_info.last_name ? `${user.user_info.first_name} ${user.user_info.last_name}` : user.username} from ${orgName} ?`}
+        message={
+          <span>
+            Are you sure you want to remove{" "}
+            {user.user_info.first_name && user.user_info.last_name ? (
+              <span style={{ fontWeight: "bold" }}>
+                {`${user.user_info.first_name} ${user.user_info.last_name}`}
+              </span>
+            ) : (
+              <span style={{ fontWeight: "bold" }}>{user.username}</span>
+            )}{" "}
+            from <span style={{ fontWeight: "bold" }}>{orgName}</span>?
+          </span>
+        }
       />
     </>
-  )
-}
-
+  );
+};
 
 const UserList: React.FC = () => {
   const authContext = useContext(AuthContext);
   const {
-    register,
     handleSubmit,
     control,
+    setError,
+    clearErrors,
     formState: { errors },
     reset,
     setValue,
-    getValues
+    getValues,
   } = useForm();
 
   const [org, setOrg] = useState<{
@@ -148,7 +172,7 @@ const UserList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<UserDataType[]>([]);
   const [existingUser, setExistingUser] = useState<boolean>(false);
-
+  const [userNameExist, setUserNameExist] = useState<boolean>(false);
   useEffect(() => {
     const orgId = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
@@ -190,44 +214,46 @@ const UserList: React.FC = () => {
       email: user.email,
       username: user.username,
       role: user.role.toLowerCase(),
-      workspace: '',
+      workspace: "",
     });
     setAddUserDialogOpen(true);
   };
 
   const handleAddUserDialogClose = () => {
     setAddUserDialogOpen(false);
+    reset({ username: "" });
+    clearErrors("username");
+    setExistingUser(false);
+    setUserNameExist(false);
   };
 
   const onSubmit = (user: any) => {
+
+  if (userNameExist) {
+      Toaster.errorToast(" Username already Exist.");
+      return;
+  }
     const params = {
       email: user.email,
+      username: user.username,
       role: user.role,
       workspace_id: user.workspace,
-      org: user.org
-    }
+      org: user.org,
+    };
     inviteUser(params)
       .then((response) => {
         const successMessage = isEditMode
           ? "User edited successfully"
           : "User invited successfully";
-
-        const message = response.message || successMessage;
-        toast.success(message);
+        Toaster.successToast(successMessage);
         setAddUserDialogOpen(false);
         settingsData();
       })
       .catch((error) => {
-        if (error.response) {
-          toast.error(
-            error.response.data.message || "An error occurred on the server"
-          );
-        } else if (error.request) {
-          toast.error("No response was received from the server");
+        if (error.response && error.response.status === 400) {
+          Toaster.errorToast("Bad Request - Invalid data sent");
         } else {
-          toast.error(
-            error.message || "An error occurred while making the request"
-          );
+          Toaster.errorToast("Network error or server is down");
         }
       });
   };
@@ -237,11 +263,37 @@ const UserList: React.FC = () => {
     if (email) {
       checkEmail(email)
         .then((response) => {
-          if (response && response.status == 409) {
-            setValue('username', response.data.username)
+          if (response && response.status === 409) {
+            setValue("username", response.data.username);
             setExistingUser(true);
+            clearErrors("username");
           } else {
             setExistingUser(false);
+            setValue("username", "");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setValue("username", "");
+        });
+    }
+  };
+
+  const checkUserExists = (username: string) => {
+    if (username) {
+      checkUsername(username)
+        .then((response) => {
+          if (response) {
+            if (response.status === 409) {
+              setError("username", {
+                type: "manual",
+                message: "Username already exists",
+              });
+              setUserNameExist(true);
+            } else if (response.status === 200) {
+              clearErrors("username");
+              setUserNameExist(false);
+            }
           }
         })
         .catch((error) => {
@@ -262,10 +314,10 @@ const UserList: React.FC = () => {
   };
 
   const getStatusChipColor = (status: any) => {
-    switch (status) {
-      case "Active":
+    switch (status.toLowerCase()) {
+      case "active":
         return "success";
-      case "Deleted":
+      case "deleted":
         return "error";
       default:
         return "warning";
@@ -347,65 +399,79 @@ const UserList: React.FC = () => {
                 users
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    return <TableRow key={row.user_id}>
-                      <TableCell>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <Avatar
-                            alt={toTitleCase(
-                              row.user_info.first_name || row.username
-                            )}
-                            src={
-                              row.user_info.profile_picture
-                                ? `data:image/jpeg;base64,${row.user_info.profile_picture}`
-                                : undefined
-                            }
-                            sx={{ marginRight: 2, fontSize: "2rem" }}
-                            style={{ alignItems: "center", fontSize: '20px' }}
+                    return (
+                      <TableRow key={row.user_id}>
+                        <TableCell>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
                           >
-                            {!row.user_info.profile_picture &&
-                              (row.user_info.first_name ||
+                            <Avatar
+                              alt={toTitleCase(
+                                row.user_info.first_name || row.username
+                              )}
+                              src={
+                                row.user_info.profile_picture
+                                  ? `data:image/jpeg;base64,${row.user_info.profile_picture}`
+                                  : undefined
+                              }
+                              sx={{ marginRight: 2, fontSize: "2rem" }}
+                              style={{ alignItems: "center", fontSize: "20px" }}
+                            >
+                              {!row.user_info.profile_picture &&
+                                (row.user_info.first_name ||
                                 row.user_info.last_name
-                                ? `${row.user_info.first_name
-                                  ? toTitleCase(row.user_info.first_name[0])
-                                  : ""
-                                }${row.user_info.last_name
-                                  ? toTitleCase(row.user_info.last_name[0])
-                                  : ""
-                                }`
-                                : row.username
+                                  ? `${
+                                      row.user_info.first_name
+                                        ? toTitleCase(
+                                            row.user_info.first_name[0]
+                                          )
+                                        : ""
+                                    }${
+                                      row.user_info.last_name
+                                        ? toTitleCase(
+                                            row.user_info.last_name[0]
+                                          )
+                                        : ""
+                                    }`
+                                  : row.username
                                   ? toTitleCase(row.username[0])
                                   : "")}
-                          </Avatar>
-
-                          <div>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontWeight: "bold" }}
-                            >
-                              {toTitleCase(row.user_info.first_name)}{" "}
-                              {toTitleCase(row.user_info.last_name)}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              @{row.username}
-                            </Typography>
+                            </Avatar>
+                            <div>
+                              <Typography
+                                variant="body1"
+                                sx={{ fontWeight: "bold" }}
+                              >
+                                {toTitleCase(row.user_info.first_name)}{" "}
+                                {toTitleCase(row.user_info.last_name)}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                @{row.username}
+                              </Typography>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{row.role}</TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>
-                        <CustomChip
-                          rounded
-                          skin="light"
-                          label={row.status ? row.status : "Pending"}
-                          color={getStatusChipColor(row.status)}
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <RowOptions user={row} editClickHandler={handleEditUserClick} refreshData={settingsData} orgName={org?.org_name}></RowOptions>
-                      </TableCell>
-                    </TableRow>
+                        </TableCell>
+                        <TableCell>{row.role}</TableCell>
+                        <TableCell>{row.email}</TableCell>
+                        <TableCell>
+                          <CustomChip
+                            rounded
+                            skin="light"
+                            label={row.status ? row.status : "Pending"}
+                            color={getStatusChipColor(row.status)}
+                            variant="outlined"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <RowOptions
+                            user={row}
+                            editClickHandler={handleEditUserClick}
+                            refreshData={settingsData}
+                            orgName={org?.org_name}
+                          ></RowOptions>
+                        </TableCell>
+                      </TableRow>
+                    );
                   })
               ) : (
                 <TableRow>
@@ -436,7 +502,6 @@ const UserList: React.FC = () => {
           sx={{ marginLeft: "16px" }}
         />
       </Card>
-
       <Dialog
         open={isAddUserDialogOpen}
         onClose={handleAddUserDialogClose}
@@ -454,46 +519,93 @@ const UserList: React.FC = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <TextField
-              label="Email Address"
-              fullWidth
-              {...register("email", {
+            <Controller
+              name="email"
+              control={control}
+              rules={{
                 required: "Email is required",
-                onBlur: (checkEmailExists),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: "Invalid email address",
                 },
-              })}
-              //onBlur={() =>checkEmailExists(email) }
-              placeholder="Enter Valid email address"
-              style={{ marginBottom: "20px" }}
-              disabled={isEditMode}
-              error={!!errors.email}
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  label="Email Address"
+                  fullWidth
+                  {...field}
+                  placeholder="Enter Valid email address"
+                  style={{ marginBottom: "20px" }}
+                  disabled={isEditMode}
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                  onBlur={(e) => {
+                    field.onBlur();
+                    checkEmailExists(e);
+                  }}
+                />
+              )}
             />
-            <TextField
-              label="Username"
+            <Controller
+              name="username"
+              control={control}
+              rules={{
+                required: "Username is required",
+                minLength: {
+                  value: 3,
+                  message: "Username must be at least 3 characters long",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Username"
+                  fullWidth
+                  placeholder="Enter username"
+                  style={{ marginBottom: "20px" }}
+                  disabled={isEditMode || existingUser}
+                  InputLabelProps={{ shrink: true }}
+                  error={!!errors.username || userNameExist}
+                  helperText={
+                    (errors.username?.message as string) ||
+                    (userNameExist && "Username already exists")
+                  }
+                  onChange={(e) => {
+                    clearErrors("username");
+                    field.onChange(e);
+                  }}
+                  onBlur={() => {
+                    field.onBlur();
+                    checkUserExists(getValues("username"));
+                  }}
+                />
+              )}
+            />
+            <Controller
+              name="organization"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Organization"
+                  fullWidth
+                  disabled
+                  placeholder="Enter organization"
+                  style={{ marginBottom: "20px" }}
+                  {...field}
+                  value={field.value || org?.org_name}
+                />
+              )}
+            />
+            <FormControl
               fullWidth
-              {...register("username")}
-              placeholder="Enter username"
               style={{ marginBottom: "20px" }}
-              disabled={isEditMode || existingUser}
-              value={isEditMode || existingUser ? getValues("username") : ""}
-            />
-            <TextField
-              label="Organization"
-              fullWidth
-              disabled
-              placeholder="Enter organization"
-              style={{ marginBottom: "20px" }}
-              value={org?.org_name}
-            />
-
-            <FormControl fullWidth style={{ marginBottom: "20px" }}>
+              error={!!errors.role}
+            >
               <InputLabel id="role-select-label">Select Role</InputLabel>
               <Controller
                 name="role"
                 control={control}
+                rules={{ required: "Role is required" }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -502,20 +614,23 @@ const UserList: React.FC = () => {
                     label="Role"
                   >
                     <MenuItem value="admin">Admin</MenuItem>
-                    <MenuItem value="workspace-admin"> Workspace Admin</MenuItem>
+                    <MenuItem value="workspace-admin">Workspace Admin</MenuItem>
                     <MenuItem value="developer">Developer</MenuItem>
                   </Select>
                 )}
               />
+              {errors.role && (
+                <FormHelperText>{errors.role.message as string}</FormHelperText>
+              )}
             </FormControl>
-
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.workspace}>
               <InputLabel id="workspace-select-label">
                 Select Workspace
               </InputLabel>
               <Controller
                 name="workspace"
                 control={control}
+                rules={{ required: "Workspace is required" }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -532,6 +647,11 @@ const UserList: React.FC = () => {
                   </Select>
                 )}
               />
+              {errors.workspace && (
+                <FormHelperText>
+                  {errors.workspace.message as string}
+                </FormHelperText>
+              )}
             </FormControl>
           </DialogContent>
           <DialogActions>
@@ -546,7 +666,6 @@ const UserList: React.FC = () => {
           </DialogActions>
         </form>
       </Dialog>
-
     </>
   );
 };
