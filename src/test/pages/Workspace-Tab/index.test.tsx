@@ -2,20 +2,18 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Workspace from 'src/pages/workspace/[slug]';
-import { useRouter } from 'next/router';
+import mockRouter from 'next-router-mock';
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
-}));
+jest.mock('next/router', () => jest.requireActual('next-router-mock'));
 
 describe('Workspace Component', () => {
   const mockRouter = {
     query: { project: 'TestProject' },
   };
 
-  beforeEach(() => {
+  /* beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-  });
+  }); */
 
   test('renders Workspace component with card', async () => {
     render(<Workspace />);
