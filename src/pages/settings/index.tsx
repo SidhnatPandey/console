@@ -125,7 +125,7 @@ const RowOptions: React.FC<RowOptionsProps> = ({ user, editClickHandler, refresh
 }
 
 
-const UserList: React.FC = () => {
+const UserList = () => {
   const authContext = useContext(AuthContext);
   const {
     register,
@@ -550,5 +550,10 @@ const UserList: React.FC = () => {
     </>
   );
 };
+
+UserList.acl = {
+  action: 'manage',
+  subject: 'OrgSettings'
+}
 
 export default UserList;

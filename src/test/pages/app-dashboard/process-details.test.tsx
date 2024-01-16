@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import ProcessDetails from "src/pages/apps/app-dashboard/ProcessDetails";
+import ProcessDetails from "src/pages/workspace/app-dashboard/ProcessDetails";
 import "@testing-library/jest-dom";
 
 describe("ProcessDetails component", () => {
@@ -87,9 +87,9 @@ describe("ProcessDetails component", () => {
 
   // it('submits approval on dialog ok click', async () => {
   //   const mockSubmitApproval = jest.fn();
-    
+
   //   render(<ProcessDetails handleTrigger={mockSubmitApproval} {...mockData} />);
-    
+
   //   fireEvent.click(screen.getByTestId('approve'));
   //   fireEvent.click(screen.getByTestId('ok'));
 

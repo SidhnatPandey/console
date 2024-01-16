@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 // ** Spinner Import
 import Spinner from 'src/@core/components/spinner'

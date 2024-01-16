@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
-import AppLogs from "src/pages/apps/app-dashboard/AppLogs";
+import AppLogs from "src/pages/workspace/app-dashboard/AppLogs";
 import "@testing-library/jest-dom";
 
 jest.mock("src/services/dashboardService", () => ({
