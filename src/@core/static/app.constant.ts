@@ -19,5 +19,9 @@ export const PERMISSION_CONSTANTS = {
     security: 'security-dashboard',
 
     //document
-    document: 'document'
+    document: 'document',
+
+    //app
+    appDashboard: 'app-dashboard',
+    deleteApp: 'app-delete'
 }

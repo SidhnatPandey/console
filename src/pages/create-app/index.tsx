@@ -70,6 +70,7 @@ import {
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 
 type FormValues = {
@@ -196,6 +197,7 @@ const StepperCustomVertical = () => {
     useState<boolean>(false);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
+  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>();
 
   // Handle Stepper
   const handleBack = () => {
@@ -213,6 +215,7 @@ const StepperCustomVertical = () => {
   const [branches, setBranches] = useState<string[]>(["No Branch"]);
 
   useEffect(() => {
+    setWorkspace(JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!));
     if (!gitUser) {
       fetchGitOwner();
     }
@@ -376,11 +379,12 @@ const StepperCustomVertical = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
+    data["workspace_id"] = workspace?.id;
     console.log(data);
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
-        router.push({ pathname: '/apps/app-dashboard', query: { appId: response.data.app_id } });
+        router.push({ pathname: '/workspace/app-dashboard', query: { appId: response.data.app_id } });
       })
       .catch((error) => {
         toast.error(error);

@@ -38,12 +38,15 @@ const rulesForWorkspaceAdmin = (can: any) => {
   can('read', PERMISSION_CONSTANTS.workspaceSettings)
   can('read', PERMISSION_CONSTANTS.security)
   can('read', PERMISSION_CONSTANTS.document)
+  can('read', PERMISSION_CONSTANTS.appDashboard)
+  can('delete', PERMISSION_CONSTANTS.deleteApp)
 }
 
 const rulesForDeveloper = (can: any) => {
   can('read', PERMISSION_CONSTANTS.workspace)
   can('read', PERMISSION_CONSTANTS.security)
   can('read', PERMISSION_CONSTANTS.document)
+  can('read', PERMISSION_CONSTANTS.appDashboard)
 }
 
 export const buildAbilityFor = (role: string, subject: string): AppAbility => {
