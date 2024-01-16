@@ -151,8 +151,8 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
         return 'test'
       case 'deploy-stg':
         return 'stg'
-      case 'stg-approval':
-        return 'stg'
+      case 'prod-approval':
+        return 'prod'
       case 'deploy-prod':
         return 'prod'
       default:

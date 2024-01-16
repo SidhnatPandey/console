@@ -58,25 +58,29 @@ const ProcessDetails = (props: ProcessDetailsProps) => {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
 
   const calcDuration = () => {
-    const sDate = new Date(supplyChainStepData.started_at);
-    const eDate = new Date(supplyChainStepData.completed_at);
-    let diff = eDate.getTime() - sDate.getTime();
-    const hours = Math.floor(diff / 1000 / 60 / 60);
-    diff -= hours * 1000 * 60 * 60;
-    const minutes = Math.floor(diff / 1000 / 60);
-    diff -= minutes * 1000 * 60;
-    const seconds = Math.floor(diff / 1000);
-    let string = "";
-    if (hours > 0) {
-      string = hours + " hour ";
+    if ((supplyChainStepData.status === 'Succeeded') || (supplyChainStepData.status === 'Failed')) {
+      const sDate = new Date(supplyChainStepData.started_at);
+      const eDate = new Date(supplyChainStepData.completed_at);
+      let diff = eDate.getTime() - sDate.getTime();
+      const hours = Math.floor(diff / 1000 / 60 / 60);
+      diff -= hours * 1000 * 60 * 60;
+      const minutes = Math.floor(diff / 1000 / 60);
+      diff -= minutes * 1000 * 60;
+      const seconds = Math.floor(diff / 1000);
+      let string = "";
+      if (hours > 0) {
+        string = hours + " hour ";
+      }
+      if (minutes > 0) {
+        string += minutes + " min ";
+      }
+      if (seconds > 0) {
+        string += seconds + " sec";
+      }
+      setDuration(string);
+    } else {
+      setDuration('N/A');
     }
-    if (minutes > 0) {
-      string += minutes + " min ";
-    }
-    if (seconds > 0) {
-      string += seconds + " sec";
-    }
-    setDuration(string);
   };
 
   const submitApproval = () => {
