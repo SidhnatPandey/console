@@ -110,7 +110,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
 
   useEffect(() => {
     getAppList();
-  }, []);
+  }, [workspace_id]);
 
   const getAppList = () => {
     setLoading(true);

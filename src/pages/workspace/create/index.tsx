@@ -11,7 +11,7 @@ type FormData = {
   description: string;
 };
 
-const CreateWorkspace: React.FC = () => {
+const CreateWorkspace = () => {
   const {
     register,
     handleSubmit,
@@ -26,8 +26,8 @@ const CreateWorkspace: React.FC = () => {
       .then((response) => {
         if (response.status === 201) {
           Toaster.successToast("Workspace created successfully");
-          authContext.fetchWorkspaces(data.workspace_name); 
-          reset(); 
+          authContext.fetchWorkspaces(data.workspace_name);
+          reset();
         } else if (response.status === 409) {
           Toaster.infoToast("Workspace name already exists for current organization");
         } else {
@@ -86,5 +86,10 @@ const CreateWorkspace: React.FC = () => {
     </Card>
   );
 };
+
+CreateWorkspace.acl = {
+  action: 'read',
+  subject: 'workspace'
+}
 
 export default CreateWorkspace;

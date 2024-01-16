@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { NavGroup, VerticalNavItemsType } from 'src/@core/layouts/types'
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant'
 import { AuthContext } from 'src/context/AuthContext'
 import VerticalNavItems from 'src/navigation/vertical'
 
@@ -11,13 +12,17 @@ const ServerSideNavItems = () => {
     icon: 'ion:document-outline',
     badgeContent: '0',
     title: 'Workspaces',
-    children: []
+    children: [],
+    action: 'read',
+    subject: PERMISSION_CONSTANTS.workspace,
   }
 
   const AddWorkspaceObj = {
     icon: 'fluent:add-28-regular',
     title: 'New Workspace',
-    path: '/workspace/create'
+    path: '/workspace/create',
+    action: 'read',
+    subject: PERMISSION_CONSTANTS.addWorkspace,
   }
 
   // ** State
@@ -30,7 +35,9 @@ const ServerSideNavItems = () => {
       authContext?.workspaces.forEach((workspace: any) => {
         WorkspaceObj.children?.push({
           title: workspace.name,
-          path: `/workspace/${workspace.id}`
+          path: `/workspace/${workspace.id}`,
+          action: 'read',
+          subject: PERMISSION_CONSTANTS.workspace,
         })
       });
       WorkspaceObj.badgeContent = authContext.workspaces.length.toString();

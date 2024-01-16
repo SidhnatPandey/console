@@ -74,11 +74,12 @@ const AppBarContent = (props: Props) => {
   // Handler for selecting an organization
   const handleOrganizationSelection = (organization: Organization) => {
     handleOrganizationClose();
-   if(selectedOrganization?.org_id !== organization.org_id){
-    setSelectedOrganization(organization);
-    localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(organization.org_id))
-    window.location.reload();
-   }
+    if (selectedOrganization?.org_id !== organization.org_id) {
+      setSelectedOrganization(organization);
+      localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(organization.org_id));
+      localStorage.removeItem(LOCALSTORAGE_CONSTANTS.workspace);
+      window.location.reload();
+    }
   };
 
   return (

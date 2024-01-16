@@ -9,6 +9,8 @@ import Apps from "../apps";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
 import { Icon } from "@iconify/react";
+import { AbilityContext } from "src/layouts/components/acl/Can";
+import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
 const Workspace = () => {
   const router = useRouter();
@@ -20,9 +22,12 @@ const Workspace = () => {
   // State to manage the current project
   const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
 
+  const ability = useContext(AbilityContext)
+
   useEffect(() => {
     // Update the current project when the query parameter changes
-    const workspace = authContext.workspaces.find((workspace) => workspace.id === slug);
+    const workspace = authContext.workspaces?.find((workspace) => workspace.id === slug);
+    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, JSON.stringify(workspace));
     setWorkspace(workspace);
     setCurrentProject(workspace?.name);
   }, [slug]);
@@ -132,7 +137,7 @@ const Workspace = () => {
               Apps
             </Button>
 
-            <Button
+            {ability?.can('read', PERMISSION_CONSTANTS.workspaceSettings) ? (<Button
               value={1}
               variant="text"
               onClick={handleShowSettings}
@@ -154,7 +159,8 @@ const Workspace = () => {
                 }}
               />
               Settings
-            </Button>
+            </Button>) : null}
+
           </Tabs>
 
           {/* Show/Hide Apps or Settings component based on state */}
@@ -182,8 +188,8 @@ const Workspace = () => {
 };
 
 Workspace.acl = {
-  action: 'manage',
-  subject: 'workspace'
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.workspace
 }
 
 export default Workspace;

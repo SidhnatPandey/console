@@ -1,4 +1,5 @@
 import { AbilityBuilder, Ability } from '@casl/ability'
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant'
 
 export type Subjects = string
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete'
@@ -21,15 +22,31 @@ const defineRulesFor = (role: string, subject: string) => {
 
   if (role === 'Admin' || role === 'admin') {
     can('manage', 'all')
-  } else if (role === 'abc') {
-    can(['read'], 'acl-page')
+  } else if (role === 'developer') {
+    rulesForDeveloper(can);
   } else if (role === 'workspace-admin') {
-    can(['read', 'create', 'update', 'delete'], subject)
+    rulesForWorkspaceAdmin(can);
   } else {
-    can('manage', 'all')
+    can(['read', 'create', 'update', 'delete'], subject)
   }
-
   return rules
+}
+
+const rulesForWorkspaceAdmin = (can: any) => {
+  can('read', PERMISSION_CONSTANTS.workspace)
+  can('read', PERMISSION_CONSTANTS.addWorkspace)
+  can('read', PERMISSION_CONSTANTS.workspaceSettings)
+  can('read', PERMISSION_CONSTANTS.security)
+  can('read', PERMISSION_CONSTANTS.document)
+  can('read', PERMISSION_CONSTANTS.appDashboard)
+  can('delete', PERMISSION_CONSTANTS.deleteApp)
+}
+
+const rulesForDeveloper = (can: any) => {
+  can('read', PERMISSION_CONSTANTS.workspace)
+  can('read', PERMISSION_CONSTANTS.security)
+  can('read', PERMISSION_CONSTANTS.document)
+  can('read', PERMISSION_CONSTANTS.appDashboard)
 }
 
 export const buildAbilityFor = (role: string, subject: string): AppAbility => {

@@ -29,6 +29,7 @@ import { APP_API } from "src/@core/static/api.constant";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
+import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -61,7 +62,7 @@ interface App {
   last_deployed: string
 }
 
-const AppDashboard: React.FC<{ appId: string }> = () => {
+const AppDashboard = () => {
   const router = useRouter();
   const timer = Number(env("NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER")) || 60000;
 
@@ -88,10 +89,6 @@ const AppDashboard: React.FC<{ appId: string }> = () => {
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
-
-  const handleTriggerFromChild = () => {
-    getAppDetails(router?.query?.appId);
-  }
 
   const getAppDetails = (id: any) => {
     appDetails(id)
@@ -319,5 +316,10 @@ const AppDashboard: React.FC<{ appId: string }> = () => {
     </>
   );
 };
+
+AppDashboard.alc = {
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.appDashboard
+}
 
 export default AppDashboard;

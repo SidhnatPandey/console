@@ -33,6 +33,12 @@ export const postUserProfile = (profile: any) => {
   )
 };
 
+export const checkDeleteCriteria = () => {
+  setApiBaseUrl();
+  const url = `${APP_API.checkDeleteCriteria}` ;
+  return get(url).then(response => response?.data);
+}
+
 export const deactivateUser = () => {
   setApiBaseUrl();
   return deleteCall(APP_API.deactivateUser).then(

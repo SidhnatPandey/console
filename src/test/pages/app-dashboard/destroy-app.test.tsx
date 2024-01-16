@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { destroyApp } from 'src/services/appService';
-import DestroyApp from 'src/pages/apps/app-dashboard/DestroyApp';
+import DestroyApp from 'src/pages/workspace/app-dashboard/DestroyApp';
 import userEvent from '@testing-library/user-event';
 import toast from 'react-hot-toast';
 

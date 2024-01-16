@@ -1,5 +1,6 @@
 // navigation.js
 import { VerticalNavItemsType } from 'src/@core/layouts/types';
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant';
 
 const navigation = (): VerticalNavItemsType => {
   return [
@@ -24,7 +25,16 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Security',
       icon: 'material-symbols:lock-outline',
-      path: '/security'
+      path: '/security',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.security,
+    },
+    {
+      title: 'App-Dashboards',
+      icon: 'tabler:smart-home',
+      path: '/workspace/app-dashboard/?appId=65a62a3f1c34456bd9179ce7',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.appDashboard,
     },
     {
       sectionTitle: 'MANAGE'
@@ -51,7 +61,9 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Documentation',
       icon: 'carbon:document',
-      path: 'https://docs.initializ.ai/'
+      path: 'https://docs.initializ.ai/',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.document,
     },
   ];
 };

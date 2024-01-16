@@ -1,4 +1,4 @@
-import AppDashboard from "../../../pages/apps/app-dashboard/index";
+import AppDashboard from "../../../pages/workspace/app-dashboard/index";
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -40,7 +40,7 @@ jest.mock("react", () => ({
 describe("AppDashboard Component", () => {
 
   beforeEach(() => {
-    render(<AppDashboard />);
+    render(<AppDashboard appId={""} />);
   })
 
   it("should render loading state", async () => {
@@ -78,7 +78,7 @@ describe("AppDashboard Component", () => {
 
     userEvent.click(screen.getByTestId("Settings"));
     expect(screen.getByTestId("tab-panel-4")).toBeInTheDocument();
-  }); 
+  });
 
   it("should switch tabs", async () => {
     userEvent.click(screen.getByTestId("Logs"));
