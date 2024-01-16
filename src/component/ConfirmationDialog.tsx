@@ -6,7 +6,7 @@ interface ConfirmationDialogProps {
   open: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-  message: string;
+  message: any;
   loading?: boolean
 }
 

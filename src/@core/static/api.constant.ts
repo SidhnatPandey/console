@@ -9,6 +9,7 @@ export const APP_API = {
     userInfo: 'userInfo',
     userProfile: "userProfile",
     deactivateUser: "deleteUser",
+    checkDeleteCriteria: "checkDeleteCriteria",
 
     // Create-App
     sendGitCode: 'code?code={code}',

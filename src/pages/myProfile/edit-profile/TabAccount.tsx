@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 import ConfirmationDialog from "../../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
 import { CircularProgress } from '@mui/material';
-
+import { checkDeleteCriteria } from "src/services/userService";
 
 interface Data {
   user_info?: any;
@@ -104,6 +104,7 @@ const TabAccount = () => {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [deleteCriteria, setDeleteCriteria] = useState<{ allowed: boolean }>({ allowed: false });
   const router = useRouter();
 
   const setData = () => {
@@ -131,6 +132,19 @@ const TabAccount = () => {
     setOriginalData(data);
     setImgSrc(profilePicture);
   }
+
+  useEffect(() => {
+    checkDeleteCriteria()
+      .then((result) => {
+        setDeleteCriteria(result.data);  // Assuming the response contains data property
+      })
+      .catch((error) => {
+        console.error("Error checking delete criteria:", error);
+        setDeleteCriteria({ allowed: false });
+      });
+  }, []);
+
+
 
   useEffect(() => {
     setData();
@@ -469,6 +483,10 @@ const TabAccount = () => {
                   Once you delete your account, there is no going back. Please
                   be certain.
                 </Typography>
+                {!deleteCriteria.allowed && (
+                  <Typography variant="body2" color="error">
+                    “Before you can delete your account, you will need to delete any organization you own or transfer ownership to another user”                 </Typography>
+                )}
               </Paper>
               <Box sx={{ mb: 4 }}>
                 <FormControl>
@@ -516,8 +534,8 @@ const TabAccount = () => {
                 variant="contained"
                 color="error"
                 type="submit"
-                onClick={() => setConfirmationDialogOpen(true)} // Open the confirmation dialog
-                disabled={!isCheckboxChecked}
+                onClick={() => setConfirmationDialogOpen(true)}
+                disabled={!isCheckboxChecked || !deleteCriteria.allowed}  // Disable if checkbox is not checked or user cannot delete the account
               >
                 Deactivate Account
               </Button>
