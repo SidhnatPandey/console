@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Button from '@mui/material/Button';
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from '@mui/material/Box';
@@ -9,19 +9,19 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import ConfirmationDialog from "src/component/ConfirmationDialog";
-import {  deleteWorkspace } from 'src/services/appService';
+import { deleteWorkspace } from 'src/services/appService';
 import router from 'next/router';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
+import { AuthContext } from 'src/context/AuthContext';
 
 interface DestroyWorkspaceProps {
   loading: boolean;
-  onConfirmDestroy: () => void; 
   workspaceId: any
 }
 
-const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId , onConfirmDestroy , loading  }) => {
+const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId, loading }) => {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-
+  const auth = useContext(AuthContext);
 
   const handleDestroyWorkspace = () => {
     setConfirmationDialogOpen(true);
@@ -29,25 +29,22 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId , onCon
 
   const confirmDestroyWorkspace = () => {
     deleteWorkspace(workspaceId.id)
-      .then((response) => {
-        console.log("Workspace deleted successfully:", response);
-        onConfirmDestroy();
+      .then(() => {
         setConfirmationDialogOpen(false);
-
+        auth.fetchWorkspaces(null);
         const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
         router.push(defaultRoute);
-        console.log(defaultRoute, "Redirecting to default route");
       })
       .catch((error) => {
         console.error("Error deleting workspace:", error);
         setConfirmationDialogOpen(false);
       });
   };
-  
+
   return (
     <Card sx={{ margin: '-25px 0 0' }}>
       {loading ? (
-        <CircularProgress /> 
+        <CircularProgress />
       ) : (
         <CardHeader
           sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}

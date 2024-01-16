@@ -46,8 +46,8 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const ProcessLogs: React.FC<ProcessLogsProps> = ({ steps, loading, tabHeading }) => {
-
+const ProcessLogs = (props: ProcessLogsProps) => {
+  const { steps, loading, tabHeading } = props
   const [value, setValue] = useState<string>("0");
   const [logs, setLogs] = useState<string[]>([]);
   const [tabName, setTabName] = useState<string>();

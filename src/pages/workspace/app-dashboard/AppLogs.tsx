@@ -35,7 +35,9 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   },
 }));
 
-const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
+const AppLogs = (props: AppLogsProps) => {
+
+  const { appId } = props
   const [value, setValue] = useState<string>("1");
   const [tabName, setTabName] = useState<string>("Prod");
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +58,7 @@ const AppLogs: React.FC<AppLogsProps> = ({ appId }) => {
       element.scrollTop = element.scrollHeight;
     }
   }, [data]);
-  
+
 
   const handleTabChange = (step: string, index: number) => {
     setValue(index.toString());

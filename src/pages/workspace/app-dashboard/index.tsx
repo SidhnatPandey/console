@@ -29,7 +29,7 @@ import { APP_API } from "src/@core/static/api.constant";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
-import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -65,7 +65,7 @@ interface App {
 const AppDashboard = () => {
   const router = useRouter();
   const timer = Number(env("NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER")) || 60000;
-
+  const workspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
   const [value, setValue] = useState<string>("1");
   const [loading, setLoading] = useState<boolean>(false);
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
@@ -74,6 +74,7 @@ const AppDashboard = () => {
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
+  key = key + '?workspace_id=' + workspace.id
   setApiBaseUrl();
   const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
     refreshInterval: timer
@@ -91,7 +92,7 @@ const AppDashboard = () => {
   };
 
   const getAppDetails = (id: any) => {
-    appDetails(id)
+    appDetails(id, workspace.id)
       .then((response: any) => {
         setAppData(response.data);
         setLoading(false);
@@ -317,7 +318,7 @@ const AppDashboard = () => {
   );
 };
 
-AppDashboard.alc = {
+AppDashboard.acl = {
   action: 'read',
   subject: PERMISSION_CONSTANTS.appDashboard
 }

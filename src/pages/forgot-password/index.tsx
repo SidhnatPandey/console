@@ -69,7 +69,6 @@ const ForgotPassword = () => {
 
     // Get the email input value from the form
     const email = event.currentTarget.email.value;
-    console.log("Email:", email);
 
     forgotPassword(email)
       .then((response) => {

@@ -43,13 +43,14 @@ interface Result {
   Value: string;
 }
 
-const ProcessDetails: React.FC<ProcessDetailsProps> = ({
-  supplyChainStepData,
-  loading,
-  gitRepo,
-  gitBranch,
-  handleTrigger,
-}) => {
+const ProcessDetails = (props: ProcessDetailsProps) => {
+  const {
+    supplyChainStepData,
+    loading,
+    gitRepo,
+    gitBranch,
+    handleTrigger,
+  } = props
   const [duration, setDuration] = useState<string | undefined>();
   const [comment, setComment] = useState<string>("");
   const [action, setAction] = useState<string>("");
