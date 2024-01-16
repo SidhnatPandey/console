@@ -229,10 +229,10 @@ const UserList = () => {
 
   const onSubmit = (user: any) => {
 
-  if (userNameExist) {
+    if (userNameExist) {
       Toaster.errorToast(" Username already Exist.");
       return;
-  }
+    }
     const params = {
       email: user.email,
       username: user.username,
@@ -419,23 +419,21 @@ const UserList = () => {
                             >
                               {!row.user_info.profile_picture &&
                                 (row.user_info.first_name ||
-                                row.user_info.last_name
-                                  ? `${
-                                      row.user_info.first_name
-                                        ? toTitleCase(
-                                            row.user_info.first_name[0]
-                                          )
-                                        : ""
-                                    }${
-                                      row.user_info.last_name
-                                        ? toTitleCase(
-                                            row.user_info.last_name[0]
-                                          )
-                                        : ""
-                                    }`
+                                  row.user_info.last_name
+                                  ? `${row.user_info.first_name
+                                    ? toTitleCase(
+                                      row.user_info.first_name[0]
+                                    )
+                                    : ""
+                                  }${row.user_info.last_name
+                                    ? toTitleCase(
+                                      row.user_info.last_name[0]
+                                    )
+                                    : ""
+                                  }`
                                   : row.username
-                                  ? toTitleCase(row.username[0])
-                                  : "")}
+                                    ? toTitleCase(row.username[0])
+                                    : "")}
                             </Avatar>
                             <div>
                               <Typography
@@ -451,7 +449,7 @@ const UserList = () => {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{row.role}</TableCell>
+                        <TableCell>{row.role === 'admin' ? row.role : 'user'}</TableCell>
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
                           <CustomChip

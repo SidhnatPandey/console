@@ -191,13 +191,14 @@ const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 const StepperCustomVertical = () => {
   // ** States
 
+  const sotredWorkspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
+  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>(sotredWorkspace);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
-  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>();
 
   // Handle Stepper
   const handleBack = () => {
@@ -215,7 +216,6 @@ const StepperCustomVertical = () => {
   const [branches, setBranches] = useState<string[]>(["No Branch"]);
 
   useEffect(() => {
-    setWorkspace(JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!));
     if (!gitUser) {
       fetchGitOwner();
     }
@@ -255,7 +255,7 @@ const StepperCustomVertical = () => {
 
   const router = useRouter();
   if (router.query?.code) {
-    sendCode(router.query?.code as string)
+    sendCode(router.query?.code as string, workspace.id)
       .then((response) => {
         if (response?.data.git_user) {
           setGitUser(response.git_user);
@@ -292,7 +292,7 @@ const StepperCustomVertical = () => {
 
   const fetchGitOwner = async () => {
     try {
-      const response = await getGitOwner();
+      const response = await getGitOwner(workspace.id);
       if (response.data) {
         setGitUser(response.data.gitUser);
         await fetchUserRepositories(response.data.gitUser as string);
@@ -305,7 +305,7 @@ const StepperCustomVertical = () => {
   const fetchUserRepositories = async (user: string) => {
     try {
       setLoadingRepositories(true);
-      const response = await getRepositories(user);
+      const response = await getRepositories(user, workspace.id);
       if (response.data) {
         setRepositories(response.data);
       }
@@ -319,7 +319,7 @@ const StepperCustomVertical = () => {
   const fetchBranch = async (repo: string) => {
     try {
       setLoadingBranches(true);
-      const response = await getBranch(repo, gitUser);
+      const response = await getBranch(repo, gitUser, workspace.id);
       if (response.data) {
         setBranches(response.data);
       }
