@@ -29,6 +29,7 @@ import { Avatar } from '@mui/material';
 import { UserDataType } from 'src/context/types';
 
 interface WorkspaceSettingsDataItem {
+    profile_picture: any;
     username: ReactNode;
     id: number;
     user_full_name: string;
@@ -258,8 +259,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                                                 <Avatar
                                                     alt={row.user_full_name}
                                                     src={
-                                                        row.user?.user_info.profile_picture
-                                                            ? `data:image/jpeg;base64,${row.user.user_info.profile_picture}`
+                                                        row?.profile_picture
+                                                            ? `data:image/jpeg;base64,${row.profile_picture}`
                                                             : undefined
                                                     }
                                                     sx={{ marginRight: 2, fontSize: "2rem" }}
