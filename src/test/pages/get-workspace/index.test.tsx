@@ -4,24 +4,21 @@ import '@testing-library/jest-dom';
 import Workspace from 'src/pages/workspace/[slug]';
 import mockRouter from 'next-router-mock';
 
-jest.mock('next/router', () => jest.requireActual('next-router-mock'));
+jest.mock('next/router', () => require('next-router-mock'));
 
 describe('Workspace Component', () => {
-  const mockRouter = {
-    query: { project: 'TestProject' },
-  };
-
-  /* beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue(mockRouter);
-  }); */
+  beforeEach(() => {
+    mockRouter.setCurrentUrl('/workspace/TestProject');
+    mockRouter.query = { slug: 'TestProject' };
+  });
 
   test('renders Workspace component with card', async () => {
     render(<Workspace />);
-
+  
     const cardElement = await screen.findByTestId('card');
     expect(cardElement).toBeInTheDocument();
-
   });
+  
 
   test('checks Workspace component are present or not', () => {
     render(<Workspace />);

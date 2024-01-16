@@ -11,6 +11,7 @@ import FlagIcon from '@mui/icons-material/Flag';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { UserDataType } from 'src/context/types';
+import { toTitleCase } from 'src/utils/stringUtils';
 
 
 interface ProfileProps {
@@ -36,7 +37,7 @@ const Profile: React.FC<ProfileProps> = ({ profileData }) => {
                 <PermIdentityIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Full Name:</strong> {profileData?.user_info?.first_name} {profileData?.user_info?.last_name}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center" data-testid="status">
-                <CheckIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>Status: </strong> {profileData?.status}
+                <CheckIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }} >Status: </strong>{profileData?.status ? toTitleCase(profileData.status) : 'No Status'}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary" display="flex" alignItems="center" data-testid="city">
                 <LocationOnIcon /> <strong style={{ marginLeft: '8px', marginRight: '8px' }}>City: </strong> {profileData?.user_info?.address?.city}
