@@ -29,13 +29,13 @@ const navigation = (): VerticalNavItemsType => {
       action: 'read',
       subject: PERMISSION_CONSTANTS.security,
     },
-    {
-      title: 'App-Dashboards',
-      icon: 'tabler:smart-home',
-      path: '/workspace/app-dashboard/?appId=65a62a3f1c34456bd9179ce7',
-      action: 'read',
-      subject: PERMISSION_CONSTANTS.appDashboard,
-    },
+    /*  {
+       title: 'App-Dashboards',
+       icon: 'tabler:smart-home',
+       path: '/workspace/app-dashboard/?appId=65a62a3f1c34456bd9179ce7',
+       action: 'read',
+       subject: PERMISSION_CONSTANTS.appDashboard,
+     }, */
     {
       sectionTitle: 'MANAGE'
     },
