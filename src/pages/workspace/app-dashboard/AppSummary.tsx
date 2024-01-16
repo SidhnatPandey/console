@@ -30,7 +30,9 @@ interface AppSummaryProps {
   metricsTimer: number;
 }
 
-const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer }) => {
+const AppSummary = (props: AppSummaryProps) => {
+
+  const { loading, appName, metricsTimer } = props
 
   let key = appName ? APP_API.appMatrix : undefined;
   if (appName) { key = key?.replace('{appName}', appName); }
@@ -115,5 +117,4 @@ const AppSummary: React.FC<AppSummaryProps> = ({ loading, appName, metricsTimer 
     </Card>
   );
 };
-
 export default AppSummary;

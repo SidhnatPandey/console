@@ -28,7 +28,7 @@ interface AppListProps {
   workspace_id: string | undefined;
 }
 
-const createData = ({
+/* const createData = ({
   name,
   currentEnv,
   lastDeployed,
@@ -49,7 +49,7 @@ const createData = ({
     liveAppUrl,
     status,
   };
-};
+}; */
 
 const EnhancedTableHead: React.FC<{
   onRequestSort: (property: keyof Row) => void;
@@ -172,8 +172,8 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
     // Render your component here based on the selected row ID
   };
 
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, appListData?.length - page * rowsPerPage);
+  /* const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, appListData?.length - page * rowsPerPage); */
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

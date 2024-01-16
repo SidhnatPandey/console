@@ -70,9 +70,9 @@ import {
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
-import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
-
+/* 
 type FormValues = {
   application_name: string;
   git_repo: string;
@@ -84,7 +84,7 @@ type ConfigurationValues = {
   port: number;
   http_path: string;
   env_variables: EnvironmentVariable[];
-};
+}; */
 
 type EnvironmentVariable = {
   key: string;
@@ -188,7 +188,7 @@ const ConfigurationSchema = yup.object().shape({
 
 const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 
-const StepperCustomVertical = () => {
+const CreateApp = () => {
   // ** States
 
   const sotredWorkspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
@@ -204,7 +204,7 @@ const StepperCustomVertical = () => {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     if (activeStep === 1) {
-      const sourceCodeValue = getSoruceCodeValue();
+      // const sourceCodeValue = getSoruceCodeValue();
       //setSourceCodeValue();
     }
   };
@@ -380,7 +380,6 @@ const StepperCustomVertical = () => {
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
     data["workspace_id"] = workspace?.id;
-    console.log(data);
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
@@ -1117,4 +1116,9 @@ const StepperCustomVertical = () => {
   );
 };
 
-export default StepperCustomVertical;
+CreateApp.acl = {
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.createApp
+}
+
+export default CreateApp;
