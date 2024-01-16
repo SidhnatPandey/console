@@ -50,17 +50,19 @@ export const appList = (workspaceId: string) => {
   return get(url).then((response) => response?.data);
 };
 
-export const appDetails = (id: any) => {
+export const appDetails = (id: any, workspaceId: string) => {
   setApiBaseUrl();
   let url = APP_API.appDetails;
   url = url.replace("{appId}", id);
+  url = url + '?workspace_id=' + workspaceId
   return get(url).then((response) => response?.data);
 };
 
-export const destroyApp = (id: string) => {
+export const destroyApp = (id: string, workspaceId: string) => {
   setApiBaseUrl();
   let url = APP_API.destroyApp;
   url = url.replace("{appId}", id);
+  url = url + '?workspace_id=' + workspaceId
   return deleteCall(url).then((response) => response?.data);
 }
 

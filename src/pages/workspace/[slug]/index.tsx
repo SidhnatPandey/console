@@ -9,7 +9,6 @@ import Apps from "../apps";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
 import { Icon } from "@iconify/react";
-import { AbilityContext } from "src/layouts/components/acl/Can";
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
 const Workspace = () => {
@@ -22,14 +21,15 @@ const Workspace = () => {
   // State to manage the current project
   const [currentProject, setCurrentProject] = useState<string | string[] | undefined | null>();
 
-  const ability = useContext(AbilityContext)
-
   useEffect(() => {
     // Update the current project when the query parameter changes
     const workspace = authContext.workspaces?.find((workspace) => workspace.id === slug);
+    console.log(workspace);
+
     localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, JSON.stringify(workspace));
     setWorkspace(workspace);
     setCurrentProject(workspace?.name);
+    setSelectedTab(0)
   }, [slug]);
 
   const handleShowApps = () => {
@@ -137,7 +137,7 @@ const Workspace = () => {
               Apps
             </Button>
 
-            {ability?.can('read', PERMISSION_CONSTANTS.workspaceSettings) ? (<Button
+            {workspace.role != 'developer' ? (<Button
               value={1}
               variant="text"
               onClick={handleShowSettings}

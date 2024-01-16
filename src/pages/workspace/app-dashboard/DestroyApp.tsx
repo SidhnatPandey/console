@@ -12,6 +12,7 @@ import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 interface DestroyAppProps {
   loading: boolean;
@@ -20,13 +21,14 @@ interface DestroyAppProps {
   appId?: string;
 }
 
-const DestroyApp: React.FC<DestroyAppProps> = ({
-  loading,
-  appId,
-}) => {
+const DestroyApp = (props: DestroyAppProps) => {
+  const {
+    loading,
+    appId,
+  } = props
   const router = useRouter();
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-
+  const workspaceId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!).id;
   const handleDestroyApp = () => {
     if (appId) {
       // Open the confirmation dialog
@@ -36,12 +38,13 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
 
   const confirmDestroyApp = () => {
     if (appId) {
-      destroyApp(appId)
+      destroyApp(appId, workspaceId)
         .then((response: any) => {
           setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
-            router.push("/apps");
+            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            router.push(defaultRoute);
           } else {
             toast.error("App deletion failed. Please try again.");
           }
@@ -133,5 +136,6 @@ const DestroyApp: React.FC<DestroyAppProps> = ({
     </Card>
   );
 };
+
 
 export default DestroyApp;

@@ -20,14 +20,15 @@ interface ProcessTileProps {
   loading: boolean
 }
 
-const ProcessTile: React.FC<ProcessTileProps> = ({
-  stage,
-  status,
-  onClick,
-  isSelected,
-  loading
-}) => {
+const ProcessTile = (props: ProcessTileProps) => {
 
+  const {
+    stage,
+    status,
+    onClick,
+    isSelected,
+    loading
+  } = props
   const checkApproval = () => {
     return stage.toLowerCase().includes("approval")
   }

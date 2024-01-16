@@ -15,13 +15,13 @@ export const PERMISSION_CONSTANTS = {
     workspaceSettings: 'workspace-settings',
     workspaceApps: 'workspace-apps',
 
-    // security
+    // other
     security: 'security-dashboard',
-
-    //document
     document: 'document',
+    profile: 'profile',
 
     //app
     appDashboard: 'app-dashboard',
-    deleteApp: 'app-delete'
+    deleteApp: 'app-delete',
+    createApp: 'create-app'
 }

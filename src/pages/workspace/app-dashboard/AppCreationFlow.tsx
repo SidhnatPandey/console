@@ -25,7 +25,9 @@ interface AppCreationFlow {
   gitBranch: string | undefined;
 }
 
-const AppCreationFlow: React.FC<AppCreationFlow> = ({ supplyChainData, loading, timer, gitRepo, gitBranch }) => {
+const AppCreationFlow = (props: AppCreationFlow) => {
+
+  const { supplyChainData, loading, timer, gitRepo, gitBranch } = props
   const [selectedTile, setSelectedTile] = useState<string>("clone");
 
   const handleTileClick = (stage: string) => {

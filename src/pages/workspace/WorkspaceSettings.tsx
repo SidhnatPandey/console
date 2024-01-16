@@ -27,6 +27,7 @@ import { setApiBaseUrl } from 'src/@core/services/interceptor';
 import toast from 'react-hot-toast';
 import { Avatar } from '@mui/material';
 import { UserDataType } from 'src/context/types';
+import { toTitleCase } from 'src/utils/stringUtils';
 
 interface WorkspaceSettingsDataItem {
     profile_picture: any;
@@ -106,10 +107,10 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
     };
 
     const getStatusChipColor = (status: any) => {
-        switch (status) {
-            case "Active":
+        switch (status.toLowerCase()) {
+            case "active":
                 return "success";
-            case "Inactive":
+            case "deleted":
                 return "error";
             default:
                 return "warning";
@@ -127,8 +128,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                     workspace_id: workspaceId.id
                 }
                 removeUserFromWorkspace(payload)
-                    .then((response) => {
-                        console.log('User removed successfully:', response);
+                    .then(() => {
                         toast.success('User removed successfully');
                         setWorkspaceSettingsData((prevData) => {
                             const updatedData = prevData.filter((user, key) => key !== selectedRow);
@@ -180,8 +180,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                 workspace_id: workspaceId?.id
             }
             addUserToWorkspace(payload)
-                .then((response) => {
-                    console.log('User added successfully:', response);
+                .then(() => {
                     fetchWorkspaces();
                 })
                 .catch((error) => {
@@ -278,13 +277,13 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                                             </div>
 
                                         </TableCell>
-                                        <TableCell>{row.role}</TableCell>
+                                        <TableCell>{toTitleCase(row.role)}</TableCell>
                                         <TableCell>{row.email}</TableCell>
                                         <TableCell>
                                             <CustomChip
                                                 rounded
                                                 skin="light"
-                                                label={row.status ? row.status : "Pending"}
+                                                label={row.status ? toTitleCase(row.status) : "Pending"}
                                                 color={getStatusChipColor(row.status)}
                                                 variant="outlined"
                                             />
@@ -333,7 +332,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                 />
             </Card>
             <Card sx={{ margin: '16px 0 0 0' }}>
-                <DestroyWorkspace onConfirmDestroy={() => console.log('Destroy Workspace')} loading={false} workspaceId={workspaceId} />
+                <DestroyWorkspace loading={false} workspaceId={workspaceId} />
             </Card>
             <Dialog open={isAddUserDialogOpen} onClose={handleAddUserDialogClose} maxWidth="sm" fullWidth>
                 <DialogTitle>
@@ -447,7 +446,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             error={isValidationError && !selectedUserRole}
                             helperText={isValidationError && !selectedUserRole ? "Role is required" : ""}
                         >
-                            <MenuItem value="admin">Admin</MenuItem>
                             <MenuItem value="workspace-admin">Workspace Admin</MenuItem>
                             <MenuItem value="developer">Developer</MenuItem>
                         </TextField>

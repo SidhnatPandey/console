@@ -181,7 +181,6 @@ const UserList = () => {
       (org) => org.org_id === orgId
     )[0];
     setOrg(org);
-    console.log(org);
   }, [authContext]);
 
   useEffect(() => {
@@ -241,7 +240,7 @@ const UserList = () => {
       org: user.org,
     };
     inviteUser(params)
-      .then((response) => {
+      .then(() => {
         const successMessage = isEditMode
           ? "User edited successfully"
           : "User invited successfully";
@@ -449,13 +448,13 @@ const UserList = () => {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{row.role === 'admin' ? row.role : 'user'}</TableCell>
+                        <TableCell>{row.role === 'admin' ? 'Admin' : 'User'}</TableCell>
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
                           <CustomChip
                             rounded
                             skin="light"
-                            label={row.status ? row.status : "Pending"}
+                            label={row.status ? toTitleCase(row.status) : "Pending"}
                             color={getStatusChipColor(row.status)}
                             variant="outlined"
                           />
@@ -667,10 +666,5 @@ const UserList = () => {
     </>
   );
 };
-
-UserList.acl = {
-  action: 'manage',
-  subject: 'OrgSettings'
-}
 
 export default UserList;

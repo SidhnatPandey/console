@@ -149,6 +149,10 @@ const AuthProvider = ({ children }: Props) => {
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.token);
     window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.refreshToken);
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.workspace);
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.homeRoute);
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.userName);
+    window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.ogrId);
     router.push('/login')
   }
 
