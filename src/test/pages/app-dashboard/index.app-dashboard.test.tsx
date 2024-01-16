@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom';
+import { workspace } from "src/services/appService";
 
 jest.mock("next/router", () => ({
   useRouter: () => ({
@@ -31,7 +32,15 @@ jest.mock("src/services/appService", () => ({
       description: "Your description",
     },
   }),
+  getListOfUsersWorkspaces: jest.fn().mockResolvedValue({
+    data: [
+      {
+        id: "mock-workspace-id",
+      },
+    ],
+  }),
 }));
+
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
@@ -40,7 +49,7 @@ jest.mock("react", () => ({
 describe("AppDashboard Component", () => {
 
   beforeEach(() => {
-    render(<AppDashboard appId={""} />);
+    render(<AppDashboard  />);
   })
 
   it("should render loading state", async () => {

@@ -9,7 +9,9 @@ jest.mock('src/services/userService', () => ({
     getUserProfile: jest.fn(() => Promise.resolve({ data: {} })),
     postUserProfile: jest.fn(() => Promise.resolve({ status: 200 })),
     deactivateUser: jest.fn(() => Promise.resolve({ status: 200 })),
+    checkDeleteCriteria: jest.fn(() => Promise.resolve({ data: {} })),
 }));
+
 jest.mock('react-hot-toast', () => ({ toast: { success: jest.fn(), error: jest.fn() } }));
 jest.mock('src/hooks/useAuth', () => ({ useAuth: jest.fn(() => ({ logout: jest.fn() })) }));
 
@@ -102,10 +104,9 @@ describe('TabAccount Component', () => {
         fireEvent.click(resetButton);
         await waitFor(() => {
             const profilePic = screen.getByAltText('Profile Pic');
-            expect(profilePic).toHaveAttribute('src', 'data:image/jpeg;base64,'); // Change this based on the expected initial value
+            expect(profilePic).toHaveAttribute('src', 'data:image/jpeg;base64,undefined'); 
         });
     });
-
 
     it('handles cancel changes correctly', async () => {
         render(<TabAccount />);

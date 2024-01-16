@@ -23,7 +23,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import CustomChip from "src/@core/components/mui/chip";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { getListOfUsersWorkspaces, addUserToWorkspace, removeUserFromWorkspace, orguser } from 'src/services/appService';
-import { setApiBaseUrl } from 'src/@core/services/interceptor';
 import toast from 'react-hot-toast';
 import { Avatar } from '@mui/material';
 import { UserDataType } from 'src/context/types';
@@ -59,6 +58,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
     const [isValidationError, setIsValidationError] = useState(false);
     const [isEditDialogOpen, setEditDialogOpen] = useState(false);
     const [selectedUserForEdit, setSelectedUserForEdit] = useState<WorkspaceSettingsDataItem | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         fetchWorkspaces();
@@ -72,12 +72,14 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
     }, [selectedUserForEdit, isEditDialogOpen])
 
     const fetchWorkspaces = () => {
-        setApiBaseUrl();
+        setLoading(true);
         getListOfUsersWorkspaces(workspaceId?.id)
             .then((response) => {
                 setWorkspaceSettingsData(response?.data || []);
+                setLoading(false);
             })
             .catch((error) => {
+                setLoading(false);
                 console.error('Error fetching workspaces:', error);
             });
     };
@@ -204,8 +206,12 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
         setSelectedUserRole(row.role)
         setSelectedUserId(row.user_id)
         handleOptionClick('Remove', row.user_id, row.role)
-
     }
+
+    const getRole = (role: string) => {
+        return role === 'workspace-admin' ? 'Workspace Admin' : toTitleCase(role)
+    }
+
     return (
         <>
             <Card sx={{ margin: '0 0 30px 0' }}>
@@ -247,76 +253,89 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {(rowsPerPage > 0
-                                ? workspaceSettingsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                : workspaceSettingsData
-                            ).map((row, key) => {
-                                return (
-                                    <TableRow key={key}>
-                                        <TableCell>
-                                            <div style={{ display: "flex", alignItems: "center" }}>
-                                                <Avatar
-                                                    alt={row.user_full_name}
-                                                    src={
-                                                        row?.profile_picture
-                                                            ? `data:image/jpeg;base64,${row.profile_picture}`
-                                                            : undefined
-                                                    }
-                                                    sx={{ marginRight: 2, fontSize: "2rem" }}
-                                                    style={{ alignItems: "center", fontSize: '20px' }}
+                            {workspaceSettingsData.length > 0
+                                ? workspaceSettingsData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, key) => {
+                                    return (
+                                        <TableRow key={key}>
+                                            <TableCell>
+                                                <div style={{ display: "flex", alignItems: "center" }}>
+                                                    <Avatar
+                                                        alt={row.user_full_name}
+                                                        src={
+                                                            row?.profile_picture
+                                                                ? `data:image/jpeg;base64,${row.profile_picture}`
+                                                                : undefined
+                                                        }
+                                                        sx={{ marginRight: 2, fontSize: "2rem" }}
+                                                        style={{ alignItems: "center", fontSize: '20px' }}
 
-                                                />
-                                                <div>
-                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                                                        {row?.user_full_name}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="textSecondary" component="div">
-                                                        @{row.username}
-                                                    </Typography>
+                                                    />
+                                                    <div>
+                                                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                            {row?.user_full_name}
+                                                        </Typography>
+                                                        <Typography variant="body2" color="textSecondary" component="div">
+                                                            @{row.username}
+                                                        </Typography>
+                                                    </div>
                                                 </div>
-                                            </div>
 
+                                            </TableCell>
+                                            <TableCell>{getRole(row.role)}</TableCell>
+                                            <TableCell>{row.email}</TableCell>
+                                            <TableCell>
+                                                <CustomChip
+                                                    rounded
+                                                    skin="light"
+                                                    label={row.status ? toTitleCase(row.status) : "Pending"}
+                                                    color={getStatusChipColor(row.status)}
+                                                    variant="outlined"
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    aria-label="more"
+                                                    aria-controls="long-menu"
+                                                    aria-haspopup="true"
+                                                    onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => handleMenuClick(e, key)}
+                                                >
+                                                    <MoreVertIcon />
+                                                </IconButton>
+                                                <Menu
+                                                    id="long-menu"
+                                                    anchorEl={anchorEl}
+                                                    keepMounted
+                                                    open={Boolean(anchorEl && selectedRow === key)}
+                                                    onClose={handleMenuClose}
+                                                >
+                                                    <MenuItem onClick={() => handleOptionClick('Edit')}>
+                                                        <EditIcon fontSize="small" style={{ marginRight: '4.5px' }} />
+                                                        Edit
+                                                    </MenuItem>
+                                                    <MenuItem onClick={() => handleRemove(row)}>
+                                                        <DeleteForeverIcon fontSize="small" sx={{ marginRight: 1 }} />
+                                                        Remove
+                                                    </MenuItem>
+                                                </Menu>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                }) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={5}
+                                            style={{
+                                                textAlign: 'center',
+                                                fontSize: '18px',
+                                                paddingTop: '50px', // Increase the top padding
+                                                paddingBottom: '50px', // Increase the bottom padding
+                                            }}
+                                        >
+                                            {loading ? 'Loading ...' : 'No Users'}
                                         </TableCell>
-                                        <TableCell>{toTitleCase(row.role)}</TableCell>
-                                        <TableCell>{row.email}</TableCell>
-                                        <TableCell>
-                                            <CustomChip
-                                                rounded
-                                                skin="light"
-                                                label={row.status ? toTitleCase(row.status) : "Pending"}
-                                                color={getStatusChipColor(row.status)}
-                                                variant="outlined"
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                aria-label="more"
-                                                aria-controls="long-menu"
-                                                aria-haspopup="true"
-                                                onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => handleMenuClick(e, key)}
-                                            >
-                                                <MoreVertIcon />
-                                            </IconButton>
-                                            <Menu
-                                                id="long-menu"
-                                                anchorEl={anchorEl}
-                                                keepMounted
-                                                open={Boolean(anchorEl && selectedRow === key)}
-                                                onClose={handleMenuClose}
-                                            >
-                                                <MenuItem onClick={() => handleOptionClick('Edit')}>
-                                                    <EditIcon fontSize="small" style={{ marginRight: '4.5px' }} />
-                                                    Edit
-                                                </MenuItem>
-                                                <MenuItem onClick={() => handleRemove(row)}>
-                                                    <DeleteForeverIcon fontSize="small" sx={{ marginRight: 1 }} />
-                                                    Remove
-                                                </MenuItem>
-                                            </Menu>
-                                        </TableCell>
+
                                     </TableRow>
-                                )
-                            })}
+                                )}
                         </TableBody>
                     </Table>
                 </TableContainer>
