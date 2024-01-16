@@ -457,7 +457,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({ workspaceId }
                         onClick={() => {
                             handleAddUser()
                             handleEditDialogClose();
-                            console.log("lund")
                         }}
                         color="primary"
                         sx={{ marginTop: '16px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
