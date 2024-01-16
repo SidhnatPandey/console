@@ -74,7 +74,7 @@ const AppDashboard = () => {
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
-  key = key + '?workspace_id=' + workspace.id
+  key = key + '&workspace_id=' + workspace.id
   setApiBaseUrl();
   const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
     refreshInterval: timer
