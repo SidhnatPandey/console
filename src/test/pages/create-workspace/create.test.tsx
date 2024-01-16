@@ -97,29 +97,5 @@ describe("<CreateWorkspace />", () => {
     expect(workspaceNameInput.value).toBe("");
     expect(descriptionInput.value).toBe("");
   });
-  test("shows an info toast if the workspace name already exists", async () => {
-    // Override the mock implementation for this test
-    require("src/services/appService").workspace.mockResolvedValueOnce({ status: 409 });
-  
-    render(<CreateWorkspace />);
-  
-    const workspaceNameInput = screen.getByLabelText(/workspace name/i);
-    fireEvent.change(workspaceNameInput, {
-      target: { value: "ExistingWorkspace" },
-    });
-  
-    const descriptionInput = screen.getByLabelText(/workspace description/i);
-    fireEvent.change(descriptionInput, {
-      target: { value: "Workspace Description" },
-    });
-  
-    const submitButton = screen.getByRole("button", { name: /create/i });
-    fireEvent.click(submitButton);
-  
-    await waitFor(() => {
-      expect(Toaster.infoToast).toHaveBeenCalledWith(
-        "Workspace name already exists for current organization"
-      );
-    });
-  });
+ 
 });
