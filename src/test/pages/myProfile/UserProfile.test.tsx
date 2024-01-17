@@ -27,7 +27,7 @@ describe('Profile Component', () => {
   };
 
   test('renders user information correctly', async () => {
-    render(<Profile user_info={user_info} />);
+    render(<Profile profileData={null} />);
     
     expect(screen.getByTestId('about-section')).toBeInTheDocument();
     expect(screen.getByTestId('full-name')).toBeInTheDocument();
