@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { appList } from 'src/services/appService';
 import { convertDateFormat } from 'src/utils/dateUtil';
 import CustomChip from 'src/@core/components/mui/chip'
+import { toTitleCase } from 'src/utils/stringUtils';
 
 interface Row {
   id: number;
@@ -152,7 +153,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
       case 'deploy-stg':
         return 'stg'
       case 'prod-approval':
-        return 'prod'
+        return 'stg'
       case 'deploy-prod':
         return 'prod'
       default:
@@ -210,7 +211,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
                       fontWeight: 'bold',
                       color: '#7353e5'
                     }} >{row?.application_name}</TableCell>
-                    <TableCell>{getCurrentEnv(row?.stage)}</TableCell>
+                    <TableCell>{toTitleCase(getCurrentEnv(row?.stage))}</TableCell>
                     <TableCell>{convertDateFormat(row?.last_deployed)}</TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url.startsWith('http://') || row?.url.startsWith('https://') ? row?.url : `https://${row?.url}`} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
                     <TableCell>

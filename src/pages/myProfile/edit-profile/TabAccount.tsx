@@ -26,6 +26,7 @@ import ConfirmationDialog from "../../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
 import { CircularProgress } from '@mui/material';
 import { checkDeleteCriteria } from "src/services/userService";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 interface Data {
   user_info?: any;
@@ -109,6 +110,8 @@ const TabAccount = () => {
 
   const setData = () => {
     const userData = authContext?.user;
+    const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
+    const org = authContext.organisations.filter((org) => org.org_id === orgId)[0];
     const profilePicture = 'data:image/jpeg;base64,' + userData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
     const data: Data = {
       ...formData,
@@ -122,7 +125,7 @@ const TabAccount = () => {
       city: userData?.user_info?.address?.city,
       firstName: userData?.user_info?.first_name,
       country: userData?.user_info?.address?.country,
-      organization: userData?.org,
+      organization: org.org_name,
       email: userData?.email,
       username: userData?.username,
       profile_picture: userData?.user_info?.profile_picture,
@@ -143,8 +146,6 @@ const TabAccount = () => {
         setDeleteCriteria({ allowed: false });
       });
   }, []);
-
-
 
   useEffect(() => {
     setData();
@@ -354,8 +355,9 @@ const TabAccount = () => {
                 <TextField
                   fullWidth
                   label="Organization"
-                  placeholder="Initialize"
+                  placeholder="Initializ"
                   value={formData.organization}
+                  disabled
                   onChange={(e) =>
                     handleFormChange("organization", e.target.value)
                   }
@@ -453,7 +455,7 @@ const TabAccount = () => {
                   color="secondary"
                   onClick={handleCancelChanges}
                 >
-                  Cancel
+                  Reset
                 </Button>
               </Grid>
             </Grid>
@@ -484,8 +486,8 @@ const TabAccount = () => {
                   be certain.
                 </Typography>
                 {!deleteCriteria.allowed && (
-                  <Typography variant="body2" color="error">
-                    “Before you can delete your account, you will need to delete any organization you own or transfer ownership to another user”                 </Typography>
+                  <Typography variant="body1" color="error">
+                    <b>Note: </b> Before you can delete your account, you will need to delete any organization you own or transfer ownership to another user.                 </Typography>
                 )}
               </Paper>
               <Box sx={{ mb: 4 }}>
