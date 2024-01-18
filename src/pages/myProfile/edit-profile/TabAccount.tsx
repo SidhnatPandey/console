@@ -24,7 +24,7 @@ import { Countries } from "src/@core/static/countries";
 import { useRouter } from "next/router";
 import ConfirmationDialog from "../../../component/ConfirmationDialog";
 import { AuthContext } from "src/context/AuthContext"; // Update with the actual path to your AuthContext
-import { CircularProgress } from '@mui/material';
+import { CircularProgress } from "@mui/material";
 import { checkDeleteCriteria } from "src/services/userService";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
@@ -100,19 +100,27 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 const TabAccount = () => {
   const authContext = useContext(AuthContext); // Access the auth context
   const [formData, setFormData] = useState<Data>(initialData);
-  const [imgSrc, setImgSrc] = useState<string>('');
+  const [imgSrc, setImgSrc] = useState<string>("");
   const [originalData, setOriginalData] = useState<Data>(initialData); // Added for storing original data
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false); // State for the confirmation dialog
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [deleteCriteria, setDeleteCriteria] = useState<{ allowed: boolean }>({ allowed: false });
+  const [deleteCriteria, setDeleteCriteria] = useState<{ allowed: boolean }>({
+    allowed: false,
+  });
   const router = useRouter();
 
   const setData = () => {
     const userData = authContext?.user;
-    const orgId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
-    const org = authContext.organisations.filter((org) => org.org_id === orgId)[0];
-    const profilePicture = 'data:image/jpeg;base64,' + userData?.user_info?.profile_picture || "/images/avatars/user-default-avatar.png";
+    const orgId = JSON.parse(
+      localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
+    );
+    const org = authContext.organisations.filter(
+      (org) => org.org_id === orgId
+    )[0];
+    const profilePicture =
+      "data:image/jpeg;base64," + userData?.user_info?.profile_picture ||
+      "/images/avatars/user-default-avatar.png";
     const data: Data = {
       ...formData,
       role: userData?.role,
@@ -125,21 +133,21 @@ const TabAccount = () => {
       city: userData?.user_info?.address?.city,
       firstName: userData?.user_info?.first_name,
       country: userData?.user_info?.address?.country,
-      organization: org.org_name,
+      organization: org?.org_name,
       email: userData?.email,
       username: userData?.username,
       profile_picture: userData?.user_info?.profile_picture,
-    }
+    };
 
     setFormData(data);
     setOriginalData(data);
     setImgSrc(profilePicture);
-  }
+  };
 
   useEffect(() => {
     checkDeleteCriteria()
       .then((result) => {
-        setDeleteCriteria(result.data);  // Assuming the response contains data property
+        setDeleteCriteria(result.data); // Assuming the response contains data property
       })
       .catch((error) => {
         console.error("Error checking delete criteria:", error);
@@ -177,18 +185,18 @@ const TabAccount = () => {
         if (response.status === 200) {
           // Update the user context immediately after a successful profile update
           authContext.setUser(response.data);
-          toast.success('Profile updated successfully!');
-          router.push('/myProfile');
+          toast.success("Profile updated successfully!");
+          router.push("/myProfile");
         } else {
-          toast.error('Profile update failed. Please try again.');
+          toast.error("Profile update failed. Please try again.");
         }
       })
       .catch((error) => {
         setIsSubmitting(false);
         if (error.response && error.response.status === 400) {
-          toast.error('Bad request. Please check your data and try again.');
+          toast.error("Bad request. Please check your data and try again.");
         } else {
-          toast.error('An error occurred. Please try again later.');
+          toast.error("An error occurred. Please try again later.");
         }
       });
   };
@@ -198,8 +206,8 @@ const TabAccount = () => {
     const { files } = e.target;
     if (files && files.length > 0) {
       const selectedFile = files[0];
-      const allowedExtensions = ['jpeg', 'jpg', 'png'];
-      const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
+      const allowedExtensions = ["jpeg", "jpg", "png"];
+      const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
       if (fileExtension && allowedExtensions.includes(fileExtension)) {
         if (selectedFile.size <= 800 * 1024) {
           reader.onload = () => {
@@ -209,24 +217,24 @@ const TabAccount = () => {
               ...formData,
               user_info: {
                 ...formData.user_info,
-                profile_picture: profilePicture?.split(',')[1] as string,
+                profile_picture: profilePicture?.split(",")[1] as string,
               },
             });
           };
           reader.readAsDataURL(selectedFile);
         } else {
           toast.error(
-            'Image size exceeds the limit of 800KB. Please choose a smaller image.'
+            "Image size exceeds the limit of 800KB. Please choose a smaller image."
           );
         }
       } else {
-        toast.error('Only JPEG, JPG, and PNG files are allowed.');
+        toast.error("Only JPEG, JPG, and PNG files are allowed.");
       }
     }
   };
 
   const handleInputImageReset = () => {
-    setImgSrc('data:image/jpeg;base64,' + originalData.profile_picture);
+    setImgSrc("data:image/jpeg;base64," + originalData.profile_picture);
     setFormData({
       ...formData,
       user_info: {
@@ -268,14 +276,14 @@ const TabAccount = () => {
     deactivateUser()
       .then((response: any) => {
         if (response.status === 200) {
-          toast.success('Account deactivated successfully!');
+          toast.success("Account deactivated successfully!");
           authContext.logout(); // Assuming you have a logout method in your auth context
         } else {
-          toast.error('Account deactivation failed. Please try again.');
+          toast.error("Account deactivation failed. Please try again.");
         }
       })
       .catch(() => {
-        toast.error('An error occurred. Please try again later.');
+        toast.error("An error occurred. Please try again later.");
       });
   };
 
@@ -293,7 +301,14 @@ const TabAccount = () => {
         <form onSubmit={handleSubmit(handleSaveChanges)}>
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ImgStyled src={imgSrc && imgSrc.split(',')[1] !== "null" ? imgSrc : "/images/avatars/user-default-avatar.png"} alt="Profile Pic" />
+              <ImgStyled
+                src={
+                  imgSrc && imgSrc.split(",")[1] !== "null"
+                    ? imgSrc
+                    : "/images/avatars/user-default-avatar.png"
+                }
+                alt="Profile Pic"
+              />
               <div>
                 <ButtonStyled variant="contained" as="label">
                   Upload New Photo
@@ -305,6 +320,7 @@ const TabAccount = () => {
                   />
                 </ButtonStyled>
                 <ResetButtonStyled
+                  data-testid="reset-image"
                   color="secondary"
                   variant="outlined"
                   onClick={handleInputImageReset}
@@ -373,7 +389,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -412,10 +428,12 @@ const TabAccount = () => {
                   </InputLabel>
                   <Select
                     id="country"
-                    labelId="country-label"  // Added labelId to associate with the label
+                    labelId="country-label" // Added labelId to associate with the label
                     label="Country"
                     value={formData.country}
-                    onChange={(e) => handleFormChange("country", e.target.value)}
+                    onChange={(e) =>
+                      handleFormChange("country", e.target.value)
+                    }
                   >
                     {Countries.map((country) => (
                       <MenuItem key={country.code} value={country.name}>
@@ -424,7 +442,6 @@ const TabAccount = () => {
                     ))}
                   </Select>
                 </FormControl>
-
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -447,10 +464,17 @@ const TabAccount = () => {
                   sx={{ mr: 4 }}
                   onClick={handleSaveChanges}
                 >
-                  {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
+                  {isSubmitting && (
+                    <CircularProgress
+                      size="1.2rem"
+                      color="secondary"
+                      style={{ marginRight: "5px" }}
+                    />
+                  )}
                   Save Changes
                 </Button>
                 <Button
+                  data-testid="reset"
                   variant="outlined"
                   color="secondary"
                   onClick={handleCancelChanges}
@@ -487,7 +511,10 @@ const TabAccount = () => {
                 </Typography>
                 {!deleteCriteria.allowed && (
                   <Typography variant="body1" color="error">
-                    <b>Note: </b> Before you can delete your account, you will need to delete any organization you own or transfer ownership to another user.                 </Typography>
+                    <b>Note: </b> Before you can delete your account, you will
+                    need to delete any organization you own or transfer
+                    ownership to another user.{" "}
+                  </Typography>
                 )}
               </Paper>
               <Box sx={{ mb: 4 }}>
@@ -502,10 +529,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                              "& .MuiTypography-root": {
-                                color: "error.main",
-                              },
-                            }
+                                "& .MuiTypography-root": {
+                                  color: "error.main",
+                                },
+                              }
                             : null
                         }
                         control={
@@ -537,7 +564,7 @@ const TabAccount = () => {
                 color="error"
                 type="submit"
                 onClick={() => setConfirmationDialogOpen(true)}
-                disabled={!isCheckboxChecked || !deleteCriteria.allowed}  // Disable if checkbox is not checked or user cannot delete the account
+                disabled={!isCheckboxChecked || !deleteCriteria.allowed} // Disable if checkbox is not checked or user cannot delete the account
               >
                 Deactivate Account
               </Button>
