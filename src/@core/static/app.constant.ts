@@ -19,6 +19,8 @@ export const PERMISSION_CONSTANTS = {
     security: 'security-dashboard',
     document: 'document',
     profile: 'profile',
+    editProfile: 'edit-profile',
+    orgSetting: 'org-setting',
 
     //app
     appDashboard: 'app-dashboard',

@@ -98,7 +98,7 @@ const ProcessDetails = (props: ProcessDetailsProps) => {
         if (response.status === 200) {
           setTimeout(() => {
             handleTrigger();
-            toast.success("Approved Successfully");
+            toast.success(`${action} Successfully`);
             setSubmitted(false);
             setConfirmationDialogOpen(false);
           }, 7000)
@@ -108,6 +108,8 @@ const ProcessDetails = (props: ProcessDetailsProps) => {
         }
       })
       .catch(() => {
+        setSubmitted(false);
+        setConfirmationDialogOpen(false);
         toast.error("Some Error Occured");
       });
   };
