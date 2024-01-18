@@ -7,7 +7,6 @@ import * as userService from "src/services/userService";
 jest.mock("src/services/userService");
 
 describe("UserList Component", () => {
-    
   const mockUsers = [
     {
       user_id: "1",
@@ -28,8 +27,8 @@ describe("UserList Component", () => {
       data: { users: mockUsers },
     });
     (userService.inviteUser as jest.Mock).mockResolvedValue({
-        status: 201, 
-      });
+      status: 201,
+    });
   });
 
   afterEach(() => {
@@ -85,64 +84,71 @@ describe("UserList Component", () => {
     const tableCellData = screen.getByTestId("tableData");
     expect(tableCellData).toBeInTheDocument();
   });
-  
+
   test("Renders the first user's avatar in the table", async () => {
     render(<UserList />);
-  
-    const firstUserAvatar = await waitFor(() => screen.getByTestId("avatar-0"));
+
+    const firstUserAvatar = await waitFor(() =>
+      screen.findByTestId("avatar-0")
+    );
     expect(firstUserAvatar).toBeInTheDocument();
   });
 
-    test('Verify all the buttons', () => {
-      render(<UserList />);
+  test("Verify all the buttons", () => {
+    render(<UserList />);
 
-      const rowButton = screen.getByRole("button", { name: /Rows per page: 5/i });
-      fireEvent.click(rowButton);
-      const previousButton = screen.getByRole("button", { name: /Go to previous page/i });
-      fireEvent.click(previousButton);
-      const nextButton = screen.getByRole("button", { name: /Go to next page/i });
-      fireEvent.click(nextButton);
+    const rowButton = screen.getByRole("button", { name: /Rows per page: 5/i });
+    fireEvent.click(rowButton);
+    const previousButton = screen.getByRole("button", {
+      name: /Go to previous page/i,
+    });
+    fireEvent.click(previousButton);
+    const nextButton = screen.getByRole("button", { name: /Go to next page/i });
+    fireEvent.click(nextButton);
   });
 
-test('Verify the "remove User" menu', async () => {
-
-    render(<RowOptions user={{
-        id: "",
-        type: "",
-        user_id: "",
-        role: "",
-        org: "",
-        org_id: "",
-        email: "",
-        username: "",
-        password: "",
-        created_at: "",
-        updated_at: "",
-        nickname: "",
-        default_org: undefined,
-        user_info: {
+  test('Verify the "remove User" menu', async () => {
+    render(
+      <RowOptions
+        user={{
+          id: "",
+          type: "",
+          user_id: "",
+          role: "",
+          org: "",
+          org_id: "",
+          email: "",
+          username: "",
+          password: "",
+          created_at: "",
+          updated_at: "",
+          nickname: "",
+          default_org: undefined,
+          user_info: {
             first_name: "",
             last_name: "",
             phone_number: "",
             profile_picture: "",
             address: {
-                country: "",
-                state: "",
-                zip_code: 0,
-                city: "",
-                street_address: ""
-            }
-        },
-        status: ""
-    }} editClickHandler={undefined} refreshData={undefined} orgName={undefined} />);
+              country: "",
+              state: "",
+              zip_code: 0,
+              city: "",
+              street_address: "",
+            },
+          },
+          status: "",
+        }}
+        editClickHandler={undefined}
+        refreshData={undefined}
+        orgName={undefined}
+      />
+    );
 
-    const menuIconButton = screen.getByTestId("menu-icon"); 
-        fireEvent.click(menuIconButton);
+    const menuIconButton = screen.getByTestId("menu-icon");
+    fireEvent.click(menuIconButton);
 
-        const removeMenu = await screen.getByTestId("remove-user");
-        fireEvent.click(removeMenu);
-    });
-    
+    const removeMenu = screen.getByTestId("remove-user");
+    fireEvent.click(removeMenu);
+  });
 });
-
-
