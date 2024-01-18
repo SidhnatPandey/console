@@ -28,7 +28,7 @@ const DestroyApp = (props: DestroyAppProps) => {
   } = props
   const router = useRouter();
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-  const workspaceId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!).id;
+  const workspaceId = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!)?.id;
   const handleDestroyApp = () => {
     if (appId) {
       // Open the confirmation dialog

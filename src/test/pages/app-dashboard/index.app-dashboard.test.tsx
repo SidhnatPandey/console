@@ -2,58 +2,68 @@ import AppDashboard from "../../../pages/workspace/app-dashboard/index";
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import '@testing-library/jest-dom';
-import { workspace } from "src/services/appService";
+import "@testing-library/jest-dom";
 
-jest.mock("next/router", () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
-
-jest.mock("src/services/dashboardService", () => ({
-  supplyChainRuns: jest.fn().mockResolvedValue({
-    data: {
-      supplyChainProperty1: "Value1",
-      supplyChainProperty2: "Value2",
-    },
-  }),
-}));
-
-jest.mock("src/services/appService", () => ({
-  appDetails: jest.fn().mockResolvedValue({
-    data: {
-      application_name: "Your App",
-      stage: "Production",
-      status: "Running",
-      id: "your-id",
-      port: 8080,
-      http_path: "/your-path",
-      description: "Your description",
-    },
-  }),
-  getListOfUsersWorkspaces: jest.fn().mockResolvedValue({
-    data: [
-      {
-        id: "mock-workspace-id",
-      },
-    ],
-  }),
-}));
-
-
-jest.mock("react", () => ({
-  ...jest.requireActual("react"),
-  useState: () => [false, jest.fn()],
-}));
 describe("AppDashboard Component", () => {
-
   beforeEach(() => {
-    render(<AppDashboard  />);
-  })
+    jest.mock("next/router", () => ({
+      useRouter: () => ({
+        push: jest.fn(),
+      }),
+    }));
+
+    // jest.mock('src/layouts/components/acl/Can', () => ({
+    //   AbilityContext: jest.fn().mockReturnValue({
+    //     createContext: {
+    //       can: jest.fn().mockImplementation((action, subject) => true)
+    //     }
+    //   })
+    // }));
+    
+     jest.mock("src/services/dashboardService", () => ({
+      supplyChainRuns: jest.fn().mockResolvedValue({
+        data: {
+          supplyChainProperty1: "Value1",
+          supplyChainProperty2: "Value2",
+        },
+      }),
+    }));
+
+    jest.mock("src/services/appService", () => ({
+      appDetails: jest.fn().mockResolvedValue({
+        data: {
+          application_name: "Your App",
+          stage: "Production",
+          status: "Running",
+          id: "your-id",
+          port: 8080,
+          http_path: "/your-path",
+          description: "Your description",
+        },
+      }),
+      getListOfUsersWorkspaces: jest.fn().mockResolvedValue({
+        data: [
+          {
+            id: "mock-workspace-id",
+          },
+        ],
+      }),
+      workspace: jest.fn().mockResolvedValue({
+        workspace: {
+          id: "mock-workspace-id",
+        },
+      }),
+    }));
+
+    jest.mock("react", () => ({
+      ...jest.requireActual("react"),
+      useState: () => [false, jest.fn()],
+    }));
+
+    render(<AppDashboard />);
+  });
 
   it("should render loading state", async () => {
-
     expect(screen.getByTestId("card")).toBeInTheDocument();
 
     expect(screen.getByTestId("tab-list")).toBeInTheDocument();
@@ -74,7 +84,6 @@ describe("AppDashboard Component", () => {
   });
 
   it("should render data state", async () => {
-
     await waitFor(() => {
       expect(screen.getByTestId("Overview")).toBeInTheDocument();
     });
