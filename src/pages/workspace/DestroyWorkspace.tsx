@@ -44,7 +44,7 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId, loadin
   return (
     <Card sx={{ margin: '-25px 0 0' }}>
       {loading ? (
-        <CircularProgress />
+        <CircularProgress data-testid="loading-spinner" />
       ) : (
         <CardHeader
           sx={{ '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
@@ -87,12 +87,14 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId, loadin
                   }}
                 >
                   <Button
+                    data-testid="destroy-button"
                     startIcon={<DeleteIcon />}
                     style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
                     onClick={handleDestroyWorkspace}
                   >
                     Destroy
                   </Button>
+
                 </Box>
               </Grid>
             </>

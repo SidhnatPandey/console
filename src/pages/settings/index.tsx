@@ -532,6 +532,7 @@ const UserList = () => {
                   fullWidth
                   {...field}
                   placeholder="Enter Valid email address"
+                  id="user-email-address"
                   style={{ marginBottom: "20px" }}
                   disabled={isEditMode}
                   error={!!error}
@@ -559,6 +560,7 @@ const UserList = () => {
                   label="Username"
                   fullWidth
                   placeholder="Enter username"
+                  id="user-username"
                   style={{ marginBottom: "20px" }}
                   disabled={isEditMode || existingUser}
                   InputLabelProps={{ shrink: true }}
