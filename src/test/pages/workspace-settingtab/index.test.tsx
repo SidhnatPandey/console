@@ -70,6 +70,8 @@ describe('WorkspaceSettings', () => {
   
     await waitFor(() => {
       expect(mockedGetListOfUsersWorkspaces).toHaveBeenCalledTimes(1);
+    });
+      await waitFor(() => {
       expect(mockedOrgUser).toHaveBeenCalledTimes(1);
     });
       expect(screen.getByText('User One')).toBeInTheDocument();
@@ -127,11 +129,11 @@ test("Verify all the buttons", () => {
   fireEvent.click(nextButton);
 });
 
-  test('should open menu when clicking the more icon', async () => {
-    render(<WorkspaceSettings workspaceId={mockWorkspaceId} />);
+test('should open menu when clicking the more icon', async () => {
+  render(<WorkspaceSettings workspaceId={mockWorkspaceId} />);
 
-    await waitFor(() => expect(screen.getByText('User One')).toBeInTheDocument());
+  await screen.findByText('User One');
 
-    const menuIconButtons = screen.getAllByTestId('menu-icon');
-    fireEvent.click(menuIconButtons[0]);
-  });
+  const menuIconButtons = screen.getAllByTestId('menu-icon');
+  fireEvent.click(menuIconButtons[0]);
+});
