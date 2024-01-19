@@ -88,7 +88,7 @@ describe('WorkspaceSettings', () => {
     expect(screen.getByText('User One')).toBeInTheDocument();
     expect(screen.getByText('User Two')).toBeInTheDocument();
   });
-  
+   
   test('opens add user dialog on button click', async () => {
     // Render the component
     render(<WorkspaceSettings workspaceId={mockWorkspaceId} />);
