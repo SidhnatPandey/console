@@ -27,6 +27,7 @@ export const APP_API = {
     appMatrix: 'app/metrics?deployment={appName}',
     approval: 'changeapprovalstatus',
     appLogs: 'apps/{appId}/logs?env=',
+    rebuild: 'manualrun?app_id=',
 
     // Security 
     vulernabilities: 'vulernabilities',

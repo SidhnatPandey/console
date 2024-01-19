@@ -103,6 +103,12 @@ export const deleteWorkspace = (workspaceId: string) => {
 
 export const orguser = () => {
   setApiBaseUrl();
-  const url = `${APP_API.orgUserList}`;
+  const url = APP_API.orgUserList;
   return get(url).then(response => response?.data);
+}
+
+export const rebuild = (appId: string) => {
+  setApiBaseUrl();
+  const url = APP_API.rebuild + appId;
+  return get(url).then(response => response?.data)
 }

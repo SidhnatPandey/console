@@ -5,9 +5,11 @@ import ProcessTile from "./ProcessTile";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
 import Skeleton from 'react-loading-skeleton';
-import { Card, CardHeader, CardContent, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, Typography, Button } from "@mui/material";
 import { APP_API } from "src/@core/static/api.constant";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
+import { rebuild } from "src/services/appService";
+import Toaster from "src/utils/toaster";
 
 interface AppCreationFlow {
   supplyChainData: {
@@ -47,6 +49,14 @@ const AppCreationFlow = (props: AppCreationFlow) => {
     handleTileClick(step);
   };
 
+  const handleRebuild = () => {
+    rebuild(supplyChainData.app_id).then(() => {
+      Toaster.successToast('Initiatest Rebuild. Please wait for sometime.')
+    }).catch(() => {
+      Toaster.errorToast('Failed to Rebuild')
+    })
+  }
+
   const getSupplyChain = () => {
     return (supplyChainData ? <div className={`scroll-container`} style={{ minHeight: '200px' }}>
       {supplyChainData?.steps.map((process, index) => (
@@ -85,6 +95,9 @@ const AppCreationFlow = (props: AppCreationFlow) => {
           action={
             <Typography variant='body2' data-testid="updated-time" sx={{ color: 'text.disabled' }}>
               Updated {(timer) / 1000} seconds ago
+              {supplyChainData?.status === 'Failed' && <Button variant='contained' color='secondary' size="small" style={{ marginLeft: '15px' }} onClick={handleRebuild}>
+                Rebuild
+              </Button>}
             </Typography>
           }
         />}
