@@ -19,7 +19,7 @@ const SecurityDashboard = () => {
             <WorkspaceDropdown />
           </div>
           <div style={{ marginTop: "20px" }}>
-            <WorkspaceDropdown />
+            {/* <WorkspaceDropdown /> */}
           </div>
         </Card>
       </Box>
