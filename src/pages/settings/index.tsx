@@ -52,7 +52,7 @@ interface RowOptionsProps {
   orgName: string | undefined;
 }
 
-const RowOptions: React.FC<RowOptionsProps> = ({
+export const RowOptions: React.FC<RowOptionsProps> = ({
   user,
   editClickHandler,
   refreshData,
@@ -92,6 +92,7 @@ const RowOptions: React.FC<RowOptionsProps> = ({
   return (
     <>
       <IconButton
+        data-testid="menu-icon"
         aria-label="more"
         aria-controls="long-menu"
         aria-haspopup="true"
@@ -101,12 +102,14 @@ const RowOptions: React.FC<RowOptionsProps> = ({
       </IconButton>
       <Menu
         id="long-menu"
+        data-testid="menu"
         anchorEl={anchorEl}
         keepMounted
         open={rowOptionsOpen}
         onClose={handleRowOptionsClose}
       >
         <MenuItem
+          data-testid="edit-user"
           onClick={() => {
             editClickHandler(user), handleRowOptionsClose();
           }}
@@ -115,6 +118,7 @@ const RowOptions: React.FC<RowOptionsProps> = ({
           Edit
         </MenuItem>
         <MenuItem
+          data-testid="remove-user"
           onClick={() => {
             setRemoveConfirmationOpen(true), setUserToRemove(user.user_id);
           }}
@@ -227,7 +231,6 @@ const UserList = () => {
   };
 
   const onSubmit = (user: any) => {
-
     if (userNameExist) {
       Toaster.errorToast(" Username already Exist.");
       return;
@@ -325,7 +328,7 @@ const UserList = () => {
 
   return (
     <>
-      <Card>
+      <Card data-testid="card">
         <div
           style={{
             display: "flex",
@@ -335,6 +338,7 @@ const UserList = () => {
           }}
         >
           <Button
+            data-testid="add-new-user-button"
             variant="contained"
             color="primary"
             onClick={handleAddUserClick}
@@ -353,6 +357,7 @@ const UserList = () => {
               >
                 <TableCell>
                   <Typography
+                    data-testid="user-full-name"
                     variant="subtitle1"
                     style={{ textTransform: "none" }}
                   >
@@ -361,6 +366,7 @@ const UserList = () => {
                 </TableCell>
                 <TableCell>
                   <Typography
+                    data-testid="role"
                     variant="subtitle1"
                     style={{ textTransform: "none" }}
                   >
@@ -369,6 +375,7 @@ const UserList = () => {
                 </TableCell>
                 <TableCell>
                   <Typography
+                    data-testid="email-address"
                     variant="subtitle1"
                     style={{ textTransform: "none" }}
                   >
@@ -377,6 +384,7 @@ const UserList = () => {
                 </TableCell>
                 <TableCell>
                   <Typography
+                    data-testid="status"
                     variant="subtitle1"
                     style={{ textTransform: "none" }}
                   >
@@ -385,6 +393,7 @@ const UserList = () => {
                 </TableCell>
                 <TableCell>
                   <Typography
+                    data-testid="action"
                     variant="subtitle1"
                     style={{ textTransform: "none" }}
                   >
@@ -405,6 +414,7 @@ const UserList = () => {
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <Avatar
+                              data-testid="avatar-0"
                               alt={toTitleCase(
                                 row.user_info.first_name || row.username
                               )}
@@ -418,21 +428,23 @@ const UserList = () => {
                             >
                               {!row.user_info.profile_picture &&
                                 (row.user_info.first_name ||
-                                  row.user_info.last_name
-                                  ? `${row.user_info.first_name
-                                    ? toTitleCase(
-                                      row.user_info.first_name[0]
-                                    )
-                                    : ""
-                                  }${row.user_info.last_name
-                                    ? toTitleCase(
-                                      row.user_info.last_name[0]
-                                    )
-                                    : ""
-                                  }`
+                                row.user_info.last_name
+                                  ? `${
+                                      row.user_info.first_name
+                                        ? toTitleCase(
+                                            row.user_info.first_name[0]
+                                          )
+                                        : ""
+                                    }${
+                                      row.user_info.last_name
+                                        ? toTitleCase(
+                                            row.user_info.last_name[0]
+                                          )
+                                        : ""
+                                    }`
                                   : row.username
-                                    ? toTitleCase(row.username[0])
-                                    : "")}
+                                  ? toTitleCase(row.username[0])
+                                  : "")}
                             </Avatar>
                             <div>
                               <Typography
@@ -448,13 +460,17 @@ const UserList = () => {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{row.role === 'admin' ? 'Admin' : 'User'}</TableCell>
+                        <TableCell>
+                          {row.role === "admin" ? "Admin" : "User"}
+                        </TableCell>
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
                           <CustomChip
                             rounded
                             skin="light"
-                            label={row.status ? toTitleCase(row.status) : "Pending"}
+                            label={
+                              row.status ? toTitleCase(row.status) : "Pending"
+                            }
                             color={getStatusChipColor(row.status)}
                             variant="outlined"
                           />
@@ -473,6 +489,7 @@ const UserList = () => {
               ) : (
                 <TableRow>
                   <TableCell
+                    data-testid="tableData"
                     colSpan={5}
                     style={{
                       textAlign: "center",
@@ -503,9 +520,10 @@ const UserList = () => {
         open={isAddUserDialogOpen}
         onClose={handleAddUserDialogClose}
         PaperProps={{ style: { width: "30%" } }}
+        data-testid="user-dialog"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>
+        <form data-testid="form" onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle data-testid="user-dialog-title">
             {isEditMode ? "Edit User" : "Add/Invite New User"}
             <IconButton
               aria-label="close"
@@ -528,6 +546,7 @@ const UserList = () => {
               }}
               render={({ field, fieldState: { error } }) => (
                 <TextField
+                  data-testid="email-input"
                   label="Email Address"
                   fullWidth
                   {...field}
@@ -556,6 +575,7 @@ const UserList = () => {
               }}
               render={({ field }) => (
                 <TextField
+                  data-testid="username-input"
                   {...field}
                   label="Username"
                   fullWidth
@@ -585,6 +605,7 @@ const UserList = () => {
               control={control}
               render={({ field }) => (
                 <TextField
+                  data-testid="organization-input"
                   label="Organization"
                   fullWidth
                   disabled
@@ -607,6 +628,7 @@ const UserList = () => {
                 rules={{ required: "Role is required" }}
                 render={({ field }) => (
                   <Select
+                    data-testid="role-select"
                     {...field}
                     labelId="role-select-label"
                     id="role-select"
@@ -632,6 +654,7 @@ const UserList = () => {
                 rules={{ required: "Workspace is required" }}
                 render={({ field }) => (
                   <Select
+                    data-testid="workspace-select"
                     {...field}
                     labelId="workspace-select-label"
                     id="workspace-select"
@@ -655,6 +678,7 @@ const UserList = () => {
           </DialogContent>
           <DialogActions>
             <Button
+              data-testid="submit-button"
               color="primary"
               size="large"
               variant="contained"

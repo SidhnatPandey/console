@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import TeamsIcon from '@mui/icons-material/People';
 import AccountsIcon from '@mui/icons-material/AccountBox';
 import TabAccount from './TabAccount';
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant';
 
 const Settings = () => {
   const [selectedPage, setSelectedPage] = useState('accounts'); // Set 'accounts' as the initial value
@@ -55,5 +56,10 @@ const Settings = () => {
     </>
   );
 };
+
+Settings.acl = {
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.editProfile
+}
 
 export default Settings;

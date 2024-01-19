@@ -16,7 +16,7 @@ import PendingIcon from "@mui/icons-material/Pending";
 import LoopIcon from "@mui/icons-material/Loop";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import AppSummary from "./AppSummary";
 import AppCreationFlow from "./AppCreationFlow";
 import { useRouter } from "next/router";
@@ -30,6 +30,7 @@ import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import { AbilityContext } from "src/layouts/components/acl/Can";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -71,10 +72,12 @@ const AppDashboard = () => {
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
 
+  const ability = useContext(AbilityContext);
+
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
-  key = key + '&workspace_id=' + workspace.id
+  key = key + '&workspace_id=' + workspace?.id
   setApiBaseUrl();
   const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
     refreshInterval: timer
@@ -310,7 +313,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />
+            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />}
           </Typography>
         </TabPanel>
       </TabContext>

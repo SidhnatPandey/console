@@ -9,7 +9,10 @@ import Apps from "../apps";
 import WorkspaceSettings from "../WorkspaceSettings";
 import { AuthContext } from "src/context/AuthContext";
 import { Icon } from "@iconify/react";
-import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import {
+  LOCALSTORAGE_CONSTANTS,
+  PERMISSION_CONSTANTS,
+} from "src/@core/static/app.constant";
 
 const Workspace = () => {
   const router = useRouter();
@@ -22,10 +25,15 @@ const Workspace = () => {
 
   useEffect(() => {
     // Update the current project when the query parameter changes
-    const workspace = authContext.workspaces?.find((workspace) => workspace.id === slug);
-    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, JSON.stringify(workspace));
+    const workspace = authContext.workspaces?.find(
+      (workspace) => workspace.id === slug
+    );
+    localStorage.setItem(
+      LOCALSTORAGE_CONSTANTS.workspace,
+      JSON.stringify(workspace)
+    );
     setWorkspace(workspace);
-    setSelectedTab(0)
+    setSelectedTab(0);
   }, [slug, authContext.workspaces]);
 
   const handleShowApps = () => {
@@ -77,13 +85,19 @@ const Workspace = () => {
             />
           ) : (
             <>
-              <span data-testid="description" >
+              <span data-testid="description">
                 {loading ? (
-                  <Skeleton width={400} height={20} style={{ marginBottom: "35px" }} />
+                  <Skeleton
+                    width={400}
+                    height={20}
+                    style={{ marginBottom: "35px" }}
+                  />
                 ) : (
                   <>
                     {workspace && workspace.description ? (
-                      <p style={{ marginTop: '0px' }}>{workspace.description}</p>
+                      <p style={{ marginTop: "0px" }}>
+                        {workspace.description}
+                      </p>
                     ) : (
                       <> No description available for this workspace.</>
                     )}
@@ -96,7 +110,7 @@ const Workspace = () => {
       </Card>
       <br />
       <Tabs
-        sx={{ borderBottom: 'none !important' }}
+        sx={{ borderBottom: "none !important" }}
         value={selectedTab}
         data-testid="tabs"
         aria-label="workspace tabs"
@@ -107,6 +121,7 @@ const Workspace = () => {
         }}
       >
         <Button
+          data-testid="button"
           value={0}
           variant="text"
           onClick={handleShowApps}
@@ -131,45 +146,46 @@ const Workspace = () => {
           Apps
         </Button>
 
-        {workspace?.role != 'developer' ? (<Button
-          value={1}
-          variant="text"
-          onClick={handleShowSettings}
-          sx={{
-            backgroundColor: selectedTab === 1 ? "primary.main" : "inherit",
-            color: selectedTab === 1 ? "white" : "primary.main",
-            fontWeight: selectedTab === 1 ? "bold" : "normal",
-            "&:hover": {
-              backgroundColor: selectedTab === 1 ? "primary.dark" : "inherit",
-            },
-          }}
-        >
-          <Icon
-            data-testid="settings"
-            icon={"uil:setting"}
-            style={{
-              fontSize: "20px",
-              marginRight: "8px",
+        {workspace?.role != "developer" ? (
+          <Button
+            data-testid="button2"
+            value={1}
+            variant="text"
+            onClick={handleShowSettings}
+            sx={{
+              backgroundColor: selectedTab === 1 ? "primary.main" : "inherit",
+              color: selectedTab === 1 ? "white" : "primary.main",
+              fontWeight: selectedTab === 1 ? "bold" : "normal",
+              "&:hover": {
+                backgroundColor: selectedTab === 1 ? "primary.dark" : "inherit",
+              },
             }}
-          />
-          Settings
-        </Button>) : null}
-
+          >
+            <Icon
+              data-testid="settings"
+              icon={"uil:setting"}
+              style={{
+                fontSize: "20px",
+                marginRight: "8px",
+              }}
+            />
+            Settings
+          </Button>
+        ) : null}
       </Tabs>
 
       {/* Show/Hide Apps or Settings component based on state */}
       {selectedTab === 0 && (
         <Box mt={4}>
-          <Apps
-            selectedRow={null}
-            workspace_id={workspace?.id}
-          />
+          <Apps selectedRow={null} workspace_id={workspace?.id} />
         </Box>
       )}
       {selectedTab === 1 && (
         <Box mt={4}>
           {/* Render Settings component */}
-          <h2 data-testid="settingsContent"><WorkspaceSettings workspaceId={workspace} /></h2>
+          <h2 data-testid="settingsContent">
+            <WorkspaceSettings workspaceId={workspace} />
+          </h2>
           {/* Add your Settings component content here */}
         </Box>
       )}
@@ -178,8 +194,8 @@ const Workspace = () => {
 };
 
 Workspace.acl = {
-  action: 'read',
-  subject: PERMISSION_CONSTANTS.workspace
-}
+  action: "read",
+  subject: PERMISSION_CONSTANTS.workspace,
+};
 
 export default Workspace;

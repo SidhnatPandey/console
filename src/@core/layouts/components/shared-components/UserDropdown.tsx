@@ -23,6 +23,9 @@ import { useAuth } from 'src/hooks/useAuth'
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
 import { AuthContext } from 'src/context/AuthContext'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant'
+import { toTitleCase } from 'src/utils/stringUtils'
 
 interface Props {
   settings: Settings
@@ -58,6 +61,7 @@ const UserDropdown = (props: Props) => {
 
   // ** Vars
   const { direction } = settings
+  const ability = useContext(AbilityContext)
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -88,6 +92,15 @@ const UserDropdown = (props: Props) => {
   const handleLogout = () => {
     logout()
     handleDropdownClose()
+  }
+
+  const getRole = (role: string | undefined) => {
+    if (role) {
+      return role === 'workspace-admin' ? 'Workspace Admin' : toTitleCase(role)
+    } else {
+      return 'User';
+    }
+
   }
   return (
     <Fragment>
@@ -138,7 +151,7 @@ const UserDropdown = (props: Props) => {
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography sx={{ fontWeight: 500 }}>{(authContext.user?.user_info?.first_name || authContext.user?.user_info?.last_name) ? authContext.user?.user_info?.first_name + " " + authContext.user?.user_info?.last_name : authContext.user?.username}</Typography>
-              <Typography variant='body2'>{authContext.user?.role}</Typography>
+              <Typography variant='body2'>{getRole(authContext.user?.role)}</Typography>
             </Box>
           </Box>
         </Box>
@@ -149,12 +162,13 @@ const UserDropdown = (props: Props) => {
             My Profile
           </Box>
         </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/settings')}>
+        {ability.can('read', PERMISSION_CONSTANTS.orgSetting) && <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/settings')}>
           <Box sx={styles}>
             <Icon icon='tabler:settings' />
             Settings
           </Box>
-        </MenuItemStyled>
+        </MenuItemStyled>}
+
         <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           {/* <Box sx={styles}>
             <Icon icon='tabler:credit-card' />

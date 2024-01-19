@@ -10,6 +10,11 @@ jest.mock('react-hot-toast', () => ({
         error: jest.fn(),
     },
 }));
+jest.mock("next/router", () => ({
+    useRouter: () => ({
+      push: jest.fn(),
+    }),
+  }));
 
 jest.mock('src/services/appService', () => ({
     destroyApp: jest.fn() as jest.MockedFunction<typeof destroyApp>,

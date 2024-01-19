@@ -39,9 +39,10 @@ const rulesForWorkspaceAdmin = (can: any) => {
   can('read', PERMISSION_CONSTANTS.security)
   can('read', PERMISSION_CONSTANTS.document)
   can('read', PERMISSION_CONSTANTS.appDashboard)
-  can('delete', PERMISSION_CONSTANTS.deleteApp)
+  can('read', PERMISSION_CONSTANTS.deleteApp)
   can('read', PERMISSION_CONSTANTS.profile)
   can('read', PERMISSION_CONSTANTS.createApp)
+  can('read', PERMISSION_CONSTANTS.editProfile)
 }
 
 const rulesForDeveloper = (can: any) => {
@@ -51,6 +52,7 @@ const rulesForDeveloper = (can: any) => {
   can('read', PERMISSION_CONSTANTS.appDashboard)
   can('read', PERMISSION_CONSTANTS.profile)
   can('read', PERMISSION_CONSTANTS.createApp)
+  can('read', PERMISSION_CONSTANTS.editProfile)
 }
 
 export const buildAbilityFor = (role: string, subject: string): AppAbility => {
