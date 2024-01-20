@@ -22,9 +22,6 @@ const SwitcherButton = ({ handleBtnClick, btnNames, defaultValue }: SwitcherButt
             {btnNames.map((button, index) => (
                 <ToggleButton value={button} style={alignment === button ? styles : { padding: '0px 15px', height: '35px' }} key={index}>{button.toUpperCase()}</ToggleButton>
             ))}
-            {/* <ToggleButton value='prod' style={alignment === 'prod' ? styles : undefined}>PROD</ToggleButton>
-            <ToggleButton value='current' style={alignment === 'current' ? styles : undefined}>CURRENT</ToggleButton> */}
-            {/*  <ToggleButton value='ios' style={alignment === 'ios' ? styles : undefined}>iOS</ToggleButton> */}
         </ToggleButtonGroup>
     )
 }
