@@ -264,7 +264,7 @@ const AppDashboard = () => {
           )}
         </span>
         <span style={{ textAlign: 'end', marginRight: '20px', marginTop: '3rem', width: '100%' }}>
-          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspace.name}</b></p>
+          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspace?.name}</b></p>
           <SwitcherButton handleBtnClick={triggerSupplyChainRun} btnNames={['prod', 'current']} defaultValue={'current'}></SwitcherButton>
         </span>
       </Card>
