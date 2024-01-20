@@ -31,6 +31,7 @@ import { getFetcher } from "src/services/fetcherService";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import { AbilityContext } from "src/layouts/components/acl/Can";
+import SwitcherButton from "src/component/switcherButton";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -71,24 +72,32 @@ const AppDashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
   const [appData, setAppData] = useState<App>(); // State to hold the fetched data
-
+  const [runType, setRunType] = useState<string>('current');
   const ability = useContext(AbilityContext);
+
 
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
-  key = key + '&workspace_id=' + workspace?.id
+  const nkey = key + '&run_type=' + runType
   setApiBaseUrl();
-  const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
+  const { data: supplyChainRunsData, mutate } = useSWR(nkey, getFetcher, {
     refreshInterval: timer
   });
+
+  const triggerSupplyChainRun = (selectedValue: string) => {
+    setRunType(selectedValue);
+  }
+
+  useEffect(() => {
+    mutate
+  }, [runType]);
 
   useEffect(() => {
     if (router?.query?.appId) {
       getAppDetails(router?.query?.appId);
     }
-  }, [router]
-  );
+  }, [router]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -208,7 +217,7 @@ const AppDashboard = () => {
             />
           )}
         </span>
-        <span style={{ marginTop: "3.5rem" }}>
+        <span style={{ marginTop: "3.5rem", width: '100%' }}>
           <h1 style={{ marginBottom: "0" }} data-testid="title">
             {loading ? <Skeleton /> : appData?.application_name || "N/A"}
           </h1>
@@ -253,6 +262,10 @@ const AppDashboard = () => {
               </span>
             </>
           )}
+        </span>
+        <span style={{ textAlign: 'end', marginRight: '20px', marginTop: '3rem', width: '100%' }}>
+          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspace?.name}</b></p>
+          <SwitcherButton handleBtnClick={triggerSupplyChainRun} btnNames={['prod', 'current']} defaultValue={'current'}></SwitcherButton>
         </span>
       </Card>
 
