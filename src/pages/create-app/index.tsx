@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // ** MUI Imports
 import Box from "@mui/material/Box";
@@ -71,6 +71,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
 
 /* 
 type FormValues = {
@@ -149,10 +150,12 @@ const defaultSourceCodeValues = {
   git_repo: "",
   git_branch: "",
   src_code_path: "",
+  workspace_id: ""
 };
 
 const sourceCodeSchema = yup.object().shape({
   application_name: yup.string().required(),
+  workspace_id: yup.string().required(),
   git_repo: yup.string().required(),
   git_branch: yup.string().required(),
   src_code_path: yup.string(),
@@ -191,14 +194,15 @@ const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 const CreateApp = () => {
   // ** States
 
-  const sotredWorkspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
-  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>(sotredWorkspace);
+  const storedWorkspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
+  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>(storedWorkspace);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
+  const authContext = useContext(AuthContext);
 
   // Handle Stepper
   const handleBack = () => {
@@ -221,12 +225,17 @@ const CreateApp = () => {
     }
   }, [gitUser]);
 
+  useEffect(() => {
+    setSourceCodeValue('workspace_id', workspace.id);
+  }, [authContext.workspaces, workspace])
+
   // react hook form
   const {
     control: sourceCodeControl,
     handleSubmit: handleSourceCodeSubmit,
     register: sourceCodeRegister,
     getValues: getSoruceCodeValue,
+    setValue: setSourceCodeValue,
     formState: { errors: sourceCodeErrors },
   } = useForm({
     defaultValues: defaultSourceCodeValues,
@@ -262,9 +271,6 @@ const CreateApp = () => {
           fetchUserRepositories(response.git_user as string);
         }
       })
-      .catch((error) => {
-        toast.error(error.message);
-      });
   }
 
   const isNextButtonDisabled = appNameExist || !isConfigurationFormValid;
@@ -284,28 +290,25 @@ const CreateApp = () => {
               : setAppNameExist(false);
           }
         })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   };
 
-  const fetchGitOwner = async () => {
+  const fetchGitOwner = async (workspaceId = workspace.id) => {
     try {
-      const response = await getGitOwner(workspace.id);
+      const response = await getGitOwner(workspaceId);
       if (response.data) {
         setGitUser(response.data.gitUser);
-        await fetchUserRepositories(response.data.gitUser as string);
+        await fetchUserRepositories(response.data.gitUser as string, workspaceId);
       }
     } catch (error) {
       //toast.error("Could not fetch git user.");
     }
   };
 
-  const fetchUserRepositories = async (user: string) => {
+  const fetchUserRepositories = async (user: string, workspaceId = workspace.id) => {
     try {
       setLoadingRepositories(true);
-      const response = await getRepositories(user, workspace.id);
+      const response = await getRepositories(user, workspaceId);
       if (response.data) {
         setRepositories(response.data);
       }
@@ -337,6 +340,15 @@ const CreateApp = () => {
       setRepoSelected(true);
       fetchBranch(repo);
     }
+  };
+
+  const handleWorkspaceChange = (event: SelectChangeEvent) => {
+    const workspace_id = event.target.value;
+    const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
+    setWorkspace(workspace);
+    setRepoSelected(false);
+    setRepositories(["No Repository"]);
+    fetchGitOwner(workspace_id);
   };
 
   const onSubmit = () => {
@@ -379,7 +391,6 @@ const CreateApp = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
-    data["workspace_id"] = workspace?.id;
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
@@ -422,7 +433,7 @@ const CreateApp = () => {
         return (
           <form onSubmit={handleSourceCodeSubmit(onSubmit)}>
             <Grid container spacing={5}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={6} sm={6}>
                 <FormControl fullWidth>
                   <Controller
                     name="application_name"
@@ -463,6 +474,50 @@ const CreateApp = () => {
                       id="app-exists-error"
                     >
                       This application name already exists
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel
+                    id="workspace_id"
+                    error={Boolean(sourceCodeErrors.workspace_id)}
+                  >
+                    Workspaces
+                  </InputLabel>
+
+                  <Controller
+                    name="workspace_id"
+                    control={sourceCodeControl}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        value={value}
+                        label="Workspaces"
+                        onChange={(e) => {
+                          onChange(e);
+                          handleWorkspaceChange(e);
+                        }}
+                        error={Boolean(sourceCodeErrors.workspace_id)}
+                        labelId="stepper-linear-personal-country"
+                        aria-describedby="stepper-linear-personal-country-helper"
+                      >
+                        {authContext.workspaces?.map((reg) => (
+                          <MenuItem key={reg.id} value={reg.id}>
+                            {reg.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+
+                  {sourceCodeErrors.git_repo && (
+                    <FormHelperText
+                      sx={{ color: "error.main" }}
+                      id="stepper-linear-account-username"
+                    >
+                      This field is required
                     </FormHelperText>
                   )}
                 </FormControl>

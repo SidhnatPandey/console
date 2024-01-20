@@ -77,7 +77,7 @@ const AppDashboard = () => {
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
   key = key?.replace('{appId}', updatedAppId)
-  key = key + '&workspace_id=' + workspace.id
+  key = key + '&workspace_id=' + workspace?.id
   setApiBaseUrl();
   const { data: supplyChainRunsData } = useSWR(key, getFetcher, {
     refreshInterval: timer
@@ -313,7 +313,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            {ability.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />}
+            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />}
           </Typography>
         </TabPanel>
       </TabContext>

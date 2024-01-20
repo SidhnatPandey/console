@@ -115,7 +115,7 @@ const TabAccount = () => {
     const orgId = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
     );
-    const org = authContext.organisations.filter(
+    const org = authContext.organisations?.filter(
       (org) => org.org_id === orgId
     )[0];
     const profilePicture =
@@ -157,7 +157,7 @@ const TabAccount = () => {
 
   useEffect(() => {
     setData();
-  }, []);
+  }, [authContext.organisations]);
 
   const handleSaveChanges = () => {
     setIsSubmitting(true);
@@ -389,7 +389,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -529,10 +529,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                                "& .MuiTypography-root": {
-                                  color: "error.main",
-                                },
-                              }
+                              "& .MuiTypography-root": {
+                                color: "error.main",
+                              },
+                            }
                             : null
                         }
                         control={
