@@ -132,12 +132,6 @@ const SecurityCompliance = () => {
     <Card sx={{ width: "60%", height: "80%" }}>
       <CardHeader
         title="Scan Compliance"
-        action={
-          <OptionsMenu
-            options={["Refresh", "Edit", "Share"]}
-            iconButtonProps={{ size: "small", sx: { color: "text.disabled" } }}
-          />
-        }
       />
       <CardContent>
         <Grid container spacing={6}>
