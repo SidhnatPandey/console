@@ -66,7 +66,7 @@ export const formatCreditCardNumber = (value: string, Payment: PaymentTypes) => 
     default:
       nextValue = `${clearValue.slice(0, 4)} ${clearValue.slice(4, 8)} ${clearValue.slice(8, 12)} ${clearValue.slice(
         12,
-        19
+        16
       )}`
       break
   }

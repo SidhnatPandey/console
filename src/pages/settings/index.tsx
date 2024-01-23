@@ -352,7 +352,7 @@ const UserList = () => {
             <TableHead>
               <TableRow
                 sx={{
-                  backgroundColor: (theme) => theme.palette.primary.main + "10",
+                  backgroundColor: (theme: any) => theme.palette.primary.main + "10",
                 }}
               >
                 <TableCell>
@@ -428,23 +428,21 @@ const UserList = () => {
                             >
                               {!row.user_info.profile_picture &&
                                 (row.user_info.first_name ||
-                                row.user_info.last_name
-                                  ? `${
-                                      row.user_info.first_name
-                                        ? toTitleCase(
-                                            row.user_info.first_name[0]
-                                          )
-                                        : ""
-                                    }${
-                                      row.user_info.last_name
-                                        ? toTitleCase(
-                                            row.user_info.last_name[0]
-                                          )
-                                        : ""
-                                    }`
+                                  row.user_info.last_name
+                                  ? `${row.user_info.first_name
+                                    ? toTitleCase(
+                                      row.user_info.first_name[0]
+                                    )
+                                    : ""
+                                  }${row.user_info.last_name
+                                    ? toTitleCase(
+                                      row.user_info.last_name[0]
+                                    )
+                                    : ""
+                                  }`
                                   : row.username
-                                  ? toTitleCase(row.username[0])
-                                  : "")}
+                                    ? toTitleCase(row.username[0])
+                                    : "")}
                             </Avatar>
                             <div>
                               <Typography
@@ -589,7 +587,7 @@ const UserList = () => {
                     (errors.username?.message as string) ||
                     (userNameExist && "Username already exists")
                   }
-                  onChange={(e) => {
+                  onChange={(e: any) => {
                     clearErrors("username");
                     field.onChange(e);
                   }}

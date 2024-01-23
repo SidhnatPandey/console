@@ -14,7 +14,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Types
-import { PricingPlanProps } from './types'
+import { PricingPlanProps, PricingPlanType } from './types'
 
 // ** Styled Component for the wrapper of whole component
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -34,7 +34,7 @@ const BoxFeature = styled(Box)<BoxProps>(({ theme }) => ({
 
 const PlanDetails = (props: PricingPlanProps) => {
   // ** Props
-  const { plan, data } = props
+  const { plan, data, handleUpgrade } = props
 
   const renderFeatures = () => {
     return data?.planBenefits.map((item: string, index: number) => (
@@ -45,6 +45,12 @@ const PlanDetails = (props: PricingPlanProps) => {
         <Typography sx={{ color: 'text.secondary' }}>{item}</Typography>
       </Box>
     ))
+  }
+
+  const handleClick = (plan: PricingPlanType | undefined) => {
+    if (!plan?.currentPlan) {
+      handleUpgrade(plan);
+    }
   }
 
   return (
@@ -75,14 +81,14 @@ const PlanDetails = (props: PricingPlanProps) => {
           }}
         />
       ) : null}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+      {/* <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
         <img
           width={data?.imgWidth}
           src={`${data?.imgSrc}`}
           height={data?.imgHeight}
           alt={`${data?.title.toLowerCase().replace(' ', '-')}-plan-img`}
         />
-      </Box>
+      </Box> */}
       <Box sx={{ textAlign: 'center' }}>
         <Typography sx={{ mb: 1.5, fontWeight: 500, lineHeight: 1.385, fontSize: '1.625rem' }}>
           {data?.title}
@@ -118,6 +124,8 @@ const PlanDetails = (props: PricingPlanProps) => {
         fullWidth
         color={data?.currentPlan ? 'success' : 'primary'}
         variant={data?.popularPlan ? 'contained' : 'tonal'}
+        onClick={() => handleClick(data)}
+        disabled={data?.title === 'Enterprise'}
       >
         {data?.currentPlan ? 'Your Current Plan' : 'Upgrade'}
       </Button>

@@ -16,7 +16,8 @@ export type PricingPlanType = {
 
 export type PricingPlanProps = {
   plan: string
-  data?: PricingPlanType
+  data?: PricingPlanType,
+  handleUpgrade: any
 }
 
 export type PricingFaqType = {

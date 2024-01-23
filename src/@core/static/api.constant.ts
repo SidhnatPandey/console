@@ -46,5 +46,8 @@ export const APP_API = {
     OrgList: 'organization',
     orgUserList: 'organization/users',
     removeOrgUser: 'organization/removeUserFromOrg?user_id=',
-    inviteUser: 'inviteUser'
+    inviteUser: 'inviteUser',
+
+    //billing
+    getPlans: 'plans'
 }

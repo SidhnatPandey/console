@@ -120,7 +120,7 @@ const StepperHeaderContainer = styled(CardContent)<CardContentProps>(
   })
 );
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
+const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   "& .MuiStepLabel-root": {
     paddingTop: 0,
   },
@@ -443,7 +443,7 @@ const CreateApp = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={(e) => {
+                        onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
                         }}

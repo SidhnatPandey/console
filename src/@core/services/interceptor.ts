@@ -19,6 +19,11 @@ export const setApiBaseUrl = (service = 'core') => {
         case 'security':
             base_url = env('NEXT_PUBLIC_SECURITY_BASE_URL');
             break;
+        case 'billing':
+            base_url = env('NEXT_PUBLIC_BILLING_BASE_URL');
+            break;
+        default:
+            base_url = baseUrl;
     }
     axiosInstance.defaults.baseURL = base_url;
 };
