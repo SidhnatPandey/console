@@ -24,17 +24,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
       
-    # Step 2: Set up Node.js environment with NPM  
+    # Step 2: Set up Node.js environment with Yarn
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'yarn'
         
-    # Step 3: Install Dependencies    
+    # Step 3: Install Dependencies with Yarn   
     - name: Install dependencies
-      run: npm ci
+      run: yarn install --frozen-lockfile
       
-    # Step 4: Code Quality Scan with ESLint
+    # Step 4: Code Quality Scan with ESLint using Yarn
     - name: Code Quality Scan with ESLint
-      run: npm run lint
+      run: yarn lint
