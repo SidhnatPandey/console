@@ -1,8 +1,16 @@
 import { Box, Card } from "@mui/material";
-import React from "react";
+import React, { useContext, useState } from "react";
+import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
+import { SecurityContext } from "src/context/SecurityContext";
+
 
 const SecurityDashboard = () => {
+const securityContext = useContext(SecurityContext)
+
+const triggerSecurityData = (selectedValue: string) => {
+  securityContext.setRunType(selectedValue);
+}
   return (
     <>
       <Box>
@@ -14,12 +22,12 @@ const SecurityDashboard = () => {
             alignItems: "center",
           }}
         >
-          <h2>Security Dashboard</h2>
-          <div style={{ marginTop: "20px" }}>
+          
+            <h2>Security Dashboard</h2>
+         
+          <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
             <WorkspaceDropdown />
-          </div>
-          <div style={{ marginTop: "20px" }}>
-            {/* <WorkspaceDropdown /> */}
+            <SwitcherButton handleBtnClick={triggerSecurityData} btnNames={['prod', 'non-prod']} defaultValue={'non-prod'} />
           </div>
         </Card>
       </Box>

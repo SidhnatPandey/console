@@ -30,9 +30,9 @@ export const APP_API = {
     rebuild: 'manualrun?app_id=',
 
     // Security 
-    vulernabilities: 'vulernabilities',
-    getScans: 'vulernabilities/scans',
-    allVulnerabilities: 'vulernabilities/all',
+    vulernabilities: 'vulernabilities?workspace_id={workspace_id}&run_type={run_type}',
+    getScans: 'vulernabilities/scans?workspace_id={workspace_id}&run_type={run_type}',
+    allVulnerabilities: 'vulernabilities/all?workspace_id={workspace_id}&run_type={run_type}',
 
     //Workspace
     createWorkspace: 'workspace',

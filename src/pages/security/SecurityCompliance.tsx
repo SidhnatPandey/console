@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -20,10 +20,12 @@ import ReactApexcharts from "src/@core/components/react-apexcharts";
 // ** Util Import
 import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
 import { getScans } from "src/services/securityService";
-
+import { SecurityContext } from "src/context/SecurityContext";
 const SecurityCompliance = () => {
   // ** Hook
   const theme = useTheme();
+  const securityContext = useContext(SecurityContext)
+
 
   const options: ApexOptions = {
     chart: {
@@ -111,22 +113,25 @@ const SecurityCompliance = () => {
     failed: 0,
   });
   const [successPercentage, setSuccessPercentage] = useState(100);
+ 
 
   useEffect(() => {
-    const getScanData = () => {
-      getScans()
-        .then((response) => {
-          setScanData(response?.data || {});
-          const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
-          setSuccessPercentage(percentage);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
+    getScanData(securityContext.workspace, securityContext.runType);
+    console.log(securityContext.workspace, securityContext.runType);
+    
+  }, [securityContext.workspace, securityContext.runType]); 
 
-    getScanData();
-  }, []);
+  const getScanData = (workspaceId: string, runType: string, appId?: string) => {
+        getScans(workspaceId, runType)
+          .then((response) => {
+            setScanData(response?.data || {});
+            const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+            setSuccessPercentage(percentage);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      };
 
   return (
     <Card sx={{ width: "60%", height: "80%" }}>
