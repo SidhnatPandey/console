@@ -18,10 +18,11 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title }) => {
       <Box>
         <Card
           sx={{
-            padding: "10px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            paddingLeft: '16px', 
+            paddingRight: '16px', 
           }}
         >
           <h2>{title}</h2>
