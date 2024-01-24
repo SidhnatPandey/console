@@ -116,16 +116,15 @@ const SecurityCompliance = () => {
  
 
   useEffect(() => {
-    getScanData(securityContext.workspace, securityContext.runType);
-    console.log(securityContext.workspace, securityContext.runType);
-    
+    getScanData(securityContext.workspace, securityContext.runType);    
   }, [securityContext.workspace, securityContext.runType]); 
 
   const getScanData = (workspaceId: string, runType: string, appId?: string) => {
         getScans(workspaceId, runType)
           .then((response) => {
             setScanData(response?.data || {});
-            const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+            let percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+            percentage = parseFloat(percentage.toFixed(2));  
             setSuccessPercentage(percentage);
           })
           .catch((error) => {
@@ -137,12 +136,6 @@ const SecurityCompliance = () => {
     <Card sx={{ width: "60%", height: "80%" }}>
       <CardHeader
         title="Scan Compliance"
-        action={
-          <OptionsMenu
-            options={["Refresh", "Edit", "Share"]}
-            iconButtonProps={{ size: "small", sx: { color: "text.disabled" } }}
-          />
-        }
       />
       <CardContent>
         <Grid container spacing={6}>

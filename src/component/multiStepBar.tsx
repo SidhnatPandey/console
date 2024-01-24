@@ -24,7 +24,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
   useEffect(() => {
     let high = 0, low = 0, medium = 0, critical = 0, unknown = 0;
-    Cves.forEach((cve) => {
+    Cves?.forEach((cve) => {
       switch (cve.Severity) {
         case 'High':
           high += cve.Count; break;
@@ -58,7 +58,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
     }
   }
 
-  const sum = Cves.reduce((accumulator, currentValue) => {
+  const sum = Cves?.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.Count;
   }, 0);
 
@@ -69,8 +69,8 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
         const color = getColor(ele.Severity);
         let borderRadius = "0";
         if (index == 0) { borderRadius = "10px 0 0 10px" }
-        if (index == Cves.length - 1) { borderRadius = "0 10px 10px 0" }
-        if (Cves.length == 1) { borderRadius = "10px" }
+        if (index == Cves?.length - 1) { borderRadius = "0 10px 10px 0" }
+        if (Cves?.length == 1) { borderRadius = "10px" }
         return (
           <Tooltip title={ele.Severity + ':' + ele.Count} key={index}>
             <div style={{ width: `${percent}%`, height: '10px', backgroundColor: color, borderRadius: `${borderRadius}` }}></div>

@@ -6,12 +6,13 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 
 // ** Third Party Imports
-import { Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { getAllvulnerabilities } from 'src/services/securityService'
+import { SecurityContext } from 'src/context/SecurityContext'
 
 interface LabelProp {
   cx: number
@@ -20,14 +21,15 @@ interface LabelProp {
   midAngle: number
   innerRadius: number
   outerRadius: number
+  index: number
 }
 
 const ColorMapping = {
   Critical: 'red',
   High: 'orange',
   Medium: '#7353E5',
-  Low: 'grey',
-  Unknown: '#D3D3D3'
+  Low: 'lightgrey',
+  Unknown: 'grey'
 }
 
 interface CVE {
@@ -47,25 +49,29 @@ const SecurityVulnerabilities = () => {
 
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState<number>(0);
+  const securityContext = useContext(SecurityContext)
+
 
   const renderCustomizedLabel = (props: LabelProp) => {
     // ** Props
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props
+    const { cx, cy, midAngle, innerRadius, outerRadius, index } = props
 
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5
     const x = cx + radius * Math.cos(-midAngle * RADIAN)
     const y = cy + radius * Math.sin(-midAngle * RADIAN)
     /* const value = Math.ceil((totalVulnerabilities * percent));
     (${value}/${totalVulnerabilities}) */
-    return (
-      <text x={x} y={y} fill='#fff' textAnchor='middle' dominantBaseline='central'>
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    )
-  }
+    const count = vulnerabilities[index].value;
 
-  const getVulnerabilities = () => {
-    getAllvulnerabilities().then((res) => {
+  return (
+    <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central">
+      {count}
+    </text>
+  );
+};
+
+  const getVulnerabilities = (workspaceId: string, runType: string, appId?: string) => {
+    getAllvulnerabilities(workspaceId, runType).then((res) => {
       const totalV = res?.data.reduce((total: number, cve: any) => total + cve.Count, 0);
       setTotalVulnerabilities(totalV);
       const newArr: Vulnerability[] = [];
@@ -92,8 +98,8 @@ const SecurityVulnerabilities = () => {
   }
 
   useEffect(() => {
-    getVulnerabilities();
-  }, [])
+    getVulnerabilities(securityContext.workspace, securityContext.runType);
+  }, [securityContext.workspace, securityContext.runType])
 
   return (
     <Card  sx={{ width: "38%" }} >
@@ -111,8 +117,6 @@ const SecurityVulnerabilities = () => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-
-              <Tooltip />
               <foreignObject x="-2" y="45%" width="100%" height="100%" style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '18px', color: 'grey', fontWeight: 'bold' }}>CVEs</div>
                 <div style={{ fontSize: '15px', color: 'grey' }}> {totalVulnerabilities}</div>
@@ -123,42 +127,46 @@ const SecurityVulnerabilities = () => {
         <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 4, justifyContent: 'center' }}>
           <Box
             sx={{
-              mr: 6,
+              mr: 5,
               display: 'flex',
               alignItems: 'center',
               '& svg': { mr: 1.5, color: 'lightgrey' }
             }}
           >
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+            <Icon icon='mdi:circle' fontSize='0.5rem' />
             <Typography variant='body2'>Low</Typography>
           </Box>
           <Box
             sx={{
-              mr: 6,
+              mr: 5,
               display: 'flex',
               alignItems: 'center',
               '& svg': { mr: 1.5, color: 'rgb(115, 83, 229)' }
             }}
           >
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+            <Icon icon='mdi:circle' fontSize='0.5rem' />
             <Typography variant='body2'>Medium</Typography>
           </Box>
           <Box
             sx={{
-              mr: 6,
+              mr: 5,
               display: 'flex',
               alignItems: 'center',
               '& svg': { mr: 1.5, color: 'darkorange' }
             }}
           >
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+            <Icon icon='mdi:circle' fontSize='0.5rem' />
             <Typography variant='body2'>High</Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'red' } }}>
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
+          <Box sx={{  mr: 5, display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'red' } }}>
+            <Icon icon='mdi:circle' fontSize='0.5rem' />
             <Typography variant='body2'>Critical</Typography>
           </Box>
-        </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'grey' } }}>
+            <Icon icon='mdi:circle' fontSize='0.5rem' />
+            <Typography variant='body2'>Unknown</Typography>
+          </Box>
+        </Box>    
       </CardContent>
     </Card>
   )

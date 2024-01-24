@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -17,7 +17,8 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import MultiStepBarChart from "src/component/multiStepBar";
 import { vulnerabilitiesList } from "src/services/securityService";
-import { convertDateFormat } from "src/utils/dateUtil";
+import { SecurityContext } from "src/context/SecurityContext";
+import { calculateDaysFromTodayString } from "src/@core/utils/format";
 interface AppSecurityData {
   AppId?: string;
   AppName: string;
@@ -30,6 +31,8 @@ interface AppSecurityData {
   }[];
 }
 const ApplicationVulnerabilities = () => {
+  const securityContext = useContext(SecurityContext)
+
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
     //  {
     //   AppName: "App 1",
@@ -102,7 +105,7 @@ const ApplicationVulnerabilities = () => {
   const entriesPerPage = 5;
 
   const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
-    return Cves.reduce((total, cve) => total + cve.Count, 0);
+    return Cves?.reduce((total, cve) => total + cve.Count, 0);
   };
 
   const handleSort = (columnName: keyof AppSecurityData) => {
@@ -153,11 +156,11 @@ const ApplicationVulnerabilities = () => {
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
-    getVulnerabilitesList();
-  }, [currentPage, totalPages, searchTerm]);
+    getVulnerabilitesList(securityContext.workspace, securityContext.runType);
+  }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType]);
 
-  const getVulnerabilitesList = () => {
-    vulnerabilitiesList().then(
+  const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+    vulnerabilitiesList(workspaceId, runType).then(
       (res) => {
         res ? setVulnerabilityData(res.data) : {};
       }
@@ -264,7 +267,7 @@ const ApplicationVulnerabilities = () => {
                     <TableRow key={index}>
                       <TableCell>{row.AppName}</TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
-                      <TableCell>{convertDateFormat(row.LastScanned)}</TableCell>
+                      <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <MultiStepBarChart Cves={row.Cves} />
