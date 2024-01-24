@@ -13,7 +13,6 @@ import { ApexOptions } from "apexcharts";
 
 // ** Custom Components Imports
 import Icon from "src/@core/components/icon";
-import OptionsMenu from "src/@core/components/option-menu";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import ReactApexcharts from "src/@core/components/react-apexcharts";
 
@@ -24,8 +23,7 @@ import { SecurityContext } from "src/context/SecurityContext";
 const SecurityCompliance = () => {
   // ** Hook
   const theme = useTheme();
-  const securityContext = useContext(SecurityContext)
-
+  const securityContext = useContext(SecurityContext);
 
   const options: ApexOptions = {
     chart: {
@@ -107,36 +105,41 @@ const SecurityCompliance = () => {
       },
     ],
   };
+
   const [scanData, setScanData] = useState({
     totalScans: 0,
     succeeded: 0,
     failed: 0,
   });
   const [successPercentage, setSuccessPercentage] = useState(100);
- 
+  const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
-    getScanData(securityContext.workspace, securityContext.runType);    
-  }, [securityContext.workspace, securityContext.runType]); 
+    getScanData(securityContext.workspace, securityContext.runType);
+  }, [securityContext.workspace, securityContext.runType]);
 
-  const getScanData = (workspaceId: string, runType: string, appId?: string) => {
-        getScans(workspaceId, runType)
-          .then((response) => {
-            setScanData(response?.data || {});
-            let percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
-            percentage = parseFloat(percentage.toFixed(2));  
-            setSuccessPercentage(percentage);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      };
+  const getScanData = (
+    workspaceId: string,
+    runType: string,
+    appId?: string
+  ) => {
+    getScans(workspaceId, runType)
+      .then((response) => {
+        setScanData(response?.data || {});
+        let percentage =
+          (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+        percentage = parseFloat(percentage.toFixed(2));
+        setSuccessPercentage(percentage);
+        setChartKey(Math.random());
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <Card sx={{ width: "60%", height: "80%" }}>
-      <CardHeader
-        title="Scan Compliance"
-      />
+      <CardHeader title="Scan Compliance" />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={5} style={{ paddingTop: "50px" }}>
@@ -161,12 +164,14 @@ const SecurityCompliance = () => {
                 }}
               >
                 <Typography sx={{ fontWeight: 500 }}>Success</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 700, color: "text.disabled" }}
+                >
                   {scanData.succeeded ? scanData.succeeded : 0}{" "}
                 </Typography>
               </Box>
             </Box>
-
             <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
               <CustomAvatar
                 skin="light"
@@ -184,7 +189,10 @@ const SecurityCompliance = () => {
                 }}
               >
                 <Typography sx={{ fontWeight: 500 }}>Failed</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 700, color: "text.disabled" }}
+                >
                   {scanData.failed ? scanData.failed : 0}
                 </Typography>
               </Box>
@@ -201,6 +209,7 @@ const SecurityCompliance = () => {
             }}
           >
             <ReactApexcharts
+              key={chartKey}
               type="radialBar"
               height={325}
               options={options}

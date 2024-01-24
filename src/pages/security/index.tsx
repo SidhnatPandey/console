@@ -5,12 +5,13 @@ import ApplicationVulnerabilities from "./ApplicationVulnerabilities";
 import { Box } from "@mui/system";
 import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import SecurityDashboard from "./SecurityDashboard";
-import { SecurityContext, SecurityProvider } from "src/context/SecurityContext";
+import {SecurityProvider } from "src/context/SecurityContext";
+
 const Security = () => {
   return (
       <SecurityProvider>
         <Box sx={{ marginBottom: "20px" }}>
-          <SecurityDashboard />
+          <SecurityDashboard title="Security Dashboard" />
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <SecurityCompliance />

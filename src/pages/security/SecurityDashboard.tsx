@@ -1,10 +1,13 @@
 import { Box, Card } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
 import { SecurityContext } from "src/context/SecurityContext";
 
-const SecurityDashboard = () => {
+interface SecurityDashboardProps {
+  title: string; 
+}
+const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title }) => {
   const securityContext = useContext(SecurityContext);
 
   const triggerSecurityData = (selectedValue: string) => {
@@ -21,7 +24,7 @@ const SecurityDashboard = () => {
             alignItems: "center",
           }}
         >
-          <h2>Security Dashboard</h2>
+          <h2>{title}</h2>
 
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             <WorkspaceDropdown />
