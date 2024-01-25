@@ -45,14 +45,21 @@ interface Vulnerability {
 
 const RADIAN = Math.PI / 180;
 
-const SecurityVulnerabilities = () => {
+interface Props {
+  appId: string
+}
+
+const SecurityVulnerabilities = (props: Props) => {
+
+  const { appId } = props;
+
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState<number>(0);
   const securityContext = useContext(SecurityContext);
 
   const renderCustomizedLabel = (props: LabelProp) => {
     // ** Props
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index } =
+    const { cx, cy, midAngle, innerRadius, outerRadius, index } =
       props;
 
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -80,7 +87,7 @@ const SecurityVulnerabilities = () => {
     runType: string,
     appId?: string
   ) => {
-    getAllvulnerabilities(workspaceId, runType,appId).then((res) => {
+    getAllvulnerabilities(workspaceId, runType, appId).then((res) => {
       const totalV = res?.data.reduce(
         (total: number, cve: any) => total + cve.Count,
         0
@@ -115,38 +122,38 @@ const SecurityVulnerabilities = () => {
   };
 
   useEffect(() => {
-    getVulnerabilities(securityContext.workspace, securityContext.runType,securityContext.appId);
-  }, [securityContext.workspace, securityContext.runType,securityContext.appId]);
+    getVulnerabilities(securityContext.workspace, securityContext.runType, appId);
+  }, [securityContext.workspace, securityContext.runType, appId]);
 
   const totalSum = vulnerabilities.reduce((acc, item) => acc + item.value, 0);
 
   const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
     active,
     payload,
-}) => {
+  }) => {
     if (active && payload && payload.length > 0) {
-        const payloadData = payload[0];
-        if (payloadData && payloadData.value !== undefined) {
-            return (
-                <div className="custom-tooltip" style={{ 
-                    backgroundColor: 'white', 
-                    padding: '5px', 
-                    border: '1px solid #ddd', 
-                    boxShadow: '0px 0px 5px #ddd' ,                    
-                }}>
-                    <p className="label">
-                        {`${payloadData.name} : ${(
-                            (payloadData.value / totalSum) *
-                            100
-                        ).toFixed(0)}%`}
-                    </p>
-                </div>
-            );
-        }
+      const payloadData = payload[0];
+      if (payloadData && payloadData.value !== undefined) {
+        return (
+          <div className="custom-tooltip" style={{
+            backgroundColor: 'white',
+            padding: '5px',
+            border: '1px solid #ddd',
+            boxShadow: '0px 0px 5px #ddd',
+          }}>
+            <p className="label">
+              {`${payloadData.name} : ${(
+                (payloadData.value / totalSum) *
+                100
+              ).toFixed(0)}%`}
+            </p>
+          </div>
+        );
+      }
     }
 
     return null;
-};
+  };
 
 
   return (

@@ -20,7 +20,14 @@ import ReactApexcharts from "src/@core/components/react-apexcharts";
 import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
 import { getScans } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
-const SecurityCompliance = () => {
+
+interface Props {
+  appId: string
+}
+
+const SecurityCompliance = (props: Props) => {
+
+  const { appId } = props;
   // ** Hook
   const theme = useTheme();
   const securityContext = useContext(SecurityContext);
@@ -115,16 +122,15 @@ const SecurityCompliance = () => {
   const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
-    console.log('called : ' + securityContext.appId )
-    getScanData(securityContext.workspace, securityContext.runType,securityContext.appId);
-  }, [securityContext.workspace, securityContext.runType,securityContext.appId]);
+    getScanData(securityContext.workspace, securityContext.runType, appId);
+  }, [securityContext.workspace, securityContext.runType, appId]);
 
   const getScanData = (
     workspaceId: string,
     runType: string,
     appId?: string
   ) => {
-    getScans(workspaceId, runType,appId)
+    getScans(workspaceId, runType, appId)
       .then((response) => {
         setScanData(response?.data || {});
         let percentage =
