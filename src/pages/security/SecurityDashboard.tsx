@@ -1,5 +1,6 @@
 import { Box, Card } from "@mui/material";
 import React from "react";
+import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
 
 const SecurityDashboard = () => {
@@ -14,12 +15,12 @@ const SecurityDashboard = () => {
             alignItems: "center",
           }}
         >
-          <h2>Security Dashboard</h2>
-          <div style={{ marginTop: "20px" }}>
-            <WorkspaceDropdown />
+          <div style={{ marginBottom: "20px" }}>
+            <h3>Security Dashboard</h3>
           </div>
-          <div style={{ marginTop: "20px" }}>
-            {/* <WorkspaceDropdown /> */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '100px' }}>
+            <WorkspaceDropdown />
+            <SwitcherButton handleBtnClick={undefined} btnNames={['prod', 'current']} defaultValue={'current'} />
           </div>
         </Card>
       </Box>

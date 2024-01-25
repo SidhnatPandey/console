@@ -21,7 +21,7 @@ import { vulnerabilitiesList } from "src/services/securityService";
 import { convertDateFormat } from "src/utils/dateUtil";
 interface AppSecurityData {
   AppName: string;
-  WorkspaceId?: string;
+  workspace?: string;
   LastScanned: string;
   Cves: {
     Count: number;
@@ -30,64 +30,64 @@ interface AppSecurityData {
 }
 const ApplicationVulnerabilities = () => {
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
-/*     {
-      AppName: "App 1",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 1, Severity: "Critical" },
-        { Count: 2, Severity: "High" },
-        { Count: 10, Severity: "Low" },
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 2",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [
-        { Count: 1, Severity: "Critical" },
+  //    {
+  //     AppName: "App 1",
+  //     workspace: "workspace A",
+  //     LastScanned: "2023-01-15",
+  //     Cves: [
+  //       { Count: 1, Severity: "Critical" },
+  //       { Count: 2, Severity: "High" },
+  //       { Count: 10, Severity: "Low" },
+  //       { Count: 3, Severity: "Medium" },
+  //       { Count: 2, Severity: "Unknown" },
+  //     ],
+  //   },
+  //   {
+  //     AppName: "App 2",
+  //     workspace: "workspace B",
+  //     LastScanned: "2023-01-20",
+  //     Cves: [
+  //       { Count: 1, Severity: "Critical" },
 
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 3",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 4",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [{ Count: 3, Severity: "Medium" }],
-    },
-    {
-      AppName: "App 1",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 2",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [{ Count: 1, Severity: "Critical" }],
-    },
-    {
-      AppName: "App 3",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [{ Count: 3, Severity: "Medium" }],
-    }, */
+  //       { Count: 2, Severity: "Unknown" },
+  //     ],
+  //   },
+  //   {
+  //     AppName: "App 3",
+  //     workspace: "workspace A",
+  //     LastScanned: "2023-01-15",
+  //     Cves: [
+  //       { Count: 3, Severity: "Medium" },
+  //       { Count: 2, Severity: "Unknown" },
+  //     ],
+  //   },
+  //   {
+  //     AppName: "App 4",
+  //     workspace: "workspace B",
+  //     LastScanned: "2023-01-20",
+  //     Cves: [{ Count: 3, Severity: "Medium" }],
+  //   },
+  //   {
+  //     AppName: "App 1",
+  //     workspace: "workspace A",
+  //     LastScanned: "2023-01-15",
+  //     Cves: [
+  //       { Count: 3, Severity: "Medium" },
+  //       { Count: 2, Severity: "Unknown" },
+  //     ],
+  //   },
+  //   {
+  //     AppName: "App 2",
+  //     workspace: "workspace B",
+  //     LastScanned: "2023-01-20",
+  //     Cves: [{ Count: 1, Severity: "Critical" }],
+  //   },
+  //   {
+  //     AppName: "App 3",
+  //     workspace: "workspace A",
+  //     LastScanned: "2023-01-15",
+  //     Cves: [{ Count: 3, Severity: "Medium" }],
+  //   }, 
   ]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -133,16 +133,6 @@ const ApplicationVulnerabilities = () => {
       })
     );
   };
-  const renderOptionsMenuCell = () => (
-    <TableCell>
-      <Box display="flex" flexDirection="column">
-        <OptionsMenu
-          options={["Refresh", "Edit", "Share"]}
-          iconButtonProps={{ size: "small", sx: { color: "gray" } }}
-        />
-      </Box>
-    </TableCell>
-  );
 
   const filteredData = vulnerabilityData?.filter((row) =>
     Object.values(row).some(
@@ -221,9 +211,9 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                {/*<TableCell onClick={() => handleSort("WorkspaceId")}>
+                <TableCell onClick={() => handleSort("workspace")}>
                   <Box display="flex" alignItems="center">
-                    <span>WorkspaceId</span>
+                    <span>workspace</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -233,7 +223,7 @@ const ApplicationVulnerabilities = () => {
                       />
                     </Box>
                   </Box>
-                </TableCell> */}
+                </TableCell>
                 <TableCell onClick={() => handleSort("LastScanned")}>
                   <Box display="flex" alignItems="center">
                     <span>Last Scanned</span>
@@ -249,7 +239,7 @@ const ApplicationVulnerabilities = () => {
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("Cves")}
-                  style={{ width: 600 }}
+                  style={{ width: 400 }}
                 >
                   <Box display="flex" alignItems="center">
                     <span>CVEs</span>
@@ -263,7 +253,6 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                {renderOptionsMenuCell()}
               </TableRow>
             </TableHead>
             {filteredData?.length > 0 ? (
@@ -273,7 +262,7 @@ const ApplicationVulnerabilities = () => {
                   .map((row, index) => (
                     <TableRow key={index}>
                       <TableCell>{row.AppName}</TableCell>
-                      {/* <TableCell>{row.WorkspaceId}</TableCell> */}
+                      <TableCell>{row.workspace}</TableCell>
                       <TableCell>{convertDateFormat(row.LastScanned)}</TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
@@ -281,14 +270,13 @@ const ApplicationVulnerabilities = () => {
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
                       </TableCell>
-                      {renderOptionsMenuCell()}
                     </TableRow>
                   ))}
               </TableBody>
             ) : (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={3}>
+                  <TableCell colSpan={4}>
                     <Box textAlign="center" mt={2}>
                       <span>No Apps</span>
                     </Box>
