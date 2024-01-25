@@ -1,15 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, TextField } from "@mui/material"
-import { ChangeEvent, useContext, useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import Payment from 'payment'
 import { formatCVC, formatCreditCardNumber, formatExpirationDate } from "src/@core/utils/format";
 import { deleteCard, makeCardDefault } from "src/services/billingService";
 import PaymentCard from "./card";
-
 import ConfirmationDialog from "src/component/ConfirmationDialog";
-import { AuthContext } from "src/context/AuthContext";
 import { CardType } from ".";
 import PaymentDialog from "../payment";
 
@@ -29,11 +27,12 @@ const formSchema = yup.object().shape({
 
 interface Props {
     cards: CardType[],
-    fetchCards: any
+    fetchCards(): void,
+    customerId: string
 }
 const PaymentMethod = (props: Props) => {
 
-    const { cards, fetchCards } = props;
+    const { cards, fetchCards, customerId } = props;
 
     const {
         control: formControl,
@@ -53,7 +52,6 @@ const PaymentMethod = (props: Props) => {
     const [isDelete, setIsDelete] = useState<boolean>(false);
     const [selectedCardId, setSelectedCardId] = useState<string>('');
     const [openPaymentDialog, setOpenPaymentDialog] = useState<boolean>(false);
-    const authContext = useContext(AuthContext);
 
     const onSubmit = (data: any) => {
         console.log(data);
@@ -87,7 +85,6 @@ const PaymentMethod = (props: Props) => {
     const handlePaymentClose = () => setOpenPaymentDialog(false);
 
     const setAsDefault = () => {
-        const customerId = authContext.org.customer_id;
         makeCardDefault(selectedCardId, customerId).then(
             () => {
                 fetchCards();

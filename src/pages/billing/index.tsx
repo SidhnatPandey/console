@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import PaymentMethod from "./paymentMethod";
 import Plans from "./plans";
 
@@ -11,6 +11,7 @@ import MuiTabList, { TabListProps } from '@mui/lab/TabList';
 import AppsIcon from "@mui/icons-material/Apps";
 import { PricingPlanType } from "src/@core/components/plan-details/types";
 import { getCards, getPlans } from "src/services/billingService";
+import { AuthContext } from "src/context/AuthContext";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     borderBottom: "0 !important",
@@ -58,11 +59,13 @@ const Billing = () => {
     const [value, setValue] = useState<string>('1');
     const [plans, setPlans] = useState<PricingPlanType[]>([]);
     const [cards, setCards] = useState<CardType[]>([]);
+    const authContext = useContext(AuthContext);
 
     const fetchPlans = () => {
         getPlans().then(
             res => {
-                setPlans(res.data);
+                const filteredPlans = res.data.filter((plan: any) => plan.tier >= authContext?.org?.tier);
+                setPlans(filteredPlans);
             }
         )
     }
@@ -78,7 +81,7 @@ const Billing = () => {
     useEffect(() => {
         fetchPlans();
         fetchCards();
-    }, [])
+    }, [authContext.org])
 
     const handleChange = (event: SyntheticEvent, newValue: string) => {
         setValue(newValue)
@@ -93,7 +96,7 @@ const Billing = () => {
             <TabPanel value='1' sx={{ p: '20px 0px' }}>
                 <Plans plans={plans} fetchCards={fetchCards} />
                 <br />
-                <PaymentMethod cards={cards} fetchCards={fetchCards}></PaymentMethod>
+                {authContext?.org?.tier > 0 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext.org.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
                 <Typography>

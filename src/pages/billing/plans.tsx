@@ -81,7 +81,7 @@ const Plans = (props: Props) => {
                         <Typography sx={{ color: 'text.secondary' }}>Choose the best plan to fit your needs.</Typography>
                     </Box>
                 </Box>
-                <Grid container spacing={6}>
+                <Grid container spacing={6} justifyContent="center">
                     {plans?.map((item: PricingPlanType) => (
                         <Grid item xs={12} md={4} key={item.title.toLowerCase()}>
                             <PlanDetails plan={'monthly'} data={item} handleUpgrade={upgradePlan} />

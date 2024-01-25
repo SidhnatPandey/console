@@ -14,7 +14,8 @@ export type PricingPlanType = {
     perMonth: number
     totalAnnual: number
   }
-  id: string
+  id: string,
+  tier?: number
 }
 
 export type PricingPlanProps = {
