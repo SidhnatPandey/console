@@ -14,8 +14,8 @@ const Security = () => {
           <SecurityDashboard title="Security Dashboard" subtitle={""} />
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <SecurityCompliance />
-          <SecurityVulnerabilities />
+          <SecurityCompliance appId={""} />
+          <SecurityVulnerabilities appId={""} />
         </Box>
         <ApplicationVulnerabilities />
       </SecurityProvider>

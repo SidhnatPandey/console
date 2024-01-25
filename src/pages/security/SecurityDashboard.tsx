@@ -5,10 +5,13 @@ import WorkspaceDropdown from "src/component/workspaceDropdown";
 import { SecurityContext } from "src/context/SecurityContext";
 
 interface SecurityDashboardProps {
-  title: string; 
-  subtitle: string; 
+  title: string;
+  subtitle: string;
 }
-const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title , subtitle}) => {
+const SecurityDashboard: React.FC<SecurityDashboardProps> = ({
+  title,
+  subtitle,
+}) => {
   const securityContext = useContext(SecurityContext);
 
   const triggerSecurityData = (selectedValue: string) => {
@@ -22,13 +25,14 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title , subtitle}
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            paddingLeft: '16px', 
-            paddingRight: '16px', 
+            paddingLeft: "16px",
+            paddingRight: "16px",
           }}
         >
-          <h2>{title}</h2>
-          <h3>{subtitle}</h3>
-
+          <div>
+            <h3 style={{ marginBottom: 0 }}>{title}</h3>
+            <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             <WorkspaceDropdown />
             <SwitcherButton
