@@ -11,10 +11,10 @@ import axios from 'axios'
 import { env } from 'next-runtime-env';
 
 // ** Types
-import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation } from './types'
+import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation, Org } from './types'
 import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
-import { getOrganisations, getUserInfo, getWorkspaces } from 'src/services/userService';
+import { getOrganisations, getUserInfo, getUserOrg, getWorkspaces } from 'src/services/userService';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -29,6 +29,9 @@ const defaultProvider: AuthValuesType = {
   setWorkspaces: () => null,
   setOrganisations: () => null,
   fetchWorkspaces: () => null,
+  org: null,
+  setOrg: () => null,
+  fetchOrg: () => null,
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -43,6 +46,7 @@ const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
   const [workspaces, setWorkspaces] = useState<Workspace[]>(defaultProvider.workspaces);
   const [organisations, setOrganisations] = useState<Organisation[]>(defaultProvider.organisations);
+  const [org, setOrg] = useState<Org>(defaultProvider.org)
 
 
   // ** Hooks
@@ -55,6 +59,7 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
         getUser();
+        fetchOrg();
         const isNavigate = !localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace);
         fetchWorkspaces(null, isNavigate);
         fetchOrganisation();
@@ -135,6 +140,7 @@ const AuthProvider = ({ children }: Props) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.ogrId, JSON.stringify(response.data.data.user_data?.default_org))
           params.rememberMe ? localStorage.setItem(LOCALSTORAGE_CONSTANTS.userInfo, JSON.stringify(user)) : null
           await fetchWorkspaces(null, true, true);
+          fetchOrg();
           fetchOrganisation();
           getUser();
         }
@@ -186,6 +192,14 @@ const AuthProvider = ({ children }: Props) => {
     })
   }
 
+  const fetchOrg = () => {
+    getUserOrg().then(
+      res => {
+        setOrg(res?.data);
+      }
+    )
+  }
+
   const values = {
     user,
     loading,
@@ -197,7 +211,10 @@ const AuthProvider = ({ children }: Props) => {
     setWorkspaces,
     organisations,
     setOrganisations,
-    fetchWorkspaces
+    fetchWorkspaces,
+    fetchOrg,
+    org,
+    setOrg
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

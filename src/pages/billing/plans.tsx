@@ -1,111 +1,72 @@
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material"
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PlanDetails from "src/@core/components/plan-details";
 import { PricingPlanType } from "src/@core/components/plan-details/types";
-import { setApiBaseUrl } from "src/@core/services/interceptor";
-import { APP_API } from "src/@core/static/api.constant";
-import { getFetcher } from "src/services/fetcherService";
-import { toTitleCase } from "src/utils/stringUtils";
-import useSWR from "swr";
+import Payment from "../payment";
+import { saveCardSession } from "src/services/billingService";
+import { useRouter } from "next/navigation";
+import Toaster from "src/utils/toaster";
+import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
 
-const Plans = () => {
+interface Props {
+    plans: PricingPlanType[]
+    fetchCards(): void;
+}
 
+const Plans = (props: Props) => {
+
+    const { plans, fetchCards } = props;
+    const [openPaymentDialog, setOpenPaymentDialog] = useState<boolean>(false);
     const router = useRouter();
+    const authContext = useContext(AuthContext);
 
-    const pricingPlans: PricingPlanType[] = [
-        {
-            imgWidth: 140,
-            imgHeight: 140,
-            title: 'Developer',
-            monthlyPrice: 0,
-            currentPlan: true,
-            popularPlan: false,
-            subtitle: 'A simple start for everyone',
-            imgSrc: '/images/pages/pricing-plan-basic.png',
-            yearlyPlan: {
-                perMonth: 0,
-                totalAnnual: 0
-            },
-            planBenefits: [
-                '100 responses a month',
-                'Unlimited forms and surveys',
-                'Unlimited fields',
-                'Basic form creation tools',
-                'Up to 2 subdomains'
-            ]
-        },
-        {
-            imgWidth: 140,
-            imgHeight: 140,
-            monthlyPrice: 49,
-            title: 'Startup',
-            popularPlan: true,
-            currentPlan: false,
-            subtitle: 'For small to medium businesses',
-            imgSrc: '/images/pages/pricing-plan-standard.png',
-            yearlyPlan: {
-                perMonth: 40,
-                totalAnnual: 480
-            },
-            planBenefits: [
-                'Unlimited responses',
-                'Unlimited forms and surveys',
-                'Instagram profile page',
-                'Google Docs integration',
-                'Custom “Thank you” page'
-            ]
-        },
-        {
-            imgWidth: 140,
-            imgHeight: 140,
-            monthlyPrice: 99,
-            popularPlan: false,
-            currentPlan: false,
-            title: 'Enterprise',
-            subtitle: 'Solution for big organizations',
-            imgSrc: '/images/pages/pricing-plan-enterprise.png',
-            yearlyPlan: {
-                perMonth: 80,
-                totalAnnual: 960
-            },
-            planBenefits: [
-                'PayPal payments',
-                'Logic Jumps',
-                'File upload with 5GB storage',
-                'Custom domain support',
-                'Stripe integration'
-            ]
-        }
-    ]
-
-    const [plans, setPlans] = useState<PricingPlanType[]>();
-
-    const key = APP_API.getPlans;
-    setApiBaseUrl('billing');
-    const { data } = useSWR(key, getFetcher, {
-        onSuccess: () => {
-            const plans: any = [];
-            data.data.forEach((plan: any, index: number) => {
-                const descriptionArr = plan.description.split('\n');
-                const desc = descriptionArr.shift();
-                const obj = {
-                    title: toTitleCase(plan.plan_name),
-                    subtitle: desc,
-                    currentPlan: index === 0 ? true : false,
-                    popularPlan: index === 1 ? true : false,
-                    monthlyPrice: plan.plan_price,
-                    planBenefits: descriptionArr
-                }
-                plans.push(obj);
-            })
-            setPlans(plans);
-        }
-    });
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const sessionId = urlParams.get('session_id');
 
     const upgradePlan = (plan: PricingPlanType) => {
-        console.log(plan);
-        router.push('/payment');
+        setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.planId, plan.id);
+        setOpenPaymentDialog(true);
+    }
+
+    const handleClose = () => {
+        setOpenPaymentDialog(false);
+    }
+
+    useEffect(() => {
+        if (sessionId) { fetchSession() }
+    }, [sessionId]);
+
+    const fetchSession = () => {
+        fetch(`/api/checkout_sessions?session_id=${sessionId}`, {
+            method: "GET",
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.status === 'complete') {
+                    sendData(sessionId, data.customer_id);
+                    Toaster.successToast('Process Completed')
+                } else {
+                    Toaster.errorToast('Process Failed')
+                }
+            });
+    }
+
+    const sendData = (sessionId: string | null, customreId: string) => {
+        if (sessionId && customreId) {
+            const planId = getItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId)!;
+            saveCardSession(sessionId, customreId, planId).then(
+                () => {
+                    fetchCards();
+                    authContext.fetchOrg();
+                    urlParams.delete("session_id");
+                    router.replace('/billing');
+                    removeItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId);
+                }
+            )
+        }
     }
 
     return (
@@ -128,6 +89,7 @@ const Plans = () => {
                     ))}
                 </Grid>
             </CardContent>
+            <Payment openDialog={openPaymentDialog} handleClose={handleClose}></Payment>
         </Card>
     )
 }

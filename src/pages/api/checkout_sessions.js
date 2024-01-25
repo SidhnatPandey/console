@@ -17,7 +17,7 @@ export default async function handler(req, res) {
                     billing_address_collection: 'required',
                     mode: 'setup',
                     return_url:
-                        `${req.headers.origin}/payment/return?session_id={CHECKOUT_SESSION_ID}`,
+                        `${req.headers.origin}/billing?session_id={CHECKOUT_SESSION_ID}`,
                 }
                 if (customer_id) {
                     obj['customer'] = customer_id

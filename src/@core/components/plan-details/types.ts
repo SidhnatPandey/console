@@ -4,19 +4,22 @@ export type PricingPlanType = {
   subtitle: string
   imgWidth?: number
   imgHeight?: number
-  currentPlan: boolean
-  popularPlan: boolean
-  monthlyPrice: number
-  planBenefits: string[]
+  currentPlan?: boolean
+  popular_plan: boolean
+  monthly_price: number
+  plan_benefits: string[],
+  description?: string,
+  summary?: string,
   yearlyPlan: {
     perMonth: number
     totalAnnual: number
   }
+  id: string
 }
 
 export type PricingPlanProps = {
   plan: string
-  data?: PricingPlanType,
+  data: PricingPlanType,
   handleUpgrade: any
 }
 

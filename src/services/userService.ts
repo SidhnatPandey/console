@@ -35,7 +35,7 @@ export const postUserProfile = (profile: any) => {
 
 export const checkDeleteCriteria = () => {
   setApiBaseUrl();
-  const url = `${APP_API.checkDeleteCriteria}` ;
+  const url = `${APP_API.checkDeleteCriteria}`;
   return get(url).then(response => response?.data);
 }
 
@@ -76,6 +76,11 @@ export const inviteUser = (user: any) => {
   return post(APP_API.inviteUser, user).then(
     (response) => response?.data
   )
+}
+
+export const getUserOrg = () => {
+  setApiBaseUrl();
+  return get(APP_API.getOrg).then(response => response?.data);
 }
 
 

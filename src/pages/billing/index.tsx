@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import PaymentMethod from "./paymentMethod";
 import Plans from "./plans";
 
@@ -9,6 +9,8 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList';
 import AppsIcon from "@mui/icons-material/Apps";
+import { PricingPlanType } from "src/@core/components/plan-details/types";
+import { getCards, getPlans } from "src/services/billingService";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     borderBottom: "0 !important",
@@ -25,9 +27,58 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     },
 }));
 
+export interface CardType {
+    id: string,
+    billing_details: {
+        address: {
+            city: string,
+            country: string,
+            line1: string,
+            line2: string,
+            postal_code: string,
+            state: string
+        },
+        email: string,
+        name: string,
+        phone: string
+    },
+    card: {
+        brand: string,
+        country: string,
+        exp_month: number,
+        exp_year: number,
+        last4: string
+    },
+    created: number,
+    Default: boolean
+}
+
 const Billing = () => {
 
-    const [value, setValue] = useState<string>('1')
+    const [value, setValue] = useState<string>('1');
+    const [plans, setPlans] = useState<PricingPlanType[]>([]);
+    const [cards, setCards] = useState<CardType[]>([]);
+
+    const fetchPlans = () => {
+        getPlans().then(
+            res => {
+                setPlans(res.data);
+            }
+        )
+    }
+
+    const fetchCards = () => {
+        getCards().then(
+            response => {
+                setCards(response?.data);
+            }
+        )
+    }
+
+    useEffect(() => {
+        fetchPlans();
+        fetchCards();
+    }, [])
 
     const handleChange = (event: SyntheticEvent, newValue: string) => {
         setValue(newValue)
@@ -40,9 +91,9 @@ const Billing = () => {
                 <Tab value='2' label='Invoices' />
             </TabList>
             <TabPanel value='1' sx={{ p: '20px 0px' }}>
-                <Plans />
+                <Plans plans={plans} fetchCards={fetchCards} />
                 <br />
-                {/* <PaymentMethod></PaymentMethod> */}
+                <PaymentMethod cards={cards} fetchCards={fetchCards}></PaymentMethod>
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
                 <Typography>

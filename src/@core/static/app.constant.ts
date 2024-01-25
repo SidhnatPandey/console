@@ -5,7 +5,8 @@ export const LOCALSTORAGE_CONSTANTS = {
     userName: 'username',
     ogrId: 'orgId',
     homeRoute: 'default_route',
-    workspace: 'workspace'
+    workspace: 'workspace',
+    planId: 'selectedPlanId'
 }
 
 export const PERMISSION_CONSTANTS = {

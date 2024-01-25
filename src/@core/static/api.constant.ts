@@ -47,7 +47,12 @@ export const APP_API = {
     orgUserList: 'organization/users',
     removeOrgUser: 'organization/removeUserFromOrg?user_id=',
     inviteUser: 'inviteUser',
+    getOrg: 'organization/info',
 
     //billing
-    getPlans: 'plans'
+    getPlans: 'plans',
+    saveCard: 'cards?session_id={sessionId}&customer_id={customerId}&plan_id={planId}',
+    getCards: 'cards',
+    deleteCard: 'cards/{paymentMethod}',
+    makeCardDefault: 'cards/{paymentMethod}/setdefault?customer_id={customerId}'
 }

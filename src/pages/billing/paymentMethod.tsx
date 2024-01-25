@@ -1,11 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, TextField } from "@mui/material"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useContext, useState } from "react"
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import Payment from 'payment'
 import { formatCVC, formatCreditCardNumber, formatExpirationDate } from "src/@core/utils/format";
-import { useRouter } from "next/router";
+import { deleteCard, makeCardDefault } from "src/services/billingService";
+import PaymentCard from "./card";
+
+import ConfirmationDialog from "src/component/ConfirmationDialog";
+import { AuthContext } from "src/context/AuthContext";
+import { CardType } from ".";
+import PaymentDialog from "../payment";
 
 const defaultFormValues = {
     cardNumber: "",
@@ -21,12 +27,17 @@ const formSchema = yup.object().shape({
     cardName: yup.string().required(),
 });
 
-const PaymentMethod = () => {
+interface Props {
+    cards: CardType[],
+    fetchCards: any
+}
+const PaymentMethod = (props: Props) => {
+
+    const { cards, fetchCards } = props;
 
     const {
         control: formControl,
         handleSubmit: handleFormSubmit,
-        register: formRegister,
         getValues: getFormValue,
         setValue: setFormValue,
         formState: { errors: formErrors },
@@ -36,13 +47,19 @@ const PaymentMethod = () => {
     });
 
     const [open, setOpen] = useState<boolean>(false)
-    const handleClickOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
-    const router = useRouter();
+
+    const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
+    const [isDelete, setIsDelete] = useState<boolean>(false);
+    const [selectedCardId, setSelectedCardId] = useState<string>('');
+    const [openPaymentDialog, setOpenPaymentDialog] = useState<boolean>(false);
+    const authContext = useContext(AuthContext);
 
     const onSubmit = (data: any) => {
         console.log(data);
     }
+    const handleClickOpen = () => setOpen(true)
+    const handleClose = () => setOpen(false)
 
     const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
         if (target.name === 'cardNumber') {
@@ -57,15 +74,54 @@ const PaymentMethod = () => {
         }
     }
 
-    const openStripePayment = () => {
-        router.push('/payment');
+    const removeCard = () => {
+        deleteCard(selectedCardId).then(
+            () => {
+                fetchCards();
+                setConfirmDialog(false);
+            }
+        )
+    }
+
+    const handleClickOpenPayment = () => setOpenPaymentDialog(true)
+    const handlePaymentClose = () => setOpenPaymentDialog(false);
+
+    const setAsDefault = () => {
+        const customerId = authContext.org.customer_id;
+        makeCardDefault(selectedCardId, customerId).then(
+            () => {
+                fetchCards();
+                setConfirmDialog(false);
+            }
+        )
+    }
+
+    const handleConfirm = () => {
+        isDelete ? removeCard() : setAsDefault();
+    }
+
+    const openConfirmation = (card: CardType, isDelete: boolean) => {
+        setIsDelete(isDelete);
+        setSelectedCardId(card.id);
+        if (isDelete) {
+            setMessage(`Are you sure you want to delete card ending with ${card.card.last4} ?`)
+        } else {
+            setMessage(`Are you sure you want to make card ending with ${card.card.last4} as default card?`)
+        }
+        setConfirmDialog(true);
     }
 
     return (
         <Card>
             <CardContent>
                 <h3 style={{ marginTop: '-10px' }}> Payment Method </h3>
-                <Button variant="contained" color="primary" onClick={openStripePayment}> Add New Card</Button>
+                <Grid item xs={12} md={6}>
+                    {cards?.map((item: CardType, index: number) => (
+                        <PaymentCard key={index} index={index} item={item} cardsLength={cards.length} openConfirmation={openConfirmation} openEdit={handleClickOpen} ></PaymentCard>
+                    ))}
+                </Grid>
+                <Button variant="contained" color="primary" onClick={handleClickOpenPayment} style={{ marginTop: '20px' }}> Add New Card</Button>
+                <PaymentDialog openDialog={openPaymentDialog} handleClose={handlePaymentClose}></PaymentDialog>
             </CardContent>
 
             <Dialog
@@ -109,7 +165,6 @@ const PaymentMethod = () => {
                                                     handleInputChange(e)
                                                 }}
                                                 placeholder="9999 9999 9999 9999"
-                                                maxlength="12"
                                                 error={
                                                     (Boolean(formErrors.cardNumber))
                                                 }
@@ -208,7 +263,6 @@ const PaymentMethod = () => {
                                                     handleInputChange(e)
                                                 }}
                                                 placeholder="07/27"
-                                                maxlength="12"
                                                 error={
                                                     (Boolean(formErrors.expire))
                                                 }
@@ -237,6 +291,8 @@ const PaymentMethod = () => {
                     </DialogActions>
                 </form>
             </Dialog>
+
+            <ConfirmationDialog open={confirmDialog} onConfirm={handleConfirm} onCancel={() => setConfirmDialog(false)} message={message} />
         </Card>
     )
 }
