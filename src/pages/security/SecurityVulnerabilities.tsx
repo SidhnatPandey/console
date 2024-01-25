@@ -80,7 +80,7 @@ const SecurityVulnerabilities = () => {
     runType: string,
     appId?: string
   ) => {
-    getAllvulnerabilities(workspaceId, runType).then((res) => {
+    getAllvulnerabilities(workspaceId, runType,appId).then((res) => {
       const totalV = res?.data.reduce(
         (total: number, cve: any) => total + cve.Count,
         0
@@ -115,8 +115,8 @@ const SecurityVulnerabilities = () => {
   };
 
   useEffect(() => {
-    getVulnerabilities(securityContext.workspace, securityContext.runType);
-  }, [securityContext.workspace, securityContext.runType]);
+    getVulnerabilities(securityContext.workspace, securityContext.runType,securityContext.appId);
+  }, [securityContext.workspace, securityContext.runType,securityContext.appId]);
 
   const totalSum = vulnerabilities.reduce((acc, item) => acc + item.value, 0);
 

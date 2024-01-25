@@ -115,15 +115,16 @@ const SecurityCompliance = () => {
   const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
-    getScanData(securityContext.workspace, securityContext.runType);
-  }, [securityContext.workspace, securityContext.runType]);
+    console.log('called : ' + securityContext.appId )
+    getScanData(securityContext.workspace, securityContext.runType,securityContext.appId);
+  }, [securityContext.workspace, securityContext.runType,securityContext.appId]);
 
   const getScanData = (
     workspaceId: string,
     runType: string,
     appId?: string
   ) => {
-    getScans(workspaceId, runType)
+    getScans(workspaceId, runType,appId)
       .then((response) => {
         setScanData(response?.data || {});
         let percentage =

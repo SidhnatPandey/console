@@ -11,7 +11,7 @@ const Security = () => {
   return (
       <SecurityProvider>
         <Box sx={{ marginBottom: "20px" }}>
-          <SecurityDashboard title="Security Dashboard" />
+          <SecurityDashboard title="Security Dashboard" subtitle={""} />
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <SecurityCompliance />

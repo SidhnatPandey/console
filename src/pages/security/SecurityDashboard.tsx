@@ -6,8 +6,9 @@ import { SecurityContext } from "src/context/SecurityContext";
 
 interface SecurityDashboardProps {
   title: string; 
+  subtitle: string; 
 }
-const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title }) => {
+const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title , subtitle}) => {
   const securityContext = useContext(SecurityContext);
 
   const triggerSecurityData = (selectedValue: string) => {
@@ -26,6 +27,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ title }) => {
           }}
         >
           <h2>{title}</h2>
+          <h3>{subtitle}</h3>
 
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             <WorkspaceDropdown />

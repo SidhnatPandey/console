@@ -13,8 +13,7 @@ export const getScans = (workspace_id:string,run_type:string,app_id?:string) => 
     setApiBaseUrl("security");
     let url = APP_API.getScans.replace('{workspace_id}', workspace_id);
     url = url.replace('{run_type}', run_type);
-    if(app_id) 
-    {url = url + '&app_id=' + app_id  }
+    if(app_id) {url = url + '&app_id=' + app_id  }
     return get(url).then((response) => response?.data);
 };
 

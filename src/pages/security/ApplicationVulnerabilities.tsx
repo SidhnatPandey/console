@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import Link from 'next/link'
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Pagination from "@mui/material/Pagination";
@@ -265,7 +266,7 @@ const ApplicationVulnerabilities = () => {
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell>{row.AppName}</TableCell>
+                      <TableCell><Link href={`/security/app/${row.AppId}`}>{row.AppName}</Link></TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
                       <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
                       <TableCell>

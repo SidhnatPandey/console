@@ -63,8 +63,10 @@ export type Organisation = {
 
 export type SecurityValueTypes = {
  workspace: string,
-  runType: string
+  runType: string,
+  appId: string
   setWorkspace:(value: string) => void
   setRunType:(value: string) => void 
+  setAppId:(value: string) => void
 }
 
