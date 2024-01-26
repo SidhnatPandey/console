@@ -1,25 +1,25 @@
-class MockResizeObserver {
-    observations: any;
-    callback: any;
-    constructor(callback: any) {
-        this.callback = callback;
-        this.observations = [];
-    }
+// class MockResizeObserver {
+//     observations: any;
+//     callback: any;
+//     constructor(callback: any) {
+//         this.callback = callback;
+//         this.observations = [];
+//     }
 
-    observe(target: any, options: any) {
-        this.observations.push({ target, options });
-    }
+//     observe(target: any, options: any) {
+//         this.observations.push({ target, options });
+//     }
 
-    unobserve(target: any) {
-        this.observations = this.observations.filter((obs: { target: any; }) => obs.target !== target);
-    }
+//     unobserve(target: any) {
+//         this.observations = this.observations.filter((obs: { target: any; }) => obs.target !== target);
+//     }
 
-    disconnect() {
-        this.observations = [];
-    }
-}
+//     disconnect() {
+//         this.observations = [];
+//     }
+// }
 
-window.ResizeObserver = MockResizeObserver;
+// window.ResizeObserver = MockResizeObserver;
 
 
 import React from 'react';
