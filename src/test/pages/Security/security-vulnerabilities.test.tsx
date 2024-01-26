@@ -1,33 +1,3 @@
-class MockResizeObserver {
-    observations: any;
-    callback: any;
-    constructor(callback: any) {
-        this.callback = callback;
-        this.observations = [];
-    }
-
-
-    observe(target: any, options: any) {
-        this.observations.push({ target, options });
-    }
-
-    unobserve(target: any) {
-        this.observations = this.observations.filter((obs: { target: any; }) => obs.target !== target);
-    }
-
-    disconnect() {
-        this.observations = [];
-    }
-}
-
-// Override the global ResizeObserver only in a test environment
-if (process.env.NODE_ENV === 'test') {
-  window.ResizeObserver = MockResizeObserver;
-}
-
-window.ResizeObserver = MockResizeObserver;
-
-
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -51,6 +21,20 @@ describe('SecurityVulnerabilities Component', () => {
     appId: 'mock-app',
     setAppId: jest.fn(),
   };
+
+// Simplified functional MockResizeObserver
+const MockResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+beforeEach(() => {
+  // Override the global ResizeObserver only in a test environment
+  if (process.env.NODE_ENV === 'test') {
+    window.ResizeObserver = MockResizeObserver;
+  }
+});
 
   it('should render without crashing', () => {
     render(
