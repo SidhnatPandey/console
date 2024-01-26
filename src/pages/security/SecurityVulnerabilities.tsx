@@ -157,18 +157,19 @@ const SecurityVulnerabilities = (props: Props) => {
 
 
   return (
-    <Card sx={{ width: "38%" }}>
+    <Card sx={{ width: "38%" }}data-testid="vulnerability-card">
       <CardHeader
         title="Vulnerabilities"
+        data-testid="card-header"
         subheader="Analysis of Vulnerabilities in Apps"
         subheaderTypographyProps={{
           sx: { color: (theme) => `${theme.palette.text.disabled} !important` },
         }}
       />
       <CardContent>
-        <Box sx={{ height: 350, marginTop: "-30px" }}>
+        <Box sx={{ height: 350, marginTop: "-30px" }} data-testid="box">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart height={350} style={{ direction: "ltr" }}>
+            <PieChart height={350} style={{ direction: "ltr" }}data-testid="pieChart">
               <Pie
                 data={vulnerabilities}
                 innerRadius={80}
@@ -176,12 +177,13 @@ const SecurityVulnerabilities = (props: Props) => {
                 label={renderCustomizedLabel}
                 labelLine={false}
                 startAngle={-150}
+                data-testid="pie"
               >
                 {vulnerabilities.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip />} data-testid="tooltip" />
               <text
                 x={170}
                 y={170}
@@ -189,6 +191,7 @@ const SecurityVulnerabilities = (props: Props) => {
                 textAnchor="middle"
                 dominantBaseline="central"
                 style={{ fontSize: "18px", fontWeight: "bold" }}
+                data-testid="CVEs-title"
               >
                 CVEs
               </text>
@@ -199,6 +202,7 @@ const SecurityVulnerabilities = (props: Props) => {
                 textAnchor="middle"
                 dominantBaseline="central"
                 style={{ fontSize: "15px" }}
+                data-testid="total-vulnerability"
               >
                 {totalVulnerabilities}
               </text>
@@ -222,7 +226,7 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2">Low</Typography>
+            <Typography variant="body2" data-testid="low-severity">Low</Typography>
           </Box>
           <Box
             sx={{
@@ -233,7 +237,7 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2">Medium</Typography>
+            <Typography variant="body2" data-testid="medium-severity">Medium</Typography>
           </Box>
           <Box
             sx={{
@@ -244,7 +248,7 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2">High</Typography>
+            <Typography variant="body2" data-testid="high-severity">High</Typography>
           </Box>
           <Box
             sx={{
@@ -255,7 +259,7 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2">Critical</Typography>
+            <Typography variant="body2" data-testid="critical-severity">Critical</Typography>
           </Box>
           <Box
             sx={{
@@ -265,7 +269,7 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2">Unknown</Typography>
+            <Typography variant="body2" data-testid="unknown-severity">Unknown</Typography>
           </Box>
         </Box>
       </CardContent>
