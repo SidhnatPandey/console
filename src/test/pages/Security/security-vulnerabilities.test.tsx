@@ -1,25 +1,31 @@
-// class MockResizeObserver {
-//     observations: any;
-//     callback: any;
-//     constructor(callback: any) {
-//         this.callback = callback;
-//         this.observations = [];
-//     }
+class MockResizeObserver {
+    observations: any;
+    callback: any;
+    constructor(callback: any) {
+        this.callback = callback;
+        this.observations = [];
+    }
 
-//     observe(target: any, options: any) {
-//         this.observations.push({ target, options });
-//     }
 
-//     unobserve(target: any) {
-//         this.observations = this.observations.filter((obs: { target: any; }) => obs.target !== target);
-//     }
+    observe(target: any, options: any) {
+        this.observations.push({ target, options });
+    }
 
-//     disconnect() {
-//         this.observations = [];
-//     }
-// }
+    unobserve(target: any) {
+        this.observations = this.observations.filter((obs: { target: any; }) => obs.target !== target);
+    }
 
-// window.ResizeObserver = MockResizeObserver;
+    disconnect() {
+        this.observations = [];
+    }
+}
+
+// Override the global ResizeObserver only in a test environment
+if (process.env.NODE_ENV === 'test') {
+  window.ResizeObserver = MockResizeObserver;
+}
+
+window.ResizeObserver = MockResizeObserver;
 
 
 import React from 'react';
