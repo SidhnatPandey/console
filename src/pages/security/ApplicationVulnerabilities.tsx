@@ -33,6 +33,7 @@ interface AppSecurityData {
 }
 const ApplicationVulnerabilities = () => {
   const securityContext = useContext(SecurityContext)
+  const [selectedWorkspace, setSelectedWorkspace] = useState("");
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
     //  {
@@ -109,6 +110,8 @@ const ApplicationVulnerabilities = () => {
     return Cves?.reduce((total, cve) => total + cve.Count, 0);
   };
 
+  
+
   const handleSort = (columnName: keyof AppSecurityData) => {
     setSort({
       column: columnName,
@@ -139,13 +142,18 @@ const ApplicationVulnerabilities = () => {
     );
   };
 
-  const filteredData = vulnerabilityData?.filter((row) =>
-    Object.values(row).some(
-      (value) =>
-        value &&
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+   // Modify filteredData to include workspace filtering
+   const filteredData = vulnerabilityData?.filter((row) => {
+    return (
+      (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
+      Object.values(row).some((value) =>
+        value
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      )
+    );
+  });
   const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
   const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
@@ -155,18 +163,22 @@ const ApplicationVulnerabilities = () => {
   );
 
   useEffect(() => {
-    const validPage = Math.min(Math.max(currentPage, 1), totalPages);
-    setCurrentPage(validPage);
+  const validPage = Math.min(Math.max(currentPage, 1), totalPages);
+  setCurrentPage(validPage);
     getVulnerabilitesList(securityContext.workspace, securityContext.runType);
-  }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType]);
+  }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType, selectedWorkspace]);
 
-  const getVulnerabilitesList = (workspaceId: string, runType: string) => {
-    vulnerabilitiesList(workspaceId, runType).then(
-      (res) => {
-        res ? setVulnerabilityData(res.data) : {};
-      }
-    )
-  }
+  useEffect(() => {
+    if (vulnerabilityData.length === 0) {
+      setCurrentPage(1);
+    }
+  }, [vulnerabilityData]);
+
+ const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+  vulnerabilitiesList(workspaceId, runType).then((res) => {
+    setVulnerabilityData(res?.data || []);
+  });
+};
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -260,9 +272,9 @@ const ApplicationVulnerabilities = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            {filteredData?.length > 0 ? (
               <TableBody>
-                {filteredData
+                 {filteredData && filteredData.length > 0 ? (
+                filteredData
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
@@ -276,19 +288,19 @@ const ApplicationVulnerabilities = () => {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
-              </TableBody>
+                  ))
+              
             ) : (
-              <TableBody>
+             
                 <TableRow>
                   <TableCell colSpan={4}>
                     <Box textAlign="center" mt={2}>
-                      <span>No Apps</span>
+                      <span>No Apps Available</span>
                     </Box>
                   </TableCell>
-                </TableRow>
-              </TableBody>
-            )}
+                  </TableRow>
+              
+            )}</TableBody>
           </Table>
         </TableContainer>
         <Box
