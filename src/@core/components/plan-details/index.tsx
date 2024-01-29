@@ -103,7 +103,7 @@ const PlanDetails = (props: PricingPlanProps) => {
           {toTitleCase(data.title)}
         </Typography>
         <Typography sx={{ color: 'text.secondary' }}>{data?.subtitle}</Typography>
-        <Box sx={{ my: 7, position: 'relative' }}>
+        <Box sx={{ mt: 7, mb: 2, position: 'relative' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             {data.title !== 'Enterprise' ? <>
               <Typography sx={{ mt: 2.5, mr: 0.5, fontWeight: 500, color: 'primary.main', alignSelf: 'flex-start' }}>
@@ -133,7 +133,7 @@ const PlanDetails = (props: PricingPlanProps) => {
         </Box>
       </Box>
       <Box sx={{ textAlign: 'center' }}>
-        <Typography sx={{ mb: 1.5, color: 'text.disabled' }}>Per month, per Application Instance (AI)</Typography>
+        <Typography sx={{ mb: 4.5, color: 'primary.main' }}>Per month, per Application Instance (AI)</Typography>
         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}><b>{data?.description}</b></Typography>
         <Typography sx={{ mb: 1.5 }}>{data?.summary}</Typography>
       </Box>
