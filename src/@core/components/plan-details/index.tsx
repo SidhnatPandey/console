@@ -132,7 +132,7 @@ const PlanDetails = (props: PricingPlanProps) => {
           ) : null}
         </Box>
       </Box>
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: 'center', padding: '0 20px' }}>
         <Typography sx={{ mb: 4.5, color: 'primary.main' }}>Per month, per Application Instance (AI)</Typography>
         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}><b>{data?.description}</b></Typography>
         <Typography sx={{ mb: 1.5 }}>{data?.summary}</Typography>
