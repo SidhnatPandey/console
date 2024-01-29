@@ -40,6 +40,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { CircularProgress } from '@mui/material';
+import Image from 'next/image'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -185,7 +186,7 @@ const LoginPage = () => {
           }}
         >
           <Box sx={{ width: '100%', maxWidth: 400 }}>
-            <img src='../images/logo.png' alt='logo' width='90' height='90' />
+            <Image src='/images/logo.png' alt='logo' width='90' height='90' />
             <Box sx={{ my: 0.5 }}>
               <Typography variant='h3' sx={{ mb: 1 }}>
                 {`Welcome to ${themeConfig.templateName}! 👋🏻`}

@@ -10,29 +10,30 @@ const data: PricingDataType = {
       imgWidth: 140,
       imgHeight: 140,
       title: 'Basic',
-      monthlyPrice: 0,
+      monthly_price: 0,
       currentPlan: true,
-      popularPlan: false,
+      popular_plan: false,
       subtitle: 'A simple start for everyone',
       imgSrc: '/images/pages/pricing-plan-basic.png',
       yearlyPlan: {
         perMonth: 0,
         totalAnnual: 0
       },
-      planBenefits: [
+      plan_benefits: [
         '100 responses a month',
         'Unlimited forms and surveys',
         'Unlimited fields',
         'Basic form creation tools',
         'Up to 2 subdomains'
-      ]
+      ],
+      id: '1',
     },
     {
       imgWidth: 140,
       imgHeight: 140,
-      monthlyPrice: 49,
+      monthly_price: 49,
       title: 'Standard',
-      popularPlan: true,
+      popular_plan: true,
       currentPlan: false,
       subtitle: 'For small to medium businesses',
       imgSrc: '/images/pages/pricing-plan-standard.png',
@@ -40,19 +41,20 @@ const data: PricingDataType = {
         perMonth: 40,
         totalAnnual: 480
       },
-      planBenefits: [
+      plan_benefits: [
         'Unlimited responses',
         'Unlimited forms and surveys',
         'Instagram profile page',
         'Google Docs integration',
         'Custom “Thank you” page'
-      ]
+      ],
+      id: '2'
     },
     {
       imgWidth: 140,
       imgHeight: 140,
-      monthlyPrice: 99,
-      popularPlan: false,
+      monthly_price: 99,
+      popular_plan: false,
       currentPlan: false,
       title: 'Enterprise',
       subtitle: 'Solution for big organizations',
@@ -61,13 +63,14 @@ const data: PricingDataType = {
         perMonth: 80,
         totalAnnual: 960
       },
-      planBenefits: [
+      plan_benefits: [
         'PayPal payments',
         'Logic Jumps',
         'File upload with 5GB storage',
         'Custom domain support',
         'Stripe integration'
-      ]
+      ],
+      id: '3'
     }
   ],
   faq: [
