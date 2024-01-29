@@ -1,5 +1,5 @@
 import { Box, Card } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
 import { SecurityContext } from "src/context/SecurityContext";
@@ -7,13 +7,22 @@ import { SecurityContext } from "src/context/SecurityContext";
 interface SecurityDashboardProps {
   title: string;
   subtitle: string;
+  wid?: string;
 }
 const SecurityDashboard: React.FC<SecurityDashboardProps> = ({
   title,
   subtitle,
+  wid
 }) => {
   const securityContext = useContext(SecurityContext);
-
+ 
+  useEffect(() => {
+    if (wid) {
+      securityContext.setWorkspace(wid);
+    }
+  }, [wid]);
+  
+  
   const triggerSecurityData = (selectedValue: string) => {
     securityContext.setRunType(selectedValue);
   };

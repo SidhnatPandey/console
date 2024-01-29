@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SecurityCompliance from "../../SecurityCompliance";
 import SecurityVulnerabilities from "../../SecurityVulnerabilities";
 import { Box } from "@mui/system";
@@ -11,14 +11,13 @@ import { SecurityProvider } from "src/context/SecurityContext";
 const AppSecurityDetails = () => {
 
   const router = useRouter();
-  const { appId  } = router.query;
-
+  const { appId ,wid } = router.query;
 
   return (
     <>
     <SecurityProvider>
       <Box sx={{ marginBottom: "20px" }}>
-        <SecurityDashboard title="Work Order API" subtitle="Application CVE Dashboard" />
+        <SecurityDashboard title="Work Order API" subtitle="Application CVE Dashboard" wid={convertToString(wid)}  />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <SecurityCompliance appId={convertToString(appId)}  />

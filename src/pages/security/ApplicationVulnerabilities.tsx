@@ -121,10 +121,6 @@ const ApplicationVulnerabilities = () => {
     });
   };
 
-  const setWorkspaceValue = (workspaceId: string) => {
-    securityContext.setWorkspace(workspaceId);
-  }
-
   return (
     <Card sx={{ marginTop: "20px" }}>
       <Box display="flex" flexDirection="column">
@@ -223,7 +219,7 @@ const ApplicationVulnerabilities = () => {
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={`/security/app/${row.AppId}`} onClick={() => setWorkspaceValue(row.WorkspaceId)}>{row.AppName}</Link></TableCell>
+                      <TableCell><Link href={`/security/app/${row.AppId}?wid=${row.WorkspaceId}`} >{row.AppName}</Link></TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
                       <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
                       <TableCell>

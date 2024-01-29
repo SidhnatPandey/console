@@ -17,10 +17,6 @@ export const SecurityProvider = ({ children }: Props) => {
   const [appId, setAppId] = useState<string>( defaultProvider.appId);
   const [workspace, setWorkspace] = useState<string>( defaultProvider.workspace);
   const [runType, setRunType] = useState<string>(defaultProvider.runType);
-  
-  useEffect(() => { 
-    console.log(appId);
-  }, [appId])
 
   const values = {
     workspace,
