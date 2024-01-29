@@ -5,20 +5,20 @@ import ApplicationVulnerabilities from "./ApplicationVulnerabilities";
 import { Box } from "@mui/system";
 import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import SecurityDashboard from "./SecurityDashboard";
-import {SecurityProvider } from "src/context/SecurityContext";
+import { SecurityProvider } from "src/context/SecurityContext";
 
 const Security = () => {
   return (
-      <SecurityProvider>
-        <Box sx={{ marginBottom: "20px" }}>
-          <SecurityDashboard title="Security Dashboard" subtitle={""} />
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <SecurityCompliance appId={""} />
-          <SecurityVulnerabilities appId={""} />
-        </Box>
-        <ApplicationVulnerabilities />
-      </SecurityProvider>
+    <SecurityProvider>
+      <Box sx={{ marginBottom: "20px" }}>
+        <SecurityDashboard title="Security Dashboard" showWorkspaceDropdown={false} />
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <SecurityCompliance appId={""} />
+        <SecurityVulnerabilities appId={""} />
+      </Box>
+      <ApplicationVulnerabilities />
+    </SecurityProvider>
   );
 };
 

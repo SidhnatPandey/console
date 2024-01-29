@@ -1,25 +1,28 @@
 import { Box, Card } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
 import { SecurityContext } from "src/context/SecurityContext";
+import useWorkspace from "src/hooks/useWorkspace";
 
 interface SecurityDashboardProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   wid?: string;
+  showWorkspaceDropdown: boolean
 }
-const SecurityDashboard: React.FC<SecurityDashboardProps> = ({
+const SecurityDashboard = ({
   title,
   subtitle,
-  wid
-}) => {
+  wid,
+  showWorkspaceDropdown
+}: SecurityDashboardProps) => {
+
   const securityContext = useContext(SecurityContext);
-  if (wid) {
-    securityContext.setWorkspace(wid);
-  }
-  
-  
+  if (wid) { securityContext.setWorkspace(wid) }
+
+  const workspace = useWorkspace();
+
   const triggerSecurityData = (selectedValue: string) => {
     securityContext.setRunType(selectedValue);
   };
@@ -40,7 +43,8 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({
             <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
-            <WorkspaceDropdown />
+            {showWorkspaceDropdown ? <WorkspaceDropdown /> : <>Workspace: {workspace.getWorkspaceNameById(wid)}</>}
+
             <SwitcherButton
               handleBtnClick={triggerSecurityData}
               btnNames={["prod", "non-prod"]}
