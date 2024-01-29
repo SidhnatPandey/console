@@ -11,7 +11,10 @@ const Security = () => {
   return (
     <SecurityProvider>
       <Box sx={{ marginBottom: "20px" }}>
-        <SecurityDashboard title="Security Dashboard" showWorkspaceDropdown={false} />
+        <SecurityDashboard
+          title="Security Dashboard"
+          showWorkspaceDropdown={true}
+        />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <SecurityCompliance appId={""} />
