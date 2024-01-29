@@ -46,7 +46,7 @@ const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
   const [workspaces, setWorkspaces] = useState<Workspace[]>(defaultProvider.workspaces);
   const [organisations, setOrganisations] = useState<Organisation[]>(defaultProvider.organisations);
-  const [org, setOrg] = useState<Org>(defaultProvider.org)
+  const [org, setOrg] = useState<Org | null>(defaultProvider.org)
 
 
   // ** Hooks

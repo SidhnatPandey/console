@@ -9,9 +9,9 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList';
 import AppsIcon from "@mui/icons-material/Apps";
-import { PricingPlanType } from "src/@core/components/plan-details/types";
-import { getCards, getPlans } from "src/services/billingService";
+import { getCards } from "src/services/billingService";
 import { AuthContext } from "src/context/AuthContext";
+import usePlan from "src/hooks/plan";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     borderBottom: "0 !important",
@@ -57,18 +57,9 @@ export interface CardType {
 const Billing = () => {
 
     const [value, setValue] = useState<string>('1');
-    const [plans, setPlans] = useState<PricingPlanType[]>([]);
     const [cards, setCards] = useState<CardType[]>([]);
     const authContext = useContext(AuthContext);
-
-    const fetchPlans = () => {
-        getPlans().then(
-            res => {
-                const filteredPlans = res.data.filter((plan: any) => plan.tier >= authContext?.org?.tier);
-                setPlans(filteredPlans);
-            }
-        )
-    }
+    const plan = usePlan();
 
     const fetchCards = () => {
         getCards().then(
@@ -79,8 +70,8 @@ const Billing = () => {
     }
 
     useEffect(() => {
-        fetchPlans();
         fetchCards();
+        plan.fetchPlans();
     }, [authContext.org])
 
     const handleChange = (event: SyntheticEvent, newValue: string) => {
@@ -94,9 +85,9 @@ const Billing = () => {
                 <Tab value='2' label='Invoices' />
             </TabList>
             <TabPanel value='1' sx={{ p: '20px 0px' }}>
-                <Plans plans={plans} fetchCards={fetchCards} />
+                <Plans plans={plan.userPlans()} fetchCards={fetchCards} />
                 <br />
-                {authContext?.org?.tier > 0 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext.org.customer_id}></PaymentMethod>}
+                {plan.planTier() > 1 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext?.org?.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
                 <Typography>

@@ -28,7 +28,7 @@ const formSchema = yup.object().shape({
 interface Props {
     cards: CardType[],
     fetchCards(): void,
-    customerId: string
+    customerId: string | undefined
 }
 const PaymentMethod = (props: Props) => {
 
@@ -85,12 +85,14 @@ const PaymentMethod = (props: Props) => {
     const handlePaymentClose = () => setOpenPaymentDialog(false);
 
     const setAsDefault = () => {
-        makeCardDefault(selectedCardId, customerId).then(
-            () => {
-                fetchCards();
-                setConfirmDialog(false);
-            }
-        )
+        if (customerId) {
+            makeCardDefault(selectedCardId, customerId).then(
+                () => {
+                    fetchCards();
+                    setConfirmDialog(false);
+                }
+            )
+        }
     }
 
     const handleConfirm = () => {

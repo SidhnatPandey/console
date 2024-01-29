@@ -395,6 +395,9 @@ const CreateApp = () => {
       .then((response) => {
         toast.success("App Created Successfully");
         router.push({ pathname: '/workspace/app-dashboard', query: { appId: response.data.app_id } });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
       })
       .catch((error) => {
         toast.error(error);

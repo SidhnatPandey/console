@@ -41,6 +41,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image'
+import useLoading from 'src/hooks/loading'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -98,13 +99,13 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
 
 
   // ** Hooks
   const auth = useAuth()
-  const theme = useTheme()
+  const theme = useTheme();
+  const { loading, startLoading, stopLoading } = useLoading();
   // const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
@@ -124,11 +125,11 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
   const onSubmit = (data: FormData) => {
-    if (!isSubmitting) {
-      setIsSubmitting(true);
+    if (!loading) {
+      startLoading();
       const { email, password } = data;
       const loginSuccess: any = auth.login({ email, password, rememberMe }, (err: any) => {
-        setIsSubmitting(false);
+        stopLoading();
         if (err.response?.data.code) {
           setError('email', { type: 'manual', message: "" });
           switch (err.response.data.code) {
@@ -272,7 +273,7 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
+                {loading && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                 Login
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

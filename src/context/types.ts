@@ -48,7 +48,7 @@ export type AuthValuesType = {
   setWorkspaces: (value: Workspace[]) => void,
   setOrganisations: (value: Organisation[]) => void,
   fetchWorkspaces: (value: string | null) => void,
-  org: any,
+  org: Org | null,
   setOrg: (value: any) => void,
   fetchOrg: () => void,
 }
@@ -70,6 +70,8 @@ export type Org = {
   id: string,
   name: string,
   plan_id: string,
-  role: string
+  role: string,
+  app_count: number,
+  tier: number
 }
 
