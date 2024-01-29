@@ -35,66 +35,7 @@ const ApplicationVulnerabilities = () => {
   const securityContext = useContext(SecurityContext)
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
 
-  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
-    //  {
-    //   AppName: "App 1",
-    //   workspace: "workspace A",
-    //   LastScanned: "2023-01-15",
-    //   Cves: [
-    //     { Count: 1, Severity: "Critical" },
-    //     { Count: 2, Severity: "High" },
-    //     { Count: 10, Severity: "Low" },
-    //     { Count: 3, Severity: "Medium" },
-    //     { Count: 2, Severity: "Unknown" },
-    //   ],
-    // },
-    // {
-    //   AppName: "App 2",
-    //   workspace: "workspace B",
-    //   LastScanned: "2023-01-20",
-    //   Cves: [
-    //     { Count: 1, Severity: "Critical" },
-
-    //     { Count: 2, Severity: "Unknown" },
-    //   ],
-    // },
-    // {
-    //   AppName: "App 3",
-    //   workspace: "workspace A",
-    //   LastScanned: "2023-01-15",
-    //   Cves: [
-    //     { Count: 3, Severity: "Medium" },
-    //     { Count: 2, Severity: "Unknown" },
-    //   ],
-    // },
-    // {
-    //   AppName: "App 4",
-    //   workspace: "workspace B",
-    //   LastScanned: "2023-01-20",
-    //   Cves: [{ Count: 3, Severity: "Medium" }],
-    // },
-    // {
-    //   AppName: "App 1",
-    //   workspace: "workspace A",
-    //   LastScanned: "2023-01-15",
-    //   Cves: [
-    //     { Count: 3, Severity: "Medium" },
-    //     { Count: 2, Severity: "Unknown" },
-    //   ],
-    // },
-    // {
-    //   AppName: "App 2",
-    //   workspace: "workspace B",
-    //   LastScanned: "2023-01-20",
-    //   Cves: [{ Count: 1, Severity: "Critical" }],
-    // },
-    // {
-    //   AppName: "App 3",
-    //   workspace: "workspace A",
-    //   LastScanned: "2023-01-15",
-    //   Cves: [{ Count: 3, Severity: "Medium" }],
-    // }, 
-  ]);
+  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
@@ -110,7 +51,7 @@ const ApplicationVulnerabilities = () => {
     return Cves?.reduce((total, cve) => total + cve.Count, 0);
   };
 
-  
+
 
   const handleSort = (columnName: keyof AppSecurityData) => {
     setSort({
@@ -142,8 +83,8 @@ const ApplicationVulnerabilities = () => {
     );
   };
 
-   // Modify filteredData to include workspace filtering
-   const filteredData = vulnerabilityData?.filter((row) => {
+  // Modify filteredData to include workspace filtering
+  const filteredData = vulnerabilityData?.filter((row) => {
     return (
       (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
       Object.values(row).some((value) =>
@@ -163,8 +104,8 @@ const ApplicationVulnerabilities = () => {
   );
 
   useEffect(() => {
-  const validPage = Math.min(Math.max(currentPage, 1), totalPages);
-  setCurrentPage(validPage);
+    const validPage = Math.min(Math.max(currentPage, 1), totalPages);
+    setCurrentPage(validPage);
     getVulnerabilitesList(securityContext.workspace, securityContext.runType);
   }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType, selectedWorkspace]);
 
@@ -174,11 +115,15 @@ const ApplicationVulnerabilities = () => {
     }
   }, [vulnerabilityData]);
 
- const getVulnerabilitesList = (workspaceId: string, runType: string) => {
-  vulnerabilitiesList(workspaceId, runType).then((res) => {
-    setVulnerabilityData(res?.data || []);
-  });
-};
+  const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+    vulnerabilitiesList(workspaceId, runType).then((res) => {
+      setVulnerabilityData(res?.data || []);
+    });
+  };
+
+  const setWorkspaceValue = (workspaceId: string) => {
+    securityContext.setWorkspace(workspaceId);
+  }
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -272,13 +217,13 @@ const ApplicationVulnerabilities = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-              <TableBody>
-                 {filteredData && filteredData.length > 0 ? (
+            <TableBody>
+              {filteredData && filteredData.length > 0 ? (
                 filteredData
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={`/security/app/${row.AppId}`}>{row.AppName}</Link></TableCell>
+                      <TableCell><Link href={`/security/app/${row.AppId}`} onClick={() => setWorkspaceValue(row.WorkspaceId)}>{row.AppName}</Link></TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
                       <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
                       <TableCell>
@@ -289,18 +234,18 @@ const ApplicationVulnerabilities = () => {
                       </TableCell>
                     </TableRow>
                   ))
-              
-            ) : (
-             
+
+              ) : (
+
                 <TableRow>
                   <TableCell colSpan={4}>
                     <Box textAlign="center" mt={2}>
                       <span>No Apps Available</span>
                     </Box>
                   </TableCell>
-                  </TableRow>
-              
-            )}</TableBody>
+                </TableRow>
+
+              )}</TableBody>
           </Table>
         </TableContainer>
         <Box
