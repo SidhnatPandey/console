@@ -15,12 +15,9 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({
   wid
 }) => {
   const securityContext = useContext(SecurityContext);
- 
-  useEffect(() => {
-    if (wid) {
-      securityContext.setWorkspace(wid);
-    }
-  }, [wid]);
+  if (wid) {
+    securityContext.setWorkspace(wid);
+  }
   
   
   const triggerSecurityData = (selectedValue: string) => {
