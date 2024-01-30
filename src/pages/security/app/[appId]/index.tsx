@@ -25,8 +25,8 @@ const AppSecurityDetails = () => {
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
-        <SecurityCveChart white={""} warning={""} primary={""} success={""} labelColor={""} borderColor={""} legendColor={""}/>
-        <CveVulnerabilities/>
+        <SecurityCveChart white={""} warning={""} primary={""} success={""} labelColor={""} borderColor={""} legendColor={""} />
+        <CveVulnerabilities appId={convertToString(appId)} />
       </SecurityProvider>
     </>
   );

@@ -1,21 +1,18 @@
-import React, { ReactNode, createContext, useEffect, useState } from "react";
-import { SecurityValueTypes, Workspace } from "./types";
+import React, { ReactNode, createContext, useState } from "react";
+import { SecurityValueTypes } from "./types";
 
 const defaultProvider: SecurityValueTypes = {
   workspace: "all",
   setWorkspace: () => null,
   runType: "non-prod",
   setRunType: () => null,
-  appId:"",
-  setAppId: () => null,
 };
 export const SecurityContext = createContext(defaultProvider);
 type Props = {
   children: ReactNode;
 };
 export const SecurityProvider = ({ children }: Props) => {
-  const [appId, setAppId] = useState<string>( defaultProvider.appId);
-  const [workspace, setWorkspace] = useState<string>( defaultProvider.workspace);
+  const [workspace, setWorkspace] = useState<string>(defaultProvider.workspace);
   const [runType, setRunType] = useState<string>(defaultProvider.runType);
 
   const values = {
@@ -23,8 +20,6 @@ export const SecurityProvider = ({ children }: Props) => {
     setWorkspace,
     runType,
     setRunType,
-    appId,
-    setAppId,
   };
   return (
     <SecurityContext.Provider value={values}>

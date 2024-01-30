@@ -18,7 +18,6 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
-import { AuthContext } from "src/context/AuthContext";
 interface CVESecurityData {
   WorkspaceName?: string;
   CveID: string;
@@ -28,11 +27,14 @@ interface CVESecurityData {
   Description: string;
 }
 
-const CveVulnerabilities = () => {
+interface Props {
+  appId: string
+}
+
+const CveVulnerabilities = (props: Props) => {
+  const { appId } = props;
   const securityContext = useContext(SecurityContext)
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
-  const { workspaces } = useContext(AuthContext);
-
   const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -99,8 +101,11 @@ const CveVulnerabilities = () => {
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
-    getVulnerabilitesList(securityContext.workspace, securityContext.runType, securityContext.appId);
-  }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType,securityContext.appId, selectedWorkspace]);
+  }, [currentPage, totalPages, searchTerm]);
+
+  useEffect(() => {
+    getVulnerabilitesList(appId, securityContext.runType, securityContext.workspace);
+  }, [securityContext.workspace, securityContext.runType, appId])
 
   useEffect(() => {
     if (vulnerabilityData.length === 0) {
@@ -108,8 +113,8 @@ const CveVulnerabilities = () => {
     }
   }, [vulnerabilityData]);
 
-  const getVulnerabilitesList = (appId:string,runType: string,workspaceId:string) => {
-    CveVulnerabilitiesList(appId,runType,workspaceId).then((res) => {
+  const getVulnerabilitesList = (appId: string, runType: string, workspaceId: string) => {
+    CveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
       setVulnerabilityData(res?.data || []);
     });
   };
@@ -125,7 +130,7 @@ const CveVulnerabilities = () => {
           pb={2}
         >
           <h3 style={{ marginLeft: "20px", marginTop: "40px" }}>
-          Vulnerabilities
+            Vulnerabilities
           </h3>
           <Box
             display="flex"
@@ -190,7 +195,7 @@ const CveVulnerabilities = () => {
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("Version")}
-                  
+
                 >
                   <Box display="flex" alignItems="center">
                     <span>VERSION</span>
@@ -225,7 +230,7 @@ const CveVulnerabilities = () => {
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={`/security/app/${row.CveID}`}  style={{ textDecoration: 'none' }} >{row.CveID}</Link></TableCell>
+                      <TableCell><Link href={`/security/app/${row.CveID}`} style={{ textDecoration: 'none' }} >{row.CveID}</Link></TableCell>
                       <TableCell>{row.Severity}</TableCell>
                       <TableCell>{row.PackageName}</TableCell>
                       <TableCell>{row.Version}</TableCell>
