@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import Link from 'next/link'
+import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Pagination from "@mui/material/Pagination";
@@ -29,14 +29,16 @@ interface CVESecurityData {
 }
 
 interface Props {
-  appId: string
+  appId: string;
 }
 
 const CveVulnerabilities = (props: Props) => {
   const { appId } = props;
-  const securityContext = useContext(SecurityContext)
+  const securityContext = useContext(SecurityContext);
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
-  const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>([]);
+  const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>(
+    []
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
@@ -47,8 +49,6 @@ const CveVulnerabilities = (props: Props) => {
     direction: "asc",
   });
   const entriesPerPage = 5;
-
-
 
   const handleSort = (columnName: keyof CVESecurityData) => {
     setSort({
@@ -84,10 +84,7 @@ const CveVulnerabilities = (props: Props) => {
     return (
       (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
       Object.values(row).some((value) =>
-        value
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   });
@@ -105,8 +102,12 @@ const CveVulnerabilities = (props: Props) => {
   }, [currentPage, totalPages, searchTerm]);
 
   useEffect(() => {
-    getVulnerabilitesList(appId, securityContext.runType, securityContext.workspace);
-  }, [securityContext.workspace, securityContext.runType, appId])
+    getVulnerabilitesList(
+      appId,
+      securityContext.runType,
+      securityContext.workspace
+    );
+  }, [securityContext.workspace, securityContext.runType, appId]);
 
   useEffect(() => {
     if (vulnerabilityData.length === 0) {
@@ -114,7 +115,11 @@ const CveVulnerabilities = (props: Props) => {
     }
   }, [vulnerabilityData]);
 
-  const getVulnerabilitesList = (appId: string, runType: string, workspaceId: string) => {
+  const getVulnerabilitesList = (
+    appId: string,
+    runType: string,
+    workspaceId: string
+  ) => {
     CveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
       setVulnerabilityData(res?.data || []);
     });
@@ -122,14 +127,20 @@ const CveVulnerabilities = (props: Props) => {
 
   const getCVEColor = (severity: string) => {
     switch (severity) {
-      case "Critical": return 'error';
-      case 'High': return 'warning';
-      case 'Medium': return 'info';
-      case 'Low': return 'primary';
-      case 'Unknown': return 'secondary';
-      default: return 'success'
+      case "Critical":
+        return "error";
+      case "High":
+        return "warning";
+      case "Medium":
+        return "info";
+      case "Low":
+        return "primary";
+      case "Unknown":
+        return "secondary";
+      default:
+        return "success";
     }
-  }
+  };
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -205,10 +216,7 @@ const CveVulnerabilities = (props: Props) => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell
-                  onClick={() => handleSort("Version")}
-
-                >
+                <TableCell onClick={() => handleSort("Version")}>
                   <Box display="flex" alignItems="center">
                     <span>VERSION</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -242,18 +250,26 @@ const CveVulnerabilities = (props: Props) => {
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={`/security/app/${row.CveID}`} style={{ textDecoration: 'none' }} >{row.CveID}</Link></TableCell>
                       <TableCell>
-                        <ChipsRounded label={row.Severity} color={getCVEColor(row.Severity)} ></ChipsRounded>
+                        <Link
+                          href={`/security/app/${row.CveID}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {row.CveID}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <ChipsRounded
+                          label={row.Severity}
+                          color={getCVEColor(row.Severity)}
+                        ></ChipsRounded>
                       </TableCell>
                       <TableCell>{row.PackageName}</TableCell>
                       <TableCell>{row.Version}</TableCell>
                       <TableCell>{row.Description}</TableCell>
                     </TableRow>
                   ))
-
               ) : (
-
                 <TableRow>
                   <TableCell colSpan={5}>
                     <Box textAlign="center" mt={2}>
@@ -261,8 +277,8 @@ const CveVulnerabilities = (props: Props) => {
                     </Box>
                   </TableCell>
                 </TableRow>
-
-              )}</TableBody>
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
         <Box

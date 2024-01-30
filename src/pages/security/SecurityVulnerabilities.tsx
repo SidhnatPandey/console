@@ -28,8 +28,8 @@ const ColorMapping = {
   Critical: "red",
   High: "orange",
   Medium: "#7353E5",
-  Low: "lightgrey",
-  Unknown: "grey",
+  Low: "grey",
+  Unknown: "#D3D3D3",
 };
 
 interface CVE {
@@ -46,11 +46,10 @@ interface Vulnerability {
 const RADIAN = Math.PI / 180;
 
 interface Props {
-  appId: string
+  appId: string;
 }
 
 const SecurityVulnerabilities = (props: Props) => {
-
   const { appId } = props;
 
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
@@ -59,8 +58,7 @@ const SecurityVulnerabilities = (props: Props) => {
 
   const renderCustomizedLabel = (props: LabelProp) => {
     // ** Props
-    const { cx, cy, midAngle, innerRadius, outerRadius, index } =
-      props;
+    const { cx, cy, midAngle, innerRadius, outerRadius, index } = props;
 
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -122,7 +120,11 @@ const SecurityVulnerabilities = (props: Props) => {
   };
 
   useEffect(() => {
-    getVulnerabilities(securityContext.workspace, securityContext.runType, appId);
+    getVulnerabilities(
+      securityContext.workspace,
+      securityContext.runType,
+      appId
+    );
   }, [securityContext.workspace, securityContext.runType, appId]);
 
   const totalSum = vulnerabilities.reduce((acc, item) => acc + item.value, 0);
@@ -135,12 +137,15 @@ const SecurityVulnerabilities = (props: Props) => {
       const payloadData = payload[0];
       if (payloadData && payloadData.value !== undefined) {
         return (
-          <div className="custom-tooltip" style={{
-            backgroundColor: 'white',
-            padding: '5px',
-            border: '1px solid #ddd',
-            boxShadow: '0px 0px 5px #ddd',
-          }}>
+          <div
+            className="custom-tooltip"
+            style={{
+              backgroundColor: "white",
+              padding: "5px",
+              border: "1px solid #ddd",
+              boxShadow: "0px 0px 5px #ddd",
+            }}
+          >
             <p className="label">
               {`${payloadData.name} : ${(
                 (payloadData.value / totalSum) *
@@ -155,9 +160,8 @@ const SecurityVulnerabilities = (props: Props) => {
     return null;
   };
 
-
   return (
-    <Card sx={{ width: "38%" }}data-testid="vulnerability-card">
+    <Card sx={{ width: "38%" }} data-testid="vulnerability-card">
       <CardHeader
         title="Vulnerabilities"
         data-testid="card-header"
@@ -169,7 +173,11 @@ const SecurityVulnerabilities = (props: Props) => {
       <CardContent>
         <Box sx={{ height: 350, marginTop: "-30px" }} data-testid="box">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart height={350} style={{ direction: "ltr" }}data-testid="pieChart">
+            <PieChart
+              height={350}
+              style={{ direction: "ltr" }}
+              data-testid="pieChart"
+            >
               <Pie
                 data={vulnerabilities}
                 innerRadius={80}
@@ -222,11 +230,13 @@ const SecurityVulnerabilities = (props: Props) => {
               mr: 5,
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "lightgrey" },
+              "& svg": { mr: 1.5, color: "grey" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2" data-testid="low-severity">Low</Typography>
+            <Typography variant="body2" data-testid="low-severity">
+              Low
+            </Typography>
           </Box>
           <Box
             sx={{
@@ -237,7 +247,9 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2" data-testid="medium-severity">Medium</Typography>
+            <Typography variant="body2" data-testid="medium-severity">
+              Medium
+            </Typography>
           </Box>
           <Box
             sx={{
@@ -248,7 +260,9 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2" data-testid="high-severity">High</Typography>
+            <Typography variant="body2" data-testid="high-severity">
+              High
+            </Typography>
           </Box>
           <Box
             sx={{
@@ -259,17 +273,21 @@ const SecurityVulnerabilities = (props: Props) => {
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2" data-testid="critical-severity">Critical</Typography>
+            <Typography variant="body2" data-testid="critical-severity">
+              Critical
+            </Typography>
           </Box>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "grey" },
+              "& svg": { mr: 1.5, color: "#D3D3D3" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
-            <Typography variant="body2" data-testid="unknown-severity">Unknown</Typography>
+            <Typography variant="body2" data-testid="unknown-severity">
+              Unknown
+            </Typography>
           </Box>
         </Box>
       </CardContent>
