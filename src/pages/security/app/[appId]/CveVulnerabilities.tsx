@@ -18,6 +18,7 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
+import ChipsRounded from "src/component/Chip";
 interface CVESecurityData {
   WorkspaceName?: string;
   CveID: string;
@@ -118,6 +119,17 @@ const CveVulnerabilities = (props: Props) => {
       setVulnerabilityData(res?.data || []);
     });
   };
+
+  const getCVEColor = (severity: string) => {
+    switch (severity) {
+      case "Critical": return 'error';
+      case 'High': return 'warning';
+      case 'Medium': return 'info';
+      case 'Low': return 'primary';
+      case 'Unknown': return 'secondary';
+      default: return 'success'
+    }
+  }
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -231,7 +243,9 @@ const CveVulnerabilities = (props: Props) => {
                   .map((row, index) => (
                     <TableRow key={index}>
                       <TableCell><Link href={`/security/app/${row.CveID}`} style={{ textDecoration: 'none' }} >{row.CveID}</Link></TableCell>
-                      <TableCell>{row.Severity}</TableCell>
+                      <TableCell>
+                        <ChipsRounded label={row.Severity} color={getCVEColor(row.Severity)} ></ChipsRounded>
+                      </TableCell>
                       <TableCell>{row.PackageName}</TableCell>
                       <TableCell>{row.Version}</TableCell>
                       <TableCell>{row.Description}</TableCell>
