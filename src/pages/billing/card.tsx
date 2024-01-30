@@ -52,11 +52,14 @@ const Card = (props: Props) => {
                         />
                     ) : null}
                 </Box>
-                <Typography sx={{ color: 'text.secondary' }}>
+                <Typography sx={{ color: 'text.secondary', mb: 1 }}>
                     **** **** **** {item.card.last4}
                 </Typography>
+                <Typography > {item.billing_details.address.line1}, {item.billing_details.address.line2}, {item.billing_details.address.city}, {item.billing_details.address.state}, {item.billing_details.address.country}, {item.billing_details.address.postal_code} </Typography>
             </div>
+            <div>
 
+            </div>
             <Box sx={{ mt: [4, 0], textAlign: ['start', 'end'] }}>
                 {!item.Default && <Button variant='tonal' sx={{ mr: 2.5 }} onClick={() => openConfirmation(item, false)}>
                     Make as Default
@@ -67,7 +70,7 @@ const Card = (props: Props) => {
                 {cardsLength > 1 && <Button variant='outlined' color='secondary' onClick={() => openConfirmation(item, true)} >
                     Delete
                 </Button>}
-                <Typography variant='body2' sx={{ mt: [6, 11] }}>
+                <Typography variant='body2' sx={{ mt: [6, 18] }}>
                     {`Card expires at ${getDate(item.card.exp_month)}/${getLastTwoDigits(item.card.exp_year)} `}
                 </Typography>
             </Box>

@@ -72,7 +72,7 @@ const Plans = (props: Props) => {
     return (
         <Card>
             <CardContent>
-                <Box sx={{ mb: [10, 17.5], textAlign: 'center' }}>
+                <Box sx={{ mb: [10, 10], textAlign: 'center' }}>
                     <Typography variant='h4'>Pricing Plans</Typography>
                     <Box sx={{ mt: 2.5, mb: 10.75 }}>
                         <Typography sx={{ color: 'text.secondary' }}>
@@ -90,7 +90,7 @@ const Plans = (props: Props) => {
                 </Grid>
             </CardContent>
             <Payment openDialog={openPaymentDialog} handleClose={handleClose}></Payment>
-        </Card>
+        </Card >
     )
 }
 
