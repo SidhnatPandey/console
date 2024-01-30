@@ -11,7 +11,6 @@ import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
 
 const AppSecurityDetails = () => {
-
   const router = useRouter();
   const { appId, wid } = router.query;
 
@@ -19,13 +18,18 @@ const AppSecurityDetails = () => {
     <>
       <SecurityProvider>
         <Box sx={{ marginBottom: "20px" }}>
-          <SecurityDashboard title="Work Order API" subtitle="Application CVE Dashboard" wid={convertToString(wid)} showWorkspaceDropdown={false} />
+          <SecurityDashboard
+            title="Work Order API"
+            subtitle="Application CVE Dashboard"
+            wid={convertToString(wid)}
+            showWorkspaceDropdown={false}
+          />
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
-        <SecurityCveChart white={""} warning={""} primary={""} success={""} labelColor={""} borderColor={""} legendColor={""} />
+        <SecurityCveChart appId={convertToString(appId)} />
         <CveVulnerabilities appId={convertToString(appId)} />
       </SecurityProvider>
     </>
