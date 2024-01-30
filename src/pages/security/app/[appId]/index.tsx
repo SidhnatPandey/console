@@ -7,6 +7,8 @@ import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import { useRouter } from "next/router";
 import { convertToString } from "src/@core/utils/string";
 import { SecurityProvider } from "src/context/SecurityContext";
+import CveVulnerabilities from "./CveVulnerabilities";
+import SecurityCveChart from "./SecurityCveChart";
 
 const AppSecurityDetails = () => {
 
@@ -23,6 +25,8 @@ const AppSecurityDetails = () => {
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
+        <SecurityCveChart white={""} warning={""} primary={""} success={""} labelColor={""} borderColor={""} legendColor={""}/>
+        <CveVulnerabilities/>
       </SecurityProvider>
     </>
   );

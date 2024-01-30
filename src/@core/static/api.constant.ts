@@ -33,6 +33,7 @@ export const APP_API = {
     vulernabilities: 'vulernabilities?workspace_id={workspace_id}&run_type={run_type}',
     getScans: 'vulernabilities/scans?workspace_id={workspace_id}&run_type={run_type}',
     allVulnerabilities: 'vulernabilities/all?workspace_id={workspace_id}&run_type={run_type}',
+    CveVulernabilities:'vulernabilities/app?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}',
 
     //Workspace
     createWorkspace: 'workspace',
