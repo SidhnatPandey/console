@@ -2,7 +2,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { DevTool } from '@hookform/devtools';
 import { CardType } from ".";
 import { useEffect, useState } from "react";
 import { Countries } from "src/@core/static/countries";
@@ -10,6 +9,7 @@ import { updateCard } from "src/services/billingService";
 import Toaster from "src/utils/toaster";
 import useLoading from "src/hooks/loading";
 import { CircularProgress } from '@mui/material';
+import { clearNumber } from "src/@core/utils/format";
 
 const currentYear = new Date().getFullYear();
 const defaultFormValues = {
@@ -25,15 +25,15 @@ const defaultFormValues = {
 };
 
 const formSchema = yup.object().shape({
-    month: yup.number(),
-    year: yup.number(),
-    name: yup.string(),
-    line1: yup.string(),
+    month: yup.number().required(),
+    year: yup.number().required(),
+    name: yup.string().required(),
+    line1: yup.string().required(),
     line2: yup.string(),
-    city: yup.string(),
-    postal_code: yup.string(),
-    country: yup.string(),
-    state: yup.string()
+    city: yup.string().required(),
+    postal_code: yup.string().required(),
+    country: yup.string().required(),
+    state: yup.string().required()
 });
 
 interface Props {
@@ -54,6 +54,11 @@ const EditCard = (props: Props) => {
         years.push(currentYear + i);
     }
 
+    const close = () => {
+        reset();
+        handleClose();
+    }
+
     const months: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     const {
@@ -61,6 +66,7 @@ const EditCard = (props: Props) => {
         handleSubmit: handleFormSubmit,
         register,
         reset,
+        setValue,
         formState: { errors: formErrors },
     } = useForm({
         defaultValues: defaultFormValues,
@@ -84,7 +90,7 @@ const EditCard = (props: Props) => {
             Toaster.errorToast('Some error ocurred.')
         }).finally(() => {
             stopLoading();
-            handleClose();
+            close();
         })
     }
 
@@ -110,15 +116,20 @@ const EditCard = (props: Props) => {
         reset(obj);
     }
 
+    const handleZipcodeChange = (event: any) => {
+        const value = clearNumber(event.target.value);
+        setValue('postal_code', value);
+    }
+
     return (
         <Dialog
             open={open}
-            onClose={handleClose}
+            onClose={close}
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
             maxWidth={'xs'}
         >
-            <form onSubmit={handleFormSubmit(onSubmit)}>
+            <form onSubmit={handleFormSubmit(onSubmit)} noValidate>
                 <DialogContent>
                     <DialogTitle
                         id='user-view-billing-edit-card'
@@ -135,7 +146,6 @@ const EditCard = (props: Props) => {
                         sx={{ textAlign: 'center', mb: 3 }} >
                         Edit your saved card details
                     </DialogContentText>
-
 
                     <Grid container spacing={5}>
                         <Grid item xs={6} sm={6}>
@@ -211,22 +221,53 @@ const EditCard = (props: Props) => {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField className="full-width" label="Cardholder Name" {...register("name")} />
+                            <TextField className="full-width" label="Cardholder Name" {...register("name", {
+                                required: 'Cardholder Name is required'
+                            })}
+                                error={!!formErrors.name}
+                                helperText={formErrors.name?.message}
+                            />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField className="full-width" label="Street" {...register("line1")} />
+                            <TextField className="full-width" label="Street" {...register("line1", {
+                                required: 'Street is required'
+                            })}
+                                error={!!formErrors.line1}
+                                helperText={formErrors.line1?.message}
+                            />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <TextField className="full-width" label="Street (line 2)" {...register("line2")} />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField className="full-width" label="City" {...register("city")} />
+                            <TextField className="full-width" label="City" {...register("city", {
+                                required: {
+                                    value: true,
+                                    message: 'City is required'
+                                }
+                            })}
+                                error={!!formErrors.city}
+                                helperText={formErrors.city?.message} />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField className="full-width" label="Zip/Postal" {...register("postal_code")} />
+                            <TextField className="full-width" label="Zip/Postal" {...register("postal_code", {
+                                required: 'Zip/Postal Code is required'
+                            })}
+                                inputProps={{ maxLength: 6 }}
+                                onChange={(event) => {
+                                    setValue('postal_code', event.target.value);
+                                    handleZipcodeChange(event);
+                                }}
+
+                                error={!!formErrors.postal_code}
+                                helperText={formErrors.postal_code?.message} />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField className="full-width" label="State/Province" {...register("state")} />
+                            <TextField className="full-width" label="State/Province" {...register("state", {
+                                required: 'State is required'
+                            })}
+                                error={!!formErrors.state}
+                                helperText={formErrors.state?.message} />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <FormControl fullWidth>
@@ -267,11 +308,9 @@ const EditCard = (props: Props) => {
                             </FormControl>
                         </Grid>
                     </Grid>
-                    <DevTool control={formControl} />
-
                 </DialogContent>
                 <DialogActions className='dialog-actions-dense' style={{ justifyContent: 'center', paddingBottom: '20px   ' }}>
-                    <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={close}>Close</Button>
                     <Button variant="contained" type="submit" onClick={handleFormSubmit(onSubmit)} >
                         {loading && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
                         Submit</Button>
