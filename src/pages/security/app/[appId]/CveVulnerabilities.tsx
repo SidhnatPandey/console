@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { Chip } from "@mui/material";
 import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -18,7 +19,6 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
-import ChipsRounded from "src/component/Chip";
 interface CVESecurityData {
   WorkspaceName?: string;
   CveID: string;
@@ -32,10 +32,21 @@ interface Props {
   appId: string;
 }
 
+type ColorMapType = {
+  [key: string]: string;
+};
+
+const colorMap: ColorMapType = {
+  Critical: "red",
+  High: "orange",
+  Medium: "#7353E5",
+  Low: "grey",
+  Unknown: "#D3D3D3",
+};
+
 const CveVulnerabilities = (props: Props) => {
   const { appId } = props;
   const securityContext = useContext(SecurityContext);
-  const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>(
     []
   );
@@ -81,11 +92,8 @@ const CveVulnerabilities = (props: Props) => {
   };
 
   const filteredData = vulnerabilityData?.filter((row) => {
-    return (
-      (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
-      Object.values(row).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    return Object.values(row).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
   const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
@@ -125,21 +133,16 @@ const CveVulnerabilities = (props: Props) => {
     });
   };
 
-  const getCVEColor = (severity: string) => {
-    switch (severity) {
-      case "Critical":
-        return "error";
-      case "High":
-        return "warning";
-      case "Medium":
-        return "info";
-      case "Low":
-        return "primary";
-      case "Unknown":
-        return "secondary";
-      default:
-        return "success";
-    }
+  const getSeverityChip = (severity: string) => {
+    const chipColor = colorMap[severity];
+
+    return (
+      <Chip
+        label={severity}
+        size="small"
+        style={{ backgroundColor: chipColor, color: "white" }}
+      />
+    );
   };
 
   return (
@@ -252,18 +255,13 @@ const CveVulnerabilities = (props: Props) => {
                     <TableRow key={index}>
                       <TableCell>
                         <Link
-                          href={`/security/app/${row.CveID}`}
+                          href={`/security/cve/${row.CveID}`}
                           style={{ textDecoration: "none" }}
                         >
                           {row.CveID}
                         </Link>
                       </TableCell>
-                      <TableCell>
-                        <ChipsRounded
-                          label={row.Severity}
-                          color={getCVEColor(row.Severity)}
-                        ></ChipsRounded>
-                      </TableCell>
+                      <TableCell>{getSeverityChip(row.Severity)}</TableCell>
                       <TableCell>{row.PackageName}</TableCell>
                       <TableCell>{row.Version}</TableCell>
                       <TableCell>{row.Description}</TableCell>

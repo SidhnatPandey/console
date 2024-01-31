@@ -18,7 +18,7 @@ import {
   ChartData,
   ChartOptions,
 } from "chart.js";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { CveHistory } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 
@@ -101,8 +101,7 @@ const SecurityCveChart = (props: Props) => {
 
     return labels.reverse();
   };
-
-  const months = generateMonthYearLabels();
+  const months = useMemo(() => generateMonthYearLabels(), []);
 
   const options: ChartOptions<"line"> = {
     responsive: true,

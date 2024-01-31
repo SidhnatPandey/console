@@ -193,8 +193,8 @@ const SecurityVulnerabilities = (props: Props) => {
               </Pie>
               <Tooltip content={<CustomTooltip />} data-testid="tooltip" />
               <text
-                x={170}
-                y={170}
+                x="50%"
+                y="50%"
                 fill="grey"
                 textAnchor="middle"
                 dominantBaseline="central"
@@ -204,8 +204,8 @@ const SecurityVulnerabilities = (props: Props) => {
                 CVEs
               </text>
               <text
-                x={170}
-                y={190}
+                x="50%"
+                y="55%"
                 fill="grey"
                 textAnchor="middle"
                 dominantBaseline="central"
