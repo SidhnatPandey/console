@@ -37,3 +37,10 @@ export const makeCardDefault = (cardId: string, customerId: string) => {
     url = url.replace('{customerId}', customerId);
     return put(url, null).then((response) => response?.data);
 }
+
+export const updateCard = (card: any) => {
+    setApiBaseUrl('billing');
+    let url = APP_API.updateCard;
+    url = url.replace('{cardId}', card.id);
+    return put(url, card).then((response) => response?.data);
+}

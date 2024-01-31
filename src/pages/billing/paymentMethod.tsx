@@ -5,7 +5,7 @@ import PaymentCard from "./card";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import { CardType } from ".";
 import PaymentDialog from "../payment";
-import EditCard from "./editCard";
+
 interface Props {
     cards: CardType[],
     fetchCards(): void,
@@ -16,15 +16,11 @@ const PaymentMethod = (props: Props) => {
     const { cards, fetchCards, customerId } = props;
 
     //states
-    const [open, setOpen] = useState<boolean>(false)
     const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
     const [isDelete, setIsDelete] = useState<boolean>(false);
     const [selectedCardId, setSelectedCardId] = useState<string>('');
     const [openPaymentDialog, setOpenPaymentDialog] = useState<boolean>(false);
-
-    const handleClickOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
 
     const removeCard = () => {
         deleteCard(selectedCardId).then(
@@ -70,13 +66,12 @@ const PaymentMethod = (props: Props) => {
                 <h3 style={{ marginTop: '-10px' }}> Payment Method </h3>
                 <Grid item xs={12} md={6}>
                     {cards?.map((item: CardType, index: number) => (
-                        <PaymentCard key={index} index={index} item={item} cardsLength={cards.length} openConfirmation={openConfirmation} openEdit={handleClickOpen} ></PaymentCard>
+                        <PaymentCard key={index} index={index} item={item} cardsLength={cards.length} openConfirmation={openConfirmation} ></PaymentCard>
                     ))}
                 </Grid>
                 <Button variant="contained" color="primary" onClick={handleClickOpenPayment} style={{ marginTop: '20px' }}> Add New Card</Button>
                 <PaymentDialog openDialog={openPaymentDialog} handleClose={handlePaymentClose}></PaymentDialog>
             </CardContent>
-            <EditCard open={open} handleClose={handleClose}></EditCard>
             <ConfirmationDialog open={confirmDialog} onConfirm={handleConfirm} onCancel={() => setConfirmDialog(false)} message={message} />
         </Card>
     )

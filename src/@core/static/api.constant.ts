@@ -54,5 +54,6 @@ export const APP_API = {
     saveCard: 'cards?session_id={sessionId}&customer_id={customerId}&plan_id={planId}',
     getCards: 'cards',
     deleteCard: 'cards/{paymentMethod}',
-    makeCardDefault: 'cards/{paymentMethod}/setdefault?customer_id={customerId}'
+    makeCardDefault: 'cards/{paymentMethod}/setdefault?customer_id={customerId}',
+    updateCard: 'cards/{cardId}'
 }
