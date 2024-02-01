@@ -21,6 +21,7 @@ import {
 import { useContext, useEffect, useMemo, useState } from "react";
 import { CveHistory } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
+import { COLOR_PALLET } from "src/@core/static/color.constants";
 
 // Registering required components for Chart.js
 ChartJS.register(
@@ -57,13 +58,6 @@ const SecurityCveChart = (props: Props) => {
   const labelColor = theme.palette.text.disabled;
   const legendColor = theme.palette.text.secondary;
   const white = "#fff";
-  const ColorMapping = {
-    Critical: "red",
-    High: "orange",
-    Medium: "#7353E5",
-    Low: "grey",
-    Unknown: "#D3D3D3",
-  };
 
   useEffect(() => {
     getCveHistory(appId, securityContext.runType, securityContext.workspace);
@@ -161,13 +155,13 @@ const SecurityCveChart = (props: Props) => {
         label: "Critical",
         pointHoverRadius: 5,
         pointStyle: "circle",
-        borderColor: ColorMapping.Critical,
-        backgroundColor: ColorMapping.Critical,
+        borderColor: COLOR_PALLET.error,
+        backgroundColor: COLOR_PALLET.error,
         pointHoverBorderWidth: 5,
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
-        pointHoverBackgroundColor: ColorMapping.Critical,
-        data: [80, 150, 180, 270, 210, 160, 160, 202, 265, 210, 270, 255],
+        pointHoverBackgroundColor: COLOR_PALLET.error,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         fill: false,
@@ -176,16 +170,13 @@ const SecurityCveChart = (props: Props) => {
         pointRadius: 1,
         pointHoverRadius: 5,
         pointStyle: "circle",
-        borderColor: ColorMapping.High,
-        backgroundColor: ColorMapping.High,
+        borderColor: COLOR_PALLET.warning,
+        backgroundColor: COLOR_PALLET.warning,
         pointHoverBorderWidth: 5,
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
-        pointHoverBackgroundColor: ColorMapping.High,
-        data: [
-          80, 125, 105, 130, 215, 195, 140, 160, 230, 300, 220, 170, 210, 200,
-          280,
-        ],
+        pointHoverBackgroundColor: COLOR_PALLET.warning,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
       {
         fill: false,
@@ -194,15 +185,13 @@ const SecurityCveChart = (props: Props) => {
         label: "Medium",
         pointHoverRadius: 5,
         pointStyle: "circle",
-        borderColor: ColorMapping.Medium,
-        backgroundColor: ColorMapping.Medium,
+        borderColor: COLOR_PALLET.primary,
+        backgroundColor: COLOR_PALLET.primary,
         pointHoverBorderWidth: 5,
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
-        pointHoverBackgroundColor: ColorMapping.Medium,
-        data: [
-          80, 99, 82, 90, 115, 115, 74, 75, 130, 155, 125, 90, 140, 130, 180,
-        ],
+        pointHoverBackgroundColor: COLOR_PALLET.primary,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
       {
         fill: false,
@@ -211,16 +200,13 @@ const SecurityCveChart = (props: Props) => {
         pointRadius: 1,
         pointHoverRadius: 5,
         pointStyle: "circle",
-        borderColor: ColorMapping.Low,
-        backgroundColor: ColorMapping.Low,
+        borderColor: COLOR_PALLET.secondary,
+        backgroundColor: COLOR_PALLET.secondary,
         pointHoverBorderWidth: 5,
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
-        pointHoverBackgroundColor: ColorMapping.Low,
-        data: [
-          80, 125, 105, 130, 23, 195, 140, 160, 260, 300, 220, 370, 210, 20,
-          180,
-        ],
+        pointHoverBackgroundColor: COLOR_PALLET.secondary,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
       {
         fill: false,
@@ -229,15 +215,13 @@ const SecurityCveChart = (props: Props) => {
         label: "Unknown",
         pointHoverRadius: 5,
         pointStyle: "circle",
-        borderColor: ColorMapping.Unknown,
-        backgroundColor: ColorMapping.Unknown,
+        borderColor: COLOR_PALLET.info,
+        backgroundColor: COLOR_PALLET.info,
         pointHoverBorderWidth: 5,
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
-        pointHoverBackgroundColor: ColorMapping.Unknown,
-        data: [
-          80, 79, 82, 90, 165, 125, 74, 75, 330, 155, 142, 90, 156, 130, 120,
-        ],
+        pointHoverBackgroundColor: COLOR_PALLET.info,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       },
     ],
   };

@@ -1,19 +1,10 @@
 import { Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
-
-const ColorMapping = {
-  Critical: 'red',
-  High: 'orange',
-  Medium: '#7353E5',
-  Low: 'grey',
-  Unknown: '#D3D3D3'
-}
-
+import { COLOR_PALLET } from "src/@core/static/color.constants";
 interface CVE {
   Count: number,
   Severity: "Critical" | "High" | "Low" | "Medium" | string
 }
-
 interface Props {
   Cves: CVE[]
 }
@@ -50,11 +41,11 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
   const getColor = (severity: string) => {
     switch (severity) {
-      case "Critical": return ColorMapping.Critical;
-      case 'High': return ColorMapping.High;
-      case 'Medium': return ColorMapping.Medium;
-      case 'Low': return ColorMapping.Low;
-      case 'Unknown': return ColorMapping.Unknown;
+      case "Critical": return COLOR_PALLET.error;
+      case 'High': return COLOR_PALLET.warning;
+      case 'Medium': return COLOR_PALLET.primary;
+      case 'Low': return COLOR_PALLET.secondary;
+      case 'Unknown': return COLOR_PALLET.info;
     }
   }
 
