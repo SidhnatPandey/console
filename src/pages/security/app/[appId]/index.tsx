@@ -15,7 +15,6 @@ const AppSecurityDetails = () => {
   const { appId, data } = router.query;
   const { wid, appName } = JSON.parse(convertToString(data));
 
-
   return (
     <>
       <SecurityProvider>

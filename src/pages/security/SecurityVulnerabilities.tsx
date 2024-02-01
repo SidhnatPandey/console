@@ -13,6 +13,7 @@ import Icon from "src/@core/components/icon";
 import { useContext, useEffect, useState } from "react";
 import { getAllvulnerabilities } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
+import { COLOR_PALLET } from "src/@core/static/color.constants";
 
 interface LabelProp {
   cx: number;
@@ -23,14 +24,6 @@ interface LabelProp {
   outerRadius: number;
   index: number;
 }
-
-const ColorMapping = {
-  Critical: "red",
-  High: "orange",
-  Medium: "#7353E5",
-  Low: "grey",
-  Unknown: "#D3D3D3",
-};
 
 interface CVE {
   Count: number;
@@ -107,15 +100,15 @@ const SecurityVulnerabilities = (props: Props) => {
   const getColor = (severity: string) => {
     switch (severity) {
       case "Critical":
-        return ColorMapping.Critical;
+        return COLOR_PALLET.error;
       case "High":
-        return ColorMapping.High;
+        return COLOR_PALLET.warning;
       case "Medium":
-        return ColorMapping.Medium;
+        return COLOR_PALLET.primary;
       case "Low":
-        return ColorMapping.Low;
+        return COLOR_PALLET.secondary;
       case "Unknown":
-        return ColorMapping.Unknown;
+        return COLOR_PALLET.info;
     }
   };
 
@@ -230,7 +223,7 @@ const SecurityVulnerabilities = (props: Props) => {
               mr: 5,
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "grey" },
+              "& svg": { mr: 1.5, color: "#A8AAAE" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
@@ -243,7 +236,7 @@ const SecurityVulnerabilities = (props: Props) => {
               mr: 5,
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "rgb(115, 83, 229)" },
+              "& svg": { mr: 1.5, color: "#7367F0" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
@@ -256,7 +249,7 @@ const SecurityVulnerabilities = (props: Props) => {
               mr: 5,
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "darkorange" },
+              "& svg": { mr: 1.5, color: "#FF9F43" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
@@ -269,7 +262,7 @@ const SecurityVulnerabilities = (props: Props) => {
               mr: 5,
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "red" },
+              "& svg": { mr: 1.5, color: "#EA5455" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
@@ -281,7 +274,7 @@ const SecurityVulnerabilities = (props: Props) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              "& svg": { mr: 1.5, color: "#D3D3D3" },
+              "& svg": { mr: 1.5, color: "#00CFE8" },
             }}
           >
             <Icon icon="mdi:circle" fontSize="0.5rem" />
