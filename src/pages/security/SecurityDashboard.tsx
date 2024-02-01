@@ -18,9 +18,7 @@ const SecurityDashboard = ({
   showWorkspaceDropdown,
 }: SecurityDashboardProps) => {
   const securityContext = useContext(SecurityContext);
-  if (wid) {
-    securityContext.setWorkspace(wid);
-  }
+  if (wid) { securityContext.setWorkspace(wid); }
 
   const workspace = useWorkspace();
 

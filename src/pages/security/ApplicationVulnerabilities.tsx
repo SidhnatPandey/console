@@ -219,7 +219,7 @@ const ApplicationVulnerabilities = () => {
                   .slice(startIndex, endIndex + 1)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={`/security/app/${row.AppId}?wid=${row.WorkspaceId}`}  style={{ textDecoration: 'none' }} >{row.AppName}</Link></TableCell>
+                      <TableCell><Link href={{ pathname: `/security/app/${row.AppId}`, query: { data: JSON.stringify({ appName: row.AppName, wid: row.WorkspaceId }) } }} as={`/security/app/${row.AppId}`} style={{ textDecoration: 'none' }} >{row.AppName}</Link></TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
                       <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
                       <TableCell>

@@ -12,14 +12,16 @@ import SecurityCveChart from "./SecurityCveChart";
 
 const AppSecurityDetails = () => {
   const router = useRouter();
-  const { appId, wid } = router.query;
+  const { appId, data } = router.query;
+  const { wid, appName } = JSON.parse(convertToString(data));
+
 
   return (
     <>
       <SecurityProvider>
         <Box sx={{ marginBottom: "20px" }}>
           <SecurityDashboard
-            title="Work Order API"
+            title={appName}
             subtitle="Application CVE Dashboard"
             wid={convertToString(wid)}
             showWorkspaceDropdown={false}
