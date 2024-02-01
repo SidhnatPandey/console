@@ -18,6 +18,7 @@ import MultiStepBarChart from "src/component/multiStepBar";
 import { vulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 interface AppSecurityData {
   AppId?: string;
   AppName: string;
@@ -130,6 +131,10 @@ const ApplicationVulnerabilities = () => {
     });
   };
 
+  const handleAppNameClick = (workspaceId: string) => {
+    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
+  }
+
   return (
     <Card sx={{ marginTop: "20px" }}>
       <Box display="flex" flexDirection="column">
@@ -241,6 +246,7 @@ const ApplicationVulnerabilities = () => {
                           }}
                           as={`/security/app/${row.AppId}`}
                           style={{ textDecoration: "none" }}
+                          onClick={() => {handleAppNameClick(row.WorkspaceId)}}
                         >
                           {row.AppName}
                         </Link>
