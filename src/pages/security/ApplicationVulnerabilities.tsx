@@ -8,14 +8,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
-import Link from 'next/link'
+import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import pagination from "src/@core/theme/overrides/pagination";
 import MultiStepBarChart from "src/component/multiStepBar";
 import { vulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
@@ -32,10 +30,14 @@ interface AppSecurityData {
   }[];
 }
 const ApplicationVulnerabilities = () => {
-  const securityContext = useContext(SecurityContext)
+  const securityContext = useContext(SecurityContext);
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
 
-  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([]);
+  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
+    []
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
@@ -51,7 +53,16 @@ const ApplicationVulnerabilities = () => {
     return Cves?.reduce((total, cve) => total + cve.Count, 0);
   };
 
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
   const handleSort = (columnName: keyof AppSecurityData) => {
     setSort({
@@ -88,26 +99,24 @@ const ApplicationVulnerabilities = () => {
     return (
       (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
       Object.values(row).some((value) =>
-        value
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   });
   const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
-  const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
-  const endIndex = Math.min(
-    startIndex + entriesPerPage - 1,
-    filteredData?.length - 1
-  );
-
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
     setCurrentPage(validPage);
     getVulnerabilitesList(securityContext.workspace, securityContext.runType);
-  }, [currentPage, totalPages, searchTerm, securityContext.workspace, securityContext.runType, selectedWorkspace]);
+  }, [
+    currentPage,
+    totalPages,
+    searchTerm,
+    securityContext.workspace,
+    securityContext.runType,
+    selectedWorkspace,
+  ]);
 
   useEffect(() => {
     if (vulnerabilityData.length === 0) {
@@ -216,12 +225,30 @@ const ApplicationVulnerabilities = () => {
             <TableBody>
               {filteredData && filteredData.length > 0 ? (
                 filteredData
-                  .slice(startIndex, endIndex + 1)
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell><Link href={{ pathname: `/security/app/${row.AppId}`, query: { data: JSON.stringify({ appName: row.AppName, wid: row.WorkspaceId }) } }} as={`/security/app/${row.AppId}`} style={{ textDecoration: 'none' }} >{row.AppName}</Link></TableCell>
+                      <TableCell>
+                        <Link
+                          href={{
+                            pathname: `/security/app/${row.AppId}`,
+                            query: {
+                              data: JSON.stringify({
+                                appName: row.AppName,
+                                wid: row.WorkspaceId,
+                              }),
+                            },
+                          }}
+                          as={`/security/app/${row.AppId}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {row.AppName}
+                        </Link>
+                      </TableCell>
                       <TableCell>{row.WorkspaceName}</TableCell>
-                      <TableCell>{calculateDaysFromTodayString(row.LastScanned)}</TableCell>
+                      <TableCell>
+                        {calculateDaysFromTodayString(row.LastScanned)}
+                      </TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <MultiStepBarChart Cves={row.Cves} />
@@ -230,9 +257,7 @@ const ApplicationVulnerabilities = () => {
                       </TableCell>
                     </TableRow>
                   ))
-
               ) : (
-
                 <TableRow>
                   <TableCell colSpan={4}>
                     <Box textAlign="center" mt={2}>
@@ -240,48 +265,20 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </TableCell>
                 </TableRow>
-
-              )}</TableBody>
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
-        <Box
-          display="flex"
-          mt={6}
-          ml="20px"
-          marginBottom={"20px"}
-          alignItems="center"
-        >
-          <span>
-            Showing {filteredData?.length > 0 ? startIndex + 1 : 0} to{" "}
-            {endIndex + 1} of {filteredData?.length} entries
-          </span>
-          <Stack
-            spacing={2}
-            mt={3}
-            ml="auto"
-            marginBottom={"20px"}
-            alignItems="flex-end"
-          >
-            {filteredData?.length > 0 ? (
-              <Pagination
-                {...pagination}
-                shape="rounded"
-                color="primary"
-                count={totalPages}
-                page={currentPage}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            ) : (
-              <Pagination
-                shape="rounded"
-                color="primary"
-                count={1}
-                page={1}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            )}
-          </Stack>
-        </Box>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ marginLeft: "16px" }}
+        />
       </Box>
     </Card>
   );

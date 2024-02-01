@@ -8,15 +8,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
-import { Chip } from "@mui/material";
 import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import pagination from "src/@core/theme/overrides/pagination";
 import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import ChipsRounded from "src/component/Chip";
@@ -40,7 +37,8 @@ const CveVulnerabilities = (props: Props) => {
     []
   );
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
-
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
   const toggleDescription = (index: number) => {
     setExpandedRows((prevExpandedRows) => {
       const isExpanded = !prevExpandedRows[index];
@@ -95,11 +93,16 @@ const CveVulnerabilities = (props: Props) => {
   });
   const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
-  const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
-  const endIndex = Math.min(
-    startIndex + entriesPerPage - 1,
-    filteredData?.length - 1
-  );
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
   useEffect(() => {
     const validPage = Math.min(Math.max(currentPage, 1), totalPages);
@@ -252,7 +255,7 @@ const CveVulnerabilities = (props: Props) => {
             <TableBody>
               {filteredData && filteredData.length > 0 ? (
                 filteredData
-                  .slice(startIndex, endIndex + 1)
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
                       <TableCell>
@@ -316,44 +319,16 @@ const CveVulnerabilities = (props: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box
-          display="flex"
-          mt={6}
-          ml="20px"
-          marginBottom={"20px"}
-          alignItems="center"
-        >
-          <span>
-            Showing {filteredData?.length > 0 ? startIndex + 1 : 0} to{" "}
-            {endIndex + 1} of {filteredData?.length} entries
-          </span>
-          <Stack
-            spacing={2}
-            mt={3}
-            ml="auto"
-            marginBottom={"20px"}
-            alignItems="flex-end"
-          >
-            {filteredData?.length > 0 ? (
-              <Pagination
-                {...pagination}
-                shape="rounded"
-                color="primary"
-                count={totalPages}
-                page={currentPage}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            ) : (
-              <Pagination
-                shape="rounded"
-                color="primary"
-                count={1}
-                page={1}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            )}
-          </Stack>
-        </Box>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ marginLeft: "16px" }}
+        />
       </Box>
     </Card>
   );
