@@ -13,7 +13,10 @@ import SecurityCveChart from "./SecurityCveChart";
 const AppSecurityDetails = () => {
   const router = useRouter();
   const { appId, data } = router.query;
-  const { wid, appName } = JSON.parse(convertToString(data));
+
+  const { wid, appName } = data
+    ? JSON.parse(convertToString(data))
+    : { wid: "", appName: "" };
 
   return (
     <>
