@@ -19,6 +19,7 @@ import Stack from "@mui/material/Stack";
 import pagination from "src/@core/theme/overrides/pagination";
 import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
+import ChipsRounded from "src/component/Chip";
 interface CVESecurityData {
   WorkspaceName?: string;
   CveID: string;
@@ -32,24 +33,20 @@ interface Props {
   appId: string;
 }
 
-type ColorMapType = {
-  [key: string]: string;
-};
-
-const colorMap: ColorMapType = {
-  Critical: "red",
-  High: "orange",
-  Medium: "#7353E5",
-  Low: "grey",
-  Unknown: "#D3D3D3",
-};
-
 const CveVulnerabilities = (props: Props) => {
   const { appId } = props;
   const securityContext = useContext(SecurityContext);
   const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>(
     []
   );
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+
+  const toggleDescription = (index: number) => {
+    setExpandedRows((prevExpandedRows) => {
+      const isExpanded = !prevExpandedRows[index];
+      return { ...prevExpandedRows, [index]: isExpanded };
+    });
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
@@ -133,16 +130,21 @@ const CveVulnerabilities = (props: Props) => {
     });
   };
 
-  const getSeverityChip = (severity: string) => {
-    const chipColor = colorMap[severity];
-
-    return (
-      <Chip
-        label={severity}
-        size="small"
-        style={{ backgroundColor: chipColor, color: "white" }}
-      />
-    );
+  const getCVEColor = (severity: string) => {
+    switch (severity) {
+      case "Critical":
+        return "error";
+      case "High":
+        return "warning";
+      case "Medium":
+        return "primary";
+      case "Low":
+        return "secondary";
+      case "Unknown":
+        return "info";
+      default:
+        return "success";
+    }
   };
 
   return (
@@ -261,10 +263,45 @@ const CveVulnerabilities = (props: Props) => {
                           {row.CveID}
                         </Link>
                       </TableCell>
-                      <TableCell>{getSeverityChip(row.Severity)}</TableCell>
+                      <TableCell>
+                        <ChipsRounded
+                          label={row.Severity}
+                          color={getCVEColor(row.Severity)}
+                        ></ChipsRounded>
+                      </TableCell>
                       <TableCell>{row.PackageName}</TableCell>
                       <TableCell>{row.Version}</TableCell>
-                      <TableCell>{row.Description}</TableCell>
+                      <TableCell>
+                        {expandedRows[index] ? (
+                          <div>
+                            {row.Description}
+                            <span
+                              style={{ color: "blue", cursor: "pointer" }}
+                              onClick={() => toggleDescription(index)}
+                            >
+                              {" "}
+                              Show Less
+                            </span>
+                          </div>
+                        ) : (
+                          <div>
+                            {row.Description.length > 100 ? (
+                              <span>
+                                {row.Description.substring(0, 100)}
+                                <span
+                                  style={{ color: "blue", cursor: "pointer" }}
+                                  onClick={() => toggleDescription(index)}
+                                >
+                                  {" "}
+                                  Show More
+                                </span>
+                              </span>
+                            ) : (
+                              <span>{row.Description}</span>
+                            )}
+                          </div>
+                        )}
+                      </TableCell>{" "}
                     </TableRow>
                   ))
               ) : (
