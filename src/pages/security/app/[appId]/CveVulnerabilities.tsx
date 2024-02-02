@@ -37,6 +37,7 @@ const CveVulnerabilities = (props: Props) => {
     []
   );
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState<boolean>(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const toggleDescription = (index: number) => {
@@ -45,7 +46,6 @@ const CveVulnerabilities = (props: Props) => {
       return { ...prevExpandedRows, [index]: isExpanded };
     });
   };
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
     column: keyof CVESecurityData | null;
@@ -54,7 +54,6 @@ const CveVulnerabilities = (props: Props) => {
     column: null,
     direction: "asc",
   });
-  const entriesPerPage = 5;
 
   const handleSort = (columnName: keyof CVESecurityData) => {
     setSort({
@@ -91,7 +90,6 @@ const CveVulnerabilities = (props: Props) => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -105,11 +103,6 @@ const CveVulnerabilities = (props: Props) => {
   };
 
   useEffect(() => {
-    const validPage = Math.min(Math.max(currentPage, 1), totalPages);
-    setCurrentPage(validPage);
-  }, [currentPage, totalPages, searchTerm]);
-
-  useEffect(() => {
     getVulnerabilitesList(
       appId,
       securityContext.runType,
@@ -117,19 +110,15 @@ const CveVulnerabilities = (props: Props) => {
     );
   }, [securityContext.workspace, securityContext.runType, appId]);
 
-  useEffect(() => {
-    if (vulnerabilityData.length === 0) {
-      setCurrentPage(1);
-    }
-  }, [vulnerabilityData]);
-
   const getVulnerabilitesList = (
     appId: string,
     runType: string,
     workspaceId: string
   ) => {
+    setLoading(true);
     CveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
       setVulnerabilityData(res?.data || []);
+      setLoading(false);
     });
   };
 
@@ -309,10 +298,16 @@ const CveVulnerabilities = (props: Props) => {
                   ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5}>
-                    <Box textAlign="center" mt={2}>
-                      <span>No Apps Available</span>
-                    </Box>
+                  <TableCell
+                    colSpan={5}
+                    style={{
+                      textAlign: "center",
+                      fontSize: "18px",
+                      paddingTop: "50px", // Increase the top padding
+                      paddingBottom: "50px", // Increase the bottom padding
+                    }}
+                  >
+                    {loading ? "Loading ..." : "No CVEs Available"}
                   </TableCell>
                 </TableRow>
               )}

@@ -22,11 +22,10 @@ import { getScans } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 
 interface Props {
-  appId: string
+  appId?: string;
 }
 
 const SecurityCompliance = (props: Props) => {
-
   const { appId } = props;
   // ** Hook
   const theme = useTheme();
@@ -145,13 +144,22 @@ const SecurityCompliance = (props: Props) => {
   };
 
   return (
-    <Card sx={{ width: "60%", height: "80%" }} data-testid="security-compliance-card">
+    <Card
+      sx={{ width: "60%", height: "80%" }}
+      data-testid="security-compliance-card"
+    >
       <CardHeader title="Scan Compliance" data-testid="card-header" />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={5} style={{ paddingTop: "50px" }}>
-            <Typography variant="h4" data-testid="total-scans-data"> {scanData.totalScans}</Typography>
-            <Typography sx={{ mb: 6, color: "text.secondary" }} data-testid="total-scans">
+            <Typography variant="h4" data-testid="total-scans-data">
+              {" "}
+              {scanData.totalScans}
+            </Typography>
+            <Typography
+              sx={{ mb: 6, color: "text.secondary" }}
+              data-testid="total-scans"
+            >
               Total Scans
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
@@ -170,7 +178,12 @@ const SecurityCompliance = (props: Props) => {
                   alignItems: "flex-start",
                 }}
               >
-                <Typography sx={{ fontWeight: 500 }}data-testid="succeeded-scans">Success</Typography>
+                <Typography
+                  sx={{ fontWeight: 500 }}
+                  data-testid="succeeded-scans"
+                >
+                  Success
+                </Typography>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 700, color: "text.disabled" }}
@@ -196,7 +209,9 @@ const SecurityCompliance = (props: Props) => {
                   alignItems: "flex-start",
                 }}
               >
-                <Typography sx={{ fontWeight: 500 }}data-testid="failed-scans">Failed</Typography>
+                <Typography sx={{ fontWeight: 500 }} data-testid="failed-scans">
+                  Failed
+                </Typography>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 700, color: "text.disabled" }}

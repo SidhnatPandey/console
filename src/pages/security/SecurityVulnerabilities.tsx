@@ -39,7 +39,7 @@ interface Vulnerability {
 const RADIAN = Math.PI / 180;
 
 interface Props {
-  appId: string;
+  appId?: string;
 }
 
 const SecurityVulnerabilities = (props: Props) => {

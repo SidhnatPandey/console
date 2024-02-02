@@ -35,11 +35,11 @@ const ApplicationVulnerabilities = () => {
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
     []
   );
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
     column: keyof AppSecurityData | null;
@@ -48,7 +48,6 @@ const ApplicationVulnerabilities = () => {
     column: null,
     direction: "asc",
   });
-  const entriesPerPage = 5;
 
   const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
     return Cves?.reduce((total, cve) => total + cve.Count, 0);
@@ -104,36 +103,27 @@ const ApplicationVulnerabilities = () => {
       )
     );
   });
-  const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
 
   useEffect(() => {
-    const validPage = Math.min(Math.max(currentPage, 1), totalPages);
-    setCurrentPage(validPage);
     getVulnerabilitesList(securityContext.workspace, securityContext.runType);
   }, [
-    currentPage,
-    totalPages,
     searchTerm,
     securityContext.workspace,
     securityContext.runType,
     selectedWorkspace,
   ]);
 
-  useEffect(() => {
-    if (vulnerabilityData.length === 0) {
-      setCurrentPage(1);
-    }
-  }, [vulnerabilityData]);
-
   const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+    setLoading(true);
     vulnerabilitiesList(workspaceId, runType).then((res) => {
       setVulnerabilityData(res?.data || []);
+      setLoading(false);
     });
   };
 
   const handleAppNameClick = (workspaceId: string) => {
     localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
-  }
+  };
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -246,7 +236,9 @@ const ApplicationVulnerabilities = () => {
                           }}
                           as={`/security/app/${row.AppId}`}
                           style={{ textDecoration: "none" }}
-                          onClick={() => {handleAppNameClick(row.WorkspaceId)}}
+                          onClick={() => {
+                            handleAppNameClick(row.WorkspaceId);
+                          }}
                         >
                           {row.AppName}
                         </Link>
@@ -265,10 +257,16 @@ const ApplicationVulnerabilities = () => {
                   ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4}>
-                    <Box textAlign="center" mt={2}>
-                      <span>No Apps Available</span>
-                    </Box>
+                  <TableCell
+                    colSpan={5}
+                    style={{
+                      textAlign: "center",
+                      fontSize: "18px",
+                      paddingTop: "50px", // Increase the top padding
+                      paddingBottom: "50px", // Increase the bottom padding
+                    }}
+                  >
+                    {loading ? "Loading ..." : "No Apps Available"}
                   </TableCell>
                 </TableRow>
               )}
