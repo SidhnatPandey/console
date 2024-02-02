@@ -194,8 +194,8 @@ const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 const CreateApp = () => {
   // ** States
 
-  const storedWorkspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
-  const [workspace, setWorkspace] = useState<{ name: string, id: string, role: string }>(storedWorkspace);
+  const storedWorkspace = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
+  const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
@@ -226,8 +226,8 @@ const CreateApp = () => {
   }, [gitUser]);
 
   useEffect(() => {
-    setSourceCodeValue('workspace_id', workspace.id);
-  }, [authContext.workspaces, workspace])
+    setSourceCodeValue('workspace_id', workspaceId);
+  }, [authContext.workspaces, workspaceId])
 
   // react hook form
   const {
@@ -264,7 +264,7 @@ const CreateApp = () => {
 
   const router = useRouter();
   if (router.query?.code) {
-    sendCode(router.query?.code as string, workspace.id)
+    sendCode(router.query?.code as string, workspaceId)
       .then((response) => {
         if (response?.data.git_user) {
           setGitUser(response.git_user);
@@ -293,9 +293,9 @@ const CreateApp = () => {
     }
   };
 
-  const fetchGitOwner = async (workspaceId = workspace.id) => {
+  const fetchGitOwner = async (id: string = workspaceId) => {
     try {
-      const response = await getGitOwner(workspaceId);
+      const response = await getGitOwner(id);
       if (response.data) {
         setGitUser(response.data.gitUser);
         await fetchUserRepositories(response.data.gitUser as string, workspaceId);
@@ -305,10 +305,10 @@ const CreateApp = () => {
     }
   };
 
-  const fetchUserRepositories = async (user: string, workspaceId = workspace.id) => {
+  const fetchUserRepositories = async (user: string, id = workspaceId) => {
     try {
       setLoadingRepositories(true);
-      const response = await getRepositories(user, workspaceId);
+      const response = await getRepositories(user, id);
       if (response.data) {
         setRepositories(response.data);
       }
@@ -322,7 +322,7 @@ const CreateApp = () => {
   const fetchBranch = async (repo: string) => {
     try {
       setLoadingBranches(true);
-      const response = await getBranch(repo, gitUser, workspace.id);
+      const response = await getBranch(repo, gitUser, workspaceId);
       if (response.data) {
         setBranches(response.data);
       }
@@ -344,8 +344,8 @@ const CreateApp = () => {
 
   const handleWorkspaceChange = (event: SelectChangeEvent) => {
     const workspace_id = event.target.value;
-    const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
-    setWorkspace(workspace);
+    // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
+    setWorkspaceId(workspace_id);
     setRepoSelected(false);
     setRepositories(["No Repository"]);
     fetchGitOwner(workspace_id);

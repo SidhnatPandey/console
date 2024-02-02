@@ -13,6 +13,7 @@ import {
   LOCALSTORAGE_CONSTANTS,
   PERMISSION_CONSTANTS,
 } from "src/@core/static/app.constant";
+import { convertToString } from "src/@core/utils/string";
 
 const Workspace = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const Workspace = () => {
     );
     localStorage.setItem(
       LOCALSTORAGE_CONSTANTS.workspace,
-      JSON.stringify(workspace)
+      convertToString(workspace?.id)
     );
     setWorkspace(workspace);
     setSelectedTab(0);

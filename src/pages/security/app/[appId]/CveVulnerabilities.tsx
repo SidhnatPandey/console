@@ -14,57 +14,48 @@ import {
 import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MultiStepBarChart from "src/component/multiStepBar";
-import { vulnerabilitiesList } from "src/services/securityService";
+import { CveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
-import { calculateDaysFromTodayString } from "src/@core/utils/format";
-import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
-interface AppSecurityData {
-  AppId?: string;
-  AppName: string;
-  LastScanned: string;
-  WorkspaceId: string;
-  WorkspaceName: string;
-  Cves: {
-    Count: number;
-    Severity: string;
-  }[];
+import ChipsRounded from "src/component/Chip";
+interface CVESecurityData {
+  WorkspaceName?: string;
+  CveID: string;
+  Severity: string;
+  PackageName: string;
+  Version: string;
+  Description: string;
 }
-const ApplicationVulnerabilities = () => {
-  const securityContext = useContext(SecurityContext);
-  const [selectedWorkspace, setSelectedWorkspace] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState<boolean>(false);
 
-  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
+interface Props {
+  appId: string;
+}
+
+const CveVulnerabilities = (props: Props) => {
+  const { appId } = props;
+  const securityContext = useContext(SecurityContext);
+  const [vulnerabilityData, setVulnerabilityData] = useState<CVESecurityData[]>(
     []
   );
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const toggleDescription = (index: number) => {
+    setExpandedRows((prevExpandedRows) => {
+      const isExpanded = !prevExpandedRows[index];
+      return { ...prevExpandedRows, [index]: isExpanded };
+    });
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
-    column: keyof AppSecurityData | null;
+    column: keyof CVESecurityData | null;
     direction: "asc" | "desc";
   }>({
     column: null,
     direction: "asc",
   });
 
-  const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
-    return Cves?.reduce((total, cve) => total + cve.Count, 0);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleSort = (columnName: keyof AppSecurityData) => {
+  const handleSort = (columnName: keyof CVESecurityData) => {
     setSort({
       column: columnName,
       direction:
@@ -94,35 +85,58 @@ const ApplicationVulnerabilities = () => {
     );
   };
 
-  // Modify filteredData to include workspace filtering
   const filteredData = vulnerabilityData?.filter((row) => {
-    return (
-      (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
-      Object.values(row).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    return Object.values(row).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
-  useEffect(() => {
-    getVulnerabilitesList(securityContext.workspace, securityContext.runType);
-  }, [
-    searchTerm,
-    securityContext.workspace,
-    securityContext.runType,
-    selectedWorkspace,
-  ]);
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-  const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  useEffect(() => {
+    getVulnerabilitesList(
+      appId,
+      securityContext.runType,
+      securityContext.workspace
+    );
+  }, [securityContext.workspace, securityContext.runType, appId]);
+
+  const getVulnerabilitesList = (
+    appId: string,
+    runType: string,
+    workspaceId: string
+  ) => {
     setLoading(true);
-    vulnerabilitiesList(workspaceId, runType).then((res) => {
+    CveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
       setVulnerabilityData(res?.data || []);
       setLoading(false);
     });
   };
 
-  const handleAppNameClick = (workspaceId: string) => {
-    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
+  const getCVEColor = (severity: string) => {
+    switch (severity) {
+      case "Critical":
+        return "error";
+      case "High":
+        return "warning";
+      case "Medium":
+        return "primary";
+      case "Low":
+        return "secondary";
+      case "Unknown":
+        return "info";
+      default:
+        return "success";
+    }
   };
 
   return (
@@ -136,7 +150,7 @@ const ApplicationVulnerabilities = () => {
           pb={2}
         >
           <h3 style={{ marginLeft: "20px", marginTop: "40px" }}>
-            Application Vulnerabilities
+            Vulnerabilities
           </h3>
           <Box
             display="flex"
@@ -160,9 +174,9 @@ const ApplicationVulnerabilities = () => {
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
-                <TableCell onClick={() => handleSort("AppName")}>
+                <TableCell onClick={() => handleSort("CveID")}>
                   <Box display="flex" alignItems="center">
-                    <span>App Name</span>
+                    <span>CVEID</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -173,9 +187,9 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell onClick={() => handleSort("WorkspaceName")}>
+                <TableCell onClick={() => handleSort("Severity")}>
                   <Box display="flex" alignItems="center">
-                    <span>workspace</span>
+                    <span>SEVERITY</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -186,9 +200,9 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell onClick={() => handleSort("LastScanned")}>
+                <TableCell onClick={() => handleSort("PackageName")}>
                   <Box display="flex" alignItems="center">
-                    <span>Last Scanned</span>
+                    <span>PACKAGE</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -199,12 +213,22 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell
-                  onClick={() => handleSort("Cves")}
-                  style={{ width: 400 }}
-                >
+                <TableCell onClick={() => handleSort("Version")}>
                   <Box display="flex" alignItems="center">
-                    <span>CVEs</span>
+                    <span>VERSION</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell onClick={() => handleSort("Description")}>
+                  <Box display="flex" alignItems="center">
+                    <span>DESCRIPTION</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -225,34 +249,51 @@ const ApplicationVulnerabilities = () => {
                     <TableRow key={index}>
                       <TableCell>
                         <Link
-                          href={{
-                            pathname: `/security/app/${row.AppId}`,
-                            query: {
-                              data: JSON.stringify({
-                                appName: row.AppName,
-                                wid: row.WorkspaceId,
-                              }),
-                            },
-                          }}
-                          as={`/security/app/${row.AppId}`}
+                          href={`/security/cve/${row.CveID}`}
                           style={{ textDecoration: "none" }}
-                          onClick={() => {
-                            handleAppNameClick(row.WorkspaceId);
-                          }}
                         >
-                          {row.AppName}
+                          {row.CveID}
                         </Link>
                       </TableCell>
-                      <TableCell>{row.WorkspaceName}</TableCell>
                       <TableCell>
-                        {calculateDaysFromTodayString(row.LastScanned)}
+                        <ChipsRounded
+                          label={row.Severity}
+                          color={getCVEColor(row.Severity)}
+                        ></ChipsRounded>
                       </TableCell>
+                      <TableCell>{row.PackageName}</TableCell>
+                      <TableCell>{row.Version}</TableCell>
                       <TableCell>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <MultiStepBarChart Cves={row.Cves} />
-                          <span>{calculateTotalCVEs(row.Cves)}</span>
-                        </div>
-                      </TableCell>
+                        {expandedRows[index] ? (
+                          <div>
+                            {row.Description}
+                            <span
+                              style={{ color: "blue", cursor: "pointer" }}
+                              onClick={() => toggleDescription(index)}
+                            >
+                              {" "}
+                              Show Less
+                            </span>
+                          </div>
+                        ) : (
+                          <div>
+                            {row.Description.length > 100 ? (
+                              <span>
+                                {row.Description.substring(0, 100)}
+                                <span
+                                  style={{ color: "blue", cursor: "pointer" }}
+                                  onClick={() => toggleDescription(index)}
+                                >
+                                  {" "}
+                                  Show More
+                                </span>
+                              </span>
+                            ) : (
+                              <span>{row.Description}</span>
+                            )}
+                          </div>
+                        )}
+                      </TableCell>{" "}
                     </TableRow>
                   ))
               ) : (
@@ -266,7 +307,7 @@ const ApplicationVulnerabilities = () => {
                       paddingBottom: "50px", // Increase the bottom padding
                     }}
                   >
-                    {loading ? "Loading ..." : "No Apps Available"}
+                    {loading ? "Loading ..." : "No CVEs Available"}
                   </TableCell>
                 </TableRow>
               )}
@@ -288,4 +329,4 @@ const ApplicationVulnerabilities = () => {
   );
 };
 
-export default ApplicationVulnerabilities;
+export default CveVulnerabilities;
