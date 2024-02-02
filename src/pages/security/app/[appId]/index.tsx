@@ -3,7 +3,11 @@ import SecurityCompliance from "../../SecurityCompliance";
 import SecurityVulnerabilities from "../../SecurityVulnerabilities";
 import { Box } from "@mui/system";
 import SecurityDashboard from "../../SecurityDashboard";
-import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import {
+  LOCALSTORAGE_CONSTANTS,
+  PERMISSION_CONSTANTS,
+  SESSIONSTORAGE_CONSTANTS,
+} from "src/@core/static/app.constant";
 import { useRouter } from "next/router";
 import { convertToString } from "src/@core/utils/string";
 import { SecurityProvider } from "src/context/SecurityContext";
@@ -14,13 +18,19 @@ const AppSecurityDetails = () => {
   const router = useRouter();
   const { appId, data } = router.query;
   let wid!: string, appName!: string;
-  if(data){
-    const params = JSON.parse(convertToString(data))
+  if (data) {
+    const params = JSON.parse(convertToString(data));
     wid = params.wid;
-    appName = params.appName
+    appName = params.appName;
   }
 
-  if(!wid){ wid = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!}
+  if (!wid) {
+    wid = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
+  }
+  if (!appName) {
+    appName = sessionStorage.getItem(SESSIONSTORAGE_CONSTANTS.appName)!;
+  }
+  sessionStorage.setItem(SESSIONSTORAGE_CONSTANTS.appName, appName);
 
   return (
     <>
