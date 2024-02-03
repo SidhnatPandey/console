@@ -32,6 +32,7 @@ import { setApiBaseUrl } from "src/@core/services/interceptor";
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import { AbilityContext } from "src/layouts/components/acl/Can";
 import SwitcherButton from "src/component/switcherButton";
+import useWorkspace from "src/hooks/useWorkspace";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -66,8 +67,9 @@ interface App {
 
 const AppDashboard = () => {
   const router = useRouter();
+  const workspaceHook = useWorkspace();
   const timer = Number(env("NEXT_PUBLIC_APP_DASHBOARD_REFRESH_TIMER")) || 60000;
-  const workspace = JSON.parse(localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!);
+  const workspaceId = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
   const [value, setValue] = useState<string>("1");
   const [loading, setLoading] = useState<boolean>(false);
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
@@ -104,7 +106,7 @@ const AppDashboard = () => {
   };
 
   const getAppDetails = (id: any) => {
-    appDetails(id, workspace.id)
+    appDetails(id, workspaceId)
       .then((response: any) => {
         setAppData(response.data);
         setLoading(false);
@@ -217,7 +219,7 @@ const AppDashboard = () => {
             />
           )}
         </span>
-        <span style={{ marginTop: "3.5rem", width: '100%' }}>
+        <span style={{ marginTop: "3.5rem", width: '300%' }}>
           <h1 style={{ marginBottom: "0" }} data-testid="title">
             {loading ? <Skeleton /> : appData?.application_name || "N/A"}
           </h1>
@@ -264,7 +266,7 @@ const AppDashboard = () => {
           )}
         </span>
         <span style={{ textAlign: 'end', marginRight: '20px', marginTop: '3rem', width: '100%' }}>
-          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspace?.name}</b></p>
+          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspaceHook.getWorkspaceNameById(workspaceId)}</b></p>
           <SwitcherButton handleBtnClick={triggerSupplyChainRun} btnNames={['prod', 'current']} defaultValue={'current'}></SwitcherButton>
         </span>
       </Card>

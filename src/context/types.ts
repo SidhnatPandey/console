@@ -75,3 +75,10 @@ export type Org = {
   tier: number
 }
 
+export type SecurityValueTypes = {
+  workspace: string,
+  runType: string,
+  setWorkspace: (value: string) => void
+  setRunType: (value: string) => void
+}
+

@@ -2,25 +2,28 @@ import React, { useState, useContext } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { AuthContext } from 'src/context/AuthContext';
+import { SecurityContext } from 'src/context/SecurityContext';
 
 const WorkspaceDropdown = () => {
-  const [organizationAnchorEl, setOrganizationAnchorEl] = useState<HTMLElement | null>(null);
+  const [workspaceAnchorEl, setWorkspaceAnchorEl] = useState<HTMLElement | null>(null);
   const { workspaces } = useContext(AuthContext);
+  const securityContext = useContext(SecurityContext)
 
-  const organizationOpen = Boolean(organizationAnchorEl);
+  const workspaceOpen = Boolean(workspaceAnchorEl);
   const [selectedWorkspace, setSelectedWorkspace] = useState('All Workspaces');
 
-  const handleOrganizationClick = (event: React.MouseEvent<HTMLElement>) => {
-    setOrganizationAnchorEl(event.currentTarget);
+  const handleWorkspaceClick = (event: React.MouseEvent<HTMLElement>) => {
+    setWorkspaceAnchorEl(event.currentTarget);
   };
 
-  const handleOrganizationClose = () => {
-    setOrganizationAnchorEl(null);
+  const handleWorkspaceClose = () => {
+    setWorkspaceAnchorEl(null);
   };
 
-  const handleWorkspaceSelect = (workspaceName: string) => {
-    setSelectedWorkspace(workspaceName);
-    handleOrganizationClose();
+  const handleWorkspaceSelect = (workspace: any) => {
+    setSelectedWorkspace(workspace.name);
+    securityContext.setWorkspace(workspace.id);
+    handleWorkspaceClose();
   };
 
   return (
@@ -28,22 +31,22 @@ const WorkspaceDropdown = () => {
       <Button
         variant="contained"
         size="large"
-        onClick={handleOrganizationClick}
+        onClick={handleWorkspaceClick}
         endIcon={<ArrowDropDownIcon />}
         sx={{ backgroundColor: 'lightgray', '&:hover': { backgroundColor: 'lightgray' }, color: 'black' }}
       >
         {selectedWorkspace}
       </Button>
       <Menu
-        anchorEl={organizationAnchorEl}
-        open={organizationOpen}
-        onClose={handleOrganizationClose}
+        anchorEl={workspaceAnchorEl}
+        open={workspaceOpen}
+        onClose={handleWorkspaceClose}
       >
-        <MenuItem onClick={() => handleWorkspaceSelect('All Workspaces')}>
+        <MenuItem onClick={() => handleWorkspaceSelect({name:'All workspaces',id:'all'})}>
           All Workspaces
         </MenuItem>
         {workspaces && workspaces.map((workspace, index) => (
-          <MenuItem key={workspace.id || index} onClick={() => handleWorkspaceSelect(workspace.name)}>
+          <MenuItem key={workspace.id || index} onClick={() => handleWorkspaceSelect(workspace)}>
             {workspace.name}
           </MenuItem>
         ))}
