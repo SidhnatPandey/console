@@ -316,6 +316,7 @@ const AppDashboard = () => {
             supplyChainData={supplyChainRunsData?.data}
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
+            workspaceId={ workspaceId}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
