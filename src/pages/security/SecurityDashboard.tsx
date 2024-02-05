@@ -1,4 +1,4 @@
-import { Box, Button, Card } from "@mui/material";
+import { Box, Button, Card, Link, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
@@ -10,15 +10,23 @@ interface SecurityDashboardProps {
   subtitle?: string;
   wid?: string;
   showWorkspaceDropdown: boolean;
+  CveScore?: number;
+  CveDescription?: string;
+  CveUrl?: string;
 }
 const SecurityDashboard = ({
   title,
   subtitle,
   wid,
   showWorkspaceDropdown,
+  CveScore,
+  CveDescription,
+  CveUrl,
 }: SecurityDashboardProps) => {
   const securityContext = useContext(SecurityContext);
-  if (wid) { securityContext.setWorkspace(wid); }
+  if (wid) {
+    securityContext.setWorkspace(wid);
+  }
 
   const workspace = useWorkspace();
 
@@ -33,13 +41,58 @@ const SecurityDashboard = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            paddingLeft: "16px",
-            paddingRight: "16px",
+            padding: "16px",
           }}
         >
           <div>
-            <h3 style={{ marginBottom: 0 }}>{title}</h3>
-            <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
+            <Typography variant="h5" component="div">
+              {title}
+            </Typography>
+            <Typography variant="subtitle1" component="div" gutterBottom>
+              {subtitle}
+            </Typography>
+            {CveScore !== undefined && (
+              <Typography component="div">
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  CVSS SCORE:
+                </Typography>{" "}
+                <Typography variant="subtitle1" component="span">
+                  {CveScore}
+                </Typography>
+              </Typography>
+            )}
+            {CveDescription && (
+              <Typography component="div">
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Description:
+                </Typography>{" "}
+                <Typography variant="subtitle1" component="span">
+                  {CveDescription}
+                </Typography>
+              </Typography>
+            )}
+            {CveUrl && (
+              <Typography component="div">
+                <Typography
+                  variant="h6"
+                  component="span"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Reference:
+                </Typography>{" "}
+                <Link href={CveUrl} target="_blank" rel="noopener noreferrer">
+                  Vulnerability Database
+                </Link>
+              </Typography>
+            )}{" "}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             {showWorkspaceDropdown ? (

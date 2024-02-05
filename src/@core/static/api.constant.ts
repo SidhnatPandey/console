@@ -40,6 +40,8 @@ export const APP_API = {
     "vulernabilities/app?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
   CveHistoryChart:
     "vulernabilities/appVulnHistory?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
+  AppsAffectedByCve:
+    "vulernabilities/apps/affected?cve_id={cve_id}&run_type={run_type}&workspace_id={workspace_id}",
 
   //Workspace
   createWorkspace: "workspace",
