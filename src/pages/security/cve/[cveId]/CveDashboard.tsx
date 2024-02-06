@@ -7,7 +7,7 @@ import {
 } from "src/@core/static/app.constant";
 import { useRouter } from "next/router";
 import { convertToString } from "src/@core/utils/string";
-import { SecurityContext, SecurityProvider } from "src/context/SecurityContext";
+import { SecurityContext } from "src/context/SecurityContext";
 import { appAffected } from "src/services/securityService";
 import ImpactedApplications from "./ImpactedApplications";
 import ImpactedPackages from "./ImpactedPackages";
@@ -34,13 +34,13 @@ export interface AppsAffectedByCVEData {
 }
 
 const CveDashboard = () => {
+  const securityContext = useContext(SecurityContext);
   const router = useRouter();
   let { cveId, wid } = router.query;
 
   if (!wid) {
     wid = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
   }
-  const securityContext = useContext(SecurityContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [appsAffectedData, setAppsAffectedData] =
     useState<AppsAffectedByCVEData>();
@@ -52,6 +52,11 @@ const CveDashboard = () => {
       securityContext.workspace
     );
   }, [securityContext.workspace, securityContext.runType, cveId]);
+
+
+  useEffect(() => {
+    console.log('changed');
+  }, [securityContext.runType]);
 
   const getAppsAffected = (
     cveId: string,
@@ -69,7 +74,6 @@ const CveDashboard = () => {
   const CveUrl = appsAffectedData?.CveUrl || "";
   return (
     <>
-      <SecurityProvider>
         <Box sx={{ marginBottom: "20px" }}>
           <SecurityDashboard
             title={convertToString(cveId)}
@@ -96,7 +100,6 @@ const CveDashboard = () => {
             loading={loading}
           />
         </Box>
-      </SecurityProvider>
     </>
   );
 };

@@ -40,8 +40,9 @@ const SecurityDashboard = ({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: "top",
             padding: "16px",
+            gap:5
           }}
         >
           <div>
@@ -94,7 +95,8 @@ const SecurityDashboard = ({
               </Typography>
             )}{" "}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
+          <div style={{display: 'flex', gap: 15 }}>
+            <div style={{flexDirection: 'column', alignItems: "top" }}>
             {showWorkspaceDropdown ? (
               <WorkspaceDropdown />
             ) : (
@@ -109,13 +111,15 @@ const SecurityDashboard = ({
               >
                 {workspace.getWorkspaceNameById(wid)}
               </Button>
-            )}
-
+            )}  
+            </div>
+            <div style={{flexDirection: 'column', alignItems: "top", minWidth: '190px' }}>
             <SwitcherButton
               handleBtnClick={triggerSecurityData}
               btnNames={["prod", "non-prod"]}
               defaultValue={"non-prod"}
             />
+            </div>
           </div>
         </Card>
       </Box>
