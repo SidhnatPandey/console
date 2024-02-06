@@ -72,6 +72,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
+import { setItemToLocalstorage } from "src/services/locastorageService";
 
 /* 
 type FormValues = {
@@ -346,6 +347,7 @@ const CreateApp = () => {
     const workspace_id = event.target.value;
     // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
     setWorkspaceId(workspace_id);
+    setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.workspace, workspace_id);
     setRepoSelected(false);
     setRepositories(["No Repository"]);
     fetchGitOwner(workspace_id);
