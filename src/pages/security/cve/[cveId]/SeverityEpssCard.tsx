@@ -61,43 +61,47 @@ const SeverityEpss = ({
   return (
     <Card sx={{ mt: 4 }}>
       <CardContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box display="flex" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={4}>
             <Typography variant="h5">SEVERITY</Typography>
             <ChipsRounded
               label={appsAffectedData?.Severity || "N/A"}
               color={getCVEColor(appsAffectedData?.Severity || "N/A")}
-            ></ChipsRounded>
+            />
           </Box>
-          <Box display="flex" alignItems="center" gap={4}>
+          <Box>
             <Typography variant="h5">EXPLOIT PROBABILITY</Typography>
-            <Typography variant="subtitle2">in next 30 days</Typography>
-            <ChipsRounded
-              label={
-                epssData?.epss !== undefined
-                  ? getEPSSCategory(epssData?.epss) === "info"
-                    ? "Low"
-                    : getEPSSCategory(epssData?.epss) === "primary"
-                    ? "Medium"
-                    : getEPSSCategory(epssData?.epss) === "warning"
-                    ? "High"
-                    : getEPSSCategory(epssData?.epss) === "error"
-                    ? "Critical"
+            <Box display="flex" alignItems="center">
+              <Typography variant="subtitle2">in next 30 days</Typography>
+              <ChipsRounded
+                label={
+                  epssData?.epss !== undefined
+                    ? getEPSSCategory(epssData?.epss) === "info"
+                      ? "Low"
+                      : getEPSSCategory(epssData?.epss) === "primary"
+                      ? "Medium"
+                      : getEPSSCategory(epssData?.epss) === "warning"
+                      ? "High"
+                      : getEPSSCategory(epssData?.epss) === "error"
+                      ? "Critical"
+                      : "N/A"
                     : "N/A"
-                  : "N/A"
-              }
-              color={getEPSSCategory(epssData?.epss || "N/A")}
-            />
+                }
+                color={getEPSSCategory(epssData?.epss || "N/A")}
+              />
+            </Box>
           </Box>
-          <Box display="flex" alignItems="center" gap={4}>
+          <Box>
             <Typography variant="h5">EPSS SCORE</Typography>
-            <Typography variant="subtitle2">
-              Exploit Prediction Scoring System
-            </Typography>
-            <ChipsRounded
-              label={epssData?.epss || "N/A"}
-              color={getEPSSCategory(epssData?.epss || "N/A")}
-            />
+            <Box display="flex" alignItems="center">
+              <Typography variant="subtitle2">
+                Exploit Prediction Scoring System
+              </Typography>
+              <ChipsRounded
+                label={epssData?.epss || "N/A"}
+                color={getEPSSCategory(epssData?.epss || "N/A")}
+              />
+            </Box>
           </Box>
         </Box>
       </CardContent>
