@@ -95,7 +95,7 @@ const ImpactedPackages = ({
           pb={2}
         >
           <h3 style={{ marginLeft: "20px", marginTop: "40px" }}>
-            Impacted Applications
+            Impacted Packages
           </h3>
           <Box
             display="flex"
