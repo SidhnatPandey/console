@@ -37,38 +37,44 @@ export const getAllvulnerabilities = (
   return get(url).then((response) => response?.data);
 };
 
-export const CveVulnerabilitiesList = (
+export const cveVulnerabilitiesList = (
   app_id: string,
   run_type: string,
   workspace_id: string
 ) => {
   setApiBaseUrl("security");
-  let url = APP_API.CveVulernabilities.replace("{app_id}", app_id);
+  let url = APP_API.cveVulernabilities.replace("{app_id}", app_id);
   url = url.replace("{run_type}", run_type);
   url = url.replace("{workspace_id}", workspace_id);
   return get(url).then((response) => response?.data);
 };
 
-export const CveHistory = (
+export const cveHistory = (
   app_id: string,
   run_type: string,
   workspace_id: string
 ) => {
   setApiBaseUrl("security");
-  let url = APP_API.CveHistoryChart.replace("{app_id}", app_id);
+  let url = APP_API.cveHistoryChart.replace("{app_id}", app_id);
   url = url.replace("{run_type}", run_type);
   url = url.replace("{workspace_id}", workspace_id);
   return get(url).then((response) => response?.data);
 };
 
-export const AppAffected = (
+export const appAffected = (
   cve_id: string,
   run_type: string,
   workspace_id: string
 ) => {
   setApiBaseUrl("security");
-  let url = APP_API.AppsAffectedByCve.replace("{cve_id}", cve_id);
+  let url = APP_API.appsAffectedByCve.replace("{cve_id}", cve_id);
   url = url.replace("{run_type}", run_type);
   url = url.replace("{workspace_id}", workspace_id);
+  return get(url).then((response) => response?.data);
+};
+
+export const getEpssScore = (cve_id: string) => {
+  setApiBaseUrl("security");
+  let url = APP_API.epssScore.replace("{cve_id}", cve_id);
   return get(url).then((response) => response?.data);
 };

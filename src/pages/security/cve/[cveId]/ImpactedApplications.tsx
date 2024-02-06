@@ -13,10 +13,17 @@ import {
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { AppsAffectedByCVEData } from ".";
 
 interface AppsAffectedByCVEDataProps {
-  appsAffectedData: AppsAffectedByCVEData | undefined;
+  appsAffectedData?: {
+    AppsAffected: {
+      AppName: string;
+      AppID: string;
+      WorkspaceId: string;
+      WorkspaceName: string;
+      [key: string]: string;
+    }[];
+  };
   setAppsAffectedData: (value: any) => void;
   loading: boolean;
 }
@@ -51,10 +58,11 @@ const ImpactedApplications = ({
         ? aValue.localeCompare(bValue)
         : bValue.localeCompare(aValue);
     });
-    setAppsAffectedData({ ...appsAffectedData, AppsAffected: sortedData });
+    setAppsAffectedData({
+      ...appsAffectedData,
+      AppsAffected: sortedData, // Corrected to set the sorted data
+    });
   };
-
-  console.log(sortColumn, sortData, sortOrder);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>

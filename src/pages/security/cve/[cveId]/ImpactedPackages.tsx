@@ -13,10 +13,15 @@ import {
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { AppsAffectedByCVEData } from ".";
 
 interface AppsAffectedByCVEDataProps {
-  appsAffectedData: AppsAffectedByCVEData | undefined;
+  appsAffectedData?: {
+    PackageAffected: {
+      PackageName: string;
+      Version: string;
+      [key: string]: string;
+    }[];
+  };
   setAppsAffectedData: (value: any) => void;
   loading: boolean;
 }

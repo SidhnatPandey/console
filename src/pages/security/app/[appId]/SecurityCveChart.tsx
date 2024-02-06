@@ -19,7 +19,7 @@ import {
   ChartOptions,
 } from "chart.js";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { CveHistory } from "src/services/securityService";
+import { cveHistory } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { COLOR_PALLET } from "src/@core/static/color.constants";
 
@@ -68,7 +68,7 @@ const SecurityCveChart = (props: Props) => {
     runType: string,
     workspaceId: string
   ) => {
-    CveHistory(appId, runType, workspaceId).then((res) => {
+    cveHistory(appId, runType, workspaceId).then((res) => {
       if (res?.data.length > 0) {
         setApiData(res.data);
       }
@@ -176,7 +176,7 @@ const SecurityCveChart = (props: Props) => {
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
         pointHoverBackgroundColor: COLOR_PALLET.warning,
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         fill: false,
@@ -191,7 +191,7 @@ const SecurityCveChart = (props: Props) => {
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
         pointHoverBackgroundColor: COLOR_PALLET.primary,
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         fill: false,
@@ -206,7 +206,7 @@ const SecurityCveChart = (props: Props) => {
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
         pointHoverBackgroundColor: COLOR_PALLET.secondary,
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         fill: false,
@@ -221,7 +221,7 @@ const SecurityCveChart = (props: Props) => {
         pointHoverBorderColor: white,
         pointBorderColor: "transparent",
         pointHoverBackgroundColor: COLOR_PALLET.info,
-        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
     ],
   };
