@@ -53,11 +53,6 @@ const CveDashboard = () => {
     );
   }, [securityContext.workspace, securityContext.runType, cveId]);
 
-
-  useEffect(() => {
-    console.log('changed');
-  }, [securityContext.runType]);
-
   const getAppsAffected = (
     cveId: string,
     runType: string,
@@ -74,32 +69,32 @@ const CveDashboard = () => {
   const CveUrl = appsAffectedData?.CveUrl || "";
   return (
     <>
-        <Box sx={{ marginBottom: "20px" }}>
-          <SecurityDashboard
-            title={convertToString(cveId)}
-            subtitle="CVE Details"
-            CveScore={CveScore}
-            CveDescription={CveDescription}
-            CveUrl={CveUrl}
-            wid={convertToString(wid)}
-            showWorkspaceDropdown={false}
-          />
-          <SeverityEpss
-            appsAffectedData={appsAffectedData}
-            setAppsAffectedData={setAppsAffectedData}
-          />
-          <ImpactedApplications
-            appsAffectedData={appsAffectedData}
-            setAppsAffectedData={setAppsAffectedData}
-            loading={loading}
-          />
+      <Box sx={{ marginBottom: "20px" }}>
+        <SecurityDashboard
+          title={convertToString(cveId)}
+          subtitle="CVE Details"
+          CveScore={CveScore}
+          CveDescription={CveDescription}
+          CveUrl={CveUrl}
+          wid={convertToString(wid)}
+          showWorkspaceDropdown={false}
+        />
+        <SeverityEpss
+          appsAffectedData={appsAffectedData}
+          setAppsAffectedData={setAppsAffectedData}
+        />
+        <ImpactedApplications
+          appsAffectedData={appsAffectedData}
+          setAppsAffectedData={setAppsAffectedData}
+          loading={loading}
+        />
 
-          <ImpactedPackages
-            appsAffectedData={appsAffectedData}
-            setAppsAffectedData={setAppsAffectedData}
-            loading={loading}
-          />
-        </Box>
+        <ImpactedPackages
+          appsAffectedData={appsAffectedData}
+          setAppsAffectedData={setAppsAffectedData}
+          loading={loading}
+        />
+      </Box>
     </>
   );
 };
