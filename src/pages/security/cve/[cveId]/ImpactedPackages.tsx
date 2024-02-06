@@ -69,7 +69,7 @@ const ImpactedPackages = ({
 
     setAppsAffectedData({
       ...appsAffectedData,
-      AppsAffected: slicedData,
+      PackageAffected: slicedData,
     });
   };
 
