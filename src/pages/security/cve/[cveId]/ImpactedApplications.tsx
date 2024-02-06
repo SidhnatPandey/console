@@ -48,9 +48,13 @@ const ImpactedApplications = ({
     : null;
 
   const sortData = (column: string) => {
+    if (!appsAffectedDatas || appsAffectedDatas.length <= 1) {
+      return;
+    }
     const isAsc = sortColumn === column && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setSortColumn(column);
+
     const sortedData = appsAffectedDatas?.slice().sort((a, b) => {
       const aValue = a[column];
       const bValue = b[column];
@@ -58,9 +62,15 @@ const ImpactedApplications = ({
         ? aValue.localeCompare(bValue)
         : bValue.localeCompare(aValue);
     });
+
+    const slicedData = sortedData?.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+
     setAppsAffectedData({
       ...appsAffectedData,
-      AppsAffected: sortedData, // Corrected to set the sorted data
+      AppsAffected: slicedData,
     });
   };
 
@@ -110,7 +120,7 @@ const ImpactedApplications = ({
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell onClick={() => sortData("AppName")}>
                   <Box display="flex" alignItems="center">
                     <span>APPLICATION</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -123,7 +133,7 @@ const ImpactedApplications = ({
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => sortData("WorkspaceName")}>
                   <Box display="flex" alignItems="center">
                     <span>WORKSPACE</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -144,12 +154,8 @@ const ImpactedApplications = ({
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell onClick={() => sortData("AppName")}>
-                        {row?.AppName}
-                      </TableCell>
-                      <TableCell onClick={() => sortData("WorkspaceName")}>
-                        {row?.WorkspaceName}
-                      </TableCell>
+                      <TableCell>{row?.AppName}</TableCell>
+                      <TableCell>{row?.WorkspaceName}</TableCell>
                     </TableRow>
                   ))
               ) : (

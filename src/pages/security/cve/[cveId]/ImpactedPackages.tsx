@@ -46,20 +46,32 @@ const ImpactedPackages = ({
     : null;
 
   const sortData = (column: string) => {
+    if (!packageAffectedDatas || packageAffectedDatas.length <= 1) {
+      return;
+    }
+
     const isAsc = sortColumn === column && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setSortColumn(column);
-    const sortedData = packageAffectedDatas?.slice().sort((a, b) => {
+
+    const sortedData = packageAffectedDatas.slice().sort((a, b) => {
       const aValue = a[column];
       const bValue = b[column];
       return isAsc
         ? aValue.localeCompare(bValue)
         : bValue.localeCompare(aValue);
     });
-    setAppsAffectedData({ ...appsAffectedData, PackageAffected: sortedData });
-  };
 
-  console.log(sortColumn, sortData, sortOrder);
+    const slicedData = sortedData.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+
+    setAppsAffectedData({
+      ...appsAffectedData,
+      AppsAffected: slicedData,
+    });
+  };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -107,7 +119,7 @@ const ImpactedPackages = ({
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell onClick={() => sortData("PackageName")}>
                   <Box display="flex" alignItems="center">
                     <span>PACKAGE</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -120,7 +132,7 @@ const ImpactedPackages = ({
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => sortData("Version")}>
                   <Box display="flex" alignItems="center">
                     <span>VERSION</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -141,12 +153,8 @@ const ImpactedPackages = ({
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell onClick={() => sortData("PackageName")}>
-                        {row?.PackageName}
-                      </TableCell>
-                      <TableCell onClick={() => sortData("Version")}>
-                        {row?.Version}
-                      </TableCell>
+                      <TableCell>{row?.PackageName}</TableCell>
+                      <TableCell>{row?.Version}</TableCell>
                     </TableRow>
                   ))
               ) : (
