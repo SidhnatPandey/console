@@ -1,5 +1,7 @@
 export type PricingPlanType = {
   title: string
+  price: number
+  features: string[]
   imgSrc: string
   subtitle: string
   imgWidth?: number
