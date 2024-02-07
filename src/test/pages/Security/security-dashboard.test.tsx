@@ -41,8 +41,7 @@ describe("SecurityDashboard", () => {
       <SecurityContext.Provider value={mockContextValue}>
         <SecurityDashboard
           title={"Security Dashboard"}
-          subtitle={""}
-          showWorkspaceDropdown={false}
+          showWorkspaceDropdown={true}
         />
       </SecurityContext.Provider>
     );
@@ -56,8 +55,7 @@ describe("SecurityDashboard", () => {
       <SecurityContext.Provider value={mockContextValue}>
         <SecurityDashboard
           title={"Security Dashboard"}
-          subtitle={""}
-          showWorkspaceDropdown={false}
+          showWorkspaceDropdown={true}
         />
       </SecurityContext.Provider>
     );

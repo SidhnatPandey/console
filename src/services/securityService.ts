@@ -75,6 +75,6 @@ export const appAffected = (
 
 export const getEpssScore = (cve_id: string) => {
   setApiBaseUrl("security");
-  let url = APP_API.epssScore.replace("{cve_id}", cve_id);
+  const url = APP_API.epssScore.replace("{cve_id}", cve_id);
   return get(url).then((response) => response?.data);
 };

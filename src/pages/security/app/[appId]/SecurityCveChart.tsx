@@ -262,7 +262,7 @@ const SecurityCveChart = (props: Props) => {
   };
 
   return (
-    <Card sx={{ marginTop: "20px" }}>
+    <Card sx={{ marginTop: "20px" }} data-testid="cve-chart-container">
       <CardHeader title="CVE Trend" subheader="Last 12 Months" />
       <CardContent>
         <Line redraw={true} data={data} height={400} options={options} />

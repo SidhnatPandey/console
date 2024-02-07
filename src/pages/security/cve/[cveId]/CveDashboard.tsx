@@ -36,11 +36,7 @@ export interface AppsAffectedByCVEData {
 const CveDashboard = () => {
   const securityContext = useContext(SecurityContext);
   const router = useRouter();
-  let { cveId, wid } = router.query;
-
-  if (!wid) {
-    wid = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
-  }
+  const { cveId } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
   const [appsAffectedData, setAppsAffectedData] =
     useState<AppsAffectedByCVEData>();
@@ -76,8 +72,7 @@ const CveDashboard = () => {
           CveScore={CveScore}
           CveDescription={CveDescription}
           CveUrl={CveUrl}
-          wid={convertToString(wid)}
-          showWorkspaceDropdown={false}
+          showWorkspaceDropdown={true}
         />
         <SeverityEpss
           appsAffectedData={appsAffectedData}

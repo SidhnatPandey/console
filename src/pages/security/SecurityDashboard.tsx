@@ -42,7 +42,7 @@ const SecurityDashboard = ({
             justifyContent: "space-between",
             alignItems: "top",
             padding: "16px",
-            gap:5
+            gap: 5,
           }}
         >
           <div>
@@ -95,30 +95,42 @@ const SecurityDashboard = ({
               </Typography>
             )}{" "}
           </div>
-          <div style={{display: 'flex', gap: 15 }}>
-            <div style={{flexDirection: 'column', alignItems: "top" }}>
-            {showWorkspaceDropdown ? (
-              <WorkspaceDropdown />
-            ) : (
-              <Button
-                variant="contained"
-                size="medium"
-                sx={{
-                  backgroundColor: "lightgray",
-                  "&:hover": { backgroundColor: "lightgray" },
-                  color: "black",
-                }}
-              >
-                {workspace.getWorkspaceNameById(wid)}
-              </Button>
-            )}  
+          <div style={{ display: "flex", gap: 15 }}>
+            <div
+              style={{
+                flexDirection: "column",
+                alignItems: "top",
+                minWidth: "190px",
+              }}
+            >
+              {showWorkspaceDropdown ? (
+                <WorkspaceDropdown />
+              ) : (
+                <Button
+                  variant="contained"
+                  size="medium"
+                  sx={{
+                    backgroundColor: "lightgray",
+                    "&:hover": { backgroundColor: "lightgray" },
+                    color: "black",
+                  }}
+                >
+                  {workspace.getWorkspaceNameById(wid)}
+                </Button>
+              )}
             </div>
-            <div style={{flexDirection: 'column', alignItems: "top", minWidth: '190px' }}>
-            <SwitcherButton
-              handleBtnClick={triggerSecurityData}
-              btnNames={["prod", "non-prod"]}
-              defaultValue={"non-prod"}
-            />
+            <div
+              style={{
+                flexDirection: "column",
+                alignItems: "top",
+                minWidth: "190px",
+              }}
+            >
+              <SwitcherButton
+                handleBtnClick={triggerSecurityData}
+                btnNames={["prod", "non-prod"]}
+                defaultValue={"non-prod"}
+              />
             </div>
           </div>
         </Card>

@@ -35,28 +35,33 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
     const obj: {
       color: "error" | "warning" | "primary" | "secondary" | "info" | "success";
       label: string;
-    } = { color: "secondary", label: "" };
-    if (score >= 0 && score < 0.25) {
+      percentage: number;
+    } = { color: "secondary", label: "", percentage: 0 };
+
+    const percentage = score * 100;
+
+    if (percentage < 1) {
+      obj.color = "success";
+      obj.label = "Negligible";
+    } else if (percentage < 25) {
       obj.color = "info";
       obj.label = "Low";
-      return obj;
-    } else if (score >= 0.25 && score < 0.5) {
+    } else if (percentage < 50) {
       obj.color = "primary";
       obj.label = "Medium";
-      return obj;
-    } else if (score >= 0.5 && score < 0.75) {
+    } else if (percentage < 75) {
       obj.color = "warning";
       obj.label = "High";
-      return obj;
-    } else if (score >= 0.75 && score <= 1) {
+    } else if (percentage <= 100) {
       obj.color = "error";
       obj.label = "Critical";
-      return obj;
     } else {
       obj.color = "secondary";
       obj.label = "Unknown";
-      return obj;
     }
+
+    obj.percentage = percentage;
+    return obj;
   };
 
   const { cveId } = router.query;
@@ -105,7 +110,15 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
             </Box>
             <Box>
               <ChipsRounded
-                label={Number(epssData?.epss).toFixed(2) || "N/A"}
+                label={
+                  epssData?.epss !== undefined
+                    ? epssData?.epss < 1
+                      ? "< 1%"
+                      : `${getEPSSCategory(epssData?.epss).percentage.toFixed(
+                          2
+                        )}%`
+                    : "N/A"
+                }
                 color={getEPSSCategory(epssData?.epss || "N/A").color}
               />
             </Box>

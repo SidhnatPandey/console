@@ -124,16 +124,18 @@ describe("SecurityCveChart component", () => {
     ];
     expectedMonths.forEach(async (month) => {
       await waitFor(() => {
-        const monthRegex = new RegExp(month);
-        expect(getByText(monthRegex)).toBeInTheDocument();
+        const monthRegex = screen.getByText(month);
+        expect(monthRegex).toBeInTheDocument();
       });
     });
   });
 
   test("renders without crashing", () => {
     render(<SecurityCveChart appId="testAppId" />);
+    const card = screen.getByTestId("cve-chart-container");
     const titleElement = screen.getByText("CVE Trend");
     const subheaderElement = screen.getByText("Last 12 Months");
+    expect(card).toBeInTheDocument();
     expect(titleElement).toBeInTheDocument();
     expect(subheaderElement).toBeInTheDocument();
   });
