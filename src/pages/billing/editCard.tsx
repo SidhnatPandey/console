@@ -147,42 +147,51 @@ const EditCard = (props: Props) => {
                         Edit your saved card details
                     </DialogContentText>
 
+                    {loading && <div data-testid="loading-indicator">Loading...</div>}
+
                     <Grid container spacing={5}>
                         <Grid item xs={6} sm={6}>
                             <FormControl fullWidth>
-                                <InputLabel id="month" error={Boolean(formErrors.month)}> Expiry month </InputLabel>
+                                <InputLabel id="month-label" error={Boolean(formErrors.month)}>
+                                    Expiry month
+                                </InputLabel>
                                 <Controller
                                     name="month"
                                     control={formControl}
                                     rules={{ required: true }}
                                     render={({ field: { value, onChange } }) => (
                                         <Select
-                                            value={value}
                                             label="Expiry month"
-                                            onChange={(e) => { onChange(e) }}
+                                            labelId="month-label"  // Add this line
+                                            value={value}
+                                            onChange={(e) => onChange(e)}
                                             error={Boolean(formErrors.month)}
-                                            labelId="stepper-linear-personal-country"
-                                            aria-describedby="stepper-linear-personal-country-helper"
                                             MenuProps={{
                                                 PaperProps: {
                                                     style: {
                                                         maxHeight: 350,
                                                     },
                                                 },
-                                            }} >
-                                            {months.map((month: number, index: number) => {
-                                                return (<MenuItem value={month} key={index}>{month}</MenuItem>)
-                                            })}
+                                            }}
+                                        >
+                                            {months.map((month: number, index: number) => (
+                                                <MenuItem value={month} key={index}>
+                                                    {month}
+                                                </MenuItem>
+                                            ))}
                                         </Select>
-                                    )} />
-                                {formErrors.name && (
+                                    )}
+                                />
+                                {formErrors.month && (
                                     <FormHelperText
                                         sx={{ color: "error.main" }}
-                                        id="stepper-linear-account-username">
+                                        id="stepper-linear-account-username"
+                                    >
                                         This field is required
                                     </FormHelperText>
                                 )}
                             </FormControl>
+
                         </Grid>
                         <Grid item xs={6} sm={6}>
                             <FormControl fullWidth>
