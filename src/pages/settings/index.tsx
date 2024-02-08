@@ -19,6 +19,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
+import { CircularProgress } from '@mui/material';
 import {
   Avatar,
   FormControl,
@@ -44,6 +45,7 @@ import { AuthContext } from "src/context/AuthContext";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import { useForm, Controller } from "react-hook-form";
 import Toaster from "src/utils/toaster";
+import useLoading from "src/hooks/loading";
 
 interface RowOptionsProps {
   user: UserDataType;
@@ -173,10 +175,11 @@ const UserList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingData, setLoadingData] = useState<boolean>(false);
   const [users, setUsers] = useState<UserDataType[]>([]);
   const [existingUser, setExistingUser] = useState<boolean>(false);
   const [userNameExist, setUserNameExist] = useState<boolean>(false);
+  const { loading, startLoading, stopLoading } = useLoading();
   useEffect(() => {
     const orgId = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
@@ -192,10 +195,10 @@ const UserList = () => {
   }, []);
 
   const settingsData = () => {
-    setLoading(true);
+    setLoadingData(true);
     getOrganisationsUserList().then((response) => {
       setUsers(response.data.users);
-      setLoading(false);
+      setLoadingData(false);
     });
   };
 
@@ -231,33 +234,39 @@ const UserList = () => {
   };
 
   const onSubmit = (user: any) => {
-    if (userNameExist) {
-      Toaster.errorToast(" Username already Exist.");
-      return;
+    if (!loading) {
+      startLoading();
+      if (userNameExist) {
+        Toaster.errorToast(" Username already Exist.");
+        stopLoading();
+        return;
+      }
+      const params = {
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        workspace_id: user.workspace,
+        org: user.org,
+      };
+      inviteUser(params)
+        .then(() => {
+          const successMessage = isEditMode
+            ? "User edited successfully"
+            : "User invited successfully";
+          Toaster.successToast(successMessage);
+          settingsData();
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 400) {
+            Toaster.errorToast("Bad Request - Invalid data sent");
+          } else {
+            Toaster.errorToast("Network error or server is down");
+          }
+        }).finally(() => {
+          setAddUserDialogOpen(false);
+          stopLoading();
+        })
     }
-    const params = {
-      email: user.email,
-      username: user.username,
-      role: user.role,
-      workspace_id: user.workspace,
-      org: user.org,
-    };
-    inviteUser(params)
-      .then(() => {
-        const successMessage = isEditMode
-          ? "User edited successfully"
-          : "User invited successfully";
-        Toaster.successToast(successMessage);
-        setAddUserDialogOpen(false);
-        settingsData();
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 400) {
-          Toaster.errorToast("Bad Request - Invalid data sent");
-        } else {
-          Toaster.errorToast("Network error or server is down");
-        }
-      });
   };
 
   const checkEmailExists = (event: any) => {
@@ -496,7 +505,7 @@ const UserList = () => {
                       paddingBottom: "50px",
                     }}
                   >
-                    {loading ? "Loading ..." : "No Users"}
+                    {loadingData ? "Loading ..." : "No Users"}
                   </TableCell>
                 </TableRow>
               )}
@@ -630,7 +639,7 @@ const UserList = () => {
                     {...field}
                     labelId="role-select-label"
                     id="role-select"
-                    label="Role"
+                    label="Select Role"
                   >
                     <MenuItem value="admin">Admin</MenuItem>
                     <MenuItem value="workspace-admin">Workspace Admin</MenuItem>
@@ -656,7 +665,7 @@ const UserList = () => {
                     {...field}
                     labelId="workspace-select-label"
                     id="workspace-select"
-                    label="Workspace"
+                    label="Select Workspace"
                   >
                     {authContext.workspaces.length &&
                       authContext.workspaces.map((workspace) => (
@@ -682,6 +691,7 @@ const UserList = () => {
               variant="contained"
               type="submit"
             >
+              {loading && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
               Save
             </Button>
           </DialogActions>
