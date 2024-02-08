@@ -168,7 +168,7 @@ const ImpactedPackages = ({
                       paddingBottom: "50px", // Increase the bottom padding
                     }}
                   >
-                    {loading ? "Loading ..." : "No Apps Available"}
+                    {loading ? "Loading ..." : "No Package Available"}
                   </TableCell>
                 </TableRow>
               )}

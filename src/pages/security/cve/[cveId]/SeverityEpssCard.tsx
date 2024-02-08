@@ -7,9 +7,10 @@ import { getEpssScore } from "src/services/securityService";
 
 interface AppsAffectedByCVEDataProps {
   appsAffectedData?: {
-    Severity?: string | undefined;
+    CveId: string;
+    Severity: string;
   };
-  setAppsAffectedData: (value: any) => void;
+  setAppsAffectedData?: (value: any) => void;
 }
 
 const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
@@ -64,10 +65,11 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
     return obj;
   };
 
-  const { cveId } = router.query;
   useEffect(() => {
-    getEpssScores(convertToString(cveId));
-  }, [cveId]);
+    if (appsAffectedData?.CveId) {
+      getEpssScores(convertToString(appsAffectedData?.CveId));
+    }
+  }, [appsAffectedData?.CveId]);
 
   const getEpssScores = (cveId: string) => {
     getEpssScore(cveId).then((res) => {

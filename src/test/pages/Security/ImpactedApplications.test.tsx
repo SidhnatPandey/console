@@ -2,19 +2,15 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CveVulnerabilities from "src/pages/security/app/[appId]/CveVulnerabilities";
+import ImpactedApplications from "src/pages/security/cve/[cveId]/ImpactedApplications";
 import { SecurityContext } from "src/context/SecurityContext";
 
 jest.mock("src/services/securityService", () => ({
-  cveVulnerabilitiesList: jest.fn().mockResolvedValue({
-    cveVulnerabilitiesList: [
+  appAffected: jest.fn().mockResolvedValue({
+    appAffected: [
       {
-        CveId: "1",
-        Severity: "High",
-        Package: "libc-bin",
-        Version: "2.35-0ubuntu3.6",
-        Description:
-          "sha256crypt and sha512crypt through 0.6 allow attackers to cause a denial of service (CPU consumption) because the algorithm's runtime is proportional to the square of the length of the password.",
+        AppName: "1",
+        Workspace: "High",
       },
     ],
   }),
@@ -33,20 +29,27 @@ describe("cveVulnerabilitiesList", () => {
   it("renders table headers correctly", () => {
     render(
       <SecurityContext.Provider value={mockContextValue}>
-        <CveVulnerabilities appId={""} />
+        <ImpactedApplications
+          setAppsAffectedData={function (value: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          loading={false}
+        />
       </SecurityContext.Provider>
     );
-    expect(screen.getByText(/CVEID/i)).toBeInTheDocument();
-    expect(screen.getByText(/SEVERITY/i)).toBeInTheDocument();
-    expect(screen.getByText(/PACKAGE/i)).toBeInTheDocument();
-    expect(screen.getByText(/VERSION/i)).toBeInTheDocument();
-    expect(screen.getByText(/DESCRIPTION/i)).toBeInTheDocument();
+    expect(screen.getByText("APPLICATION")).toBeInTheDocument();
+    expect(screen.getByText("WORKSPACE")).toBeInTheDocument();
   });
 
   it("renders without crashing", () => {
     render(
       <SecurityContext.Provider value={mockContextValue}>
-        <CveVulnerabilities appId={""} />
+        <ImpactedApplications
+          setAppsAffectedData={function (value: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          loading={false}
+        />{" "}
       </SecurityContext.Provider>
     );
   });
@@ -54,17 +57,27 @@ describe("cveVulnerabilitiesList", () => {
   it("sorts data correctly", async () => {
     render(
       <SecurityContext.Provider value={mockContextValue}>
-        <CveVulnerabilities appId={""} />
+        <ImpactedApplications
+          setAppsAffectedData={function (value: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          loading={false}
+        />{" "}
       </SecurityContext.Provider>
     );
-    const cveIdHeader = screen.getByText("CVEID");
-    fireEvent.click(cveIdHeader);
+    const appNameHeader = screen.getByText("APPLICATION");
+    fireEvent.click(appNameHeader);
   });
 
   it("filters data based on search term", async () => {
     render(
       <SecurityContext.Provider value={mockContextValue}>
-        <CveVulnerabilities appId={""} />
+        <ImpactedApplications
+          setAppsAffectedData={function (value: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          loading={false}
+        />{" "}
       </SecurityContext.Provider>
     );
     const searchInput = screen.getByPlaceholderText("Search");
@@ -73,15 +86,20 @@ describe("cveVulnerabilitiesList", () => {
 
   it("displays no data message when no apps are available", async () => {
     jest.mock("src/services/securityService", () => ({
-      cveVulnerabilitiesList: jest.fn().mockResolvedValue({ data: [] }),
+      appAffected: jest.fn().mockResolvedValue({ data: [] }),
     }));
     render(
       <SecurityContext.Provider value={mockContextValue}>
-        <CveVulnerabilities appId={""} />
+        <ImpactedApplications
+          setAppsAffectedData={function (value: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          loading={false}
+        />{" "}
       </SecurityContext.Provider>
     );
     await waitFor(() => {
-      expect(screen.getByText("No CVEs Available")).toBeInTheDocument();
+      expect(screen.getByText("No Apps Available")).toBeInTheDocument();
     });
   });
 });
