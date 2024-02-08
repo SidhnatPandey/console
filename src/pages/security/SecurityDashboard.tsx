@@ -1,5 +1,5 @@
 import { Box, Button, Card, Link, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import SwitcherButton from "src/component/switcherButton";
 import WorkspaceDropdown from "src/component/workspaceDropdown";
 import { SecurityContext } from "src/context/SecurityContext";
@@ -24,9 +24,11 @@ const SecurityDashboard = ({
   CveUrl,
 }: SecurityDashboardProps) => {
   const securityContext = useContext(SecurityContext);
-  if (wid) {
-    securityContext.setWorkspace(wid);
-  }
+  useEffect(() => {
+    if (wid) {
+      securityContext.setWorkspace(wid);
+    }
+  }, [wid, securityContext.setWorkspace]);
 
   const workspace = useWorkspace();
 
