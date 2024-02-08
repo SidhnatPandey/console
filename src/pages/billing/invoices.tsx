@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Table,
@@ -15,6 +14,8 @@ import {
 } from "@mui/material";
 import CustomChip from "src/@core/components/mui/chip";
 import { toTitleCase } from "src/utils/stringUtils";
+import { listOfInvoice } from "src/services/billingService";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 interface Data {
   id: string;
@@ -94,17 +95,18 @@ const headCells: readonly HeadCell[] = [
 ];
 
 function EnhancedTable() {
-  const [order, setOrder] = React.useState<"asc" | "desc">("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("total_cost");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<keyof Data>("total_cost");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [invoices, setInvoices] = useState<Data[]>([]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -151,8 +153,8 @@ function EnhancedTable() {
     return `${day} ${month} ${year}`;
   }
 
-  const sortedRows = React.useMemo(() => {
-    return [...rows].sort((a, b) => {
+  const sortedRows = useMemo(() => {
+    return [...invoices].sort((a, b) => {
       if (order === "asc") {
         return a[orderBy] > b[orderBy] ? 1 : -1;
       } else {
@@ -160,6 +162,18 @@ function EnhancedTable() {
       }
     });
   }, [order, orderBy]);
+
+  const getListOfInvoices = () => {
+    listOfInvoice().then(
+      response => {
+        if (response) { setInvoices(response.data) }
+      }
+    )
+  }
+
+  useEffect(() => {
+    getListOfInvoices();
+  }, [])
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -234,7 +248,7 @@ function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={invoices.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
