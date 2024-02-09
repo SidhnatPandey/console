@@ -33,8 +33,6 @@ describe('PaymentMethod Component', () => {
     },
   ];
 
-
-
   const mockFetchCards = jest.fn();
 
   const mockCustomerId = '123';

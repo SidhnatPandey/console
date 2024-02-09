@@ -1,15 +1,29 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
 import Plans from 'src/pages/billing/plans';
 import { PricingPlanType } from 'src/@core/components/plan-details/types';
+
 import { useRouter } from 'next/router';
 
+const mockNextRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+};
 
-jest.mock('next/router', () => ({
-  ...jest.requireActual('next/router'), 
-  useRouter: jest.fn(),
+jest.mock('src/services/billingService', () => ({
+  saveCardSession: jest.fn(),
+}));
+
+jest.mock('src/context/AuthContext', () => ({
+  useContext: jest.fn(() => ({
+    fetchOrg: jest.fn(),
+  })),
+}));
+
+jest.mock('src/utils/toaster', () => ({
+  successToast: jest.fn(),
+  errorToast: jest.fn(),
 }));
 
 describe('Plans Component', () => {
@@ -33,38 +47,40 @@ describe('Plans Component', () => {
     },
   ];
 
-
-  const mockFetchCards = jest.fn();
-
   test('renders Plans component', () => {
-    render(<Plans plans={mockPlans} fetchCards={mockFetchCards} />);
+    jest.spyOn(require('next/router'), 'useRouter').mockReturnValue(mockNextRouter);
 
-    // Add assertions based on your component structure
+    render(<Plans plans={mockPlans} fetchCards={jest.fn()} />);
+
     expect(screen.getByText(/pricing plans/i)).toBeInTheDocument();
     expect(screen.getByText(/choose the best plan/i)).toBeInTheDocument();
-    // Add more assertions as needed
   });
 
   test('handles plan upgrade click', () => {
-    (useRouter as jest.Mock).mockReturnValue({
-      push: jest.fn(),
-    });
+    const mockFetchCards = jest.fn();
+    jest.spyOn(require('next/router'), 'useRouter').mockReturnValue(mockNextRouter);
 
     render(<Plans plans={mockPlans} fetchCards={mockFetchCards} />);
 
-    const upgradeButton = screen.getByRole('button', { name: /upgrade plan/i });
+    const upgradeButton = screen.getByText(/upgrade plan/i);
     fireEvent.click(upgradeButton);
+
     expect(screen.getByText(/payment/i)).toBeInTheDocument();
   });
 
-  test('handles PaymentDialog handleClose', () => {
+  test('handles PaymentDialog handleClose', async () => {
+    const mockFetchCards = jest.fn();
+    jest.spyOn(require('next/router'), 'useRouter').mockReturnValue(mockNextRouter);
+
     render(<Plans plans={mockPlans} fetchCards={mockFetchCards} />);
 
-    const upgradeButton = screen.getByRole('button', { name: /upgrade plan/i });
+    const upgradeButton = screen.getByText(/upgrade plan/i);
     fireEvent.click(upgradeButton);
 
-    const closeButton = screen.getByRole('button', { name: /close/i });
+    const closeButton = screen.getByText(/close/i);
     fireEvent.click(closeButton);
+
+    await act(async () => {});
     expect(screen.queryByText(/payment/i)).not.toBeInTheDocument();
   });
 });
