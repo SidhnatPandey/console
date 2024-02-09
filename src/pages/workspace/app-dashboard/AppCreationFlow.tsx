@@ -30,8 +30,9 @@ interface AppCreationFlow {
 
 const AppCreationFlow = (props: AppCreationFlow) => {
 
-  const { supplyChainData, loading, timer, gitRepo, gitBranch , workspaceId} = props
+  const { supplyChainData, loading, timer, gitRepo, gitBranch, workspaceId } = props
   const [selectedTile, setSelectedTile] = useState<string>("clone");
+  const [rebuilding, setRebuilding] = useState<boolean>(false);
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem('cStage', stage);
@@ -51,11 +52,16 @@ const AppCreationFlow = (props: AppCreationFlow) => {
   };
 
   const handleRebuild = () => {
-    rebuild(supplyChainData.app_id, workspaceId).then(() => {
-      Toaster.successToast('Initiatest Rebuild. Please wait for sometime.')
-    }).catch(() => {
-      Toaster.errorToast('Failed to Rebuild')
-    })
+    if (!rebuilding) {
+      setRebuilding(true);
+      rebuild(supplyChainData.app_id, workspaceId).then(() => {
+        Toaster.successToast('Initiatest Rebuild. Please wait for sometime.')
+      }).catch(() => {
+        Toaster.errorToast('Failed to Rebuild')
+      }).finally(() => {
+        setRebuilding(false);
+      })
+    }
   }
 
   const getSupplyChain = () => {

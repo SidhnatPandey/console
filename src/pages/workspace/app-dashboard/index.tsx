@@ -219,7 +219,7 @@ const AppDashboard = () => {
             />
           )}
         </span>
-        <span style={{ marginTop: "3.5rem", width: '300%' }}>
+        <span style={{ marginTop: "3.5rem", width: '250%' }}>
           <h1 style={{ marginBottom: "0" }} data-testid="title">
             {loading ? <Skeleton /> : appData?.application_name || "N/A"}
           </h1>
@@ -316,7 +316,7 @@ const AppDashboard = () => {
             supplyChainData={supplyChainRunsData?.data}
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
-            workspaceId={ workspaceId}
+            workspaceId={workspaceId}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">

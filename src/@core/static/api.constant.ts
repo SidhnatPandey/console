@@ -49,18 +49,20 @@ export const APP_API = {
   removeUser: "workspace/removeUser",
   delete: "workspace/delete",
 
-    //Organisation
-    OrgList: 'organization',
-    orgUserList: 'organization/users',
-    removeOrgUser: 'organization/removeUserFromOrg?user_id=',
-    inviteUser: 'inviteUser',
-    getOrg: 'organization/info',
+  //Organisation
+  OrgList: "organization",
+  orgUserList: "organization/users",
+  removeOrgUser: "organization/removeUserFromOrg?user_id=",
+  inviteUser: "inviteUser",
+  getOrg: "organization/info",
 
-    //billing
-    getPlans: 'plans',
-    saveCard: 'cards?session_id={sessionId}&customer_id={customerId}&plan_id={planId}',
-    getCards: 'cards',
-    deleteCard: 'cards/{paymentMethod}',
-    makeCardDefault: 'cards/{paymentMethod}/setdefault?customer_id={customerId}',
-    updateCard: 'cards/{cardId}'
-}
+  //billing
+  getPlans: "plans",
+  saveCard:
+    "cards?session_id={sessionId}&customer_id={customerId}&plan_id={planId}",
+  getCards: "cards",
+  deleteCard: "cards/{paymentMethod}",
+  makeCardDefault: "cards/{paymentMethod}/setdefault?customer_id={customerId}",
+  updateCard: "cards/{cardId}",
+  listOfInvoices: "invoices",
+};

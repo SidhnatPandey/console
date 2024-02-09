@@ -12,6 +12,8 @@ import AppsIcon from "@mui/icons-material/Apps";
 import { getCards } from "src/services/billingService";
 import { AuthContext } from "src/context/AuthContext";
 import usePlan from "src/hooks/plan";
+import BasicTable from "./invoices";
+import EnhancedTable from "./invoices";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
     borderBottom: "0 !important",
@@ -90,13 +92,17 @@ const Billing = () => {
                 {plan.planTier() > 1 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext?.org?.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
-                <Typography>
+                {/* <Typography>
                     Chocolate bar carrot cake candy canes sesame snaps. Cupcake pie gummi bears jujubes candy canes. Chupa chups
                     sesame snaps halvah.
-                </Typography>
+                </Typography> */}
+                
+                {/* <BasicTable/> */}
+                <EnhancedTable/>
+                
             </TabPanel>
         </TabContext>
-    )
+    ) 
 }
 
 export default Billing;
