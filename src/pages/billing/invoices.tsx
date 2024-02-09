@@ -70,7 +70,7 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function EnhancedTable() {
+function InvoiceTable() {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<keyof Data>("created_at");
   const [page, setPage] = useState(0);
@@ -200,10 +200,10 @@ function EnhancedTable() {
                   <TableCell colSpan={5}  style={{
                     textAlign: 'center',
                     fontSize: '18px',
-                    paddingTop: '50px', // Increase the top padding
-                    paddingBottom: '50px', // Increase the bottom padding
+                    paddingTop: '50px',
+                    paddingBottom: '50px', 
                   }}>
-                    {/* <Typography variant="h3" style={{ color: 'rgba(0, 0, 0, 0.54)'}}>No data</Typography> */}
+                  
 
                     {loading ? 'Loading ...' : 'No Apps'}
                   </TableCell>
@@ -257,4 +257,4 @@ function EnhancedTable() {
   );
 }
 
-export default EnhancedTable;
+export default InvoiceTable;
