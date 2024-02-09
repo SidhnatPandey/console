@@ -132,6 +132,7 @@ function InvoiceTable() {
   }
 
   const sortedRows = useMemo(() => {
+    if (!Array.isArray(invoices)) return [];
     return [...invoices].sort((a, b) => {
       if (order === "asc") {
         return a[orderBy] > b[orderBy] ? 1 : -1;
@@ -246,7 +247,8 @@ function InvoiceTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={invoices?.length}
+          count={invoices?.length || 0}
+
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
