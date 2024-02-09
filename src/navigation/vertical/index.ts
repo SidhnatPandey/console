@@ -39,12 +39,11 @@ const navigation = (): VerticalNavItemsType => {
     {
       sectionTitle: 'MANAGE'
     },
-    /* {
+    {
       title: 'Billing',
       icon: 'jam:document',
-      path: '/apps/email',
-      disabled: true
-    }, */
+      path: '/billing',
+    },
     {
       title: 'Settings',
       icon: 'uil:setting',

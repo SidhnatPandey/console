@@ -47,7 +47,10 @@ export type AuthValuesType = {
   organisations: Organisation[],
   setWorkspaces: (value: Workspace[]) => void,
   setOrganisations: (value: Organisation[]) => void,
-  fetchWorkspaces: (value: string | null) => void
+  fetchWorkspaces: (value: string | null) => void,
+  org: Org | null,
+  setOrg: (value: any) => void,
+  fetchOrg: () => void,
 }
 
 export type Workspace = {
@@ -59,6 +62,17 @@ export type Workspace = {
 export type Organisation = {
   org_id: string,
   org_name: string
+}
+
+export type Org = {
+  created_by: string,
+  customer_id: string,
+  id: string,
+  name: string,
+  plan_id: string,
+  role: string,
+  app_count: number,
+  tier: number
 }
 
 export type SecurityValueTypes = {

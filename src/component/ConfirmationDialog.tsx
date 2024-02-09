@@ -12,13 +12,13 @@ interface ConfirmationDialogProps {
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, onConfirm, onCancel, message, loading }) => {
   return (
-    <Dialog fullWidth maxWidth="xs" open={open} onClose={onCancel}>
-      <DialogContent>
+    <Dialog fullWidth maxWidth="xs" open={open} onClose={onCancel} style={{ textAlign: 'center' }}>
+      <DialogContent >
         <Typography variant="body1" color="textPrimary">
           {message}
         </Typography>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ justifyContent: 'center' }}>
         <Button variant="outlined" color="primary" onClick={onCancel}>
           Cancel
         </Button>

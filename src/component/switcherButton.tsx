@@ -13,8 +13,10 @@ const SwitcherButton = ({ handleBtnClick, btnNames, defaultValue }: SwitcherButt
     const styles = { backgroundColor: '#655BD3', color: '#ffff', padding: '0px 15px', height: '35px' }
 
     const handleAlignment = (event: MouseEvent<HTMLElement>, newAlignment: string | null) => {
-        setAlignment(newAlignment);
-        handleBtnClick(newAlignment);
+        if (newAlignment !== null) {
+            setAlignment(newAlignment);
+            handleBtnClick(newAlignment);
+        }
     }
 
     return (

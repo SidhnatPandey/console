@@ -1,5 +1,6 @@
 // ** Type import
 import { HorizontalNavItemsType } from 'src/@core/layouts/types'
+import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant';
 
 const navigation = (): HorizontalNavItemsType => {
   return [
@@ -10,44 +11,39 @@ const navigation = (): HorizontalNavItemsType => {
       disabled: true
     },
     {
-      icon: 'tabler:smart-home',
-      badgeContent: '2',
+      icon: 'ion:document-outline',
+      badgeContent: '0',
       title: 'Workspaces',
       children: [
         {
-          title: 'Project X',
-          path: '/dashboards/analytics'
-        },
-        {
-          title: 'Project Y',
-          path: '/dashboards/crm'
-        },
-        {
           icon: 'fluent:add-28-regular',
           title: 'New Workspace',
-          path: '/dashboards/ecommerce'
+          path: '/workspace/create'
         }
       ]
     },
     {
-      title: 'Apps',
-      icon: 'ion:document-outline',
-      path: '/apps'
-    },
-    {
       title: 'Security',
       icon: 'material-symbols:lock-outline',
-      path: '/security'
+      path: '/security',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.security,
     },
+    /*  {
+       title: 'App-Dashboards',
+       icon: 'tabler:smart-home',
+       path: '/workspace/app-dashboard/?appId=65a62a3f1c34456bd9179ce7',
+       action: 'read',
+       subject: PERMISSION_CONSTANTS.appDashboard,
+     }, */
     {
       sectionTitle: 'MANAGE'
     },
-    /* {
+    {
       title: 'Billing',
       icon: 'jam:document',
-      path: '/apps/email',
-      disabled: true
-    }, */
+      path: '/billing',
+    },
     {
       title: 'Settings',
       icon: 'uil:setting',
@@ -64,9 +60,11 @@ const navigation = (): HorizontalNavItemsType => {
     {
       title: 'Documentation',
       icon: 'carbon:document',
-      path: 'https://docs.initializ.ai/'
+      path: 'https://docs.initializ.ai/',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.document,
     },
-  ]
+  ];
 }
 
 export default navigation

@@ -23,6 +23,9 @@ import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant'
 import { AuthContext } from 'src/context/AuthContext'
+import usePlan from 'src/hooks/plan'
+import AlertDialog from 'src/component/alertDialog'
+import useUser from 'src/hooks/user'
 
 interface Props {
   hidden: boolean
@@ -41,7 +44,9 @@ const notifications: NotificationsType[] = [];
 
 const AppBarContent = (props: Props) => {
 
-  const router = useRouter()
+  const router = useRouter();
+  const plan = usePlan();
+  const user = useUser();
   const authContext = useContext(AuthContext);
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props;
@@ -51,6 +56,8 @@ const AppBarContent = (props: Props) => {
   const [organizationAnchorEl, setOrganizationAnchorEl] = useState<null | HTMLElement>(null);
   const organizationOpen = Boolean(organizationAnchorEl);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization>(); // Default value can be an empty string
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const handleOrganizationClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOrganizationAnchorEl(event.currentTarget);
@@ -69,6 +76,7 @@ const AppBarContent = (props: Props) => {
         if (org.org_id === orgId) { setSelectedOrganization(org) }
       });
     }
+    updateMessage();
   }, [authContext.organisations]);
 
   // Handler for selecting an organization
@@ -81,6 +89,18 @@ const AppBarContent = (props: Props) => {
       window.location.reload();
     }
   };
+
+  const updateMessage = () => {
+    if (user.isAdmin()) {
+      setAlertMessage('Please go to billing to upgrade your plan')
+    } else {
+      setAlertMessage('Please contact your admin to upgrade plan')
+    }
+  }
+
+  const createApp = () => {
+    plan.isAppCrationAllowed() ? router.push('/create-app') : setOpenAlert(true);
+  }
 
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -95,7 +115,7 @@ const AppBarContent = (props: Props) => {
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         {/* <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
-        <Button variant='contained' sx={{ marginRight: '10px' }} size="large" onClick={() => router.push('/create-app')}>Create</Button>
+        <Button variant='contained' sx={{ marginRight: '10px' }} size="large" onClick={createApp}>Create</Button>
         <Button
           variant="contained"
           size="large"
@@ -121,7 +141,7 @@ const AppBarContent = (props: Props) => {
         <NotificationDropdown settings={settings} notifications={notifications} />
         <UserDropdown settings={settings} />
       </Box>
-
+      <AlertDialog open={openAlert} heading={'Plan Upgrade Needed'} message={alertMessage} onCancel={() => setOpenAlert(false)} />
     </Box>
   )
 }

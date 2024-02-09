@@ -107,8 +107,8 @@ export const orguser = () => {
   return get(url).then(response => response?.data);
 }
 
-export const rebuild = (appId: string) => {
+export const rebuild = (appId: string, workspaceId: string) => {
   setApiBaseUrl();
-  const url = APP_API.rebuild + appId;
+  const url = APP_API.rebuild.replace('{appId}', appId).replace('{wid}', workspaceId);
   return get(url).then(response => response?.data)
 }
