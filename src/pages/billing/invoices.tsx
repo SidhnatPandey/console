@@ -70,7 +70,7 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function EnhancedTable() {
+function InvoiceTable() {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<keyof Data>("created_at");
   const [page, setPage] = useState(0);
@@ -132,6 +132,7 @@ function EnhancedTable() {
   }
 
   const sortedRows = useMemo(() => {
+    if (!Array.isArray(invoices)) return [];
     return [...invoices].sort((a, b) => {
       if (order === "asc") {
         return a[orderBy] > b[orderBy] ? 1 : -1;
@@ -200,10 +201,10 @@ function EnhancedTable() {
                   <TableCell colSpan={5}  style={{
                     textAlign: 'center',
                     fontSize: '18px',
-                    paddingTop: '50px', // Increase the top padding
-                    paddingBottom: '50px', // Increase the bottom padding
+                    paddingTop: '50px',
+                    paddingBottom: '50px', 
                   }}>
-                    {/* <Typography variant="h3" style={{ color: 'rgba(0, 0, 0, 0.54)'}}>No data</Typography> */}
+                  
 
                     {loading ? 'Loading ...' : 'No Apps'}
                   </TableCell>
@@ -246,7 +247,8 @@ function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={invoices?.length}
+          count={invoices?.length || 0}
+
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -257,4 +259,4 @@ function EnhancedTable() {
   );
 }
 
-export default EnhancedTable;
+export default InvoiceTable;
