@@ -36,10 +36,14 @@ export const APP_API = {
     "vulernabilities/scans?workspace_id={workspace_id}&run_type={run_type}",
   allVulnerabilities:
     "vulernabilities/all?workspace_id={workspace_id}&run_type={run_type}",
-  CveVulernabilities:
+  cveVulernabilities:
     "vulernabilities/app?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
-  CveHistoryChart:
+  cveHistoryChart:
     "vulernabilities/appVulnHistory?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
+  appsAffectedByCve:
+    "vulernabilities/apps/affected?cve_id={cve_id}&run_type={run_type}&workspace_id={workspace_id}",
+  epssScore: "epssScore?cve_id={cve_id}",
+  sbom: "sbom?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
 
   //Workspace
   createWorkspace: "workspace",
