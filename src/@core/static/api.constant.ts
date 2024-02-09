@@ -43,6 +43,7 @@ export const APP_API = {
   appsAffectedByCve:
     "vulernabilities/apps/affected?cve_id={cve_id}&run_type={run_type}&workspace_id={workspace_id}",
   epssScore: "epssScore?cve_id={cve_id}",
+  sbom: "sbom?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
 
   //Workspace
   createWorkspace: "workspace",
