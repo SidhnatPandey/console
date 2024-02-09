@@ -15,12 +15,13 @@ import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MultiStepBarChart from "src/component/multiStepBar";
-import { vulnerabilitiesList } from "src/services/securityService";
+import { sbom, vulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+
 interface AppSecurityData {
-  AppId?: string;
+  AppId: string;
   AppName: string;
   LastScanned: string;
   WorkspaceId: string;
@@ -30,6 +31,7 @@ interface AppSecurityData {
     Severity: string;
   }[];
 }
+
 const ApplicationVulnerabilities = () => {
   const securityContext = useContext(SecurityContext);
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
@@ -121,6 +123,20 @@ const ApplicationVulnerabilities = () => {
     });
   };
 
+  const getSBOMs = (appId: string, workspaceId: string) => {
+    sbom(appId, securityContext.runType, workspaceId).then((res) => {
+      console.log(res.data);
+      const url = `data:application/pdf;base64,${res.data}`;
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sbom.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  };
+
   const handleAppNameClick = (workspaceId: string) => {
     localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
   };
@@ -160,7 +176,10 @@ const ApplicationVulnerabilities = () => {
           <Table sx={{ border: "1px solid #ced4da" }}>
             <TableHead>
               <TableRow>
-                <TableCell onClick={() => handleSort("AppName")}>
+                <TableCell
+                  onClick={() => handleSort("AppName")}
+                  style={{ width: 300 }}
+                >
                   <Box display="flex" alignItems="center">
                     <span>App Name</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -186,7 +205,10 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell onClick={() => handleSort("LastScanned")}>
+                <TableCell
+                  onClick={() => handleSort("LastScanned")}
+                  style={{ width: 300 }}
+                >
                   <Box display="flex" alignItems="center">
                     <span>Last Scanned</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -201,10 +223,23 @@ const ApplicationVulnerabilities = () => {
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("Cves")}
-                  style={{ width: 400 }}
+                  style={{ width: 600 }}
                 >
                   <Box display="flex" alignItems="center">
                     <span>CVEs</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell style={{ width: 100 }}>
+                  <Box display="flex" alignItems="center">
+                    <span>Download</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -253,12 +288,17 @@ const ApplicationVulnerabilities = () => {
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <a onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}>
+                          SBOM
+                        </a>
+                      </TableCell>
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={6}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",

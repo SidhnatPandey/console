@@ -79,20 +79,20 @@ const SecurityVulnerabilities = (props: Props) => {
     appId?: string
   ) => {
     getAllvulnerabilities(workspaceId, runType, appId).then((res) => {
-      const totalV = res?.data.reduce(
+      const data = res?.data ?? [];
+
+      const totalV = data.reduce(
         (total: number, cve: any) => total + cve.Count,
         0
       );
       setTotalVulnerabilities(totalV);
-      const newArr: Vulnerability[] = [];
-      res?.data.forEach((ele: CVE) => {
-        const obj: Vulnerability = {
-          name: ele.Severity,
-          value: ele.Count,
-          color: getColor(ele.Severity) || "white",
-        };
-        newArr.push(obj);
-      });
+
+      const newArr: Vulnerability[] = data.map((ele: CVE) => ({
+        name: ele.Severity,
+        value: ele.Count,
+        color: getColor(ele.Severity) || "white",
+      }));
+
       setVulnerabilities(newArr);
     });
   };

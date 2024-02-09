@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { CveVulnerabilitiesList } from "src/services/securityService";
+import { cveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import ChipsRounded from "src/component/Chip";
 interface CVESecurityData {
@@ -116,7 +116,7 @@ const CveVulnerabilities = (props: Props) => {
     workspaceId: string
   ) => {
     setLoading(true);
-    CveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
+    cveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
       setVulnerabilityData(res?.data || []);
       setLoading(false);
     });
