@@ -12,6 +12,7 @@ interface Props {
 const MultiStepBar: React.FC<Props> = ({ Cves }) => {
 
   const [cveArr, setCveArr] = useState<CVE[]>([]);
+  const [sum, setSum] = useState<number>(0);
 
   useEffect(() => {
     let high = 0, low = 0, medium = 0, critical = 0, unknown = 0;
@@ -29,14 +30,14 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
           unknown += cve.Count; break;
       }
     })
-    const arr = [
-      { Count: high, Severity: "High" },
-      { Count: medium, Severity: "Medium" },
-      { Count: low, Severity: "Low" },
-      { Count: critical, Severity: "Critical" },
-      { Count: unknown, Severity: "Unknown" },
-    ]
+    const arr = [];
+    if (high != 0) { arr.push({ Count: high, Severity: "High" }) }
+    if (low != 0) { arr.push({ Count: low, Severity: "Low" }) }
+    if (medium != 0) { arr.push({ Count: medium, Severity: "Medium" }) }
+    if (unknown != 0) { arr.push({ Count: unknown, Severity: "Unknown" }) }
+    if (critical != 0) { arr.push({ Count: critical, Severity: "Critical" }) }
     setCveArr(arr);
+    setSum(calcsum)
   }, [Cves])
 
   const getColor = (severity: string) => {
@@ -49,7 +50,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
     }
   }
 
-  const sum = Cves?.reduce((accumulator, currentValue) => {
+  const calcsum = Cves?.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.Count;
   }, 0);
 
@@ -60,8 +61,8 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
         const color = getColor(ele.Severity);
         let borderRadius = "0";
         if (index == 0) { borderRadius = "10px 0 0 10px" }
-        if (index == Cves?.length - 1) { borderRadius = "0 10px 10px 0" }
-        if (Cves?.length == 1) { borderRadius = "10px" }
+        if (index == cveArr?.length - 1) { borderRadius = "0 10px 10px 0" }
+        if (cveArr?.length == 1) { borderRadius = "10px" }
         return (
           <Tooltip title={ele.Severity + ':' + ele.Count} key={index}>
             <div style={{ width: `${percent}%`, height: '10px', backgroundColor: color, borderRadius: `${borderRadius}` }}></div>
