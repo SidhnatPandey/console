@@ -67,8 +67,8 @@ const SecurityCompliance = (props: Props) => {
         dataLabels: {
           name: {
             offsetY: -15,
-            fontSize: "14px",
-            color: theme.palette.text.disabled,
+            fontSize: "18px",
+            color: "gray",
             fontFamily: theme.typography.fontFamily,
           },
           value: {
@@ -167,7 +167,9 @@ const SecurityCompliance = (props: Props) => {
         >
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
-              <Typography data-testid="total-scans">Total Scans</Typography>
+              <Typography data-testid="total-scans" sx={{ fontWeight: 500 }}>
+                Total Scans
+              </Typography>
               <Typography
                 sx={{ mb: 5, color: "text.secondary" }}
                 variant="h6"
@@ -202,7 +204,7 @@ const SecurityCompliance = (props: Props) => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 700, color: "text.disabled" }}
+                    sx={{ fontWeight: 700, color: "text.secondary" }}
                     data-testid="succeeded-scans-data"
                   >
                     {scanData.succeeded ? scanData.succeeded : 0}
@@ -236,7 +238,7 @@ const SecurityCompliance = (props: Props) => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 700, color: "text.disabled" }}
+                    sx={{ fontWeight: 700, color: "text.secondary" }}
                     data-testid="failed-scans-data"
                   >
                     {scanData.failed ? scanData.failed : 0}

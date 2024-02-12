@@ -45,6 +45,7 @@ interface Props {
 
 const SecurityVulnerabilities = (props: Props) => {
   const { appId } = props;
+  const theme = useTheme();
 
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState<number>(0);
@@ -192,11 +193,16 @@ const SecurityVulnerabilities = (props: Props) => {
               <Tooltip content={<CustomTooltip />} data-testid="tooltip" />
               <text
                 x="50%"
-                y="50%"
-                fill="grey"
+                y="47%"
+                fill="gray"
                 textAnchor="middle"
                 dominantBaseline="central"
-                style={{ fontSize: "18px", fontWeight: "bold" }}
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "gray",
+                  fontFamily: theme.typography.fontFamily,
+                }}
                 data-testid="CVEs-title"
               >
                 CVEs
@@ -204,10 +210,13 @@ const SecurityVulnerabilities = (props: Props) => {
               <text
                 x="50%"
                 y="55%"
-                fill="grey"
+                fill="gray"
                 textAnchor="middle"
                 dominantBaseline="central"
-                style={{ fontSize: "15px" }}
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                }}
                 data-testid="total-vulnerability"
               >
                 {totalVulnerabilities}
