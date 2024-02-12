@@ -27,8 +27,12 @@ const Plans = (props: Props) => {
     const sessionId = urlParams.get('session_id');
 
     const upgradePlan = (plan: PricingPlanType) => {
-        setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.planId, plan.id);
-        setOpenPaymentDialog(true);
+        if (plan.title.toLowerCase() === 'enterprise') {
+            router.push('https://www.initializ.ai/contact-sales');
+        } else {
+            setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.planId, plan.id);
+            setOpenPaymentDialog(true);
+        }
     }
 
     const handleClose = () => {
