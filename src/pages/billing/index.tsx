@@ -6,14 +6,11 @@ import Tab from '@mui/material/Tab'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
 import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList';
 import AppsIcon from "@mui/icons-material/Apps";
 import { getCards } from "src/services/billingService";
 import { AuthContext } from "src/context/AuthContext";
 import usePlan from "src/hooks/plan";
-import BasicTable from "./invoices";
-import EnhancedTable from "./invoices";
 import InvoiceTable from "./invoices";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
@@ -93,12 +90,12 @@ const Billing = () => {
                 {plan.planTier() > 1 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext?.org?.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
-               
-                <InvoiceTable/>
-                
+
+                <InvoiceTable />
+
             </TabPanel>
         </TabContext>
-    ) 
+    )
 }
 
 export default Billing;
