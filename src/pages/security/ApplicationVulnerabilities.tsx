@@ -173,9 +173,13 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
         <TableContainer sx={{ width: "100%" }}>
-          <Table sx={{ border: "1px solid #ced4da" }}>
+          <Table>
             <TableHead>
-              <TableRow>
+              <TableRow
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.main + "10",
+                }}
+              >
                 <TableCell
                   onClick={() => handleSort("AppName")}
                   style={{ width: 300 }}
