@@ -38,6 +38,9 @@ const ApplicationVulnerabilities = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [downloadInProgress, setDownloadInProgress] = useState<string | null>(
+    null
+  );
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
     []
@@ -124,16 +127,18 @@ const ApplicationVulnerabilities = () => {
   };
 
   const getSBOMs = (appId: string, workspaceId: string) => {
+    setDownloadInProgress(appId);
     sbom(appId, securityContext.runType, workspaceId).then((res) => {
       console.log(res.data);
-      const url = `data:application/pdf;base64,${res.data}`;
+      const url = `data:application/json;base64,${res.data}`;
       const a = document.createElement("a");
       a.href = url;
-      a.download = "sbom.pdf";
+      a.download = "sbom.json";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      setDownloadInProgress(null);
     });
   };
 
@@ -293,8 +298,23 @@ const ApplicationVulnerabilities = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <a onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}>
-                          SBOM
+                        <a
+                          onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}
+                          style={{
+                            cursor:
+                              downloadInProgress === row.AppId
+                                ? "not-allowed"
+                                : "pointer",
+                            opacity: downloadInProgress === row.AppId ? 0.5 : 1,
+                            pointerEvents:
+                              downloadInProgress === row.AppId
+                                ? "none"
+                                : "auto",
+                          }}
+                        >
+                          {downloadInProgress === row.AppId
+                            ? "Downloading..."
+                            : "SBOM"}
                         </a>
                       </TableCell>
                     </TableRow>

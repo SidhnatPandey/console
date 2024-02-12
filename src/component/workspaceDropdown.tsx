@@ -42,7 +42,16 @@ const WorkspaceDropdown = () => {
           width: "190px",
         }}
       >
-        {selectedWorkspace}
+        <span
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "100%",
+          }}
+        >
+          {selectedWorkspace}
+        </span>
       </Button>
       <Menu
         anchorEl={workspaceAnchorEl}
@@ -51,7 +60,7 @@ const WorkspaceDropdown = () => {
       >
         <MenuItem
           onClick={() =>
-            handleWorkspaceSelect({ name: "All workspaces", id: "all" })
+            handleWorkspaceSelect({ name: "All Workspaces", id: "all" })
           }
         >
           All Workspaces
