@@ -24,8 +24,10 @@ const SwitcherButton = ({
     event: MouseEvent<HTMLElement>,
     newAlignment: string | null
   ) => {
-    setAlignment(newAlignment);
-    handleBtnClick(newAlignment);
+    if (newAlignment) {
+      setAlignment(newAlignment);
+      handleBtnClick(newAlignment);
+    }
   };
 
   return (

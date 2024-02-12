@@ -59,7 +59,7 @@ export const formatDateToMonthShort = (value: Date | string, toTimeForCurrentDay
 
 // ? The following functions are taken from https://codesandbox.io/s/ovvwzkzry9?file=/utils.js for formatting credit card details
 // Get only numbers from the input value
-const clearNumber = (value = '') => {
+export const clearNumber = (value = '') => {
   return value.replace(/\D+/g, '')
 }
 
@@ -83,7 +83,7 @@ export const formatCreditCardNumber = (value: string, Payment: PaymentTypes) => 
     default:
       nextValue = `${clearValue.slice(0, 4)} ${clearValue.slice(4, 8)} ${clearValue.slice(8, 12)} ${clearValue.slice(
         12,
-        19
+        16
       )}`
       break
   }

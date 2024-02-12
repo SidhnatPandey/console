@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, Grid, TextField, Button } from "@mui/material";
 import toast from "react-hot-toast";
 import { workspace } from "src/services/appService";
 import { AuthContext } from "src/context/AuthContext";
 import Toaster from "src/utils/toaster";
+import useLoading from "src/hooks/loading";
+import AlertDialog from "src/component/alertDialog";
+import usePlan from "src/hooks/plan";
 
 type FormData = {
   workspace_name: string;
@@ -20,23 +23,37 @@ const CreateWorkspace = () => {
   } = useForm<FormData>();
 
   const authContext = useContext(AuthContext);
+  const planHook = usePlan();
+  const { loading, startLoading, stopLoading } = useLoading();
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+
+  useEffect(() => {
+    planHook.isAppCrationAllowed() ? '' : setOpenAlert(true);
+  }, [])
 
   const onSubmit = (data: FormData) => {
-    workspace(data)
-      .then((response) => {
-        if (response.status === 201) {
-          Toaster.successToast("Workspace created successfully");
-          authContext.fetchWorkspaces(data.workspace_name);
-          reset();
-        } else if (response.status === 409) {
-          Toaster.infoToast("Workspace name already exists for current organization");
-        } else {
-          toast.error("An unexpected error occurred");
-        }
-      })
-      .catch((error) => {
-        Toaster.errorToast(error.message || "An error occurred");
-      });
+    if (!planHook.isAppCrationAllowed()) {
+      setOpenAlert(true)
+    } else if (!loading) {
+      startLoading();
+      workspace(data)
+        .then((response) => {
+          if (response.status === 201) {
+            Toaster.successToast("Workspace created successfully");
+            authContext.fetchWorkspaces(data.workspace_name);
+            reset();
+          } else if (response.status === 409) {
+            Toaster.infoToast("Workspace name already exists for current organization");
+          } else {
+            toast.error("An unexpected error occurred");
+          }
+        })
+        .catch((error) => {
+          Toaster.errorToast(error.message || "An error occurred");
+        }).finally(() => {
+          stopLoading();
+        })
+    }
   };
 
   return (
@@ -83,6 +100,7 @@ const CreateWorkspace = () => {
           </Grid>
         </Grid>
       </form>
+      <AlertDialog open={openAlert} heading={'Plan Upgrade Needed'} message={'Please go to billing to upgrade your plan'} onCancel={() => setOpenAlert(false)} />
     </Card>
   );
 };

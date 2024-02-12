@@ -72,6 +72,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
 import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
+import { setItemToLocalstorage } from "src/services/locastorageService";
 
 /* 
 type FormValues = {
@@ -120,7 +121,7 @@ const StepperHeaderContainer = styled(CardContent)<CardContentProps>(
   })
 );
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
+const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   "& .MuiStepLabel-root": {
     paddingTop: 0,
   },
@@ -346,6 +347,7 @@ const CreateApp = () => {
     const workspace_id = event.target.value;
     // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
     setWorkspaceId(workspace_id);
+    setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.workspace, workspace_id);
     setRepoSelected(false);
     setRepositories(["No Repository"]);
     fetchGitOwner(workspace_id);
@@ -395,6 +397,9 @@ const CreateApp = () => {
       .then((response) => {
         toast.success("App Created Successfully");
         router.push({ pathname: '/workspace/app-dashboard', query: { appId: response.data.app_id } });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
       })
       .catch((error) => {
         toast.error(error);
@@ -443,7 +448,7 @@ const CreateApp = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={(e) => {
+                        onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
                         }}

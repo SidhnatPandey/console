@@ -29,23 +29,25 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId }) => {
   };
 
   const confirmDestroyWorkspace = () => {
-    startLoading();
-    deleteWorkspace(workspaceId.id)
-      .then(() => {
-        setTimeout(() => {
-          auth.fetchWorkspaces(null);
+    if (!loading) {
+      startLoading();
+      deleteWorkspace(workspaceId.id)
+        .then(() => {
+          setTimeout(() => {
+            auth.fetchWorkspaces(null);
+            setConfirmationDialogOpen(false);
+            removeWorkspace(workspaceId.id);
+            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            router.push(defaultRoute);
+            stopLoading();
+          }, 3000)
+        })
+        .catch((error) => {
+          console.error("Error deleting workspace:", error);
           setConfirmationDialogOpen(false);
-          removeWorkspace(workspaceId.id);
-          const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
-          router.push(defaultRoute);
           stopLoading();
-        }, 3000)
-      })
-      .catch((error) => {
-        console.error("Error deleting workspace:", error);
-        setConfirmationDialogOpen(false);
-        stopLoading();
-      });
+        });
+    }
   };
 
   const removeWorkspace = (id: string) => {
