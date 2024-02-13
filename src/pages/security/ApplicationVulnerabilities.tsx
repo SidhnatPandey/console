@@ -42,13 +42,13 @@ const ApplicationVulnerabilities = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [sbomDownloadInProgress, setSbomDownloadInProgress] = useState<
-    string | null
-  >(null);
+  const [sbomDownloadInProgress, setSbomDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
 
-  const [cveDownloadInProgress, setCveDownloadInProgress] = useState<
-    string | null
-  >(null);
+  const [cveDownloadInProgress, setCveDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
     []
@@ -135,35 +135,51 @@ const ApplicationVulnerabilities = () => {
   };
 
   const getSBOMs = (appId: string, workspaceId: string) => {
-    setSbomDownloadInProgress(appId);
-    sbom(appId, securityContext.runType, workspaceId).then((res) => {
-      const url = `data:application/json;base64,${res?.data}`;
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "sbom.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setSbomDownloadInProgress(null);
-    });
-  };
-
-  const getDownloadAppVulCve = (appId: string, workspaceId: string) => {
-    setCveDownloadInProgress(appId);
-    downloadAppVulCve(appId, securityContext.runType, workspaceId).then(
-      (res) => {
+    if (!sbomDownloadInProgress[appId]) {
+      setSbomDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      sbom(appId, securityContext.runType, workspaceId).then((res) => {
         const url = `data:application/json;base64,${res?.data}`;
         const a = document.createElement("a");
         a.href = url;
-        a.download = "cve.json";
+        a.download = "sbom.json";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        setCveDownloadInProgress(null);
-      }
-    );
+        setSbomDownloadInProgress((prevState) => ({
+          ...prevState,
+          [appId]: false,
+        }));
+      });
+    }
+  };
+
+  const getDownloadAppVulCve = (appId: string, workspaceId: string) => {
+    if (!cveDownloadInProgress[appId]) {
+      setCveDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      downloadAppVulCve(appId, securityContext.runType, workspaceId).then(
+        (res) => {
+          const url = `data:application/json;base64,${res?.data}`;
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "cve.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          setCveDownloadInProgress((prevState) => ({
+            ...prevState,
+            [appId]: false,
+          }));
+        }
+      );
+    }
   };
 
   const handleAppNameClick = (workspaceId: string) => {
@@ -325,16 +341,9 @@ const ApplicationVulnerabilities = () => {
                         <a
                           onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}
                           style={{
-                            cursor:
-                              sbomDownloadInProgress === row.AppId
-                                ? "not-allowed"
-                                : "pointer",
-                            opacity:
-                              sbomDownloadInProgress === row.AppId ? 0.5 : 1,
-                            pointerEvents:
-                              sbomDownloadInProgress === row.AppId
-                                ? "none"
-                                : "auto",
+                            cursor: sbomDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
                           }}
                         >
                           SBOM
@@ -345,16 +354,9 @@ const ApplicationVulnerabilities = () => {
                             getDownloadAppVulCve(row.AppId, row.WorkspaceId)
                           }
                           style={{
-                            cursor:
-                              cveDownloadInProgress === row.AppId
-                                ? "not-allowed"
-                                : "pointer",
-                            opacity:
-                              cveDownloadInProgress === row.AppId ? 0.5 : 1,
-                            pointerEvents:
-                              cveDownloadInProgress === row.AppId
-                                ? "none"
-                                : "auto",
+                            cursor: cveDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
                           }}
                         >
                           CVE
