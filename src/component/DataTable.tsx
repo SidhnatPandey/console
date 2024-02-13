@@ -1,4 +1,6 @@
+import { toTitleCase } from "src/utils/stringUtils";
 import React, { useMemo, useState } from "react";
+import CustomChip from "src/@core/components/mui/chip";
 import {
   Box,
   Table,
@@ -20,32 +22,33 @@ export interface Column {
   sortable?: boolean;
   numeric?: boolean;
   showChip?: boolean;
-}
-
-interface Row {
-  [key: string]: any;
+  strictFunction?: (value: any) => any;
+  strictdata?: string;
+  downloadableLink?: boolean;
 }
 
 interface DataTableProps {
   columns: Column[];
   data: Row[];
-  showHeadings?: boolean;
   heading?: string | null;
+  loading?: boolean;
+}
+
+export interface Row {
+  [key: string]: any;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   columns,
   data,
-  showHeadings = true,
   heading,
+  loading,
 }) => {
-  // State variables and functions for sorting and pagination
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Handler for sorting columns
   const handleRequestSort = (property: string) => {
     const isSortable = columns.find(
       (column) => column.id === property && column.sortable
@@ -57,9 +60,26 @@ const DataTable: React.FC<DataTableProps> = ({
     }
   };
 
-  // Render function for table rows
   const renderRows = useMemo(() => {
-    return [...data]
+    if (!data || data.length === 0) {
+      return (
+        <TableRow>
+          <TableCell
+            colSpan={columns.length}
+            style={{
+              textAlign: "center",
+              fontSize: "18px",
+              paddingTop: "50px",
+              paddingBottom: "50px",
+            }}
+          >
+            {loading ? "Loading ..." : "No Data"}
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return data
       .sort((a, b) => {
         if (order === "asc") {
           return a[orderBy] > b[orderBy] ? 1 : -1;
@@ -71,22 +91,44 @@ const DataTable: React.FC<DataTableProps> = ({
       .map((row, index) => (
         <TableRow key={index + 1}>
           {columns.map((column) => (
-            <TableCell
-              key={column.id}
-            //  align={column.numeric ? "right" : "left"}
-              align="left"
-            >
-              {row[column.id]}
+            <TableCell key={column.id} align="left">
+              {typeof column.strictFunction === "function" &&
+              column.showChip ? (
+                <CustomChip
+                  rounded
+                  skin="light"
+                  label={row.status ? toTitleCase(row.status) : "Pending"}
+                  color={column.strictFunction(row[column.id])}
+                  variant="outlined"
+                />
+              ) : typeof column.strictFunction === "function" &&
+                !column.showChip ? (
+                column.strictFunction(row[column.id])
+              ) : column.downloadableLink ? (
+                <a
+                  href={`data:application/pdf;base64,${row[column.id]}`}
+                  download="document.pdf"
+                >
+                  {column.strictdata ? column.strictdata : "Download"}
+                </a>
+              ) : (
+                column.strictdata || row[column.id]
+              )}
             </TableCell>
           ))}
         </TableRow>
       ));
-  }, [data, columns, order, orderBy, page, rowsPerPage]);
+  }, [data, columns, order, orderBy, page, rowsPerPage, loading]);
 
   return (
+
+    
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%" }}>
+       
         {heading && (
+       /* heading of  the table */
+
           <Box
             sx={{
               display: "flex",
@@ -99,11 +141,12 @@ const DataTable: React.FC<DataTableProps> = ({
             <div></div>
           </Box>
         )}
-        {showHeadings && heading && <Divider />}
-        {/* Table Header */}
+        
+        { heading && <Divider />}
         <TableContainer>
           <Table>
-            {showHeadings && (
+            
+            {
               <TableHead>
                 <TableRow>
                   {columns.map((column) => (
@@ -124,16 +167,15 @@ const DataTable: React.FC<DataTableProps> = ({
                   ))}
                 </TableRow>
               </TableHead>
-            )}
-            {/* Table Body */}
+            }
             <TableBody>{renderRows}</TableBody>
           </Table>
         </TableContainer>
-        {/* Pagination */}
+        
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
+          count={data?.length || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={(event: unknown, newPage: number) => setPage(newPage)}
