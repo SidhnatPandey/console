@@ -4,45 +4,41 @@ import { AuthContext } from "src/context/AuthContext";
 import { getPlans } from "src/services/billingService";
 
 function usePlan() {
+  const authContext = useContext(AuthContext);
 
-    const authContext = useContext(AuthContext);
+  //states
+  const [plans, setPlans] = useState<PricingPlanType[]>([]);
 
-    //states
-    const [plans, setPlans] = useState<PricingPlanType[]>([]);
+  const isAppCrationAllowed = () => {
+    const org = authContext.org;
+    return org?.tier === 1 ? (org.app_count > 0 ? false : true) : true;
+  };
 
-    const isAppCrationAllowed = () => {
-        const org = authContext.org;
-        return (org?.tier === 1) ? (org.app_count > 0 ? false : true) : true;
-    };
+  const planTier = () => {
+    return authContext.org?.tier ?? 0;
+  };
 
-    const isDeveloperPlan = () => {
-        return (authContext.org?.tier === 1)
-    }
+  const fetchPlans = () => {
+    getPlans().then((res) => {
+      setPlans(res.data);
+    });
+  };
+  const isDeveloperPlan = () => {
+    return authContext.org?.tier === 1;
+  };
 
-    const planTier = () => {
-        return authContext.org?.tier ?? 0;
-    }
+  const userPlans = () => {
+    const userPlans = plans.filter((plan: any) => plan.tier >= planTier());
+    return userPlans;
+  };
 
-    const fetchPlans = () => {
-        getPlans().then(
-            res => {
-                setPlans(res.data);
-            }
-        )
-    }
-
-    const userPlans = () => {
-        const userPlans = plans.filter((plan: any) => plan.tier >= planTier());
-        return userPlans;
-    }
-
-    return {
-        isAppCrationAllowed,
-        planTier,
-        userPlans,
-        fetchPlans,
-        isDeveloperPlan
-    };
+  return {
+    isAppCrationAllowed,
+    planTier,
+    userPlans,
+    fetchPlans,
+    isDeveloperPlan,
+  };
 }
 
 export default usePlan;

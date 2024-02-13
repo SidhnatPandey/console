@@ -15,7 +15,11 @@ import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MultiStepBarChart from "src/component/multiStepBar";
-import { sbom, vulnerabilitiesList } from "src/services/securityService";
+import {
+  downloadAppVulCve,
+  sbom,
+  vulnerabilitiesList,
+} from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
@@ -38,6 +42,13 @@ const ApplicationVulnerabilities = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [sbomDownloadInProgress, setSbomDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
+
+  const [cveDownloadInProgress, setCveDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
     []
@@ -124,17 +135,51 @@ const ApplicationVulnerabilities = () => {
   };
 
   const getSBOMs = (appId: string, workspaceId: string) => {
-    sbom(appId, securityContext.runType, workspaceId).then((res) => {
-      console.log(res.data);
-      const url = `data:application/pdf;base64,${res.data}`;
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "sbom.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
+    if (!sbomDownloadInProgress[appId]) {
+      setSbomDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      sbom(appId, securityContext.runType, workspaceId).then((res) => {
+        const url = `data:application/json;base64,${res?.data}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "sbom.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setSbomDownloadInProgress((prevState) => ({
+          ...prevState,
+          [appId]: false,
+        }));
+      });
+    }
+  };
+
+  const getDownloadAppVulCve = (appId: string, workspaceId: string) => {
+    if (!cveDownloadInProgress[appId]) {
+      setCveDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      downloadAppVulCve(appId, securityContext.runType, workspaceId).then(
+        (res) => {
+          const url = `data:application/json;base64,${res?.data}`;
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "cve.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          setCveDownloadInProgress((prevState) => ({
+            ...prevState,
+            [appId]: false,
+          }));
+        }
+      );
+    }
   };
 
   const handleAppNameClick = (workspaceId: string) => {
@@ -173,9 +218,13 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
         <TableContainer sx={{ width: "100%" }}>
-          <Table sx={{ border: "1px solid #ced4da" }}>
+          <Table>
             <TableHead>
-              <TableRow>
+              <TableRow
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.main + "10",
+                }}
+              >
                 <TableCell
                   onClick={() => handleSort("AppName")}
                   style={{ width: 300 }}
@@ -289,8 +338,28 @@ const ApplicationVulnerabilities = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <a onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}>
+                        <a
+                          onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}
+                          style={{
+                            cursor: sbomDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                        >
                           SBOM
+                        </a>
+                        <span style={{ color: "#aaa" }}> / </span>
+                        <a
+                          onClick={() =>
+                            getDownloadAppVulCve(row.AppId, row.WorkspaceId)
+                          }
+                          style={{
+                            cursor: cveDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                        >
+                          CVE
                         </a>
                       </TableCell>
                     </TableRow>
@@ -298,12 +367,12 @@ const ApplicationVulnerabilities = () => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={5}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",
-                      paddingTop: "50px", // Increase the top padding
-                      paddingBottom: "50px", // Increase the bottom padding
+                      paddingTop: "50px",
+                      paddingBottom: "50px",
                     }}
                   >
                     {loading ? "Loading ..." : "No Apps Available"}

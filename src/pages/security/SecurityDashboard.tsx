@@ -108,17 +108,20 @@ const SecurityDashboard = ({
               {showWorkspaceDropdown ? (
                 <WorkspaceDropdown />
               ) : (
-                <Button
-                  variant="contained"
-                  size="medium"
-                  sx={{
-                    backgroundColor: "lightgray",
-                    "&:hover": { backgroundColor: "lightgray" },
-                    color: "black",
-                  }}
-                >
-                  {workspace.getWorkspaceNameById(wid)}
-                </Button>
+                <div style={{ display: "flex" }}>
+                  <Typography
+                    variant="body1"
+                    style={{ fontSize: 19, marginRight: 8 }}
+                  >
+                    Workspace :
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{ fontSize: 19, fontWeight: "bold" }}
+                  >
+                    {workspace.getWorkspaceNameById(wid)}
+                  </Typography>
+                </div>
               )}
             </div>
             <div

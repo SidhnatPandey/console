@@ -90,3 +90,15 @@ export const sbom = (
   url = url.replace("{workspace_id}", workspace_id);
   return get(url).then((response) => response?.data);
 };
+
+export const downloadAppVulCve = (
+  app_id: string,
+  run_type: string,
+  workspace_id: string
+) => {
+  setApiBaseUrl("security");
+  let url = APP_API.downloadAppVulCve.replace("{app_id}", app_id);
+  url = url.replace("{run_type}", run_type);
+  url = url.replace("{workspace_id}", workspace_id);
+  return get(url).then((response) => response?.data);
+};
