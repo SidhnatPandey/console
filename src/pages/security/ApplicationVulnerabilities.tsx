@@ -15,7 +15,11 @@ import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MultiStepBarChart from "src/component/multiStepBar";
-import { sbom, vulnerabilitiesList } from "src/services/securityService";
+import {
+  downloadAppVulCve,
+  sbom,
+  vulnerabilitiesList,
+} from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
@@ -38,9 +42,13 @@ const ApplicationVulnerabilities = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [downloadInProgress, setDownloadInProgress] = useState<string | null>(
-    null
-  );
+  const [sbomDownloadInProgress, setSbomDownloadInProgress] = useState<
+    string | null
+  >(null);
+
+  const [cveDownloadInProgress, setCveDownloadInProgress] = useState<
+    string | null
+  >(null);
 
   const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
     []
@@ -127,10 +135,9 @@ const ApplicationVulnerabilities = () => {
   };
 
   const getSBOMs = (appId: string, workspaceId: string) => {
-    setDownloadInProgress(appId);
+    setSbomDownloadInProgress(appId);
     sbom(appId, securityContext.runType, workspaceId).then((res) => {
-      console.log(res.data);
-      const url = `data:application/json;base64,${res.data}`;
+      const url = `data:application/json;base64,${res?.data}`;
       const a = document.createElement("a");
       a.href = url;
       a.download = "sbom.json";
@@ -138,8 +145,25 @@ const ApplicationVulnerabilities = () => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setDownloadInProgress(null);
+      setSbomDownloadInProgress(null);
     });
+  };
+
+  const getDownloadAppVulCve = (appId: string, workspaceId: string) => {
+    setCveDownloadInProgress(appId);
+    downloadAppVulCve(appId, securityContext.runType, workspaceId).then(
+      (res) => {
+        const url = `data:application/json;base64,${res?.data}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "cve.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setCveDownloadInProgress(null);
+      }
+    );
   };
 
   const handleAppNameClick = (workspaceId: string) => {
@@ -302,17 +326,38 @@ const ApplicationVulnerabilities = () => {
                           onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}
                           style={{
                             cursor:
-                              downloadInProgress === row.AppId
+                              sbomDownloadInProgress === row.AppId
                                 ? "not-allowed"
                                 : "pointer",
-                            opacity: downloadInProgress === row.AppId ? 0.5 : 1,
+                            opacity:
+                              sbomDownloadInProgress === row.AppId ? 0.5 : 1,
                             pointerEvents:
-                              downloadInProgress === row.AppId
+                              sbomDownloadInProgress === row.AppId
                                 ? "none"
                                 : "auto",
                           }}
                         >
                           SBOM
+                        </a>
+                        <span style={{ color: "#aaa" }}> / </span>
+                        <a
+                          onClick={() =>
+                            getDownloadAppVulCve(row.AppId, row.WorkspaceId)
+                          }
+                          style={{
+                            cursor:
+                              cveDownloadInProgress === row.AppId
+                                ? "not-allowed"
+                                : "pointer",
+                            opacity:
+                              cveDownloadInProgress === row.AppId ? 0.5 : 1,
+                            pointerEvents:
+                              cveDownloadInProgress === row.AppId
+                                ? "none"
+                                : "auto",
+                          }}
+                        >
+                          CVE
                         </a>
                       </TableCell>
                     </TableRow>
@@ -320,12 +365,12 @@ const ApplicationVulnerabilities = () => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={5}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",
-                      paddingTop: "50px", // Increase the top padding
-                      paddingBottom: "50px", // Increase the bottom padding
+                      paddingTop: "50px",
+                      paddingBottom: "50px",
                     }}
                   >
                     {loading ? "Loading ..." : "No Apps Available"}
