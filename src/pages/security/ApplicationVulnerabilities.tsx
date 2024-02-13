@@ -312,9 +312,7 @@ const ApplicationVulnerabilities = () => {
                                 : "auto",
                           }}
                         >
-                          {downloadInProgress === row.AppId
-                            ? "Downloading..."
-                            : "SBOM"}
+                          SBOM
                         </a>
                       </TableCell>
                     </TableRow>
