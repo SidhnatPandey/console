@@ -46,6 +46,8 @@ import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import { useForm, Controller } from "react-hook-form";
 import Toaster from "src/utils/toaster";
 import useLoading from "src/hooks/loading";
+import AlertDialog from "src/component/alertDialog";
+import usePlan from "src/hooks/plan";
 
 interface RowOptionsProps {
   user: UserDataType;
@@ -179,7 +181,9 @@ const UserList = () => {
   const [users, setUsers] = useState<UserDataType[]>([]);
   const [existingUser, setExistingUser] = useState<boolean>(false);
   const [userNameExist, setUserNameExist] = useState<boolean>(false);
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
   const { loading, startLoading, stopLoading } = useLoading();
+  const planHook = usePlan();
   useEffect(() => {
     const orgId = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!
@@ -203,15 +207,19 @@ const UserList = () => {
   };
 
   const handleAddUserClick = () => {
-    setIsEditMode(false);
-    reset({
-      email: "",
-      username: "",
-      organization: "",
-      role: "",
-      workspace: "",
-    });
-    setAddUserDialogOpen(true);
+    if (!planHook.isDeveloperPlan()) {
+      setIsEditMode(false);
+      reset({
+        email: "",
+        username: "",
+        organization: "",
+        role: "",
+        workspace: "",
+      });
+      setAddUserDialogOpen(true);
+    } else {
+      setOpenAlert(true);
+    }
   };
 
   const handleEditUserClick = (user: UserDataType) => {
@@ -697,6 +705,7 @@ const UserList = () => {
           </DialogActions>
         </form>
       </Dialog>
+      <AlertDialog open={openAlert} heading={'Plan Upgrade Needed'} message={'Please go to billing to upgrade your plan'} onCancel={() => setOpenAlert(false)} />
     </>
   );
 };

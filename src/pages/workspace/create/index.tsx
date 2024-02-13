@@ -32,7 +32,7 @@ const CreateWorkspace = () => {
   }, []);
 
   const onSubmit = (data: FormData) => {
-    if (!planHook.isAppCrationAllowed()) {
+    if (planHook.isDeveloperPlan()) {
       setOpenAlert(true);
     } else if (!loading) {
       startLoading();

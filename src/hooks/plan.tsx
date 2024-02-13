@@ -23,9 +23,12 @@ function usePlan() {
       setPlans(res.data);
     });
   };
+  const isDeveloperPlan = () => {
+    return authContext.org?.tier === 1;
+  };
 
   const userPlans = () => {
-    const userPlans = plans?.filter((plan: any) => plan.tier >= planTier());
+    const userPlans = plans.filter((plan: any) => plan.tier >= planTier());
     return userPlans;
   };
 
@@ -34,6 +37,7 @@ function usePlan() {
     planTier,
     userPlans,
     fetchPlans,
+    isDeveloperPlan,
   };
 }
 
