@@ -210,7 +210,7 @@ const SecurityVulnerabilities = (props: Props) => {
               <text
                 x="50%"
                 y="55%"
-                fill="gray"
+                fill="#666666"
                 textAnchor="middle"
                 dominantBaseline="central"
                 style={{
