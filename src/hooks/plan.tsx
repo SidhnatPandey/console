@@ -15,6 +15,10 @@ function usePlan() {
         return (org?.tier === 1) ? (org.app_count > 0 ? false : true) : true;
     };
 
+    const isDeveloperPlan = () => {
+        return (authContext.org?.tier === 1)
+    }
+
     const planTier = () => {
         return authContext.org?.tier ?? 0;
     }
@@ -36,7 +40,8 @@ function usePlan() {
         isAppCrationAllowed,
         planTier,
         userPlans,
-        fetchPlans
+        fetchPlans,
+        isDeveloperPlan
     };
 }
 
