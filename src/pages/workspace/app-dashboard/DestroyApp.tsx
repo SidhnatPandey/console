@@ -10,9 +10,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-hot-toast";
 import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
 
 interface DestroyAppProps {
   loading: boolean;
@@ -36,6 +37,8 @@ const DestroyApp = (props: DestroyAppProps) => {
     }
   };
 
+  const authContext = useContext(AuthContext)
+
   const confirmDestroyApp = () => {
     if (appId) {
       destroyApp(appId, workspaceId)
@@ -43,7 +46,9 @@ const DestroyApp = (props: DestroyAppProps) => {
           setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
-            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/'; setTimeout(() => {
+              authContext.fetchOrg();
+            }, 2000);
             router.push(defaultRoute);
           } else {
             toast.error("App deletion failed. Please try again.");
