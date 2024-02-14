@@ -13,6 +13,7 @@ import { convertToString } from "src/@core/utils/string";
 import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
+import BackButton from "src/component/backButton";
 
 const AppSecurityDetails = () => {
   const router = useRouter();
@@ -49,6 +50,7 @@ const AppSecurityDetails = () => {
         </Box>
         <SecurityCveChart appId={convertToString(appId)} />
         <CveVulnerabilities appId={convertToString(appId)} />
+        <BackButton />
       </SecurityProvider>
     </>
   );

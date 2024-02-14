@@ -35,9 +35,9 @@ const SecurityCompliance = (props: Props) => {
     chart: {
       sparkline: { enabled: true },
     },
-    stroke: { dashArray: 10 },
+
     labels: ["Policy Compliance"],
-    colors: [hexToRGBA(theme.palette.primary.main, 1)],
+    colors: [hexToRGBA(theme.palette.success.main, 1)],
     states: {
       hover: {
         filter: { type: "none" },
@@ -50,20 +50,20 @@ const SecurityCompliance = (props: Props) => {
       type: "gradient",
       gradient: {
         shade: "dark",
-        opacityTo: 0.5,
+        opacityTo: 1,
         opacityFrom: 1,
-        shadeIntensity: 0.5,
+        shadeIntensity: 1,
         stops: [30, 70, 100],
         inverseColors: false,
-        gradientToColors: [theme.palette.primary.main],
+        gradientToColors: [theme.palette.success.main],
       },
     },
     plotOptions: {
       radialBar: {
-        endAngle: 130,
+        endAngle: 140,
         startAngle: -140,
         hollow: { size: "60%" },
-        track: { background: "transparent" },
+        track: { background: "#EA5455" },
         dataLabels: {
           name: {
             offsetY: -15,
@@ -113,11 +113,11 @@ const SecurityCompliance = (props: Props) => {
   };
 
   const [scanData, setScanData] = useState({
-    totalScans: 0,
+    totalApps: 0,
     succeeded: 0,
     failed: 0,
   });
-  const [successPercentage, setSuccessPercentage] = useState(100);
+  const [successPercentage, setSuccessPercentage] = useState(0);
   const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
@@ -133,7 +133,7 @@ const SecurityCompliance = (props: Props) => {
       .then((response) => {
         setScanData(response?.data || {});
         let percentage =
-          (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+          (response?.data.succeeded / response?.data.totalApps) * 100 || 0;
         percentage = parseFloat(percentage.toFixed(2));
         setSuccessPercentage(percentage);
         setChartKey(Math.random());
@@ -168,14 +168,14 @@ const SecurityCompliance = (props: Props) => {
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
               <Typography data-testid="total-scans" sx={{ fontWeight: 500 }}>
-                Total Scans
+                Total Apps
               </Typography>
               <Typography
                 sx={{ mb: 5, color: "text.secondary" }}
                 variant="h6"
                 data-testid="total-scans-data"
               >
-                {scanData.totalScans}
+                {scanData.totalApps}
               </Typography>
             </Grid>
 
