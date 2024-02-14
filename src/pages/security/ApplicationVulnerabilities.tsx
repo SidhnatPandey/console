@@ -23,6 +23,7 @@ import {
 import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import Toaster from "src/utils/toaster";
 
 interface AppSecurityData {
   AppId: string;
@@ -134,51 +135,83 @@ const ApplicationVulnerabilities = () => {
     });
   };
 
-  const getSBOMs = (appId: string, workspaceId: string) => {
+  const getSBOMs = (appId: string, appName: string, workspaceId: string) => {
     if (!sbomDownloadInProgress[appId]) {
       setSbomDownloadInProgress((prevState) => ({
         ...prevState,
         [appId]: true,
       }));
-      sbom(appId, securityContext.runType, workspaceId).then((res) => {
-        const url = `data:application/json;base64,${res?.data}`;
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "sbom.json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setSbomDownloadInProgress((prevState) => ({
-          ...prevState,
-          [appId]: false,
-        }));
-      });
+      sbom(appId, securityContext.runType, workspaceId)
+        .then((res) => {
+          if (res && res.data) {
+            const url = `data:application/json;base64,${res.data}`;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "sbom.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Toaster.successToast(
+              `Successfully downloaded SBOM for ${appName}.`
+            );
+          } else {
+            throw new Error(`Try Again Later.`);
+          }
+        })
+        .catch((error) => {
+          Toaster.errorToast(
+            `Error downloading SBOM for ${appName}, ${error.message}`
+          );
+        })
+        .finally(() => {
+          setSbomDownloadInProgress((prevState) => ({
+            ...prevState,
+            [appId]: false,
+          }));
+        });
     }
   };
 
-  const getDownloadAppVulCve = (appId: string, workspaceId: string) => {
+  const getDownloadAppVulCve = (
+    appId: string,
+    appName: string,
+    workspaceId: string
+  ) => {
     if (!cveDownloadInProgress[appId]) {
       setCveDownloadInProgress((prevState) => ({
         ...prevState,
         [appId]: true,
       }));
-      downloadAppVulCve(appId, securityContext.runType, workspaceId).then(
-        (res) => {
-          const url = `data:application/json;base64,${res?.data}`;
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "cve.json";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
+      downloadAppVulCve(appId, securityContext.runType, workspaceId)
+        .then((res) => {
+          if (res && res.data) {
+            const url = `data:application/json;base64,${res.data}`;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "cve.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Toaster.successToast(
+              `Successfully downloaded CVE data for ${appName}.`
+            );
+          } else {
+            throw new Error(`Try Again Later.`);
+          }
+        })
+        .catch((error) => {
+          Toaster.errorToast(
+            `Error downloading CVE data for ${appName}, ${error.message}`
+          );
+        })
+        .finally(() => {
           setCveDownloadInProgress((prevState) => ({
             ...prevState,
             [appId]: false,
           }));
-        }
-      );
+        });
     }
   };
 
@@ -339,7 +372,9 @@ const ApplicationVulnerabilities = () => {
                       </TableCell>
                       <TableCell>
                         <a
-                          onClick={() => getSBOMs(row.AppId, row.WorkspaceId)}
+                          onClick={() =>
+                            getSBOMs(row.AppId, row.AppName, row.WorkspaceId)
+                          }
                           style={{
                             cursor: sbomDownloadInProgress[row.AppId]
                               ? "not-allowed"
@@ -351,7 +386,11 @@ const ApplicationVulnerabilities = () => {
                         <span style={{ color: "#aaa" }}> / </span>
                         <a
                           onClick={() =>
-                            getDownloadAppVulCve(row.AppId, row.WorkspaceId)
+                            getDownloadAppVulCve(
+                              row.AppId,
+                              row.AppName,
+                              row.WorkspaceId
+                            )
                           }
                           style={{
                             cursor: cveDownloadInProgress[row.AppId]
