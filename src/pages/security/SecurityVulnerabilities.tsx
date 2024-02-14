@@ -4,6 +4,7 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
+import { useTheme } from "@mui/material/styles";
 
 // ** Third Party Imports
 import { Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -44,6 +45,7 @@ interface Props {
 
 const SecurityVulnerabilities = (props: Props) => {
   const { appId } = props;
+  const theme = useTheme();
 
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState<number>(0);
@@ -126,6 +128,8 @@ const SecurityVulnerabilities = (props: Props) => {
     active,
     payload,
   }) => {
+    const theme = useTheme();
+
     if (active && payload && payload.length > 0) {
       const payloadData = payload[0];
       if (payloadData && payloadData.value !== undefined) {
@@ -133,7 +137,8 @@ const SecurityVulnerabilities = (props: Props) => {
           <div
             className="custom-tooltip"
             style={{
-              backgroundColor: "white",
+              backgroundColor: theme.palette.mode === "dark" ? "#333" : "white",
+              color: theme.palette.mode === "dark" ? "white" : "black",
               padding: "5px",
               border: "1px solid #ddd",
               boxShadow: "0px 0px 5px #ddd",
@@ -154,7 +159,7 @@ const SecurityVulnerabilities = (props: Props) => {
   };
 
   return (
-    <Card sx={{ width: "38%" }} data-testid="vulnerability-card">
+    <Card sx={{ width: "49%" }} data-testid="vulnerability-card">
       <CardHeader
         title="Vulnerabilities"
         data-testid="card-header"
@@ -164,7 +169,7 @@ const SecurityVulnerabilities = (props: Props) => {
         }}
       />
       <CardContent>
-        <Box sx={{ height: 350, marginTop: "-30px" }} data-testid="box">
+        <Box sx={{ height: 350, marginTop: "-10px" }} data-testid="box">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart
               height={350}
@@ -174,6 +179,7 @@ const SecurityVulnerabilities = (props: Props) => {
               <Pie
                 data={vulnerabilities}
                 innerRadius={80}
+                outerRadius={160}
                 dataKey="value"
                 label={renderCustomizedLabel}
                 labelLine={false}
@@ -187,11 +193,16 @@ const SecurityVulnerabilities = (props: Props) => {
               <Tooltip content={<CustomTooltip />} data-testid="tooltip" />
               <text
                 x="50%"
-                y="50%"
-                fill="grey"
+                y="47%"
+                fill="gray"
                 textAnchor="middle"
                 dominantBaseline="central"
-                style={{ fontSize: "18px", fontWeight: "bold" }}
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "gray",
+                  fontFamily: theme.typography.fontFamily,
+                }}
                 data-testid="CVEs-title"
               >
                 CVEs
@@ -199,10 +210,13 @@ const SecurityVulnerabilities = (props: Props) => {
               <text
                 x="50%"
                 y="55%"
-                fill="grey"
+                fill="#666666"
                 textAnchor="middle"
                 dominantBaseline="central"
-                style={{ fontSize: "15px" }}
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                }}
                 data-testid="total-vulnerability"
               >
                 {totalVulnerabilities}
@@ -226,7 +240,7 @@ const SecurityVulnerabilities = (props: Props) => {
               "& svg": { mr: 1.5, color: "#A8AAAE" },
             }}
           >
-            <Icon icon="mdi:circle" fontSize="0.5rem" />
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="low-severity">
               Low
             </Typography>
@@ -239,7 +253,7 @@ const SecurityVulnerabilities = (props: Props) => {
               "& svg": { mr: 1.5, color: "#7367F0" },
             }}
           >
-            <Icon icon="mdi:circle" fontSize="0.5rem" />
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="medium-severity">
               Medium
             </Typography>
@@ -252,7 +266,7 @@ const SecurityVulnerabilities = (props: Props) => {
               "& svg": { mr: 1.5, color: "#FF9F43" },
             }}
           >
-            <Icon icon="mdi:circle" fontSize="0.5rem" />
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="high-severity">
               High
             </Typography>
@@ -265,7 +279,7 @@ const SecurityVulnerabilities = (props: Props) => {
               "& svg": { mr: 1.5, color: "#EA5455" },
             }}
           >
-            <Icon icon="mdi:circle" fontSize="0.5rem" />
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="critical-severity">
               Critical
             </Typography>
@@ -277,7 +291,7 @@ const SecurityVulnerabilities = (props: Props) => {
               "& svg": { mr: 1.5, color: "#00CFE8" },
             }}
           >
-            <Icon icon="mdi:circle" fontSize="0.5rem" />
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="unknown-severity">
               Unknown
             </Typography>

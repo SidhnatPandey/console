@@ -28,12 +28,12 @@ const CreateWorkspace = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   useEffect(() => {
-    planHook.isAppCrationAllowed() ? '' : setOpenAlert(true);
-  }, [])
+    planHook.isAppCrationAllowed() ? "" : setOpenAlert(true);
+  }, []);
 
   const onSubmit = (data: FormData) => {
     if (planHook.isDeveloperPlan()) {
-      setOpenAlert(true)
+      setOpenAlert(true);
     } else if (!loading) {
       startLoading();
       workspace(data)
@@ -43,16 +43,19 @@ const CreateWorkspace = () => {
             authContext.fetchWorkspaces(data.workspace_name);
             reset();
           } else if (response.status === 409) {
-            Toaster.infoToast("Workspace name already exists for current organization");
+            Toaster.infoToast(
+              "Workspace name already exists for current organization"
+            );
           } else {
             toast.error("An unexpected error occurred");
           }
         })
         .catch((error) => {
           Toaster.errorToast(error.message || "An error occurred");
-        }).finally(() => {
-          stopLoading();
         })
+        .finally(() => {
+          stopLoading();
+        });
     }
   };
 
@@ -65,6 +68,7 @@ const CreateWorkspace = () => {
           <Grid item xs={8}>
             <TextField
               data-testid="workspaceName"
+              inputProps={{ maxLength: 20 }}
               fullWidth
               label="Workspace Name *"
               variant="outlined"
@@ -100,14 +104,19 @@ const CreateWorkspace = () => {
           </Grid>
         </Grid>
       </form>
-      <AlertDialog open={openAlert} heading={'Plan Upgrade Needed'} message={'Please go to billing to upgrade your plan'} onCancel={() => setOpenAlert(false)} />
+      <AlertDialog
+        open={openAlert}
+        heading={"Plan Upgrade Needed"}
+        message={"Please go to billing to upgrade your plan"}
+        onCancel={() => setOpenAlert(false)}
+      />
     </Card>
   );
 };
 
 CreateWorkspace.acl = {
-  action: 'read',
-  subject: 'workspace'
-}
+  action: "read",
+  subject: "workspace",
+};
 
 export default CreateWorkspace;
