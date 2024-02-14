@@ -145,9 +145,10 @@ const ApplicationVulnerabilities = () => {
         .then((res) => {
           if (res && res.data) {
             const url = `data:application/json;base64,${res.data}`;
+            const fileName = `sbom_${appName}.json`;
             const a = document.createElement("a");
             a.href = url;
-            a.download = "sbom.json";
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -187,9 +188,10 @@ const ApplicationVulnerabilities = () => {
         .then((res) => {
           if (res && res.data) {
             const url = `data:application/json;base64,${res.data}`;
+            const fileName = `cve_${appName}.json`;
             const a = document.createElement("a");
             a.href = url;
-            a.download = "cve.json";
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
