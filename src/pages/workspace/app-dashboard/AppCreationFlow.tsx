@@ -55,7 +55,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
     if (!rebuilding) {
       setRebuilding(true);
       rebuild(supplyChainData.app_id, workspaceId).then(() => {
-        Toaster.successToast('Initiatest Rebuild. Please wait for sometime.')
+        Toaster.successToast('Initiated Rebuild. Please wait for sometime.')
       }).catch(() => {
         Toaster.errorToast('Failed to Rebuild')
       }).finally(() => {
