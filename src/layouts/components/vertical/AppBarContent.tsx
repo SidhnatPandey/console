@@ -151,7 +151,7 @@ const AppBarContent = (props: Props) => {
           variant="contained"
           sx={{ marginRight: "10px", borderRadius: "4px" }}
           size="medium"
-          onClick={() => router.push("/create-app")}
+          onClick={createApp}
         >
           Create
         </Button>
