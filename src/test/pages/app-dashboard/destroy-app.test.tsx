@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { destroyApp } from 'src/services/appService';
-import DestroyApp from 'src/pages/apps/app-dashboard/DestroyApp';
+import DestroyApp from 'src/pages/workspace/app-dashboard/DestroyApp';
 import userEvent from '@testing-library/user-event';
 import toast from 'react-hot-toast';
 
@@ -10,6 +10,11 @@ jest.mock('react-hot-toast', () => ({
         error: jest.fn(),
     },
 }));
+jest.mock("next/router", () => ({
+    useRouter: () => ({
+      push: jest.fn(),
+    }),
+  }));
 
 jest.mock('src/services/appService', () => ({
     destroyApp: jest.fn() as jest.MockedFunction<typeof destroyApp>,

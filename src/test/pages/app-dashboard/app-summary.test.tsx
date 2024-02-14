@@ -1,4 +1,4 @@
-import AppSummary from "../../../pages/apps/app-dashboard/AppSummary";
+import AppSummary from "../../../pages/workspace/app-dashboard/AppSummary";
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';

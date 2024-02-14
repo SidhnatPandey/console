@@ -50,7 +50,7 @@ describe("UserProfileHeader", () => {
   });
 
   it("renders the user profile header correctly", async () => {
-    render(<UserProfileHeader setAllUserData={jest.fn()} />);
+    render(<UserProfileHeader profileData={null}  />);
 
     await waitFor(() => {
       expect(screen.getByTestId("profile-picture")).toBeInTheDocument();

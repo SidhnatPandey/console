@@ -1,0 +1,156 @@
+// import React from "react";
+// import { useState, useEffect } from "react";
+// import { Box, Typography } from "@mui/material";
+// import DataTable, { Column, Row } from "src/component/DataTable"; // Assuming the file path to your GenericTable component
+// import { listOfInvoice } from "src/services/billingService";
+
+// // interface data {
+// //   id: string;
+// //   total_cost: number;
+// //   created_at: string;
+// //   Status: string;
+// //   pdf: string;
+// // }
+
+// const InvoiceTable: React.FC = () => {
+//   const [invoices, setInvoices] = useState<Row[]>([]);
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const getListOfInvoices = () => {
+//     setLoading(true);
+//     listOfInvoice().then((response) => {
+//       if (response) {
+//         setLoading(false);
+//         setInvoices(response.data);
+//         console.log(response.data);
+//       }
+//     });
+//   };
+
+//   useEffect(() => {
+//     getListOfInvoices();
+//   }, []);
+
+//   const columns: Column[] = [
+//     { id: "id", label: "ID", sortable: true ,},
+//     { id: "total_cost", label: "Total Cost", sortable: true },
+//     { id: "created_at", label: "Invoice Date", sortable: true },
+//     { id: "status", label: "Status", sortable: false },
+//     { id: "pdf", label: "Download", sortable: false },
+//   ];
+
+//   return (
+//     <Box>
+//       <DataTable
+//         columns={columns}
+//         data={invoices}
+//         heading="Billing History"
+//         loading={loading}
+//       />
+//     </Box>
+//   );
+// };
+
+// export default InvoiceTable;
+
+
+
+
+
+// InvoiceTable.tsx
+
+import React, { useState, useEffect } from "react";
+import { Box } from "@mui/material";
+import DataTable, { Column, Row } from "src/component/DataTable"; // Assuming the file path to your DataTable component
+import { listOfInvoice } from "src/services/billingService";
+
+
+
+
+
+function formatDate(timestamp: string): string {
+  const months: string[] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const date: Date = new Date(timestamp);
+  const day: number = date.getDate();
+  const month: string = months[date.getMonth()];
+  const year: number = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
+
+const getStatusChipColor = (status: any) => {
+  switch (status.toLowerCase()) {
+    case "paid":
+      return "success";
+    case "unpaid":
+      return "error";
+    default:
+      return "warning";
+  }
+};
+
+const addDollarSign = (value: number | string): string => {
+  return `$ ${value}`;
+};
+
+
+
+
+
+
+const InvoiceTable: React.FC = () => {
+  const [invoices, setInvoices] = useState<Row[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getListOfInvoices = () => {
+    setLoading(true);
+    listOfInvoice().then((response) => {
+      if (response) {
+        setLoading(false);
+        setInvoices(response.data);
+      }
+    });
+  };
+
+
+  useEffect(() => {
+    getListOfInvoices();
+  }, []);
+
+  const columns: Column[] = [
+    { id: "invoice_number", label: "invoice number", sortable: true },
+    { id: "total_cost", label: "Total Cost", sortable: true ,strictFunction: addDollarSign},
+    { id: "created_at", label: "Invoice Date", sortable: true, strictFunction: formatDate },
+    { id: "status", label: "Status", sortable: false,showChip:true,strictFunction:getStatusChipColor },
+    { id: "pdf", label: "Download", sortable: false, downloadableLink:true},
+  ];
+
+  return (
+    <Box>
+      <DataTable
+        columns={columns}
+        data={invoices}
+        heading="Billing History"
+        loading={loading}
+      />
+    </Box>
+  );
+}
+
+
+export default InvoiceTable;
+

@@ -3,8 +3,9 @@ import UserProfileHeader from "./UserProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import Profile from "./Profile";
 import { AuthContext } from "src/context/AuthContext";
+import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
-const Index = () => {
+const MyProfile = () => {
   const authContext = useContext(AuthContext);
 
   return (
@@ -16,4 +17,9 @@ const Index = () => {
   );
 }
 
-export default Index;
+MyProfile.acl = {
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.profile
+}
+
+export default MyProfile;

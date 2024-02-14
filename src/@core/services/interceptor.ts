@@ -19,6 +19,11 @@ export const setApiBaseUrl = (service = 'core') => {
         case 'security':
             base_url = env('NEXT_PUBLIC_SECURITY_BASE_URL');
             break;
+        case 'billing':
+            base_url = env('NEXT_PUBLIC_BILLING_BASE_URL');
+            break;
+        default:
+            base_url = baseUrl;
     }
     axiosInstance.defaults.baseURL = base_url;
 };
@@ -29,9 +34,11 @@ axiosInstance.interceptors.request.use(
         // You can modify headers, add authentication tokens, etc.
         const jwtToken = window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.token);
         const username = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.userName)!);
+        const orgId = JSON.parse(window.localStorage.getItem(LOCALSTORAGE_CONSTANTS.ogrId)!);
 
         if (jwtToken) { config.headers["Authorization"] = `Bearer ${jwtToken}` }
         if (username) { config.headers["App-User"] = username }
+        if (orgId) { config.headers["org_id"] = orgId }
         return config;
     },
     (error) => {

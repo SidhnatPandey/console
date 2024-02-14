@@ -3,14 +3,15 @@
 To Compile
 
 ```
-yarn install
+npm install
 ```
 
 To run locally
 ```
-yarn dev
+npm run dev
 ```
 
 To Test
 ```
+npm run test
 ```

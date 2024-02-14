@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.13.0]
+        node-version: [20.11.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -24,21 +24,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
       
-    # Step 2: Set up Node.js environment with Yarn  
+    # Step 2: Set up Node.js environment with NPM  
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
+        cache: 'npm'
         
     # Step 3: Install Dependencies    
     - name: Install dependencies
-      run: yarn --frozen-lockfile
+      run: npm ci
       
-    # Step 4: Build the Next.js application
-    - name: Build Next.js application
-      run: yarn build
-      
-    # Step 5: Code Quality Scan with ESLint
+    # Step 4: Code Quality Scan with ESLint
     - name: Code Quality Scan with ESLint
-      run: yarn lint
+      run: npm run lint

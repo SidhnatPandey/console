@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // ** MUI Imports
 import Box from "@mui/material/Box";
@@ -70,8 +70,11 @@ import {
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from 'next-runtime-env';
+import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
+import { setItemToLocalstorage } from "src/services/locastorageService";
 
-
+/* 
 type FormValues = {
   application_name: string;
   git_repo: string;
@@ -83,7 +86,7 @@ type ConfigurationValues = {
   port: number;
   http_path: string;
   env_variables: EnvironmentVariable[];
-};
+}; */
 
 type EnvironmentVariable = {
   key: string;
@@ -118,7 +121,7 @@ const StepperHeaderContainer = styled(CardContent)<CardContentProps>(
   })
 );
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
+const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   "& .MuiStepLabel-root": {
     paddingTop: 0,
   },
@@ -148,10 +151,12 @@ const defaultSourceCodeValues = {
   git_repo: "",
   git_branch: "",
   src_code_path: "",
+  workspace_id: ""
 };
 
 const sourceCodeSchema = yup.object().shape({
   application_name: yup.string().required(),
+  workspace_id: yup.string().required(),
   git_repo: yup.string().required(),
   git_branch: yup.string().required(),
   src_code_path: yup.string(),
@@ -187,21 +192,24 @@ const ConfigurationSchema = yup.object().shape({
 
 const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
 
-const StepperCustomVertical = () => {
+const CreateApp = () => {
   // ** States
 
+  const storedWorkspace = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
+  const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
+  const authContext = useContext(AuthContext);
 
   // Handle Stepper
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     if (activeStep === 1) {
-      const sourceCodeValue = getSoruceCodeValue();
+      // const sourceCodeValue = getSoruceCodeValue();
       //setSourceCodeValue();
     }
   };
@@ -218,12 +226,17 @@ const StepperCustomVertical = () => {
     }
   }, [gitUser]);
 
+  useEffect(() => {
+    setSourceCodeValue('workspace_id', workspaceId);
+  }, [authContext.workspaces, workspaceId])
+
   // react hook form
   const {
     control: sourceCodeControl,
     handleSubmit: handleSourceCodeSubmit,
     register: sourceCodeRegister,
     getValues: getSoruceCodeValue,
+    setValue: setSourceCodeValue,
     formState: { errors: sourceCodeErrors },
   } = useForm({
     defaultValues: defaultSourceCodeValues,
@@ -252,16 +265,13 @@ const StepperCustomVertical = () => {
 
   const router = useRouter();
   if (router.query?.code) {
-    sendCode(router.query?.code as string)
+    sendCode(router.query?.code as string, workspaceId)
       .then((response) => {
         if (response?.data.git_user) {
           setGitUser(response.git_user);
           fetchUserRepositories(response.git_user as string);
         }
       })
-      .catch((error) => {
-        toast.error(error.message);
-      });
   }
 
   const isNextButtonDisabled = appNameExist || !isConfigurationFormValid;
@@ -281,28 +291,25 @@ const StepperCustomVertical = () => {
               : setAppNameExist(false);
           }
         })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   };
 
-  const fetchGitOwner = async () => {
+  const fetchGitOwner = async (id: string = workspaceId) => {
     try {
-      const response = await getGitOwner();
+      const response = await getGitOwner(id);
       if (response.data) {
         setGitUser(response.data.gitUser);
-        await fetchUserRepositories(response.data.gitUser as string);
+        await fetchUserRepositories(response.data.gitUser as string, workspaceId);
       }
     } catch (error) {
       //toast.error("Could not fetch git user.");
     }
   };
 
-  const fetchUserRepositories = async (user: string) => {
+  const fetchUserRepositories = async (user: string, id = workspaceId) => {
     try {
       setLoadingRepositories(true);
-      const response = await getRepositories(user);
+      const response = await getRepositories(user, id);
       if (response.data) {
         setRepositories(response.data);
       }
@@ -316,7 +323,7 @@ const StepperCustomVertical = () => {
   const fetchBranch = async (repo: string) => {
     try {
       setLoadingBranches(true);
-      const response = await getBranch(repo, gitUser);
+      const response = await getBranch(repo, gitUser, workspaceId);
       if (response.data) {
         setBranches(response.data);
       }
@@ -334,6 +341,16 @@ const StepperCustomVertical = () => {
       setRepoSelected(true);
       fetchBranch(repo);
     }
+  };
+
+  const handleWorkspaceChange = (event: SelectChangeEvent) => {
+    const workspace_id = event.target.value;
+    // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
+    setWorkspaceId(workspace_id);
+    setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.workspace, workspace_id);
+    setRepoSelected(false);
+    setRepositories(["No Repository"]);
+    fetchGitOwner(workspace_id);
   };
 
   const onSubmit = () => {
@@ -376,11 +393,13 @@ const StepperCustomVertical = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
-    console.log(data);
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
-        router.push({ pathname: '/apps/app-dashboard', query: { appId: response.data.app_id } });
+        router.push({ pathname: '/workspace/app-dashboard', query: { appId: response.data.app_id } });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
       })
       .catch((error) => {
         toast.error(error);
@@ -419,7 +438,7 @@ const StepperCustomVertical = () => {
         return (
           <form onSubmit={handleSourceCodeSubmit(onSubmit)}>
             <Grid container spacing={5}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={6} sm={6}>
                 <FormControl fullWidth>
                   <Controller
                     name="application_name"
@@ -429,7 +448,7 @@ const StepperCustomVertical = () => {
                       <TextField
                         value={value}
                         label="Application Name"
-                        onChange={(e) => {
+                        onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
                         }}
@@ -460,6 +479,50 @@ const StepperCustomVertical = () => {
                       id="app-exists-error"
                     >
                       This application name already exists
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel
+                    id="workspace_id"
+                    error={Boolean(sourceCodeErrors.workspace_id)}
+                  >
+                    Workspaces
+                  </InputLabel>
+
+                  <Controller
+                    name="workspace_id"
+                    control={sourceCodeControl}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        value={value}
+                        label="Workspaces"
+                        onChange={(e) => {
+                          onChange(e);
+                          handleWorkspaceChange(e);
+                        }}
+                        error={Boolean(sourceCodeErrors.workspace_id)}
+                        labelId="stepper-linear-personal-country"
+                        aria-describedby="stepper-linear-personal-country-helper"
+                      >
+                        {authContext.workspaces?.map((reg) => (
+                          <MenuItem key={reg.id} value={reg.id}>
+                            {reg.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+
+                  {sourceCodeErrors.git_repo && (
+                    <FormHelperText
+                      sx={{ color: "error.main" }}
+                      id="stepper-linear-account-username"
+                    >
+                      This field is required
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -1113,4 +1176,9 @@ const StepperCustomVertical = () => {
   );
 };
 
-export default StepperCustomVertical;
+CreateApp.acl = {
+  action: 'read',
+  subject: PERMISSION_CONSTANTS.createApp
+}
+
+export default CreateApp;

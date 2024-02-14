@@ -34,7 +34,7 @@ const UserProfileHeader: React.FC<ProfileProps> = ({ profileData }) => {
 
   const handleEditProfileClick = () => {
     // Redirect to the settings page when the "Edit Profile" button is clicked
-    router.push("/settings");
+    router.push("/myProfile/edit-profile");
   };
 
   return (

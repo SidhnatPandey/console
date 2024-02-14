@@ -15,8 +15,8 @@
 
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import Apps from 'src/pages/apps';
-import { screen } from '@testing-library/react'; 
+import Apps from 'src/pages/workspace/apps';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 
@@ -39,29 +39,29 @@ jest.mock('src/services/appService', () => ({
 }));
 
 it('renders Apps component without error', () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
 });
 
 test('sorts table when column header is clicked', async () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
   const columnHeader = screen.getByText('NAME');
   fireEvent.click(columnHeader);
 });
 
 test('pagination works as expected', async () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
   expect(screen.getByLabelText('Rows per page:')).toBeInTheDocument();
   expect(screen.getByLabelText('Go to next page')).toBeInTheDocument();
 });
 
 test('sorts table when column header is clicked', async () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
   const columnHeader = screen.getByText('NAME');
   fireEvent.click(columnHeader);
 });
 
 test('pagination navigation works', async () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
   const nextPageButton = screen.getByLabelText('Go to next page');
   fireEvent.click(nextPageButton);
   const prevPageButton = screen.getByLabelText('Go to previous page');
@@ -72,5 +72,5 @@ jest.mock('src/services/appService', () => ({
   appList: jest.fn(() => Promise.reject(new Error('API Error'))),
 }));
 test('handles API error', async () => {
-  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} />);
+  render(<Apps selectedRow={null} setSelectedRow={jest.fn()} workspace_id={undefined} />);
 });

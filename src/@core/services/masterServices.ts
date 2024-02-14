@@ -18,6 +18,15 @@ export const post = async (url: string, data: any) => {
   }
 };
 
+export const put = async (url: string, data: any) => {
+  try {
+    const response = await axiosInstance.put(url, data);
+    return response;
+  } catch (error) {
+    console.error('Error :', error);
+  }
+};
+
 export const deleteCall = async (url: string) => {
   try {
     const response = await axiosInstance.delete(url);

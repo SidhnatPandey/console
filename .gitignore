@@ -26,7 +26,7 @@ replay_pid*
 node_modules
 .env
 .next
-package-lock.json
+yarn.lock
 .env.local
 .env.development
 __ENV.js

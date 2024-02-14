@@ -14,7 +14,10 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Types
-import { PricingPlanProps } from './types'
+import { PricingPlanProps, PricingPlanType } from './types'
+import { toTitleCase } from 'src/utils/stringUtils'
+import { useContext } from 'react'
+import { AuthContext } from 'src/context/AuthContext'
 
 // ** Styled Component for the wrapper of whole component
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -34,10 +37,11 @@ const BoxFeature = styled(Box)<BoxProps>(({ theme }) => ({
 
 const PlanDetails = (props: PricingPlanProps) => {
   // ** Props
-  const { plan, data } = props
+  const { plan, data, handleUpgrade } = props
+  const authContext = useContext(AuthContext);
 
   const renderFeatures = () => {
-    return data?.planBenefits.map((item: string, index: number) => (
+    return data?.plan_benefits.map((item: string, index: number) => (
       <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
         <Box component='span' sx={{ display: 'inline-flex', color: 'text.secondary', mr: 2.5 }}>
           <Icon icon='tabler:circle' fontSize='0.875rem' />
@@ -47,16 +51,27 @@ const PlanDetails = (props: PricingPlanProps) => {
     ))
   }
 
+  const handleClick = (plan: PricingPlanType) => {
+    if (!isCurrentPlan(plan.id)) {
+      handleUpgrade(plan);
+    }
+  }
+
+  const isCurrentPlan = (id: string) => {
+    return id === authContext?.org?.plan_id
+  }
+
   return (
     <BoxWrapper
       sx={{
         border: theme =>
-          !data?.popularPlan
+          !data?.popular_plan
             ? `1px solid ${theme.palette.divider}`
-            : `1px solid ${hexToRGBA(theme.palette.primary.main, 0.5)}`
+            : `1px solid ${hexToRGBA(theme.palette.primary.main, 0.5)}`,
+        minHeight: '700px'
       }}
     >
-      {data?.popularPlan ? (
+      {data?.popular_plan ? (
         <CustomChip
           rounded
           size='small'
@@ -75,30 +90,34 @@ const PlanDetails = (props: PricingPlanProps) => {
           }}
         />
       ) : null}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+      {/* <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
         <img
           width={data?.imgWidth}
           src={`${data?.imgSrc}`}
           height={data?.imgHeight}
           alt={`${data?.title.toLowerCase().replace(' ', '-')}-plan-img`}
         />
-      </Box>
+      </Box> */}
       <Box sx={{ textAlign: 'center' }}>
         <Typography sx={{ mb: 1.5, fontWeight: 500, lineHeight: 1.385, fontSize: '1.625rem' }}>
-          {data?.title}
+          {toTitleCase(data.title)}
         </Typography>
         <Typography sx={{ color: 'text.secondary' }}>{data?.subtitle}</Typography>
-        <Box sx={{ my: 7, position: 'relative' }}>
+        <Box sx={{ mt: 7, mb: 2, position: 'relative' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Typography sx={{ mt: 2.5, mr: 0.5, fontWeight: 500, color: 'primary.main', alignSelf: 'flex-start' }}>
-              $
-            </Typography>
-            <Typography variant='h1' sx={{ color: 'primary.main', fontSize: '3rem', lineHeight: 1.4168 }}>
-              {plan === 'monthly' ? data?.monthlyPrice : data?.yearlyPlan.perMonth}
-            </Typography>
-            <Typography sx={{ mb: 1.5, alignSelf: 'flex-end', color: 'text.disabled' }}>/month</Typography>
+            {data.title !== 'Enterprise' ? <>
+              <Typography sx={{ mt: 2.5, mr: 0.5, fontWeight: 500, color: 'primary.main', alignSelf: 'flex-start' }}>
+                $
+              </Typography>
+              <Typography variant='h1' sx={{ color: 'primary.main', fontSize: '3rem', lineHeight: 1.4168 }}>
+                {plan === 'monthly' ? data?.monthly_price : data?.yearlyPlan.perMonth}
+              </Typography>
+              {/* <Typography sx={{ mb: 1.5, alignSelf: 'flex-end', color: 'text.disabled' }}>/month</Typography> */}
+            </> : <Typography variant='h1' sx={{ color: 'primary.main', fontSize: '3rem', lineHeight: 1.4168 }}>
+              {plan === 'monthly' ? data?.monthly_price : data?.yearlyPlan.perMonth}
+            </Typography>}
           </Box>
-          {plan !== 'monthly' && data?.monthlyPrice !== 0 ? (
+          {plan !== 'monthly' && data?.monthly_price !== 0 ? (
             <Typography
               variant='body2'
               sx={{
@@ -113,13 +132,20 @@ const PlanDetails = (props: PricingPlanProps) => {
           ) : null}
         </Box>
       </Box>
+      <Box sx={{ textAlign: 'center', padding: '0 20px' }}>
+        <Typography sx={{ mb: 4.5, color: 'primary.main' }}>Per month, per Application Instance (AI)</Typography>
+        <Typography sx={{ color: 'text.secondary', mb: 1.5 }}><b>{data?.description}</b></Typography>
+        <Typography sx={{ mb: 1.5 }}>{data?.summary}</Typography>
+      </Box>
       <BoxFeature>{renderFeatures()}</BoxFeature>
       <Button
         fullWidth
-        color={data?.currentPlan ? 'success' : 'primary'}
-        variant={data?.popularPlan ? 'contained' : 'tonal'}
+        color={isCurrentPlan(data.id) ? 'success' : 'primary'}
+        variant={data?.popular_plan ? 'contained' : 'tonal'}
+        onClick={() => handleClick(data)}
+        style={{ alignItems: 'bottom' }}
       >
-        {data?.currentPlan ? 'Your Current Plan' : 'Upgrade'}
+        {isCurrentPlan(data.id) ? 'Your Current Plan' : 'Select Plan'}
       </Button>
     </BoxWrapper>
   )

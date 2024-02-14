@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -8,88 +8,52 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
+import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import OptionsMenu from "src/@core/components/option-menu";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import pagination from "src/@core/theme/overrides/pagination";
 import MultiStepBarChart from "src/component/multiStepBar";
-import { vulnerabilitiesList } from "src/services/securityService";
-import { convertDateFormat } from "src/utils/dateUtil";
+import {
+  downloadAppVulCve,
+  sbom,
+  vulnerabilitiesList,
+} from "src/services/securityService";
+import { SecurityContext } from "src/context/SecurityContext";
+import { calculateDaysFromTodayString } from "src/@core/utils/format";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import Toaster from "src/utils/toaster";
+
 interface AppSecurityData {
+  AppId: string;
   AppName: string;
-  WorkspaceId?: string;
   LastScanned: string;
+  WorkspaceId: string;
+  WorkspaceName: string;
   Cves: {
     Count: number;
     Severity: string;
   }[];
 }
-const ApplicationVulnerabilities = () => {
-  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>([
-/*     {
-      AppName: "App 1",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 1, Severity: "Critical" },
-        { Count: 2, Severity: "High" },
-        { Count: 10, Severity: "Low" },
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 2",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [
-        { Count: 1, Severity: "Critical" },
 
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 3",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 4",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [{ Count: 3, Severity: "Medium" }],
-    },
-    {
-      AppName: "App 1",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [
-        { Count: 3, Severity: "Medium" },
-        { Count: 2, Severity: "Unknown" },
-      ],
-    },
-    {
-      AppName: "App 2",
-      WorkspaceId: "WorkspaceId B",
-      LastScanned: "2023-01-20",
-      Cves: [{ Count: 1, Severity: "Critical" }],
-    },
-    {
-      AppName: "App 3",
-      WorkspaceId: "WorkspaceId A",
-      LastScanned: "2023-01-15",
-      Cves: [{ Count: 3, Severity: "Medium" }],
-    }, */
-  ]);
-  const [currentPage, setCurrentPage] = useState(1);
+const ApplicationVulnerabilities = () => {
+  const securityContext = useContext(SecurityContext);
+  const [selectedWorkspace, setSelectedWorkspace] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sbomDownloadInProgress, setSbomDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
+
+  const [cveDownloadInProgress, setCveDownloadInProgress] = useState<{
+    [appId: string]: boolean;
+  }>({});
+
+  const [vulnerabilityData, setVulnerabilityData] = useState<AppSecurityData[]>(
+    []
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState<{
     column: keyof AppSecurityData | null;
@@ -98,10 +62,20 @@ const ApplicationVulnerabilities = () => {
     column: null,
     direction: "asc",
   });
-  const entriesPerPage = 5;
 
   const calculateTotalCVEs = (Cves: { Count: number; Severity: string }[]) => {
-    return Cves.reduce((total, cve) => total + cve.Count, 0);
+    return Cves?.reduce((total, cve) => total + cve.Count, 0);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
   };
 
   const handleSort = (columnName: keyof AppSecurityData) => {
@@ -133,45 +107,119 @@ const ApplicationVulnerabilities = () => {
       })
     );
   };
-  const renderOptionsMenuCell = () => (
-    <TableCell>
-      <Box display="flex" flexDirection="column">
-        <OptionsMenu
-          options={["Refresh", "Edit", "Share"]}
-          iconButtonProps={{ size: "small", sx: { color: "gray" } }}
-        />
-      </Box>
-    </TableCell>
-  );
 
-  const filteredData = vulnerabilityData?.filter((row) =>
-    Object.values(row).some(
-      (value) =>
-        value &&
+  // Modify filteredData to include workspace filtering
+  const filteredData = vulnerabilityData?.filter((row) => {
+    return (
+      (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
+      Object.values(row).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-  const totalPages = Math.ceil(filteredData?.length / entriesPerPage);
-
-  const startIndex = Math.max((currentPage - 1) * entriesPerPage, 0);
-  const endIndex = Math.min(
-    startIndex + entriesPerPage - 1,
-    filteredData?.length - 1
-  );
+      )
+    );
+  });
 
   useEffect(() => {
-    const validPage = Math.min(Math.max(currentPage, 1), totalPages);
-    setCurrentPage(validPage);
-    getVulnerabilitesList();
-  }, [currentPage, totalPages, searchTerm]);
+    getVulnerabilitesList(securityContext.workspace, securityContext.runType);
+  }, [
+    searchTerm,
+    securityContext.workspace,
+    securityContext.runType,
+    selectedWorkspace,
+  ]);
 
-  const getVulnerabilitesList = () => {
-    vulnerabilitiesList().then(
-      (res) => {
-        res ? setVulnerabilityData(res.data) : {};
-      }
-    )
-  }
+  const getVulnerabilitesList = (workspaceId: string, runType: string) => {
+    setLoading(true);
+    vulnerabilitiesList(workspaceId, runType).then((res) => {
+      setVulnerabilityData(res?.data || []);
+      setLoading(false);
+    });
+  };
+
+  const getSBOMs = (appId: string, appName: string, workspaceId: string) => {
+    if (!sbomDownloadInProgress[appId]) {
+      setSbomDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      sbom(appId, securityContext.runType, workspaceId)
+        .then((res) => {
+          if (res && res.data) {
+            const url = `data:application/json;base64,${res.data}`;
+            const fileName = `sbom_${appName}.json`;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Toaster.successToast(
+              `Successfully downloaded SBOM for ${appName}.`
+            );
+          } else {
+            throw new Error(`Try Again Later.`);
+          }
+        })
+        .catch((error) => {
+          Toaster.errorToast(
+            `Error downloading SBOM for ${appName}, ${error.message}`
+          );
+        })
+        .finally(() => {
+          setSbomDownloadInProgress((prevState) => ({
+            ...prevState,
+            [appId]: false,
+          }));
+        });
+    }
+  };
+
+  const getDownloadAppVulCve = (
+    appId: string,
+    appName: string,
+    workspaceId: string
+  ) => {
+    if (!cveDownloadInProgress[appId]) {
+      setCveDownloadInProgress((prevState) => ({
+        ...prevState,
+        [appId]: true,
+      }));
+      downloadAppVulCve(appId, securityContext.runType, workspaceId)
+        .then((res) => {
+          if (res && res.data) {
+            const url = `data:application/json;base64,${res.data}`;
+            const fileName = `cve_${appName}.json`;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            Toaster.successToast(
+              `Successfully downloaded CVE data for ${appName}.`
+            );
+          } else {
+            throw new Error(`Try Again Later.`);
+          }
+        })
+        .catch((error) => {
+          Toaster.errorToast(
+            `Error downloading CVE data for ${appName}, ${error.message}`
+          );
+        })
+        .finally(() => {
+          setCveDownloadInProgress((prevState) => ({
+            ...prevState,
+            [appId]: false,
+          }));
+        });
+    }
+  };
+
+  const handleAppNameClick = (workspaceId: string) => {
+    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
+  };
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -205,10 +253,17 @@ const ApplicationVulnerabilities = () => {
           </Box>
         </Box>
         <TableContainer sx={{ width: "100%" }}>
-          <Table sx={{ border: "1px solid #ced4da" }}>
+          <Table>
             <TableHead>
-              <TableRow>
-                <TableCell onClick={() => handleSort("AppName")}>
+              <TableRow
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.main + "10",
+                }}
+              >
+                <TableCell
+                  onClick={() => handleSort("AppName")}
+                  style={{ width: 300 }}
+                >
                   <Box display="flex" alignItems="center">
                     <span>App Name</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -221,9 +276,9 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                {/*<TableCell onClick={() => handleSort("WorkspaceId")}>
+                <TableCell onClick={() => handleSort("WorkspaceName")}>
                   <Box display="flex" alignItems="center">
-                    <span>WorkspaceId</span>
+                    <span>workspace</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -233,8 +288,11 @@ const ApplicationVulnerabilities = () => {
                       />
                     </Box>
                   </Box>
-                </TableCell> */}
-                <TableCell onClick={() => handleSort("LastScanned")}>
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort("LastScanned")}
+                  style={{ width: 300 }}
+                >
                   <Box display="flex" alignItems="center">
                     <span>Last Scanned</span>
                     <Box display="flex" flexDirection="column" ml={6}>
@@ -263,79 +321,118 @@ const ApplicationVulnerabilities = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                {renderOptionsMenuCell()}
+                <TableCell style={{ width: 100 }}>
+                  <Box display="flex" alignItems="center">
+                    <span>Download</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
               </TableRow>
             </TableHead>
-            {filteredData?.length > 0 ? (
-              <TableBody>
-                {filteredData
-                  .slice(startIndex, endIndex + 1)
+            <TableBody>
+              {filteredData && filteredData.length > 0 ? (
+                filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell>{row.AppName}</TableCell>
-                      {/* <TableCell>{row.WorkspaceId}</TableCell> */}
-                      <TableCell>{convertDateFormat(row.LastScanned)}</TableCell>
+                      <TableCell>
+                        <Link
+                          href={{
+                            pathname: `/security/app/${row.AppId}`,
+                            query: {
+                              data: JSON.stringify({
+                                appName: row.AppName,
+                                wid: row.WorkspaceId,
+                              }),
+                            },
+                          }}
+                          as={`/security/app/${row.AppId}`}
+                          style={{ textDecoration: "none" }}
+                          onClick={() => {
+                            handleAppNameClick(row.WorkspaceId);
+                          }}
+                        >
+                          {row.AppName}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{row.WorkspaceName}</TableCell>
+                      <TableCell>
+                        {calculateDaysFromTodayString(row.LastScanned)}
+                      </TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <MultiStepBarChart Cves={row.Cves} />
                           <span>{calculateTotalCVEs(row.Cves)}</span>
                         </div>
                       </TableCell>
-                      {renderOptionsMenuCell()}
+                      <TableCell>
+                        <a
+                          onClick={() =>
+                            getSBOMs(row.AppId, row.AppName, row.WorkspaceId)
+                          }
+                          style={{
+                            cursor: sbomDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                        >
+                          SBOM
+                        </a>
+                        <span style={{ color: "#aaa" }}> / </span>
+                        <a
+                          onClick={() =>
+                            getDownloadAppVulCve(
+                              row.AppId,
+                              row.AppName,
+                              row.WorkspaceId
+                            )
+                          }
+                          style={{
+                            cursor: cveDownloadInProgress[row.AppId]
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                        >
+                          CVE
+                        </a>
+                      </TableCell>
                     </TableRow>
-                  ))}
-              </TableBody>
-            ) : (
-              <TableBody>
+                  ))
+              ) : (
                 <TableRow>
-                  <TableCell colSpan={3}>
-                    <Box textAlign="center" mt={2}>
-                      <span>No Apps</span>
-                    </Box>
+                  <TableCell
+                    colSpan={5}
+                    style={{
+                      textAlign: "center",
+                      fontSize: "18px",
+                      paddingTop: "50px",
+                      paddingBottom: "50px",
+                    }}
+                  >
+                    {loading ? "Loading ..." : "No Apps Available"}
                   </TableCell>
                 </TableRow>
-              </TableBody>
-            )}
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
-        <Box
-          display="flex"
-          mt={6}
-          ml="20px"
-          marginBottom={"20px"}
-          alignItems="center"
-        >
-          <span>
-            Showing {filteredData?.length > 0 ? startIndex + 1 : 0} to{" "}
-            {endIndex + 1} of {filteredData?.length} entries
-          </span>
-          <Stack
-            spacing={2}
-            mt={3}
-            ml="auto"
-            marginBottom={"20px"}
-            alignItems="flex-end"
-          >
-            {filteredData?.length > 0 ? (
-              <Pagination
-                {...pagination}
-                shape="rounded"
-                color="primary"
-                count={totalPages}
-                page={currentPage}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            ) : (
-              <Pagination
-                shape="rounded"
-                color="primary"
-                count={1}
-                page={1}
-                onChange={(_event, page) => setCurrentPage(page)}
-              />
-            )}
-          </Stack>
-        </Box>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ marginLeft: "16px" }}
+        />
       </Box>
     </Card>
   );

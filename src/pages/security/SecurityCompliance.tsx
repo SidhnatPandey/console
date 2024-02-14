@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -13,17 +13,23 @@ import { ApexOptions } from "apexcharts";
 
 // ** Custom Components Imports
 import Icon from "src/@core/components/icon";
-import OptionsMenu from "src/@core/components/option-menu";
 import CustomAvatar from "src/@core/components/mui/avatar";
 import ReactApexcharts from "src/@core/components/react-apexcharts";
 
 // ** Util Import
 import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
 import { getScans } from "src/services/securityService";
+import { SecurityContext } from "src/context/SecurityContext";
 
-const SecurityCompliance = () => {
+interface Props {
+  appId?: string;
+}
+
+const SecurityCompliance = (props: Props) => {
+  const { appId } = props;
   // ** Hook
   const theme = useTheme();
+  const securityContext = useContext(SecurityContext);
 
   const options: ApexOptions = {
     chart: {
@@ -61,8 +67,8 @@ const SecurityCompliance = () => {
         dataLabels: {
           name: {
             offsetY: -15,
-            fontSize: "14px",
-            color: theme.palette.text.disabled,
+            fontSize: "18px",
+            color: "gray",
             fontFamily: theme.typography.fontFamily,
           },
           value: {
@@ -105,111 +111,143 @@ const SecurityCompliance = () => {
       },
     ],
   };
+
   const [scanData, setScanData] = useState({
     totalScans: 0,
     succeeded: 0,
     failed: 0,
   });
   const [successPercentage, setSuccessPercentage] = useState(100);
+  const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
-    const getScanData = () => {
-      getScans()
-        .then((response) => {
-          setScanData(response?.data || {});
-          const percentage = (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
-          setSuccessPercentage(percentage);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
+    getScanData(securityContext.workspace, securityContext.runType, appId);
+  }, [securityContext.workspace, securityContext.runType, appId]);
 
-    getScanData();
-  }, []);
+  const getScanData = (
+    workspaceId: string,
+    runType: string,
+    appId?: string
+  ) => {
+    getScans(workspaceId, runType, appId)
+      .then((response) => {
+        setScanData(response?.data || {});
+        let percentage =
+          (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+        percentage = parseFloat(percentage.toFixed(2));
+        setSuccessPercentage(percentage);
+        setChartKey(Math.random());
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
-    <Card sx={{ width: "60%", height: "80%" }}>
-      <CardHeader
-        title="Scan Compliance"
-        action={
-          <OptionsMenu
-            options={["Refresh", "Edit", "Share"]}
-            iconButtonProps={{ size: "small", sx: { color: "text.disabled" } }}
+    <Card sx={{ width: "49%" }} data-testid="security-compliance-card">
+      <CardHeader title="Scan Compliance" data-testid="card-header" />
+      <CardContent style={{ padding: 20, textAlign: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <ReactApexcharts
+            key={chartKey}
+            type="radialBar"
+            height={400}
+            width={400}
+            options={options}
+            series={[successPercentage]}
+            data-testid="chart"
           />
-        }
-      />
-      <CardContent>
-        <Grid container spacing={6}>
-          <Grid item xs={12} sm={5} style={{ paddingTop: "50px" }}>
-            <Typography variant="h4"> {scanData.totalScans}</Typography>
-            <Typography sx={{ mb: 6, color: "text.secondary" }}>
-              Total Scans
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-              <CustomAvatar
-                skin="light"
-                variant="rounded"
-                color="success"
-                sx={{ mr: 4, width: 34, height: 34 }}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "55px",
+          }}
+        >
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={4}>
+              <Typography data-testid="total-scans" sx={{ fontWeight: 500 }}>
+                Total Scans
+              </Typography>
+              <Typography
+                sx={{ mb: 5, color: "text.secondary" }}
+                variant="h6"
+                data-testid="total-scans-data"
               >
-                <Icon icon="tabler:circle-check" />
-              </CustomAvatar>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
-                <Typography sx={{ fontWeight: 500 }}>Success</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
-                  {scanData.succeeded ? scanData.succeeded : 0}{" "}
-                </Typography>
-              </Box>
-            </Box>
+                {scanData.totalScans}
+              </Typography>
+            </Grid>
 
-            <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-              <CustomAvatar
-                skin="light"
-                variant="rounded"
-                color="error"
-                sx={{ mr: 4, width: 34, height: 34 }}
-              >
-                <Icon icon="tabler:circle-x" />
-              </CustomAvatar>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
-                <Typography sx={{ fontWeight: 500 }}>Failed</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.disabled" }}>
-                  {scanData.failed ? scanData.failed : 0}
-                </Typography>
+            <Grid item xs={12} sm={4}>
+              <Box display="flex" alignItems="center">
+                <CustomAvatar
+                  skin="light"
+                  variant="rounded"
+                  color="success"
+                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                >
+                  <Icon icon="tabler:circle-check" />
+                </CustomAvatar>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Typography
+                    sx={{ fontWeight: 500 }}
+                    data-testid="succeeded-scans"
+                  >
+                    Success
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 700, color: "text.secondary" }}
+                    data-testid="succeeded-scans-data"
+                  >
+                    {scanData.succeeded ? scanData.succeeded : 0}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Box display="flex" alignItems="center">
+                <CustomAvatar
+                  skin="light"
+                  variant="rounded"
+                  color="error"
+                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                >
+                  <Icon icon="tabler:circle-x" />
+                </CustomAvatar>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Typography
+                    sx={{ fontWeight: 500 }}
+                    data-testid="failed-scans"
+                  >
+                    Failed
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 700, color: "text.secondary" }}
+                    data-testid="failed-scans-data"
+                  >
+                    {scanData.failed ? scanData.failed : 0}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={7}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ReactApexcharts
-              type="radialBar"
-              height={325}
-              options={options}
-              series={[successPercentage]}
-            />
-          </Grid>
-        </Grid>
+        </div>
       </CardContent>
     </Card>
   );
