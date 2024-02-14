@@ -28,7 +28,7 @@ const CreateWorkspace = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   useEffect(() => {
-    planHook.isAppCrationAllowed() ? "" : setOpenAlert(true);
+    planHook.isDeveloperPlan() ? setOpenAlert(true) : "";
   }, []);
 
   const onSubmit = (data: FormData) => {

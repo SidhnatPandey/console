@@ -28,7 +28,7 @@ function usePlan() {
   };
 
   const userPlans = () => {
-    const userPlans = plans.filter((plan: any) => plan.tier >= planTier());
+    const userPlans = plans?.filter((plan: any) => plan.tier >= planTier());
     return userPlans;
   };
 
