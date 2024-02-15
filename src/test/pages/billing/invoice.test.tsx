@@ -4,7 +4,6 @@ import InvoiceTable from "src/pages/billing/invoices";
 import { listOfInvoice } from "src/services/billingService";
 import '@testing-library/jest-dom';
 
-
 jest.mock("src/services/billingService");
 
 describe("InvoiceTable component", () => {
@@ -28,7 +27,7 @@ describe("InvoiceTable component", () => {
   });
 
   it("renders loading state", async () => {
-    (listOfInvoice as jest.Mock).mockReturnValue(new Promise(() => {}));
+    (listOfInvoice as jest.Mock).mockResolvedValueOnce({ data: [] });
 
     render(<InvoiceTable />);
 
