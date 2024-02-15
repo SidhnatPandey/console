@@ -36,6 +36,7 @@ import {
   checkEmail,
   checkUsername,
   getOrganisationsUserList,
+  getUserData,
   inviteUser,
   removeUserFromOrg,
 } from "src/services/userService";
@@ -201,10 +202,24 @@ const UserList = () => {
   const settingsData = () => {
     setLoadingData(true);
     getOrganisationsUserList().then((response) => {
-      setUsers(response.data.users);
+      if (response.data.users) {
+        setUsers(response.data.users);
+        getProfilePicture(response.data.users);
+      }
       setLoadingData(false);
     });
   };
+
+  const getProfilePicture = (userArr: UserDataType[]) => {
+    userArr.forEach((user: UserDataType) => {
+      getUserData(user.user_id).then((resp: any) => {
+        if (resp.data) {
+          user.user_info.profile_picture = resp.data.user_info.profile_picture;
+          setUsers([...userArr]);
+        }
+      })
+    })
+  }
 
   const handleAddUserClick = () => {
     if (!planHook.isDeveloperPlan()) {

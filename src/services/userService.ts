@@ -9,79 +9,71 @@ export const getUserInfo = () => {
 
 export const checkUsername = (username: string) => {
   setApiBaseUrl();
-  const url = APP_API.checkUser.replace('{username}', username)
+  const url = APP_API.checkUser.replace("{username}", username);
   return get(url).then((response) => response?.data);
 };
 
 export const checkEmail = (email: string) => {
   setApiBaseUrl();
-  const url = APP_API.checkEmail.replace('{email}', email)
+  const url = APP_API.checkEmail.replace("{email}", email);
   return get(url).then((response) => response?.data);
 };
 
-
 export const getUserProfile = () => {
   setApiBaseUrl();
-  return get(APP_API.userProfile).then(
-    (response) => response?.data)
+  return get(APP_API.userProfile).then((response) => response?.data);
 };
 
 export const postUserProfile = (profile: any) => {
   setApiBaseUrl();
-  return post(APP_API.userProfile, profile).then(
-    (response) => response?.data
-  )
+  return post(APP_API.userProfile, profile).then((response) => response?.data);
 };
 
 export const checkDeleteCriteria = () => {
   setApiBaseUrl();
   const url = `${APP_API.checkDeleteCriteria}`;
-  return get(url).then(response => response?.data);
-}
+  return get(url).then((response) => response?.data);
+};
 
 export const deactivateUser = () => {
   setApiBaseUrl();
-  return deleteCall(APP_API.deactivateUser).then(
-    (response) => response?.data
-  );
+  return deleteCall(APP_API.deactivateUser).then((response) => response?.data);
 };
 
 export const getWorkspaces = () => {
   setApiBaseUrl();
-  return get(APP_API.getListOfWorkspaces).then(
-    (response) => response?.data)
-}
+  return get(APP_API.getListOfWorkspaces).then((response) => response?.data);
+};
 
 export const getOrganisations = () => {
   setApiBaseUrl();
-  return get(APP_API.OrgList).then(
-    (response) => response?.data)
-}
+  return get(APP_API.OrgList).then((response) => response?.data);
+};
 
 export const getOrganisationsUserList = () => {
   setApiBaseUrl();
-  return get(APP_API.orgUserList).then(
-    (response) => response?.data)
-}
+  return get(APP_API.orgUserList).then((response) => response?.data);
+};
+
+export const getUserData = (userId: string) => {
+  setApiBaseUrl();
+  return get(APP_API.orgUserList + "?user_id=" + userId).then(
+    (response) => response?.data
+  );
+};
 
 export const removeUserFromOrg = (userId: any) => {
   setApiBaseUrl();
   const urlWithUserId = APP_API.removeOrgUser + userId;
-  return get(urlWithUserId).then(response => response?.data);
+  return get(urlWithUserId).then((response) => response?.data);
 };
-
 
 export const inviteUser = (user: any) => {
   setApiBaseUrl();
-  return post(APP_API.inviteUser, user).then(
-    (response) => response?.data
-  )
-}
+  return post(APP_API.inviteUser, user).then((response) => response?.data);
+};
 
 export const getUserOrg = () => {
   setApiBaseUrl();
-  return get(APP_API.getOrg).then(response => response?.data);
-}
-
-
-
+  return get(APP_API.getOrg).then((response) => response?.data);
+};
