@@ -393,6 +393,7 @@ const CreateApp = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
+    data.application_name = data.application_name.trim();
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");

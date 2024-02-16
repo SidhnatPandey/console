@@ -178,7 +178,7 @@ const AuthProvider = ({ children }: Props) => {
       if (setHomeRoute) { localStorage.setItem(LOCALSTORAGE_CONSTANTS.homeRoute, `/workspace/${response?.data.workspaces[0].id}`) }
       if (navigate || name) {
         const returnUrl = router.query.returnUrl;
-        const id = name ? newWorkspace.id : response?.data?.workspaces[0].id;
+        const id = name ? newWorkspace?.id : response?.data?.workspaces[0].id;
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
         router.replace(redirectURL as string)
       }
