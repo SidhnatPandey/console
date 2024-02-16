@@ -82,6 +82,7 @@ const SecurityCompliance = (props: Props) => {
         },
       },
     },
+
     grid: {
       padding: {
         top: -30,
@@ -166,26 +167,13 @@ const SecurityCompliance = (props: Props) => {
           }}
         >
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={4}>
-              <Typography data-testid="total-scans" sx={{ fontWeight: 500 }}>
-                Total Apps
-              </Typography>
-              <Typography
-                sx={{ mb: 5, color: "text.secondary" }}
-                variant="h6"
-                data-testid="total-scans-data"
-              >
-                {scanData.totalApps}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <Box display="flex" alignItems="center">
                 <CustomAvatar
                   skin="light"
                   variant="rounded"
                   color="success"
-                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                  sx={{ marginRight: 4, marginLeft: 10, width: 34, height: 34 }}
                 >
                   <Icon icon="tabler:circle-check" />
                 </CustomAvatar>
@@ -200,7 +188,7 @@ const SecurityCompliance = (props: Props) => {
                     sx={{ fontWeight: 500 }}
                     data-testid="succeeded-scans"
                   >
-                    Success
+                    Compliant
                   </Typography>
                   <Typography
                     variant="body2"
@@ -213,13 +201,13 @@ const SecurityCompliance = (props: Props) => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <Box display="flex" alignItems="center">
                 <CustomAvatar
                   skin="light"
                   variant="rounded"
                   color="error"
-                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                  sx={{ marginRight: 4, marginLeft: 10, width: 34, height: 34 }}
                 >
                   <Icon icon="tabler:circle-x" />
                 </CustomAvatar>
@@ -234,7 +222,7 @@ const SecurityCompliance = (props: Props) => {
                     sx={{ fontWeight: 500 }}
                     data-testid="failed-scans"
                   >
-                    Failed
+                    Non-Compliant
                   </Typography>
                   <Typography
                     variant="body2"
