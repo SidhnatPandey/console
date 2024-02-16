@@ -382,7 +382,8 @@ const TabAccount = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  type="number"
+                  type="text"
+                  inputProps={{ maxLength: 15 }}
                   label="Phone Number"
                   value={formData.phoneNumber}
                   placeholder="202 555 0111"
