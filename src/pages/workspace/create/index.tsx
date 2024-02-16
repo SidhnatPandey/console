@@ -84,6 +84,7 @@ const CreateWorkspace = () => {
             <TextField
               data-testid="workspaceDescription"
               fullWidth
+              inputProps={{ maxLength: 200 }}
               label="Workspace Description"
               variant="outlined"
               multiline
