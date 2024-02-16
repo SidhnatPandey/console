@@ -48,8 +48,8 @@ const AppSecurityDetails = () => {
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
-        {/* <SecurityCveChart appId={convertToString(appId)} /> */}
-        <ApexChart/>
+        <SecurityCveChart appId={convertToString(appId)} />
+        {/* <ApexChart/> */}
         <CveVulnerabilities appId={convertToString(appId)} />
       </SecurityProvider>
     </>
