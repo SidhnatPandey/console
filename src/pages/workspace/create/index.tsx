@@ -36,7 +36,11 @@ const CreateWorkspace = () => {
       setOpenAlert(true);
     } else if (!loading) {
       startLoading();
-      workspace(data)
+      const params = {
+        workspace_name: data.workspace_name.trim(),
+        description: data?.description
+      }
+      workspace(params)
         .then((response) => {
           if (response.status === 201) {
             Toaster.successToast("Workspace created successfully");

@@ -14,7 +14,6 @@ import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
 import BackButton from "src/component/backButton";
-import ApexChart from "./Apexchart";
 
 const AppSecurityDetails = () => {
   const router = useRouter();

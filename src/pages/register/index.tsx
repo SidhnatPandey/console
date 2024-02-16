@@ -148,10 +148,10 @@ const Register = () => {
     const user = {
       type: "organisation",
       role: "admin",
-      org: formData.org,
-      email: formData.email,
+      org: formData.org.trim(),
+      email: formData.email.trim(),
       password: formData.password,
-      username: formData.username,
+      username: formData.username.trim(),
     };
 
     setError(null);
