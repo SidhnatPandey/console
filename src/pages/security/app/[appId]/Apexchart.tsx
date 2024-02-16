@@ -8,7 +8,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 
 import { ApexOptions } from 'apexcharts'
-import dynamic from 'next/dynamic';
+
 import SwitcherButton from 'src/component/switcherButton';
 interface DataEntry {
   ApplicationId: string;
