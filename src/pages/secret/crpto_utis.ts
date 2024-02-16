@@ -2,7 +2,6 @@ import crypto from "crypto";
 const nacl = require("tweetnacl");
 nacl.util = require("tweetnacl-util");
 
-
 /**
  * Encrypts data using AES-256-GCM symmetric encryption.
  * @param {Buffer} data - Data to encrypt.
@@ -66,24 +65,4 @@ export function generateKeyPair() {
       reject(error);
     }
   });
-}
-
-/**
- * Encrypts data using RSA asymmetric encryption.
- * @param {Buffer} data - Data to encrypt.
- * @param {string} publicKey - Public key for encryption.
- * @returns {Buffer} - Encrypted data.
- */
-export function encryptRSA(data: Buffer, publicKey: string): Buffer {
-  return crypto.publicEncrypt(publicKey, data);
-}
-
-/**
- * Decrypts data using RSA asymmetric encryption.
- * @param {Buffer} encryptedData - Encrypted data to decrypt.
- * @param {string} privateKey - Private key for decryption.
- * @returns {Buffer} - Decrypted data.
- */
-export function decryptRSA(encryptedData: Buffer, privateKey: string): Buffer {
-  return crypto.privateDecrypt(privateKey, encryptedData);
 }

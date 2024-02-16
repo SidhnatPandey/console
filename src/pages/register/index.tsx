@@ -162,7 +162,7 @@ const Register = () => {
         setIsSubmitting(false);
         if (response?.status === 201) {
           toast.success("Registered successfully");
-          console.log( generateEncryptedKeys(response?.data?.orgId));
+          console.log( generateEncryptedKeys(response?.data?.orgId));       // ratnesh changes
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
