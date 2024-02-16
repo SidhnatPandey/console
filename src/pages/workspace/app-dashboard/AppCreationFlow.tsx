@@ -59,7 +59,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
       }).catch(() => {
         Toaster.errorToast('Failed to Rebuild')
       }).finally(() => {
-        setRebuilding(false);
+        //setRebuilding(false);
       })
     }
   }
@@ -102,7 +102,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
           action={
             <Typography variant='body2' data-testid="updated-time" sx={{ color: 'text.disabled' }}>
               Updated {(timer) / 1000} seconds ago
-              {supplyChainData?.status === 'Failed' && <Button variant='contained' color='secondary' size="small" style={{ marginLeft: '15px' }} onClick={handleRebuild}>
+              {(supplyChainData?.status === 'Failed' && !rebuilding) && <Button variant='contained' color='secondary' size="small" style={{ marginLeft: '15px' }} onClick={handleRebuild}>
                 Rebuild
               </Button>}
             </Typography>

@@ -27,6 +27,7 @@ import { AuthContext } from "src/context/AuthContext"; // Update with the actual
 import { CircularProgress } from "@mui/material";
 import { checkDeleteCriteria } from "src/services/userService";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { clearNumber } from "src/@core/utils/format";
 
 interface Data {
   user_info?: any;
@@ -244,9 +245,10 @@ const TabAccount = () => {
     });
   };
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
+    const valueNumber = clearNumber(value)
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [field]: value,
+      [field]: valueNumber,
     }));
 
     // Update user context
@@ -382,7 +384,8 @@ const TabAccount = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  type="number"
+                  type="text"
+                  inputProps={{ maxLength: 15 }}
                   label="Phone Number"
                   value={formData.phoneNumber}
                   placeholder="202 555 0111"

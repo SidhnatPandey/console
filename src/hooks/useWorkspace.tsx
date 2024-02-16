@@ -9,7 +9,7 @@ export default function useWorkspace() {
     const getWorkspaceNameById = (id: string | undefined) => {
         if (id) {
             const filteredWorkspace = authContext.workspaces.filter((workspace: any) => workspace.id === id)[0];
-            return filteredWorkspace.name;
+            return filteredWorkspace?.name;
         } else {
             return null
         }
