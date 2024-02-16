@@ -13,6 +13,7 @@ import { convertToString } from "src/@core/utils/string";
 import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
+import BackButton from "src/component/backButton";
 import ApexChart from "./Apexchart";
 
 const AppSecurityDetails = () => {
@@ -51,6 +52,7 @@ const AppSecurityDetails = () => {
         <SecurityCveChart appId={convertToString(appId)} />
         {/* <ApexChart/> */}
         <CveVulnerabilities appId={convertToString(appId)} />
+        <BackButton />
       </SecurityProvider>
     </>
   );

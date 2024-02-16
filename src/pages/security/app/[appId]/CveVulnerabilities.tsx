@@ -17,6 +17,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { cveVulnerabilitiesList } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import ChipsRounded from "src/component/Chip";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 interface CVESecurityData {
   WorkspaceName?: string;
   CveID: string;
@@ -103,12 +104,11 @@ const CveVulnerabilities = (props: Props) => {
   };
 
   useEffect(() => {
-    getVulnerabilitesList(
-      appId,
-      securityContext.runType,
-      securityContext.workspace
-    );
-  }, [securityContext.workspace, securityContext.runType, appId]);
+    const data = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace);
+    if (data) {
+      getVulnerabilitesList(appId, securityContext.runType, data);
+    }
+  }, [LOCALSTORAGE_CONSTANTS.workspace, securityContext.runType, appId]);
 
   const getVulnerabilitesList = (
     appId: string,

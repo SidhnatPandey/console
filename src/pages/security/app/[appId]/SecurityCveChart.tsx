@@ -22,6 +22,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { cveHistory } from "src/services/securityService";
 import { SecurityContext } from "src/context/SecurityContext";
 import { COLOR_PALLET } from "src/@core/static/color.constants";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 // Registering required components for Chart.js
 ChartJS.register(
@@ -60,8 +61,11 @@ const SecurityCveChart = (props: Props) => {
   const white = "#fff";
 
   useEffect(() => {
-    getCveHistory(appId, securityContext.runType, securityContext.workspace);
-  }, [securityContext.workspace, securityContext.runType, appId]);
+    const data = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace);
+    if (data) {
+      getCveHistory(appId, securityContext.runType, data);
+    }
+  }, [LOCALSTORAGE_CONSTANTS.workspace, securityContext.runType, appId]);
 
   const getCveHistory = (
     appId: string,
