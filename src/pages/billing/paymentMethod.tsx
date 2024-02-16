@@ -1,10 +1,13 @@
 import { Button, Card, CardContent, Grid } from "@mui/material"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { deleteCard, makeCardDefault } from "src/services/billingService";
 import PaymentCard from "./card";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import { CardType } from ".";
 import PaymentDialog from "../payment";
+import { setItemToLocalstorage } from "src/services/locastorageService";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
 
 interface Props {
     cards: CardType[],
@@ -21,6 +24,7 @@ const PaymentMethod = (props: Props) => {
     const [isDelete, setIsDelete] = useState<boolean>(false);
     const [selectedCardId, setSelectedCardId] = useState<string>('');
     const [openPaymentDialog, setOpenPaymentDialog] = useState<boolean>(false);
+    const authContext = useContext(AuthContext);
 
     const removeCard = () => {
         deleteCard(selectedCardId).then(
@@ -31,7 +35,12 @@ const PaymentMethod = (props: Props) => {
         )
     }
 
-    const handleClickOpenPayment = () => setOpenPaymentDialog(true)
+    const handleClickOpenPayment = () => {
+        setOpenPaymentDialog(true)
+        if (authContext?.org?.plan_id) {
+            setItemToLocalstorage(LOCALSTORAGE_CONSTANTS.planId, authContext?.org.plan_id);
+        }
+    }
     const handlePaymentClose = () => setOpenPaymentDialog(false);
 
     const setAsDefault = () => {
