@@ -90,9 +90,7 @@ const Billing = () => {
                 {plan.planTier() > 1 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext?.org?.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
-
                 <InvoiceTable />
-
             </TabPanel>
         </TabContext>
     )

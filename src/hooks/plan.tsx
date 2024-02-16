@@ -37,7 +37,7 @@ function usePlan() {
     planTier,
     userPlans,
     fetchPlans,
-    isDeveloperPlan,
+    isDeveloperPlan
   };
 }
 
