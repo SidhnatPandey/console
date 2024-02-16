@@ -37,8 +37,11 @@ const AppSummary = (props: AppSummaryProps) => {
   let key = appName ? APP_API.appMatrix : undefined;
   if (appName) { key = key?.replace('{appName}', appName); }
   setApiBaseUrl();
-  const { data: matrix } = useSWR<Matrix>(key, getFetcher, {
-    refreshInterval: metricsTimer
+  const { data: matrix } = useSWR<{ data: Matrix }>(key, getFetcher, {
+    refreshInterval: metricsTimer,
+    onSuccess: () => {
+      console.log(matrix);
+    }
   });
 
   return (
@@ -68,7 +71,7 @@ const AppSummary = (props: AppSummaryProps) => {
                     <Icon icon="tabler:chart-pie-2" />
                   </CustomAvatar>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h5">{matrix?.CurrentInstance ?? '?'}/{matrix?.MaxInstance ?? '?'}</Typography>
+                    <Typography variant="h5">{matrix?.data.CurrentInstance ?? '?'}/{matrix?.data.MaxInstance ?? '?'}</Typography>
                     <Typography variant="body1">Instances/Auto Scale</Typography>
                   </Box>
                 </Box>
@@ -79,7 +82,7 @@ const AppSummary = (props: AppSummaryProps) => {
                     <Icon icon="ph:cpu-bold" />
                   </CustomAvatar>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h5">{matrix?.CPUPercentage ? (Number(matrix?.CPUPercentage)).toFixed(2) : '?'}</Typography>
+                    <Typography variant="h5">{matrix?.data.CPUPercentage ? (Number(matrix?.data.CPUPercentage)).toFixed(2) : '?'}</Typography>
                     <Typography variant="body1">CPU</Typography>
                   </Box>
                 </Box>
@@ -91,7 +94,7 @@ const AppSummary = (props: AppSummaryProps) => {
                   </CustomAvatar>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h5">
-                      {matrix?.MemoryUsageMB ? Number(matrix?.MemoryUsageMB).toFixed(2) : '?'} / {matrix?.MemoryRequestMB ? Number(matrix?.MemoryRequestMB).toFixed(2) : '?'} / {matrix?.MemoryLimitMB ? Number(matrix?.MemoryLimitMB).toFixed(2) : '?'}
+                      {matrix?.data.MemoryUsageMB ? Number(matrix?.data.MemoryUsageMB).toFixed(2) : '?'} / {matrix?.data.MemoryRequestMB ? Number(matrix?.data.MemoryRequestMB).toFixed(2) : '?'} / {matrix?.data.MemoryLimitMB ? Number(matrix?.data.MemoryLimitMB).toFixed(2) : '?'}
                     </Typography>
                     <Typography variant="body1">Mem Curr/Req/Limit (MB)</Typography>
                   </Box>
@@ -104,7 +107,7 @@ const AppSummary = (props: AppSummaryProps) => {
                   </CustomAvatar>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h5">
-                      {matrix?.NetworkReceiveBytes ? Number(matrix?.NetworkReceiveBytes).toFixed(2) : '?'} / {matrix?.NetworkTransmitBytes ? Number(matrix?.NetworkTransmitBytes).toFixed(2) : '?'}
+                      {matrix?.data.NetworkReceiveBytes ? Number(matrix?.data.NetworkReceiveBytes).toFixed(2) : '?'} / {matrix?.data.NetworkTransmitBytes ? Number(matrix?.data.NetworkTransmitBytes).toFixed(2) : '?'}
                     </Typography>
                     <Typography variant="body1">N/W Receive/Transmit (B/s)</Typography>
                   </Box>
