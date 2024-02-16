@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { COLOR_PALLET } from "src/@core/static/color.constants";
 interface CVE {
   Count: number,
-  Severity: "Critical" | "High" | "Low" | "Medium" | string
+  Severity: "Critical" | "High" | "Low" | "Medium" | "Negligible" | string
 }
 interface Props {
   Cves: CVE[]
@@ -15,7 +15,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
   const [sum, setSum] = useState<number>(0);
 
   useEffect(() => {
-    let high = 0, low = 0, medium = 0, critical = 0, unknown = 0;
+    let high = 0, low = 0, medium = 0, critical = 0, negligible = 0;
     Cves?.forEach((cve) => {
       switch (cve.Severity) {
         case 'High':
@@ -26,15 +26,17 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
           low += cve.Count; break;
         case 'Critical':
           critical += cve.Count; break;
+        case 'Negligible':
+          negligible += cve.Count; break;
         case 'Unknown':
-          unknown += cve.Count; break;
+          negligible += cve.Count; break;
       }
     })
     const arr = [];
     if (high != 0) { arr.push({ Count: high, Severity: "High" }) }
     if (low != 0) { arr.push({ Count: low, Severity: "Low" }) }
     if (medium != 0) { arr.push({ Count: medium, Severity: "Medium" }) }
-    if (unknown != 0) { arr.push({ Count: unknown, Severity: "Unknown" }) }
+    if (negligible != 0) { arr.push({ Count: negligible, Severity: "Negligible" }) }
     if (critical != 0) { arr.push({ Count: critical, Severity: "Critical" }) }
     setCveArr(arr);
     setSum(calcsum)
@@ -46,7 +48,7 @@ const MultiStepBar: React.FC<Props> = ({ Cves }) => {
       case 'High': return COLOR_PALLET.warning;
       case 'Medium': return COLOR_PALLET.primary;
       case 'Low': return COLOR_PALLET.secondary;
-      case 'Unknown': return COLOR_PALLET.info;
+      case 'Negligible': return COLOR_PALLET.info;
     }
   }
 
