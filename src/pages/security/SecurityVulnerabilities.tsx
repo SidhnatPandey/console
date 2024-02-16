@@ -105,11 +105,13 @@ const SecurityVulnerabilities = (props: Props) => {
         color: getColor(ele.Severity) || "white",
       }));
 
-      newArr.push({
-        name: 'Negligible',
-        value: negligibleCount,
-        color: COLOR_PALLET.info
-      })
+      if (negligibleCount > 0) {
+        newArr.push({
+          name: 'Negligible',
+          value: negligibleCount,
+          color: COLOR_PALLET.info
+        })
+      }
 
       setVulnerabilities(newArr);
     });
