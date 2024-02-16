@@ -69,18 +69,16 @@ const SecurityCompliance = (props: Props) => {
       });
   };
 
-
   const successData = scanData.succeeded || 0;
   const failureData = scanData.failed || 0;
   const totalData = successData + failureData;
   let seriesData = totalData === 0 ? [0, 0] : [successData, failureData];
 
   if (totalData === 0) {
-    options.labels = ['No Data']
-    options.colors = ['#f0f0f0']
-    seriesData = [1]
+    options.labels = ["No Data"];
+    options.colors = ["#00CFE8"];
+    seriesData = [1];
   }
-
 
   return (
     <Card
