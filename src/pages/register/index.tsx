@@ -23,6 +23,7 @@ import { signUp } from "src/services/authService";
 import { checkUsername, checkEmail } from "src/services/userService"
 import toast from "react-hot-toast";
 import { CircularProgress } from '@mui/material';
+import { generateEncryptedKeys } from "../secret/encryption_decryption";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -161,6 +162,7 @@ const Register = () => {
         setIsSubmitting(false);
         if (response?.status === 201) {
           toast.success("Registered successfully");
+          console.log( generateEncryptedKeys(response?.data?.orgId));
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
