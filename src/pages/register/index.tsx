@@ -160,7 +160,7 @@ const Register = () => {
       .then((response) => {
         setIsSubmitting(false);
         if (response?.status === 201) {
-          toast.success("Registered successfully");
+          toast.success("Verification Email Sent to your registered email Successfully");
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
