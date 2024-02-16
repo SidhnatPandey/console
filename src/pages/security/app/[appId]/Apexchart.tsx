@@ -8,6 +8,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 
 import { ApexOptions } from 'apexcharts'
+import dynamic from 'next/dynamic';
 import SwitcherButton from 'src/component/switcherButton';
 interface DataEntry {
   ApplicationId: string;
@@ -20,6 +21,8 @@ interface DataEntry {
   RunID: string;
   LastScanned: string;
 }
+
+
 
 const ApexChart: React.FC = () => {
   const TotalCriticalCVEsArray: [number, number][] = [];
@@ -368,6 +371,7 @@ const ApexChart: React.FC = () => {
       toolbar: {
         show: false
       }
+    
     },
     dataLabels: {
       enabled: false
@@ -410,11 +414,21 @@ const ApexChart: React.FC = () => {
           show: true, // Show or hide grid lines along the y-axis
         },
       },
+
     },
     stroke: {
       width: 3 // Adjust the width here to decrease or increase line thickness
     },
-    colors: ['#ff0000', '#ffa500', '#B39DDB', '#a9a9a9', '#00bfff']
+    colors: ['#ff0000', '#ffa500', '#B39DDB', '#a9a9a9', '#00bfff'],
+
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+      markers: {
+        radius: 15,
+      },
+    }
+    
   });
 
   const [selection, setSelection] = useState('one-year');
@@ -475,17 +489,40 @@ const ApexChart: React.FC = () => {
     );
   }, []);
 
+
+//   useEffect(() => {
+//     // Initialize and render ApexCharts here
+//     const chart = new ApexCharts(document.getElementById('chart'), {
+//       series: series,
+//       options: options,
+//     });
+
+//     chart.render();
+
+//     return () => {
+//       // Cleanup code if needed
+//       chart.destroy();
+//     };
+//   }, []);
+
+
+  
+
   return (
     <div>
       <div id="chart">
         <div id="chart-timeline">
+
+          
           <Card sx={{ marginTop: "20px" }} data-testid="cve-chart-container">
+          <div style={{ float: 'right', marginTop:'20px'}}>
+                <SwitcherButton handleBtnClick={updateData} btnNames={['one-month', 'six-months', 'one-year', 'ytd', 'all']} defaultValue={'one-month'} />
+          </div>
             <CardHeader title="CVE Trend" />
             <CardContent>
-              <div style={{ float: 'right' }}>
-                <SwitcherButton handleBtnClick={updateData} btnNames={['one-month', 'six-months', 'one-year', 'ytd', 'all']} defaultValue={'one-month'} />
-              </div>
+             
               <ReactApexcharts
+
                 options={options}
                 series={series}
                 type="area"
