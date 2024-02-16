@@ -13,6 +13,7 @@ import { convertToString } from "src/@core/utils/string";
 import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
+import ApexChart from "./Apexchart";
 
 const AppSecurityDetails = () => {
   const router = useRouter();
@@ -48,6 +49,7 @@ const AppSecurityDetails = () => {
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
         <SecurityCveChart appId={convertToString(appId)} />
+        {/* <ApexChart/> */}
         <CveVulnerabilities appId={convertToString(appId)} />
       </SecurityProvider>
     </>
