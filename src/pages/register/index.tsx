@@ -20,9 +20,9 @@ import Icon from "src/@core/components/icon"; // ** Icon Imports
 import BlankLayout from "src/@core/layouts/BlankLayout"; // ** Layout Import
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2"; // ** Demo Imports
 import { signUp } from "src/services/authService";
-import { checkUsername, checkEmail } from "src/services/userService"
+import { checkUsername, checkEmail } from "src/services/userService";
 import toast from "react-hot-toast";
-import { CircularProgress } from '@mui/material';
+import { CircularProgress } from "@mui/material";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -89,8 +89,7 @@ const validationRules = [
   {
     regex: /^[!@$%&*?]+$/,
     message: "only (@, $, !, %, *, ?, or &) as the special characters",
-  }
-
+  },
 ];
 
 const Register = () => {
@@ -160,7 +159,9 @@ const Register = () => {
       .then((response) => {
         setIsSubmitting(false);
         if (response?.status === 201) {
-          toast.success("Verification Email Sent to your registered email Successfully");
+          toast.success(
+            "Verification Email Sent to your registered email Successfully"
+          );
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
@@ -192,12 +193,15 @@ const Register = () => {
 
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
     if (inputUsername.length < 3) {
       setUsernameError("Username must be at least 3 characters.");
     } else if (inputUsername.length > 15) {
       setUsernameError("Username must be a maximum of 15 characters.");
     } else if (inputUsername.includes(" ")) {
       setUsernameError("Username can't have space.");
+    } else if (!alphanumericRegex.test(inputUsername)) {
+      setUsernameError("Username can only contain letters and numbers.");
     } else {
       setUsernameError(null);
       const truncatedUsername = inputUsername;
@@ -336,13 +340,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                    (formData.email.trim() === ""
-                      ? "Email cannot be empty."
-                      : !isValidEmail(formData.email))
+                  (formData.email.trim() === ""
+                    ? "Email cannot be empty."
+                    : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                      ? "Email Already exists"
-                      : ""
+                    ? "Email Already exists"
+                    : ""
                 }
               />
 
@@ -379,10 +383,10 @@ const Register = () => {
                 helperText={
                   touched.password && !isValidPassword
                     ? "Password does not meet the requirements. Please ensure it contains:\n" +
-                    validationRules
-                      .filter((rule) => !rule.regex.test(formData.password))
-                      .map((rule) => rule.message)
-                      .join("\n")
+                      validationRules
+                        .filter((rule) => !rule.regex.test(formData.password))
+                        .map((rule) => rule.message)
+                        .join("\n")
                     : ""
                 }
               />
@@ -456,7 +460,13 @@ const Register = () => {
                 variant="contained"
                 sx={{ mb: 4 }}
               >
-                {isSubmitting && <CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />}
+                {isSubmitting && (
+                  <CircularProgress
+                    size="1.2rem"
+                    color="secondary"
+                    style={{ marginRight: "5px" }}
+                  />
+                )}
                 Sign up
               </Button>
               <Box

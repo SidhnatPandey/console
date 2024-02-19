@@ -245,7 +245,11 @@ const TabAccount = () => {
     });
   };
   const handleFormChange = (field: keyof Data, value: Data[keyof Data]) => {
-    const valueNumber = clearNumber(value)
+    let valueNumber = value;
+
+    if (field === "phoneNumber") {
+      valueNumber = clearNumber(value);
+    }
     setFormData((prevFormData) => ({
       ...prevFormData,
       [field]: valueNumber,
@@ -392,7 +396,7 @@ const TabAccount = () => {
                   onChange={(e) =>
                     handleFormChange("phoneNumber", e.target.value)
                   }
-                // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
+                  // InputProps={{ startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -532,10 +536,10 @@ const TabAccount = () => {
                         sx={
                           errors.checkbox
                             ? {
-                              "& .MuiTypography-root": {
-                                color: "error.main",
-                              },
-                            }
+                                "& .MuiTypography-root": {
+                                  color: "error.main",
+                                },
+                              }
                             : null
                         }
                         control={
