@@ -24,6 +24,7 @@ import { checkUsername, checkEmail } from "src/services/userService"
 import toast from "react-hot-toast";
 import { CircularProgress } from '@mui/material';
 import { generateEncryptedKeys } from "../secret/encryption_decryption";
+import { saveKeys } from "src/services/secretservice";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -162,7 +163,24 @@ const Register = () => {
         setIsSubmitting(false);
         if (response?.status === 201) {
           toast.success("Registered successfully");
-          console.log( generateEncryptedKeys(response?.data?.orgId));       // ratnesh changes
+          generateEncryptedKeys(response?.data?.orgId)
+            .then((encryptedKeysResponse) => {
+              const encryptedKeys = {
+                org_id: encryptedKeysResponse?.orgid,
+                publicKey: encryptedKeysResponse?.encryptedpublicKey,
+                encryptedPrivateKey: encryptedKeysResponse?.encryptedPrivateKey,
+                encryptedPrivateIv: encryptedKeysResponse?.encryptediv,
+                encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
+                encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
+              };
+                saveKeys(encryptedKeys)
+                  .then((response: any) => {
+                    console.log(response);
+                  })
+                  .catch((error: any) => {
+                    console.error(error);
+                  });
+            }); 
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
