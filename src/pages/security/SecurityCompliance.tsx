@@ -54,7 +54,7 @@ const SecurityCompliance = (props: Props) => {
         opacityFrom: 1,
         shadeIntensity: 1,
         stops: [30, 70, 100],
-        inverseColors: false,
+        inverseColors: true,
         gradientToColors: [theme.palette.success.main],
       },
     },
