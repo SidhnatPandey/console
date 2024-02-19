@@ -216,7 +216,7 @@ const SecurityCveChart = (props: Props) => {
         fill: false,
         tension: 0.5,
         pointRadius: 1,
-        label: "Unknown",
+        label: "Negligible",
         pointHoverRadius: 5,
         pointStyle: "circle",
         borderColor: COLOR_PALLET.info,

@@ -63,8 +63,8 @@ const Plans = (props: Props) => {
             const planId = getItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId)!;
             saveCardSession(sessionId, customreId, planId).then(
                 () => {
-                    fetchCards();
                     authContext.fetchOrg();
+                    fetchCards();
                     urlParams.delete("session_id");
                     router.replace('/billing');
                     removeItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId);

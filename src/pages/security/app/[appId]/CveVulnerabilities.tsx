@@ -132,6 +132,8 @@ const CveVulnerabilities = (props: Props) => {
         return "primary";
       case "Low":
         return "secondary";
+      case "Negligible":
+        return "info";
       case "Unknown":
         return "info";
       default:
@@ -261,7 +263,7 @@ const CveVulnerabilities = (props: Props) => {
                       </TableCell>
                       <TableCell>
                         <ChipsRounded
-                          label={row.Severity}
+                          label={row.Severity === 'Unknown' ? 'Negligible' : row.Severity}
                           color={getCVEColor(row.Severity)}
                         ></ChipsRounded>
                       </TableCell>
