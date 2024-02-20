@@ -255,24 +255,28 @@ const CveVulnerabilities = (props: Props) => {
                     <TableRow key={index}>
                       <TableCell>
                         <Link
-                          href={`/security/cve/${row.CveID}`}
+                          href={`/security/cve/${row?.CveID}`}
                           style={{ textDecoration: "none" }}
                         >
-                          {row.CveID}
+                          {row?.CveID}
                         </Link>
                       </TableCell>
                       <TableCell>
                         <ChipsRounded
-                          label={row.Severity === 'Unknown' ? 'Negligible' : row.Severity}
-                          color={getCVEColor(row.Severity)}
+                          label={
+                            row?.Severity === "Unknown"
+                              ? "Negligible"
+                              : row?.Severity
+                          }
+                          color={getCVEColor(row?.Severity)}
                         ></ChipsRounded>
                       </TableCell>
-                      <TableCell>{row.PackageName}</TableCell>
-                      <TableCell>{row.Version}</TableCell>
+                      <TableCell>{row?.PackageName}</TableCell>
+                      <TableCell>{row?.Version}</TableCell>
                       <TableCell>
                         {expandedRows[index] ? (
                           <div>
-                            {row.Description}
+                            {row?.Description}
                             <span
                               style={{ color: "blue", cursor: "pointer" }}
                               onClick={() => toggleDescription(index)}
@@ -283,9 +287,9 @@ const CveVulnerabilities = (props: Props) => {
                           </div>
                         ) : (
                           <div>
-                            {row.Description.length > 100 ? (
+                            {row?.Description.length > 100 ? (
                               <span>
-                                {row.Description.substring(0, 100)}
+                                {row?.Description.substring(0, 100)}
                                 <span
                                   style={{ color: "blue", cursor: "pointer" }}
                                   onClick={() => toggleDescription(index)}
@@ -295,7 +299,7 @@ const CveVulnerabilities = (props: Props) => {
                                 </span>
                               </span>
                             ) : (
-                              <span>{row.Description}</span>
+                              <span>{row?.Description}</span>
                             )}
                           </div>
                         )}

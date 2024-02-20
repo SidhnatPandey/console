@@ -347,6 +347,7 @@ const TabAccount = () => {
                   fullWidth
                   label="First Name"
                   placeholder="John"
+                  inputProps={{ maxLength: 30 }}
                   value={formData.firstName}
                   onChange={(e) =>
                     handleFormChange("firstName", e.target.value)
@@ -358,6 +359,7 @@ const TabAccount = () => {
                   fullWidth
                   label="Last Name"
                   placeholder="Doe"
+                  inputProps={{ maxLength: 30 }}
                   value={formData.lastName}
                   onChange={(e) => handleFormChange("lastName", e.target.value)}
                 />
