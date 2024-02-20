@@ -163,7 +163,9 @@ const Register = () => {
         setIsSubmitting(false);
         if (response?.status === 201) {
           toast.success("Registered successfully");
-          generateEncryptedKeys(response?.data?.orgId)
+          const org_id = response?.data?.org_id;
+          const user_id = response?.data?.userId;
+          generateEncryptedKeys(response?.data?.org_id)
             .then((encryptedKeysResponse) => {
               const encryptedKeys = {
                 org_id: encryptedKeysResponse?.orgid,
@@ -173,7 +175,11 @@ const Register = () => {
                 encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
                 encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
               };
-                saveKeys(encryptedKeys)
+                saveKeys(
+                  org_id,
+                  user_id,
+                  encryptedKeys
+                )
                   .then((response: any) => {
                     console.log(response);
                   })

@@ -71,4 +71,7 @@ export const APP_API = {
   makeCardDefault: "cards/{paymentMethod}/setdefault?customer_id={customerId}",
   updateCard: "cards/{cardId}",
   listOfInvoices: "invoices",
+
+  //secret
+  savekey: "savekey?userId={userId}&org_id={org_id}",
 };
