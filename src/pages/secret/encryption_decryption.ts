@@ -1,9 +1,5 @@
 import crypto from "crypto";
-import {
-  decryptAESGCM,
-  encryptAESGCM,
-  generateKeyPair,
-} from "./crpto_utis";
+import { decryptAESGCM, encryptAESGCM, generateKeyPair } from "./crpto_utis";
 
 const nacl = require("tweetnacl");
 nacl.util = require("tweetnacl-util");
@@ -87,7 +83,7 @@ export function generateEncryptedKeys(orgid: string): Promise<{
         privateKey = keyPair.privateKey;
         // Encrypt private key using the derived key and IV
         return encryptAESGCM(
-          Buffer.from(privateKey, "utf8"),
+          Buffer.from(privateKey, "base64"),
           Buffer.from(orgKey, "hex"),
           iv
         );
@@ -140,7 +136,7 @@ export function decryptPrivateKey(
         const EncryptedData = Buffer.from(encryptedData, "hex");
         decryptAESGCM(EncryptedData, orgKey, IV, AuthTag)
           .then((decryptedData) => {
-            const decryptedPrivateKey = decryptedData.toString("utf8");
+            const decryptedPrivateKey = decryptedData.toString("base64");
             resolve({
               privateKey: decryptedPrivateKey,
               orgKey: orgKey.toString("hex"),
@@ -155,5 +151,142 @@ export function decryptPrivateKey(
         console.error("Error deriving key:", err);
         reject(err); // Reject with error if key derivation fails
       });
+  });
+}
+
+//*
+// * Encrypts a key-value pair using AES 256 GCM.
+// * @param {string} privateKey - Private key for encryption.
+// * @param {string} key - Key to encrypt.
+// * @param {string} value - Value to encrypt.
+// * @returns {Promise<{
+// *   encrypted_key_iv: string;
+// *   encrypted_value_iv: string;
+// *   encrypted_key_tag: string;
+// *   encrypted_value_tag: string;
+// *   encrypted_key_ciphertext: string;
+// *   encrypted_value_ciphertext: string;
+// * }>} - Promise resolving to an object containing the encrypted key and value.
+export function encryptKey(
+  privateKey: string,
+  key: string,
+  value: string
+): Promise<{
+  encrypted_key_iv: string;
+  encrypted_value_iv: string;
+  encrypted_key_tag: string;
+  encrypted_value_tag: string;
+  encrypted_key_ciphertext: string;
+  encrypted_value_ciphertext: string;
+}> {
+  return new Promise((resolve, reject) => {
+    const keyIV = crypto.randomBytes(12); // Generate IV for key
+    const valueIV = crypto.randomBytes(12); // Generate IV for value
+
+    // Encrypt key
+    encryptAESGCM(
+      Buffer.from(key, "utf8"),
+      Buffer.from(privateKey, "base64"),
+      keyIV
+    )
+      .then(({ encryptedData: keyEncryptedData, authTag: keyAuthTag }) => {
+        const encrypted_key_ciphertext = keyEncryptedData.toString("hex");
+        const encrypted_key_tag = keyAuthTag.toString("hex");
+
+        // Encrypt value
+        encryptAESGCM(
+          Buffer.from(value, "utf8"),
+          Buffer.from(privateKey, "base64"),
+          valueIV
+        )
+          .then(
+            ({ encryptedData: valueEncryptedData, authTag: valueAuthTag }) => {
+              const encrypted_value_ciphertext =
+                valueEncryptedData.toString("hex");
+              const encrypted_value_tag = valueAuthTag.toString("hex");
+
+              resolve({
+                encrypted_key_iv: keyIV.toString("hex"),
+                encrypted_value_iv: valueIV.toString("hex"),
+                encrypted_key_tag,
+                encrypted_value_tag,
+                encrypted_key_ciphertext,
+                encrypted_value_ciphertext,
+              });
+            }
+          )
+          .catch((err) => {
+            console.error("Error encrypting value:", err);
+            reject(err);
+          });
+      })
+      .catch((err) => {
+        console.error("Error encrypting key:", err);
+        reject(err);
+      });
+  });
+}
+
+/**
+ * Decrypts a key-value pair using AES 256 GCM.
+ * @param {string} privateKey - Private key for decryption.
+ * @param {string} encrypted_key_iv - IV used to encrypt the key.
+ * @param {string} encrypted_key_tag - Authentication tag for the encrypted key.
+ * @param {string} encrypted_key_ciphertext - Encrypted key.
+ * @param {string} encrypted_value_iv - IV used to encrypt the value.
+ * @param {string} encrypted_value_tag - Authentication tag for the encrypted value.
+ * @param {string} encrypted_value_ciphertext - Encrypted value.
+ * @returns {Promise<{ key: string, value: string }>} - Promise resolving to an object containing the decrypted key and value.
+ */
+export function decryptKey(
+  privateKey: string,
+  encrypted_key_iv: string,
+  encrypted_key_tag: string,
+  encrypted_key_ciphertext: string,
+  encrypted_value_iv: string,
+  encrypted_value_tag: string,
+  encrypted_value_ciphertext: string
+): Promise<{ key: string; value: string }> {
+  return new Promise((resolve, reject) => {
+    try {
+      // Convert IV and tag strings to Buffer
+      const keyIV = Buffer.from(encrypted_key_iv, "hex");
+      const valueIV = Buffer.from(encrypted_value_iv, "hex");
+      const keyTag = Buffer.from(encrypted_key_tag, "hex");
+      const valueTag = Buffer.from(encrypted_value_tag, "hex");
+
+      // Decrypt key
+      decryptAESGCM(
+        Buffer.from(encrypted_key_ciphertext, "hex"),
+        Buffer.from(privateKey, "base64"),
+        keyIV,
+        keyTag
+      )
+        .then((decryptedKey) => {
+          // Decrypt value
+          decryptAESGCM(
+            Buffer.from(encrypted_value_ciphertext, "hex"),
+            Buffer.from(privateKey, "base64"),
+            valueIV,
+            valueTag
+          )
+            .then((decryptedValue) => {
+              resolve({
+                key: decryptedKey.toString("utf8"),
+                value: decryptedValue.toString("utf8"),
+              });
+            })
+            .catch((err) => {
+              console.error("Error decrypting value:", err);
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          console.error("Error decrypting key:", err);
+          reject(err);
+        });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
