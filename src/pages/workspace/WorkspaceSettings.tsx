@@ -32,10 +32,10 @@ import toast from "react-hot-toast";
 import { Avatar } from "@mui/material";
 import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
+import { getUserData } from "src/services/userService";
 
 interface WorkspaceSettingsDataItem {
-  profile_picture: any;
-  username: ReactNode;
+  username: string;
   id: number;
   user_full_name: string;
   role: string;
@@ -44,6 +44,7 @@ interface WorkspaceSettingsDataItem {
   org_id: string;
   user_id: string;
   user: UserDataType;
+  profile_picture: string;
 }
 
 interface WorkspaceSettingsComponent {
@@ -71,6 +72,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
   const [selectedUserForEdit, setSelectedUserForEdit] =
     useState<WorkspaceSettingsDataItem | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [users, setUsers] = useState<UserDataType[]>([]);
+
 
   useEffect(() => {
     fetchWorkspaces();
@@ -104,6 +107,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
           (user: any) => user.email
         );
         setFetchedUsers(filteredUsers);
+        getProfilePicture(filteredUsers);
       } else {
         console.error("Invalid data format received from orguser API");
       }
@@ -111,6 +115,17 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
       console.error("Error fetching users:", error);
     }
   };
+
+  const getProfilePicture = (userArr: UserDataType[]) => {
+    userArr.forEach((user: UserDataType) => {
+      getUserData(user.user_id).then((resp: any) => {
+        if (resp.data) {
+          user.user_info.profile_picture = resp.data.user_info.profile_picture;
+          setUsers([...userArr]);
+        }
+      })
+    })
+  }
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -183,6 +198,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
     setEditDialogOpen(false);
     setSelectedUserForEdit(null);
   };
+
   const handleAddUserClick = () => {
     setAddUserDialogOpen(true);
   };
@@ -320,7 +336,8 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
               {workspaceSettingsData.length > 0 ? (
                 workspaceSettingsData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, key) => {
+                  .map((row, key): any => {
+                    const [first_name , last_name] = row.user_full_name.split(" ");
                     return (
                       <TableRow key={key}>
                         <TableCell>
@@ -331,13 +348,31 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
                               data-testid="avatar-0"
                               alt={row.user_full_name}
                               src={
-                                row?.profile_picture
+                                row.profile_picture
                                   ? `data:image/jpeg;base64,${row.profile_picture}`
                                   : undefined
                               }
                               sx={{ marginRight: 2, fontSize: "2rem" }}
                               style={{ alignItems: "center", fontSize: "20px" }}
-                            />
+                            >
+                              {!row.profile_picture &&
+                                (first_name ||
+                                  last_name
+                                  ? `${first_name
+                                    ? toTitleCase(
+                                      first_name[0]
+                                    )
+                                    : ""
+                                  }${last_name
+                                    ? toTitleCase(
+                                      last_name[0]
+                                    )
+                                    : ""
+                                  }`
+                                  : row.username
+                                    ? toTitleCase(row.username[0])
+                                    : "")}
+                            </Avatar>
                             <div>
                               <Typography
                                 variant="body1"
