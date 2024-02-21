@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -32,6 +32,7 @@ import toast from "react-hot-toast";
 import { Avatar } from "@mui/material";
 import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
+import { getUserData } from "src/services/userService";
 
 interface WorkspaceSettingsDataItem {
   profile_picture: any;
@@ -88,6 +89,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
     getListOfUsersWorkspaces(workspaceId?.id)
       .then((response) => {
         setWorkspaceSettingsData(response?.data || []);
+        getProfilePicture(response?.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -111,6 +113,17 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
       console.error("Error fetching users:", error);
     }
   };
+
+  const getProfilePicture = (userArr: WorkspaceSettingsDataItem[]) => {
+    userArr.forEach((user: WorkspaceSettingsDataItem) => {
+      getUserData(user.user_id).then((resp: any) => {
+        if (resp.data) {
+          user.profile_picture = resp.data.user_info.profile_picture;
+          setWorkspaceSettingsData([...userArr]);
+        }
+      })
+    })
+  }
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -321,7 +334,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
                 workspaceSettingsData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, key) => {
-                    const [first_name , last_name] = row.user_full_name.split(" ");
+                    const [first_name, last_name] = row.user_full_name.split(" ");
                     return (
                       <TableRow key={key}>
                         <TableCell>
@@ -527,10 +540,10 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
             >
               {Array.isArray(fetchedUsers)
                 ? fetchedUsers.map((user) => (
-                    <MenuItem key={user.id} value={user.user_id}>
-                      {user.email}
-                    </MenuItem>
-                  ))
+                  <MenuItem key={user.id} value={user.user_id}>
+                    {user.email}
+                  </MenuItem>
+                ))
                 : null}
             </TextField>
             <TextField
