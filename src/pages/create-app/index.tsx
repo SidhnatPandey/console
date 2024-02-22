@@ -274,6 +274,7 @@ const CreateApp = () => {
   if (router.query?.code) {
     sendCode(router.query?.code as string, workspaceId).then((response) => {
       if (response?.data.git_user) {
+        router.replace('/create-app')
         setGitUser(response.git_user);
         fetchUserRepositories(response.git_user as string);
       }
