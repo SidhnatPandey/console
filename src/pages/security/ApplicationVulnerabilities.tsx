@@ -111,7 +111,7 @@ const ApplicationVulnerabilities = () => {
   // Modify filteredData to include workspace filtering
   const filteredData = vulnerabilityData?.filter((row) => {
     return (
-      (selectedWorkspace ? row.WorkspaceName === selectedWorkspace : true) &&
+      (selectedWorkspace ? row?.WorkspaceName === selectedWorkspace : true) &&
       Object.values(row).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -345,40 +345,40 @@ const ApplicationVulnerabilities = () => {
                       <TableCell>
                         <Link
                           href={{
-                            pathname: `/security/app/${row.AppId}`,
+                            pathname: `/security/app/${row?.AppId}`,
                             query: {
                               data: JSON.stringify({
-                                appName: row.AppName,
-                                wid: row.WorkspaceId,
+                                appName: row?.AppName,
+                                wid: row?.WorkspaceId,
                               }),
                             },
                           }}
-                          as={`/security/app/${row.AppId}`}
+                          as={`/security/app/${row?.AppId}`}
                           style={{ textDecoration: "none" }}
                           onClick={() => {
-                            handleAppNameClick(row.WorkspaceId);
+                            handleAppNameClick(row?.WorkspaceId);
                           }}
                         >
-                          {row.AppName}
+                          {row?.AppName}
                         </Link>
                       </TableCell>
-                      <TableCell>{row.WorkspaceName}</TableCell>
+                      <TableCell>{row?.WorkspaceName}</TableCell>
                       <TableCell>
-                        {calculateDaysFromTodayString(row.LastScanned)}
+                        {calculateDaysFromTodayString(row?.LastScanned)}
                       </TableCell>
                       <TableCell>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <MultiStepBarChart Cves={row.Cves} />
-                          <span>{calculateTotalCVEs(row.Cves)}</span>
+                          <MultiStepBarChart Cves={row?.Cves} />
+                          <span>{calculateTotalCVEs(row?.Cves)}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <a
                           onClick={() =>
-                            getSBOMs(row.AppId, row.AppName, row.WorkspaceId)
+                            getSBOMs(row?.AppId, row?.AppName, row?.WorkspaceId)
                           }
                           style={{
-                            cursor: sbomDownloadInProgress[row.AppId]
+                            cursor: sbomDownloadInProgress[row?.AppId]
                               ? "not-allowed"
                               : "pointer",
                           }}
@@ -389,13 +389,13 @@ const ApplicationVulnerabilities = () => {
                         <a
                           onClick={() =>
                             getDownloadAppVulCve(
-                              row.AppId,
-                              row.AppName,
-                              row.WorkspaceId
+                              row?.AppId,
+                              row?.AppName,
+                              row?.WorkspaceId
                             )
                           }
                           style={{
-                            cursor: cveDownloadInProgress[row.AppId]
+                            cursor: cveDownloadInProgress[row?.AppId]
                               ? "not-allowed"
                               : "pointer",
                           }}

@@ -63,7 +63,7 @@ const SecurityCompliance = (props: Props) => {
         endAngle: 140,
         startAngle: -140,
         hollow: { size: "60%" },
-        track: { background: "#EA5455" },
+        track: { background: "#CE4A4B" },
         dataLabels: {
           name: {
             offsetY: -15,

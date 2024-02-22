@@ -11,8 +11,10 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
+import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 
 interface AppsAffectedByCVEDataProps {
   appsAffectedData?: {
@@ -74,6 +76,9 @@ const ImpactedApplications = ({
     });
   };
 
+  const handleAppNameClick = (workspaceId: string) => {
+    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
+  };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -158,7 +163,26 @@ const ImpactedApplications = ({
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell>{row?.AppName}</TableCell>
+                      <TableCell>
+                        <Link
+                          href={{
+                            pathname: `/security/app/${row?.AppID}`,
+                            query: {
+                              data: JSON.stringify({
+                                appName: row?.AppName,
+                                wid: row?.WorkspaceId,
+                              }),
+                            },
+                          }}
+                          as={`/security/app/${row?.AppID}`}
+                          style={{ textDecoration: "none" }}
+                          onClick={() => {
+                            handleAppNameClick(row?.WorkspaceId);
+                          }}
+                        >
+                          {row?.AppName}
+                        </Link>
+                      </TableCell>
                       <TableCell>{row?.WorkspaceName}</TableCell>
                     </TableRow>
                   ))

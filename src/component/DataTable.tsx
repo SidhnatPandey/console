@@ -1,6 +1,7 @@
 import { toTitleCase } from "src/utils/stringUtils";
 import React, { useMemo, useState } from "react";
 import CustomChip from "src/@core/components/mui/chip";
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   Box,
   Table,
@@ -73,7 +74,7 @@ const DataTable: React.FC<DataTableProps> = ({
               paddingBottom: "50px",
             }}
           >
-            {loading ? "Loading ..." : "No Data"}
+            {loading ? <CircularProgress color="primary" /> : "No Data"}
           </TableCell>
         </TableRow>
       );
@@ -93,7 +94,7 @@ const DataTable: React.FC<DataTableProps> = ({
           {columns.map((column) => (
             <TableCell key={column.id} align="left">
               {typeof column.strictFunction === "function" &&
-              column.showChip ? (
+                column.showChip ? (
                 <CustomChip
                   rounded
                   skin="light"
@@ -122,12 +123,12 @@ const DataTable: React.FC<DataTableProps> = ({
 
   return (
 
-    
+
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%" }}>
-       
+
         {heading && (
-       /* heading of  the table */
+          /* heading of  the table */
 
           <Box
             sx={{
@@ -141,11 +142,11 @@ const DataTable: React.FC<DataTableProps> = ({
             <div></div>
           </Box>
         )}
-        
-        { heading && <Divider />}
+
+        {heading && <Divider />}
         <TableContainer>
           <Table>
-            
+
             {
               <TableHead>
                 <TableRow>
@@ -171,7 +172,7 @@ const DataTable: React.FC<DataTableProps> = ({
             <TableBody>{renderRows}</TableBody>
           </Table>
         </TableContainer>
-        
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"

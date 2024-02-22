@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // ** MUI Imports
 import Box from "@mui/material/Box";
@@ -69,8 +69,11 @@ import {
 } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { env } from 'next-runtime-env';
-import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import { env } from "next-runtime-env";
+import {
+  LOCALSTORAGE_CONSTANTS,
+  PERMISSION_CONSTANTS,
+} from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
 import { setItemToLocalstorage } from "src/services/locastorageService";
 
@@ -151,7 +154,7 @@ const defaultSourceCodeValues = {
   git_repo: "",
   git_branch: "",
   src_code_path: "",
-  workspace_id: ""
+  workspace_id: "",
 };
 
 const sourceCodeSchema = yup.object().shape({
@@ -190,12 +193,14 @@ const ConfigurationSchema = yup.object().shape({
   ),
 });
 
-const githubUrl = env('NEXT_PUBLIC_GITHUB_URL');
+const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
 
 const CreateApp = () => {
   // ** States
 
-  const storedWorkspace = localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace)!;
+  const storedWorkspace = localStorage.getItem(
+    LOCALSTORAGE_CONSTANTS.workspace
+  )!;
   const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
@@ -218,7 +223,8 @@ const CreateApp = () => {
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
-  const [branches, setBranches] = useState<string[]>(["No Branch"]);
+  const [branches, setBranches] = useState<string[]>([]);
+  const [repoError, setRepoError] = useState(false);
 
   useEffect(() => {
     if (!gitUser) {
@@ -227,8 +233,8 @@ const CreateApp = () => {
   }, [gitUser]);
 
   useEffect(() => {
-    setSourceCodeValue('workspace_id', workspaceId);
-  }, [authContext.workspaces, workspaceId])
+    setSourceCodeValue("workspace_id", workspaceId);
+  }, [authContext.workspaces, workspaceId]);
 
   // react hook form
   const {
@@ -237,6 +243,7 @@ const CreateApp = () => {
     register: sourceCodeRegister,
     getValues: getSoruceCodeValue,
     setValue: setSourceCodeValue,
+    reset: resetSourceCodeForm,
     formState: { errors: sourceCodeErrors },
   } = useForm({
     defaultValues: defaultSourceCodeValues,
@@ -258,23 +265,24 @@ const CreateApp = () => {
     resolver: yupResolver(ConfigurationSchema),
   });
 
-  const { fields, append, remove, } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: "env_variables",
-    control: configurationControl
+    control: configurationControl,
   });
 
   const router = useRouter();
   if (router.query?.code) {
-    sendCode(router.query?.code as string, workspaceId)
-      .then((response) => {
-        if (response?.data.git_user) {
-          setGitUser(response.git_user);
-          fetchUserRepositories(response.git_user as string);
-        }
-      })
+    sendCode(router.query?.code as string, workspaceId).then((response) => {
+      if (response?.data.git_user) {
+        router.replace('/create-app')
+        setGitUser(response.git_user);
+        fetchUserRepositories(response.git_user as string);
+      }
+    });
   }
 
-  const isNextButtonDisabled = appNameExist || !isConfigurationFormValid;
+  const isNextButtonDisabled =
+    appNameExist || !isConfigurationFormValid || repoError;
 
   // Function to check if the application name exists
   /*   useEffect(() => {
@@ -283,14 +291,13 @@ const CreateApp = () => {
 
   const checkAppNameExists = (appName: string) => {
     if (appName) {
-      appNameExists(appName)
-        .then((response) => {
-          if (response) {
-            response.status === 409
-              ? setAppNameExist(true)
-              : setAppNameExist(false);
-          }
-        })
+      appNameExists(appName).then((response) => {
+        if (response) {
+          response.status === 409
+            ? setAppNameExist(true)
+            : setAppNameExist(false);
+        }
+      });
     }
   };
 
@@ -299,7 +306,10 @@ const CreateApp = () => {
       const response = await getGitOwner(id);
       if (response.data) {
         setGitUser(response.data.gitUser);
-        await fetchUserRepositories(response.data.gitUser as string, workspaceId);
+        await fetchUserRepositories(
+          response.data.gitUser as string,
+          workspaceId
+        );
       }
     } catch (error) {
       //toast.error("Could not fetch git user.");
@@ -321,11 +331,15 @@ const CreateApp = () => {
   };
 
   const fetchBranch = async (repo: string) => {
+    resetSourceCodeForm(getSoruceCodeValue());
     try {
       setLoadingBranches(true);
       const response = await getBranch(repo, gitUser, workspaceId);
       if (response.data) {
         setBranches(response.data);
+      } else {
+        setBranches([]);
+        setSourceCodeValue('git_branch', '');
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
@@ -340,6 +354,9 @@ const CreateApp = () => {
       setRepo(repo);
       setRepoSelected(true);
       fetchBranch(repo);
+      setRepoError(false);
+    } else {
+      setRepoError(true);
     }
   };
 
@@ -365,7 +382,9 @@ const CreateApp = () => {
 
   const handleClickOpen = () => {
     if (getConfigurationValue("env_variables").length === 0) {
-      setConfigurationValue("env_variables", [{ key: "", value: "", stg: false, test: false, prod: false }]);
+      setConfigurationValue("env_variables", [
+        { key: "", value: "", stg: false, test: false, prod: false },
+      ]);
     }
     setOpen(true);
   };
@@ -397,7 +416,10 @@ const CreateApp = () => {
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
-        router.push({ pathname: '/workspace/app-dashboard', query: { appId: response.data.app_id } });
+        router.push({
+          pathname: "/workspace/app-dashboard",
+          query: { appId: response.data.app_id },
+        });
         setTimeout(() => {
           authContext.fetchOrg();
         }, 2000);
@@ -407,31 +429,45 @@ const CreateApp = () => {
       });
   };
 
-  const handleCheckboxChange = (index: number, checked: boolean, type: string) => {
+  const handleCheckboxChange = (
+    index: number,
+    checked: boolean,
+    type: string
+  ) => {
     const currentValues = getConfigurationValue();
     switch (type) {
-      case 'test':
+      case "test":
         currentValues.env_variables[index].test = checked;
         break;
-      case 'stg':
+      case "stg":
         currentValues.env_variables[index].stg = checked;
         break;
-      case 'prod':
+      case "prod":
         currentValues.env_variables[index].prod = checked;
         break;
     }
-    setConfigurationValue('env_variables', currentValues.env_variables);
+    setConfigurationValue("env_variables", currentValues.env_variables);
   };
 
   const convertData = (envVariables: any[]) => {
-    const nData: { test: EnvironmentVariable[], stg: EnvironmentVariable[], prod: EnvironmentVariable[] } = { test: [], stg: [], prod: [] };
+    const nData: {
+      test: EnvironmentVariable[];
+      stg: EnvironmentVariable[];
+      prod: EnvironmentVariable[];
+    } = { test: [], stg: [], prod: [] };
     envVariables.forEach((ele: any) => {
-      if (ele.test) { nData.test.push({ 'key': ele.key, 'value': ele.value }) }
-      if (ele.stg) { nData.stg.push({ 'key': ele.key, 'value': ele.value }) }
-      if (ele.prod) { nData.prod.push({ 'key': ele.key, 'value': ele.value }) }
-    })
+      if (ele.test) {
+        nData.test.push({ key: ele.key, value: ele.value });
+      }
+      if (ele.stg) {
+        nData.stg.push({ key: ele.key, value: ele.value });
+      }
+      if (ele.prod) {
+        nData.prod.push({ key: ele.key, value: ele.value });
+      }
+    });
     return nData;
-  }
+  };
 
   const getStepContent = (step: number) => {
     switch (step) {
@@ -458,12 +494,15 @@ const CreateApp = () => {
                         }}
                         placeholder="Name your app"
                         error={
-                          (Boolean(sourceCodeErrors.application_name) || appNameExist) &&
-                          !(sourceCodeErrors.application_name === undefined && !appNameExist)
+                          (Boolean(sourceCodeErrors.application_name) ||
+                            appNameExist) &&
+                          !(
+                            sourceCodeErrors.application_name === undefined &&
+                            !appNameExist
+                          )
                         }
                         aria-describedby="stepper-linear-account-username"
                       />
-
                     )}
                   />
                   {sourceCodeErrors.application_name && (
@@ -613,10 +652,7 @@ const CreateApp = () => {
                       <LoaderComponent />
                     ) : (
                       <FormControl fullWidth>
-                        <InputLabel
-                          id="git-branch"
-                          error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
-                        >
+                        <InputLabel id="git-branch">
                           Branch
                         </InputLabel>
                         <Controller
@@ -627,12 +663,15 @@ const CreateApp = () => {
                             <Select
                               value={value}
                               label="Branch"
-                              onChange={onChange}
-                              error={Boolean(sourceCodeErrors.git_branch)} // Use git_branch here
+                              onChange={(e) =>
+                                onChange(e)
+                              }
+                              error={Boolean(sourceCodeErrors.git_branch)}
                               labelId="stepper-linear-personal-country"
                               aria-describedby="stepper-linear-personal-country-helper"
                             >
-                              {branches.map((branch) => (
+                              {branches.length === 0 && <MenuItem disabled>No Branch</MenuItem>}
+                              {branches.length > 0 && branches.map((branch) => (
                                 <MenuItem key={branch} value={branch}>
                                   {branch}
                                 </MenuItem>
@@ -821,26 +860,73 @@ const CreateApp = () => {
                               </FormControl>
                             </Grid>
                             <Grid item xs={1} sm={1}>
-                              <FormControlLabel label='Test' labelPlacement='top' control={<Checkbox
-                                checked={field.test}
-                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'test')} />} />
+                              <FormControlLabel
+                                label="Test"
+                                labelPlacement="top"
+                                control={
+                                  <Checkbox
+                                    checked={field.test}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        index,
+                                        e.target.checked,
+                                        "test"
+                                      )
+                                    }
+                                  />
+                                }
+                              />
                             </Grid>
                             <Grid item xs={1} sm={1}>
-                              <FormControlLabel label='Stg' labelPlacement='top' control={<Checkbox
-                                checked={field.stg}
-                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'stg')} />} />
+                              <FormControlLabel
+                                label="Stg"
+                                labelPlacement="top"
+                                control={
+                                  <Checkbox
+                                    checked={field.stg}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        index,
+                                        e.target.checked,
+                                        "stg"
+                                      )
+                                    }
+                                  />
+                                }
+                              />
                             </Grid>
                             <Grid item xs={1} sm={1}>
-                              <FormControlLabel label='Prod' labelPlacement='top' control={<Checkbox
-                                checked={field.prod}
-                                onChange={(e) => handleCheckboxChange(index, e.target.checked, 'prod')} />} />
+                              <FormControlLabel
+                                label="Prod"
+                                labelPlacement="top"
+                                control={
+                                  <Checkbox
+                                    checked={field.prod}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        index,
+                                        e.target.checked,
+                                        "prod"
+                                      )
+                                    }
+                                  />
+                                }
+                              />
                             </Grid>
                             <Grid item xs={1} sm={1}>
                               {index === fields.length - 1 && (
                                 <IconButton
                                   aria-label="add"
                                   size="large"
-                                  onClick={() => append({ key: "", value: "", stg: false, test: false, prod: false })}
+                                  onClick={() =>
+                                    append({
+                                      key: "",
+                                      value: "",
+                                      stg: false,
+                                      test: false,
+                                      prod: false,
+                                    })
+                                  }
                                 >
                                   <AddIcon fontSize="inherit" />
                                 </IconButton>
@@ -1178,8 +1264,8 @@ const CreateApp = () => {
 };
 
 CreateApp.acl = {
-  action: 'read',
-  subject: PERMISSION_CONSTANTS.createApp
-}
+  action: "read",
+  subject: PERMISSION_CONSTANTS.createApp,
+};
 
 export default CreateApp;
