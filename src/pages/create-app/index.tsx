@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // ** MUI Imports
 import Box from "@mui/material/Box";
@@ -209,16 +209,6 @@ const CreateApp = () => {
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
-  const [branchError, setBranchError] = useState(false);
-
-  const handleBranchChange = (value: any, onChange: any) => {
-    if (value === "No Branch") {
-      setBranchError(true);
-    } else {
-      setBranchError(false);
-    }
-    onChange(value);
-  };
 
   // Handle Stepper
   const handleBack = () => {
@@ -233,7 +223,7 @@ const CreateApp = () => {
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
-  const [branches, setBranches] = useState<string[]>(["main"]);
+  const [branches, setBranches] = useState<string[]>([]);
   const [repoError, setRepoError] = useState(false);
 
   useEffect(() => {
@@ -253,6 +243,7 @@ const CreateApp = () => {
     register: sourceCodeRegister,
     getValues: getSoruceCodeValue,
     setValue: setSourceCodeValue,
+    reset: resetSourceCodeForm,
     formState: { errors: sourceCodeErrors },
   } = useForm({
     defaultValues: defaultSourceCodeValues,
@@ -290,7 +281,7 @@ const CreateApp = () => {
   }
 
   const isNextButtonDisabled =
-    appNameExist || !isConfigurationFormValid || branchError || repoError;
+    appNameExist || !isConfigurationFormValid || repoError;
 
   // Function to check if the application name exists
   /*   useEffect(() => {
@@ -339,11 +330,15 @@ const CreateApp = () => {
   };
 
   const fetchBranch = async (repo: string) => {
+    resetSourceCodeForm(getSoruceCodeValue());
     try {
       setLoadingBranches(true);
       const response = await getBranch(repo, gitUser, workspaceId);
       if (response.data) {
         setBranches(response.data);
+      } else {
+        setBranches([]);
+        setSourceCodeValue('git_branch', '');
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
@@ -655,8 +650,8 @@ const CreateApp = () => {
                     {isLoadingBranches ? (
                       <LoaderComponent />
                     ) : (
-                      <FormControl fullWidth error={branchError}>
-                        <InputLabel id="git-branch" error={branchError}>
+                      <FormControl fullWidth>
+                        <InputLabel id="git-branch">
                           Branch
                         </InputLabel>
                         <Controller
@@ -668,13 +663,14 @@ const CreateApp = () => {
                               value={value}
                               label="Branch"
                               onChange={(e) =>
-                                handleBranchChange(e.target.value, onChange)
+                                onChange(e)
                               }
-                              error={branchError}
+                              error={Boolean(sourceCodeErrors.git_branch)}
                               labelId="stepper-linear-personal-country"
                               aria-describedby="stepper-linear-personal-country-helper"
                             >
-                              {branches.map((branch) => (
+                              {branches.length === 0 && <MenuItem disabled>No Branch</MenuItem>}
+                              {branches.length > 0 && branches.map((branch) => (
                                 <MenuItem key={branch} value={branch}>
                                   {branch}
                                 </MenuItem>
@@ -688,14 +684,6 @@ const CreateApp = () => {
                             id="stepper-linear-account-username"
                           >
                             This field is required
-                          </FormHelperText>
-                        )}
-                        {branchError && (
-                          <FormHelperText
-                            sx={{ color: "error.main" }}
-                            id="stepper-linear-account-username"
-                          >
-                            Branch cannot be "No Branch"
                           </FormHelperText>
                         )}
                       </FormControl>

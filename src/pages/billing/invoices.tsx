@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import DataTable, { Column, Row } from "src/component/DataTable"; 
+import DataTable, { Column, Row } from "src/component/DataTable";
 import { listOfInvoice } from "src/services/billingService";
+import useLoading from "src/hooks/loading";
 
 function formatDate(timestamp: string): string {
   const months: string[] = [
@@ -44,13 +45,13 @@ const addDollarSign = (value: number | string): string => {
 
 const InvoiceTable: React.FC = () => {
   const [invoices, setInvoices] = useState<Row[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const getListOfInvoices = () => {
-    setLoading(true);
+    startLoading();
     listOfInvoice().then((response) => {
       if (response) {
-        setLoading(false);
+        stopLoading();
         setInvoices(response.data);
       }
     });
