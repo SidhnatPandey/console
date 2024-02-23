@@ -271,23 +271,21 @@ const CreateApp = () => {
   });
 
   const router = useRouter();
-  if (router.query?.code) {
-    sendCode(router.query?.code as string, workspaceId).then((response) => {
-      if (response?.data.git_user) {
-        router.replace('/create-app')
-        setGitUser(response.git_user);
-        fetchUserRepositories(response.git_user as string);
-      }
-    });
-  }
+
+  useEffect(() => {
+    if (router.query?.code) {
+      sendCode(router.query?.code as string, workspaceId).then((response) => {
+        if (response?.data.git_user) {
+          router.replace('/create-app')
+          setGitUser(response.git_user);
+          fetchUserRepositories(response.git_user as string);
+        }
+      })
+    }
+  }, [router.query.code])
 
   const isNextButtonDisabled =
     appNameExist || !isConfigurationFormValid || repoError;
-
-  // Function to check if the application name exists
-  /*   useEffect(() => {
-      checkAppNameExists(appName);
-    }, [appName]); */
 
   const checkAppNameExists = (appName: string) => {
     if (appName) {
@@ -304,7 +302,7 @@ const CreateApp = () => {
   const fetchGitOwner = async (id: string = workspaceId) => {
     try {
       const response = await getGitOwner(id);
-      if (response.data) {
+      if (response.data.gitUser) {
         setGitUser(response.data.gitUser);
         await fetchUserRepositories(
           response.data.gitUser as string,
@@ -317,16 +315,18 @@ const CreateApp = () => {
   };
 
   const fetchUserRepositories = async (user: string, id = workspaceId) => {
-    try {
-      setLoadingRepositories(true);
-      const response = await getRepositories(user, id);
-      if (response.data) {
-        setRepositories(response.data);
+    if (user) {
+      try {
+        setLoadingRepositories(true);
+        const response = await getRepositories(user, id);
+        if (response.data) {
+          setRepositories(response.data);
+        }
+      } catch (error) {
+        toast.error("Could not fetch repositories.");
+      } finally {
+        setLoadingRepositories(false);
       }
-    } catch (error) {
-      toast.error("Could not fetch repositories.");
-    } finally {
-      setLoadingRepositories(false);
     }
   };
 
