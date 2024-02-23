@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Card, Grid, TextField, Button } from "@mui/material";
+import { Card, Grid, TextField, Button, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
 import { workspace } from "src/services/appService";
 import { AuthContext } from "src/context/AuthContext";
@@ -103,8 +103,9 @@ const CreateWorkspace = () => {
               size="large"
               variant="contained"
               type="submit"
+              disabled={loading}
             >
-              Create
+              {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Creating</> : 'Create'}
             </Button>
           </Grid>
         </Grid>

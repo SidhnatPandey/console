@@ -76,6 +76,7 @@ import {
 } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
 import { setItemToLocalstorage } from "src/services/locastorageService";
+import useLoading from "src/hooks/loading";
 
 /* 
 type FormValues = {
@@ -209,6 +210,7 @@ const CreateApp = () => {
   const [isLoadingBranches, setLoadingBranches] = useState<boolean>(false);
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Handle Stepper
   const handleBack = () => {
@@ -409,6 +411,7 @@ const CreateApp = () => {
   };
 
   const handleFinalSubmit = () => {
+    startLoading();
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
@@ -426,7 +429,10 @@ const CreateApp = () => {
       })
       .catch((error) => {
         toast.error(error);
-      });
+      })
+      .finally(() => {
+        stopLoading();
+      })
   };
 
   const handleCheckboxChange = (
@@ -1177,13 +1183,15 @@ const CreateApp = () => {
                 size="large"
                 variant="contained"
                 type="submit"
+                disabled={loading}
                 color={activeStep === steps.length - 1 ? "success" : "primary"}
                 {...(!(activeStep === steps.length - 1)
                   ? { endIcon: <Icon icon="tabler:chevron-right" /> }
                   : {})}
                 onClick={handleFinalSubmit}
               >
-                {activeStep === steps.length - 1 ? "Submit" : "Next"}
+                {/* {activeStep === steps.length - 1 ? "Submit" : "Next"} */}
+                {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Submitting</> : 'Submit'}
               </Button>
             </Grid>
           </Grid>

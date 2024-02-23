@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
@@ -329,7 +330,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />}
+            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp appName={undefined} appId={appData?.id} metricsTimer={0} />}
           </Typography>
         </TabPanel>
       </TabContext>

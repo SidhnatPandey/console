@@ -6,11 +6,12 @@ export const LOCALSTORAGE_CONSTANTS = {
   ogrId: "orgId",
   homeRoute: "default_route",
   workspace: "workspaceId",
-  planId: 'selectedPlanId'
+  planId: "selectedPlanId",
 };
 
 export const SESSIONSTORAGE_CONSTANTS = {
   appName: "appName",
+  creatAppName: "createAppName",
 };
 
 export const PERMISSION_CONSTANTS = {
