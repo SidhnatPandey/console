@@ -329,7 +329,7 @@ const AppDashboard = () => {
         </TabPanel>
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography>
-            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp loading={false} appName={undefined} appId={appData?.id} metricsTimer={0} />}
+            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp appName={undefined} appId={appData?.id} metricsTimer={0} />}
           </Typography>
         </TabPanel>
       </TabContext>

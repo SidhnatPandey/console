@@ -14,9 +14,9 @@ import { useContext, useState } from "react";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
+import useLoading from "src/hooks/loading";
 
 interface DestroyAppProps {
-  loading: boolean;
   appName?: string;
   metricsTimer?: number;
   appId?: string;
@@ -24,7 +24,6 @@ interface DestroyAppProps {
 
 const DestroyApp = (props: DestroyAppProps) => {
   const {
-    loading,
     appId,
   } = props
   const router = useRouter();
@@ -36,11 +35,12 @@ const DestroyApp = (props: DestroyAppProps) => {
       setConfirmationDialogOpen(true);
     }
   };
-
+  const { loading, startLoading, stopLoading } = useLoading();
   const authContext = useContext(AuthContext)
 
   const confirmDestroyApp = () => {
     if (appId) {
+      startLoading();
       destroyApp(appId, workspaceId)
         .then((response: any) => {
           setConfirmationDialogOpen(false);
@@ -60,79 +60,67 @@ const DestroyApp = (props: DestroyAppProps) => {
           toast.error(
             "An error occurred during App deletion. Please try again later."
           );
-        });
+        })
+        .finally(() => {
+          stopLoading();
+        })
     }
   };
 
 
   return (
     <Card sx={{ margin: "-25px" }}>
-      {loading ? (
-        <Skeleton width={200} height={20} style={{ margin: "20px" }} />
-      ) : (
-        <CardHeader
-          title="App Settings"
-          sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
-        />
-      )}
+      <CardHeader
+        title="App Settings"
+        sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
+      />
       <CardContent sx={{ pt: (theme) => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={3}>
-          {loading ? (
-            <Skeleton
-              width={300}
-              height={40}
-              style={{ marginLeft: "20px" }}
-              count={3}
-              inline
-            />
-          ) : (
-            <>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography variant="h5">Destroy</Typography>
-                  <Typography variant="body1">Delete App</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "20px", // Adjust spacing as needed
-                  }}
-                >
-                  <Typography variant="body1" sx={{ whiteSpace: "nowrap" }}>
-                    Destroy App and Associated Components
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button
-                    startIcon={<DeleteIcon />}
-                    style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
-                    onClick={handleDestroyApp}
-                  >
-                    Destroy
-                  </Button>
-                </Box>
-              </Grid>
-            </>
-          )}
+          <Grid item xs={12} md={4}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography variant="h5">Destroy</Typography>
+              <Typography variant="body1">Delete App</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "20px", // Adjust spacing as needed
+              }}
+            >
+              <Typography variant="body1" sx={{ whiteSpace: "nowrap" }}>
+                Destroy App and Associated Components
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                startIcon={<DeleteIcon />}
+                style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
+                onClick={handleDestroyApp}
+              >
+                Destroy
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
       </CardContent>
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog
+        loading={loading}
         open={isConfirmationDialogOpen}
         onConfirm={confirmDestroyApp}
         onCancel={() => setConfirmationDialogOpen(false)}
