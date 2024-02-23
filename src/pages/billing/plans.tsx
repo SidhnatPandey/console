@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material"
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PlanDetails from "src/@core/components/plan-details";
 import { PricingPlanType } from "src/@core/components/plan-details/types";
 import Payment from "../payment";
