@@ -22,6 +22,7 @@ export const PERMISSION_CONSTANTS = {
 
   // other
   security: "security-dashboard",
+  secret: "secret dashboard",
   document: "document",
   profile: "profile",
   editProfile: "edit-profile",
