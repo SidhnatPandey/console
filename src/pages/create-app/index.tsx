@@ -73,9 +73,11 @@ import { env } from "next-runtime-env";
 import {
   LOCALSTORAGE_CONSTANTS,
   PERMISSION_CONSTANTS,
+  SESSIONSTORAGE_CONSTANTS
 } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
-import { setItemToLocalstorage } from "src/services/locastorageService";
+import { getItemFromSessionStorage,removeItemFromSessionStorage,setItemToSessionStorage } from "src/services/sessionstorageService";
+import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
 
 /* 
@@ -149,22 +151,7 @@ const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   },
 }));
 
-const defaultSourceCodeValues = {
-  appNameExist: "",
-  application_name: "",
-  git_repo: "",
-  git_branch: "",
-  src_code_path: "",
-  workspace_id: "",
-};
 
-const sourceCodeSchema = yup.object().shape({
-  application_name: yup.string().required(),
-  workspace_id: yup.string().required(),
-  git_repo: yup.string().required(),
-  git_branch: yup.string().required(),
-  src_code_path: yup.string(),
-});
 
 const LoaderComponent = () => {
   return (
@@ -198,6 +185,23 @@ const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
 
 const CreateApp = () => {
   // ** States
+
+  const defaultSourceCodeValues = {
+    appNameExist: "",
+    application_name: getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName),
+    git_repo: "",
+    git_branch: "",
+    src_code_path: "",
+    workspace_id: "",
+  };
+  
+  const sourceCodeSchema = yup.object().shape({
+    application_name: yup.string().required(),
+    workspace_id: yup.string().required(),
+    git_repo: yup.string().required(),
+    git_branch: yup.string().required(),
+    src_code_path: yup.string(),
+  });
 
   const storedWorkspace = localStorage.getItem(
     LOCALSTORAGE_CONSTANTS.workspace
@@ -289,7 +293,7 @@ const CreateApp = () => {
   const isNextButtonDisabled =
     appNameExist || !isConfigurationFormValid || repoError;
 
-  const checkAppNameExists = (appName: string) => {
+  const checkAppNameExists = (appName: string | null) => {
     if (appName) {
       appNameExists(appName).then((response) => {
         if (response) {
@@ -376,7 +380,9 @@ const CreateApp = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");
+    
     }
+   
   };
 
   // configuration
@@ -412,10 +418,14 @@ const CreateApp = () => {
 
   const handleFinalSubmit = () => {
     startLoading();
+    
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
     data.application_name = data.application_name.trim();
+    if(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)){
+      removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+    }
     saveApp(data)
       .then((response) => {
         toast.success("App Created Successfully");
@@ -487,16 +497,17 @@ const CreateApp = () => {
                     name="application_name"
                     control={sourceCodeControl}
                     rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
+                    render={({ field: {onChange } }) => (
                       <TextField
-                        value={value}
+                        value={getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)}
                         label="Application Name"
                         onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
+                          setItemToSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName,e.target.value)
                         }}
                         onBlur={() => {
-                          checkAppNameExists(value);
+                          checkAppNameExists(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName));
                         }}
                         placeholder="Name your app"
                         error={
