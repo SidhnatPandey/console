@@ -69,19 +69,44 @@ const CveVulnerabilities = (props: Props) => {
 
     setVulnerabilityData((prevData) =>
       [...prevData].sort((a, b) => {
-        const valueA = a[columnName];
-        const valueB = b[columnName];
+        if (columnName === "Severity") {
+          const severityOrder: { [key: string]: number } = {
+            Critical: 0,
+            High: 1,
+            Medium: 2,
+            Low: 3,
+            Negligible: 4,
+            Unknown: 5,
+          };
 
-        if (typeof valueA === "number" && typeof valueB === "number") {
-          return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+          const severityA =
+            severityOrder[a[columnName] as keyof typeof severityOrder];
+          const severityB =
+            severityOrder[b[columnName] as keyof typeof severityOrder];
+
+          if (severityA === severityB) {
+            return sort.direction === "asc"
+              ? a[columnName].localeCompare(b[columnName])
+              : b[columnName].localeCompare(a[columnName]);
+          }
+          return sort.direction === "asc"
+            ? severityA - severityB
+            : severityB - severityA;
+        } else {
+          const valueA = a[columnName];
+          const valueB = b[columnName];
+
+          if (typeof valueA === "number" && typeof valueB === "number") {
+            return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+          }
+
+          const stringA = String(valueA);
+          const stringB = String(valueB);
+
+          return sort.direction === "asc"
+            ? stringA.localeCompare(stringB)
+            : stringB.localeCompare(stringA);
         }
-
-        const stringA = String(valueA);
-        const stringB = String(valueB);
-
-        return sort.direction === "asc"
-          ? stringA.localeCompare(stringB)
-          : stringB.localeCompare(stringA);
       })
     );
   };
@@ -117,7 +142,26 @@ const CveVulnerabilities = (props: Props) => {
   ) => {
     setLoading(true);
     cveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
-      setVulnerabilityData(res?.data || []);
+      const severityOrder: Record<string, number> = {
+        Critical: 0,
+        High: 1,
+        Medium: 2,
+        Low: 3,
+        Negligible: 4,
+        Unknown: 5,
+      };
+
+      const sortedData = res?.data?.sort(
+        (a: { Severity: string }, b: { Severity: string }) => {
+          const severityA =
+            severityOrder[a.Severity as keyof typeof severityOrder];
+          const severityB =
+            severityOrder[b.Severity as keyof typeof severityOrder];
+          return severityA - severityB;
+        }
+      );
+
+      setVulnerabilityData(sortedData || []);
       setLoading(false);
     });
   };
