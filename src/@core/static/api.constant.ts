@@ -74,4 +74,5 @@ export const APP_API = {
 
   //secret
   savekey: "savekey?userId={userId}&org_id={org_id}",
+  getkey: "getkey"
 };
