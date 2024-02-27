@@ -178,6 +178,7 @@ const ApexChart: React.FC<Props> = (props) => {
   const today = new Date();
   const endDate = today.getTime();
   let startDate: number;
+  let twentyFourHoursAgo: Date;
 
   const updateData = (timeline: string) => {
     setTime(timeline);
@@ -195,7 +196,7 @@ const ApexChart: React.FC<Props> = (props) => {
         setSubheading('one year');
         break;
       case '1 D':
-        const twentyFourHoursAgo = new Date(today.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+        twentyFourHoursAgo = new Date(today.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
         startDate = twentyFourHoursAgo.getTime();
         setSubheading('one day');
         break;
