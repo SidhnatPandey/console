@@ -181,7 +181,6 @@ const SecurityCompliance = (props: Props) => {
                     marginLeft: 10,
                     width: 34,
                     height: 34,
-                    marginTop: 15,
                   }}
                 >
                   <Icon icon="tabler:circle-check" />
