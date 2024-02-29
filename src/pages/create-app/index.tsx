@@ -51,12 +51,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
-  Checkbox,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   FormHelperText,
   Radio,
@@ -77,6 +72,7 @@ import {
 import { AuthContext } from "src/context/AuthContext";
 import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
+import EnvVariables from "./evnVariables";
 
 /* 
 type FormValues = {
@@ -378,7 +374,6 @@ const CreateApp = () => {
       toast.success("Form Submitted");
     }
   };
-
   // configuration
   const [open, setOpen] = useState(false);
 
@@ -435,7 +430,7 @@ const CreateApp = () => {
       })
   };
 
-  const handleCheckboxChange = (
+  /* const handleCheckboxChange = (
     index: number,
     checked: boolean,
     type: string
@@ -453,7 +448,11 @@ const CreateApp = () => {
         break;
     }
     setConfigurationValue("env_variables", currentValues.env_variables);
-  };
+  }; */
+
+  const handleEnvDialogClose = () => {
+    setOpen(false);
+  }
 
   const convertData = (envVariables: any[]) => {
     const nData: {
@@ -819,7 +818,8 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* Environment Variable Dialog */}
-                <Dialog
+                <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} />
+                {/* <Dialog
                   open={open}
                   onClose={handleClose}
                   aria-labelledby="alert-dialog-title"
@@ -963,7 +963,7 @@ const CreateApp = () => {
                     </Button>
                     <Button onClick={handleClose}>Close</Button>
                   </DialogActions>
-                </Dialog>
+                </Dialog> */}
               </Grid>
 
               <Grid
