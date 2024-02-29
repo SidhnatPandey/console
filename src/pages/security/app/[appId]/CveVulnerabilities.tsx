@@ -23,6 +23,8 @@ interface CVESecurityData {
   CveID: string;
   Severity: string;
   PackageName: string;
+  ExploitProbability: string;
+  FixedInVersion: string;
   Version: string;
   Description: string;
 }
@@ -250,6 +252,20 @@ const CveVulnerabilities = (props: Props) => {
                     </Box>
                   </Box>
                 </TableCell>
+                {/* style={{ whiteSpace: 'nowrap' }} */}
+                <TableCell onClick={() => handleSort("ExploitProbability")}>
+                  <Box display="flex" alignItems="center">
+                    <span>EXPLOIT PROBABILITY</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
                 <TableCell onClick={() => handleSort("PackageName")}>
                   <Box display="flex" alignItems="center">
                     <span>PACKAGE</span>
@@ -266,6 +282,19 @@ const CveVulnerabilities = (props: Props) => {
                 <TableCell onClick={() => handleSort("Version")}>
                   <Box display="flex" alignItems="center">
                     <span>VERSION</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell onClick={() => handleSort("FixedInVersion")}>
+                  <Box display="flex" alignItems="center">
+                    <span>FIXED-IN</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -315,8 +344,19 @@ const CveVulnerabilities = (props: Props) => {
                           color={getCVEColor(row?.Severity)}
                         ></ChipsRounded>
                       </TableCell>
+                      <TableCell>
+                        <ChipsRounded
+                          label={
+                            row?.ExploitProbability === "Unknown"
+                              ? "Negligible"
+                              : row?.ExploitProbability
+                          }
+                          color={getCVEColor(row?.ExploitProbability)}
+                        ></ChipsRounded>
+                      </TableCell>
                       <TableCell>{row?.PackageName}</TableCell>
                       <TableCell>{row?.Version}</TableCell>
+                      <TableCell>{row?.FixedInVersion}</TableCell>
                       <TableCell>
                         {expandedRows[index] ? (
                           <div>
@@ -353,7 +393,7 @@ const CveVulnerabilities = (props: Props) => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={7}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",

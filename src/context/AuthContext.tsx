@@ -214,7 +214,12 @@ const AuthProvider = ({ children }: Props) => {
   ) => {
     getWorkspaces().then((response) => {
       setLoading(false);
+
       setWorkspaces(response?.data.workspaces);
+      if (response?.data === null || response?.status === 400) {
+        router.push("/workspaceError");
+      }
+
       const newWorkspace = response?.data.workspaces?.find(
         (workspace: { name: string | null }) => workspace.name === name
       );

@@ -44,6 +44,7 @@ const rulesForWorkspaceAdmin = (can: any) => {
   can("read", PERMISSION_CONSTANTS.createApp);
   can("read", PERMISSION_CONSTANTS.editProfile);
   can("read", PERMISSION_CONSTANTS.orgError);
+  can("read", PERMISSION_CONSTANTS.workspaceError);
 };
 
 const rulesForDeveloper = (can: any) => {
@@ -55,6 +56,7 @@ const rulesForDeveloper = (can: any) => {
   can("read", PERMISSION_CONSTANTS.createApp);
   can("read", PERMISSION_CONSTANTS.editProfile);
   can("read", PERMISSION_CONSTANTS.orgError);
+  can("read", PERMISSION_CONSTANTS.workspaceError);
 };
 
 export const buildAbilityFor = (role: string, subject: string): AppAbility => {

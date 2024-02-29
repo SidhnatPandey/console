@@ -145,7 +145,10 @@ const SecurityCompliance = (props: Props) => {
   };
 
   return (
-    <Card sx={{ width: "49%" }} data-testid="security-compliance-card">
+    <Card
+      sx={{ width: "49%", height: "500px" }}
+      data-testid="security-compliance-card"
+    >
       <CardHeader title="Scan Compliance" data-testid="card-header" />
       <CardContent style={{ padding: 20, textAlign: "center" }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -173,7 +176,13 @@ const SecurityCompliance = (props: Props) => {
                   skin="light"
                   variant="rounded"
                   color="success"
-                  sx={{ marginRight: 4, marginLeft: 10, width: 34, height: 34 }}
+                  sx={{
+                    marginRight: 4,
+                    marginLeft: 10,
+                    width: 34,
+                    height: 34,
+                    marginTop: 15,
+                  }}
                 >
                   <Icon icon="tabler:circle-check" />
                 </CustomAvatar>

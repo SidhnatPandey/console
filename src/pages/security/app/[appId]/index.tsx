@@ -14,6 +14,7 @@ import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
 import BackButton from "src/component/backButton";
+import OverAllAppExpo from "../../overAllAppExploitProbability";
 
 const AppSecurityDetails = () => {
   const router = useRouter();
@@ -48,6 +49,7 @@ const AppSecurityDetails = () => {
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
+        <OverAllAppExpo appId={convertToString(appId)} />
         <SecurityCveChart appId={convertToString(appId)} />
         {/* <ApexChart/> */}
         <CveVulnerabilities appId={convertToString(appId)} />
