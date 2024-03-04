@@ -1,8 +1,5 @@
 // ** React Imports
-import { ReactNode, useContext } from "react";
-
-// ** Next Import
-import Link from "next/link";
+import { ReactNode, useState } from "react";
 
 // ** MUI Components
 import Button from "@mui/material/Button";
@@ -16,8 +13,7 @@ import BlankLayout from "src/@core/layouts/BlankLayout";
 // ** Demo Imports
 import FooterIllustrations from "src/views/pages/misc/FooterIllustrations";
 import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
-import { AuthContext } from "src/context/AuthContext";
-import { useRouter } from "next/router";
+import CreateWorkspace from "./workspace/create";
 
 // ** Styled Components
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -40,44 +36,50 @@ const Img = styled("img")(({ theme }) => ({
 }));
 
 const workspaceError = () => {
-  const router = useRouter();
+  // const router = useRouter();
+
+  const [showCreateWorkspace, setShowCreateWorkspcae] = useState<boolean>(false);
 
   const handleRedirect = () => {
-    router.push("/workspace/create");
+    //router.push("/workspace/create");
+    setShowCreateWorkspcae(!showCreateWorkspace);
   };
   return (
     <Box className="content-center">
-      <Box
-        sx={{
-          p: 5,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        <BoxWrapper>
-          <Typography variant="h2" sx={{ mb: 1.5 }}>
-            No Workspace Found
-          </Typography>
-          <Typography sx={{ mb: 6, color: "text.secondary" }}>
-            Create Atleast One Workspace!.
-          </Typography>
-          <Button
-            onClick={handleRedirect}
-            variant="contained"
-            style={{ color: "white" }}
+      {!showCreateWorkspace ?
+        <>
+          <Box
+            sx={{
+              p: 5,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
           >
-            Create Workspace
-          </Button>
-        </BoxWrapper>
-        <Img
-          height="500"
-          alt="error-illustration"
-          src="/images/pages/404.png"
-        />
-      </Box>
-      <FooterIllustrations />
+            <BoxWrapper>
+              <Typography variant="h2" sx={{ mb: 1.5 }}>
+                No Workspace Found
+              </Typography>
+              <Typography sx={{ mb: 6, color: "text.secondary" }}>
+                Create Atleast One Workspace!.
+              </Typography>
+              <Button
+                onClick={handleRedirect}
+                variant="contained"
+                style={{ color: "white" }}
+              >
+                Create Workspace
+              </Button>
+            </BoxWrapper>
+            <Img
+              height="500"
+              alt="error-illustration"
+              src="/images/pages/404.png"
+            />
+          </Box>
+          <FooterIllustrations /></> :
+        <CreateWorkspace />}
     </Box>
   );
 };
