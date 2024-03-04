@@ -14,6 +14,7 @@ import { SecurityProvider } from "src/context/SecurityContext";
 import CveVulnerabilities from "./CveVulnerabilities";
 import SecurityCveChart from "./SecurityCveChart";
 import BackButton from "src/component/backButton";
+import ApexChart from "./Apexchart";
 
 const AppSecurityDetails = () => {
   const router = useRouter();
@@ -48,8 +49,8 @@ const AppSecurityDetails = () => {
           <SecurityCompliance appId={convertToString(appId)} />
           <SecurityVulnerabilities appId={convertToString(appId)} />
         </Box>
-        <SecurityCveChart appId={convertToString(appId)} />
-        {/* <ApexChart/> */}
+        {/* <SecurityCveChart appId={convertToString(appId)} /> */}
+        <ApexChart appId={convertToString(appId)}/>
         <CveVulnerabilities appId={convertToString(appId)} />
         <BackButton />
       </SecurityProvider>
