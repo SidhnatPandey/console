@@ -130,26 +130,20 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     };
 
+    const handleAllInputChange = (e: any, i: number) => {
+        const value = e.target.value;
+        setEnvVariableValue(`env_variables.${i}.test`, value);
+        setEnvVariableValue(`env_variables.${i}.stg`, value);
+        setEnvVariableValue(`env_variables.${i}.prod`, value);
+    }
+
 
     const [selectedValue, setSelectedValue] = useState("");
 
     const handleChange = (event: SelectChangeEvent<string>) => {
-        //console.log(event.target.value)
-
         setShowPass(!showPass);
-
-
     };
 
-    const handleProdstgChange = (index: number, newValue: string) => {
-        const checkboxValue = getEnvVariableValue(`env_variables.${index}.Checked`);
-
-        if (checkboxValue) {
-            setEnvVariableValue(`env_variables.${index}.stg`, newValue); // Update prod field
-            setEnvVariableValue(`env_variables.${index}.prod`, newValue);
-        }
-
-    };
     const getKeyTypeofIndex = (index: number) => {
         const val = getEnvVariableValue('env_variables')[index].KeyType as string;
         // console.log(val);
@@ -163,7 +157,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            style={{ zIndex: 100 }}
+            style={{ zIndex: 1200 }}
             maxWidth={'lg'}
             fullWidth
         >
@@ -184,9 +178,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
                         style={{ marginBottom: "10px" }}
                     >
-
-
-
                         <Grid item xs={2.75} sm={2.75}>
                             <h3>Key</h3>
                         </Grid>
@@ -243,11 +234,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                         name={`env_variables.${index}.KeyType`}
                                         control={EnvVariableControl}
                                         rules={{ required: true }}
-
                                         render={({ field: { value, onChange } }) => (
                                             <Select
                                                 value={value}
-                                                label="Repository"
+                                                label="Key Type"
                                                 //defaultValue="KEYTYPE"
                                                 sx={{ width: "100%", maxHeight: '38px' }}
                                                 onChange={(e) => {
@@ -274,17 +264,22 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             name={`env_variables.${index}.test`}
                                             control={EnvVariableControl}
                                             rules={{ required: 'This field is required' }}
-                                            render={({ field, fieldState: { error } }) => (
+                                            render={({ field: { value, onChange, onBlur } }) => (
 
                                                 <CustomTextField
                                                     fullWidth
                                                     autoFocus
                                                     id={`env-variable-key-${index}`}
-                                                    {...field}
+                                                    value={value}
+                                                    onBlur={onBlur}
+                                                    onChange={e => {
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     variant="outlined"
                                                     placeholder='TEST'
-                                                    error={Boolean(error)}
-                                                    helperText={error ? error.message : null}
+                                                /* error={Boolean(error)}
+                                                helperText={error ? error.message : null} */
                                                 />)
                                             }
                                         />
@@ -299,12 +294,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     fullWidth
                                                     value={value}
                                                     onBlur={onBlur}
-
                                                     onChange={e => {
-                                                        onChange(e),
-                                                            handleProdstgChange(index, e.target.value);
-                                                    }
-                                                    }
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
@@ -340,12 +333,14 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 <CustomTextField
                                                     fullWidth
                                                     autoFocus
-
                                                     id='user-email-input'
                                                     value={value}
                                                     variant="outlined"
                                                     onBlur={onBlur}
-                                                    onChange={onChange}
+                                                    onChange={e => {
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     placeholder='STAGE'
                                                     error={Boolean(EnvVariableErrors.env_variables)}
                                                     {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
@@ -361,8 +356,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     fullWidth
                                                     value={value}
                                                     onBlur={onBlur}
-
-                                                    onChange={onChange}
+                                                    onChange={e => {
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
@@ -400,12 +397,14 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 <CustomTextField
                                                     fullWidth
                                                     autoFocus
-
                                                     id='user-email-input'
                                                     value={value}
                                                     variant="outlined"
                                                     onBlur={onBlur}
-                                                    onChange={onChange}
+                                                    onChange={e => {
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     placeholder='PROD'
                                                     error={Boolean(EnvVariableErrors.env_variables)}
                                                     {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
@@ -422,8 +421,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     fullWidth
                                                     value={value}
                                                     onBlur={onBlur}
-
-                                                    onChange={onChange}
+                                                    onChange={e => {
+                                                        onChange(e);
+                                                        if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
+                                                    }}
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
@@ -530,7 +531,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 </Button>
                 <Button onClick={handleClose}>Close</Button>
             </DialogActions>
-        </Dialog>
+        </Dialog >
     )
 }
 

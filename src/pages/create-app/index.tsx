@@ -14,14 +14,11 @@ import { styled } from "@mui/material/styles";
 import StepLabel from "@mui/material/StepLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MuiStep, { StepProps } from "@mui/material/Step";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
@@ -159,19 +156,11 @@ const LoaderComponent = () => {
 const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
-  instance_detail: { ram: "", vcpu: "", stg: false, vertical_auto_scale: false, max: 1, min: 1 },
 };
 
 const ConfigurationSchema = yup.object().shape({
   port: yup.number().required(),
-  http_path: yup.string().required(),
-  instance_detail: yup.object({
-    ram: yup.string(),
-    vcpu: yup.string(),
-    vertical_auto_scale: yup.boolean(),
-    max: yup.number(),
-    min: yup.number()
-  })
+  http_path: yup.string().required()
 });
 
 //App instance Configuration
@@ -210,7 +199,7 @@ const CreateApp = () => {
     LOCALSTORAGE_CONSTANTS.workspace
   )!;
   const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(1);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
@@ -378,7 +367,6 @@ const CreateApp = () => {
     if (selectedInstance != null) {
       setInstanceSize(selectedInstance);
     }
-    console.log("Instance size is ", selectedInstance);
   };
 
   const handleMinChange = (event: { target: { value: string; }; }) => {
@@ -395,10 +383,6 @@ const CreateApp = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(minValue);
-  }, [minValue]);
-
   const handleMaxChange = (event: { target: { value: string; }; }) => {
     const value = event.target.value.trim();
     if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
@@ -412,11 +396,6 @@ const CreateApp = () => {
       setError('Max value must be in between 1 and 25');
     }
   };
-
-  useEffect(() => {
-    console.log(maxValue);
-  }, [maxValue]);
-
 
   const handleverticalScalling = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
     setIsChecked(event.target.checked);
@@ -480,10 +459,19 @@ const CreateApp = () => {
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
-    data.application_name = data.application_name.trim();
+    data.application_name = data.application_name?.trim();
     if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
+    const obj = {
+      ram: instanceSize.ram,
+      vcpu: instanceSize.vcpu,
+      vertical_auto_scale: isChecked,
+      max: maxValue,
+      min: minValue
+    }
+    data.instance_details = obj;
+
     saveApp(data)
       .then((response) => {
         console.log(data)
@@ -898,55 +886,53 @@ const CreateApp = () => {
                   <div><Typography variant="body1" component="span" fontWeight="bold">App Instance (AI)Size</Typography></div>
                 </Grid>
                 <Grid item xs={8} sm={8} style={{ marginTop: "-0.9rem" }}>
-                  <>
-                    <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
-                      <Select
-                        id="no_of_Instances"
-                        displayEmpty
-                        value={instanceSize.type}
-                        sx={{ width: 325 }}
-                        // {...configurationRegister("no_of_Instances.0.")}
-                        onChange={handleInstanceChange}
-                        input={<OutlinedInput />}
-                        renderValue={() => {
-                          return (
-                            <Typography>
-                              <Typography variant="body2" component="span" fontWeight="bold">
-                                {instanceSize.type + "-"}
-                              </Typography>
-                              {instanceSize.ram + " RAM | " + instanceSize.vcpu + " vCPU"}
+                  <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
+                    <Select
+                      id="no_of_Instances"
+                      displayEmpty
+                      value={instanceSize}
+                      sx={{ width: 325 }}
+                      // {...configurationRegister("no_of_Instances.0.")}
+                      onChange={handleInstanceChange}
+                      input={<OutlinedInput />}
+                      renderValue={() => {
+                        return (
+                          <Typography>
+                            <Typography variant="body2" component="span" fontWeight="bold">
+                              {instanceSize.type + "-"}
                             </Typography>
-                          );
-                        }}
-                        MenuProps={{
-                          PaperProps: {
-                            style: {
-                              maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                              width: 250,
-                            },
+                            {instanceSize.ram + " RAM | " + instanceSize.vcpu + " vCPU"}
+                          </Typography>
+                        );
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                            width: 250,
                           },
-                        }}
-                        inputProps={{ 'aria-label': 'Without label' }}
-                      // disabled={true}
-                      >
-                        {APP_API.instanceSizes.map((instance, index) => (
-                          <MenuItem key={index} value={instance.type}>
-                            <Typography variant="body1" component="span" fontWeight="bold">
-                              {instance.type + "-"}
-                            </Typography>
-                            {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </>
+                        },
+                      }}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                    // disabled={true}
+                    >
+                      {APP_API.instanceSizes.map((instance, index) => (
+                        <MenuItem key={index} value={instance.type}>
+                          <Typography variant="body1" component="span" fontWeight="bold">
+                            {instance.type + "-"}
+                          </Typography>
+                          {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
 
                 {/* Select Instances */}
                 <Grid item xs={4} sm={4}>
                   <div></div>
                 </Grid>
-                <Grid item xs={8} sm={8} >
+                <Grid item xs={8} sm={8} style={{ paddingTop: '0px' }}>
                   <FormGroup style={{ display: "block" }}>
                     <FormControlLabel
                       control={<Checkbox checked={isChecked} onChange={handleverticalScalling} />}
@@ -975,7 +961,7 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* Error */}
-                <Grid xs={8} sm={8}> <Box sx={{ marginLeft: "16rem" }}>
+                <Grid xs={8} sm={8} item> <Box sx={{ marginLeft: "16rem" }}>
                   {error && <span style={{ color: 'red' }}>{error}</span>} </Box>
                 </Grid>
                 {/* </Grid> */}
@@ -1002,6 +988,7 @@ const CreateApp = () => {
                   variant="contained"
                   type="submit"
                   onClick={handleConfigurationSubmit(onConfigurationSubmit)}
+                  disabled={!!error}
                 >
                   Next
                 </Button>
