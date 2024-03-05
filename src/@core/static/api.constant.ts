@@ -76,23 +76,35 @@ export const APP_API = {
   instanceSizes : [
     {
       type: "Default",
-      ram: "2 GB",
-      vcpu: 1
+      ram: "2GB",
+      vcpu: 1,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
     },
     {
       type: "Small",
       ram: "1 GB",
-      vcpu: 0.5
+      vcpu: 0.5,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
     }, 
     {
       type: "Large",
       ram: "4 GB",
-      vcpu: 2
+      vcpu: 2,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
     },
     {
       type: "Extra Small",
       ram: "0.5 GB",
-      vcpu: 0.1
+      vcpu: 0.1,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
     }
   ],
 };

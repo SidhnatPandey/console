@@ -173,6 +173,7 @@ const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
   env_variables: [{ key: "", value: "", stg: false, test: false, prod: false }],
+  no_of_Instances: [{ram: "", vcpu: "", vertical_auto_scale: false, min: "" , max: "", }]
 };
 
 const ConfigurationSchema = yup.object().shape({
@@ -187,6 +188,15 @@ const ConfigurationSchema = yup.object().shape({
       prod: yup.boolean(),
     })
   ),
+  no_of_Instances: yup.array().of(
+    yup.object({
+      ram: yup.string().required(),
+      vcpu: yup.string().required(),
+      vertical_auto_scale: yup.boolean(),
+      max: yup.number().max(1),
+      min: yup.number().min(1)
+    })
+  )
 });
 
 //App instance Configuration
@@ -230,14 +240,13 @@ const CreateApp = () => {
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
-  const [branches, setBranches] = useState<string[]>([]);
+  const [branches, setBranches] = useState<string[]>(["No Branch"]);
   const [repoError, setRepoError] = useState(false);
   const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
   const [isChecked, setIsChecked] = useState(false);
-  // const [minValue, setMinValue] = useState('');
-  // const [maxValue, setMaxValue] = useState('');
-  // const [minError, setMinError] = useState('');
-  // const [maxError, setMaxError] = useState('');
+  const [minValue, setMinValue] = useState('1');
+  const [maxValue, setMaxValue] = useState('1');
+  const [error, setError] = useState('');
 
 
 
@@ -385,29 +394,42 @@ const CreateApp = () => {
     console.log("Instance size is ", selectedInstance);
   };
 
-  // const handleMinChange = (event: { target: { value: any; }; }) => {
-  //   const value = event.target.value;
-  //   if (/^[0-9]*$/.test(value) && value >= 1 && value <= 25) {
-  //     setMinValue(value);
-  //     if (value <= maxValue || !maxValue) {
-  //       setMinError('');
-  //     } else {
-  //       setMinError('Min must be less than or equal to Max');
-  //     }
-  //   }
-  // };
+  const handleMinChange = (event: { target: { value: string; }; }) => {
+    const value = event.target.value.trim();
+    if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
+      setMinValue(value);
+      if (maxValue && Number(value) > Number(maxValue)) {
+        setError('Min must be less than or equal to Max');
+      } else {
+        setError('');
+      }
+    } else {
+      setError('Min value must be in between 1 and 25');
+    }
+  };
 
-  // const handleMaxChange = (event: { target: { value: any; }; }) => {
-  //   const value = event.target.value;
-  //   if (/^[0-9]*$/.test(value) && value >= 1 && value <= 25) {
-  //     setMaxValue(value);
-  //     if (value >= minValue || !minValue) {
-  //       setMaxError('');
-  //     } else {
-  //       setMaxError('Max must be greater than or equal to Min');
-  //     }
-  //   }
-  // };
+  useEffect(() => {
+    console.log(minValue);
+  }, [minValue]);
+
+  const handleMaxChange = (event: { target: { value: string; }; }) => {
+    const value = event.target.value.trim();
+    if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
+      setMaxValue(value);
+      if (minValue && Number(value) < Number(minValue)) {
+        setError('Max must be greater than or equal to Min');
+      } else {
+        setError('');
+      }
+    } else {
+      setError('Max value must be in between 1 and 25');
+    }
+  };
+
+  useEffect(() => {
+    console.log(maxValue);
+  }, [maxValue]);
+
 
   const handleverticalScalling = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
     setIsChecked(event.target.checked);
@@ -529,7 +551,7 @@ const CreateApp = () => {
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
-  
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -927,7 +949,7 @@ const CreateApp = () => {
                     <FormControlLabel
                       control={<Checkbox checked={isChecked} onChange={handleverticalScalling} />}
                       label='Enable Vertical Auto-Scaling'
-                      disabled={true}
+                      // disabled={true}
                     />
                     <Tooltip title={"Vertical Auto-Scaling allows the App to use resources beyond the request when needed"} arrow>
                       <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} />
@@ -939,49 +961,21 @@ const CreateApp = () => {
                 <Grid item xs={4} sm={4}>
                   <div><Typography variant="body1" component="span" fontWeight="bold">Number of Instances</Typography></div>
                 </Grid>
-                {/* <Grid item xs={8} sm={4}>
-                  <FormGroup>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <p style={{ margin: 0 }}>Min</p>
-                      <input type="text" id="min" value={minValue} onChange={handleMinChange} style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", }} placeholder="1" />
-                      {minError && <span style={{ color: 'red' }}>{minError}</span>}
-                      <OutlinedInput sx={{ width: 60, height: 40 }} inputProps={{ type: 'number', min: 0, max: 25, value: minValue }} onChange={handleMinChange}  />
-                      <p style={{ margin: 0 }}>Max</p>
-                      <input type="text" id="max" value={maxValue} onChange={handleMaxChange} style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", }} placeholder="1" />
-                      {maxError && <span style={{ color: 'red' }}>{maxError}</span>}
-                      <OutlinedInput sx={{ width: 60, height: 40 }} inputProps={{ type: 'number', min: 0, max: 25, value: maxValue }} onChange={handleMaxChange} />
-                    </Box> 
-                   
+                  <Grid item xs={8} sm={8}>
+                    <FormGroup>
+                      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                        <label htmlFor="min">Min</label>
+                        <TextField type="text" id="min" value={minValue} onChange={handleMinChange} placeholder="1" style={{width: "3rem"}} />
+                        <label htmlFor="max">Max</label>
+                        <TextField type="text" id="max" value={maxValue} onChange={handleMaxChange} placeholder="1" style={{width: "3rem"}} />
+                      </Box>
+                    </FormGroup>
+                  </Grid>
 
-                  </FormGroup>
-
-                  </Grid> */}
-                {/* <Grid item xs={4} sm={4}>
-                  <FormGroup>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <label htmlFor="min">Min</label>
-                      <input
-                        type="text"
-                        id="min"
-                        onChange={handleMinChange}
-                        style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
-                        placeholder="1"
-                      />
-                      {minError && <span style={{ color: 'red' }}>{minError}</span>}
-                      
-                      <label htmlFor="max">Max</label>
-                      <input
-                        type="text"
-                        id="max"
-                        onChange={handleMaxChange}
-                        style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
-                        placeholder="1"
-                      />
-                      {maxError && <span style={{ color: 'red' }}>{maxError}</span>}
-                    </Box>
-                  </FormGroup>
-                </Grid> */}
-          
+                {/* Error */}
+                <Grid xs={8} sm={8}> <Box sx={{ marginLeft: "16rem" }}>
+                  {error && <span style={{ color: 'red' }}>{error}</span>} </Box>
+                </Grid>
                 {/* </Grid> */}
 
                 {/* Environment Variable Dialog */}
