@@ -5,17 +5,11 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { render } from "react-dom";
 import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
-import { watch } from "fs";
 
 const defaultEnvVariableValues = {
-    env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "",Checked:false}],
+    env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
 
 const EnvVariableSchema = yup.object().shape({
@@ -74,42 +68,42 @@ const EnvVariables = (props: EnvVariablesProps) => {
         handleEnvDialogClose();
     };
 
-    const handleCheckboxChange = ( index: number,event: React.ChangeEvent<HTMLInputElement>, ) => {
-  
+    const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
+
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
-        if(checkboxValue){
+        if (checkboxValue) {
             console.log("i did it");
             const currentValues = getEnvVariableValue();
             const { test, stg, prod } = currentValues.env_variables[index];
             console.log("fvalue", getEnvVariableValue());
-    
+
             if ((!test && !stg && prod) || (!test && stg && prod) || (test && !stg && prod) || (test && stg && prod)) {
                 setEnvVariableValue(`env_variables.${index}.test`, prod);
                 setEnvVariableValue(`env_variables.${index}.stg`, prod);
             }
-    
+
             if ((!test && stg && (!prod || prod === '')) || (test && stg && (!prod || prod === ''))) {
                 setEnvVariableValue(`env_variables.${index}.prod`, stg);
                 setEnvVariableValue(`env_variables.${index}.test`, stg);
             }
-    
+
             if (test && (!stg || stg === '') && (!prod || prod === '')) {
                 setEnvVariableValue(`env_variables.${index}.prod`, test);
                 setEnvVariableValue(`env_variables.${index}.stg`, test);
             }
 
-            
+
         }
-        else{
+        else {
             console.log("i couldn't")
             setEnvVariableValue(`env_variables.${index}.test`, "hiiii");
-            setEnvVariableValue(`env_variables.${index}.stg`,"hiiii");
+            setEnvVariableValue(`env_variables.${index}.stg`, "hiiii");
             setEnvVariableValue(`env_variables.${index}.prod`, "hiiii");
         }
 
-      
 
-     
+
+
 
         //  setEnvVariableValue("env_variables", currentValues.env_variables);
 
@@ -133,7 +127,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
             updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
             return updatedVisible;
         });
-       
+
     };
 
 
@@ -147,14 +141,14 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     };
 
-    const handleProdstgChange = (index:number, newValue:string) => {
+    const handleProdstgChange = (index: number, newValue: string) => {
         const checkboxValue = getEnvVariableValue(`env_variables.${index}.Checked`);
 
-        if(checkboxValue){
+        if (checkboxValue) {
             setEnvVariableValue(`env_variables.${index}.stg`, newValue); // Update prod field
             setEnvVariableValue(`env_variables.${index}.prod`, newValue);
         }
-       
+
     };
     const getKeyTypeofIndex = (index: number) => {
         const val = getEnvVariableValue('env_variables')[index].KeyType as string;
@@ -258,7 +252,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 sx={{ width: "100%", maxHeight: '38px' }}
                                                 onChange={(e) => {
                                                     onChange(e);
-                                                      handleChange(e);
+                                                    handleChange(e);
 
                                                 }}
                                                 error={Boolean(EnvVariableErrors.env_variables)}
@@ -306,9 +300,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     value={value}
                                                     onBlur={onBlur}
 
-                                                    onChange={e =>{
+                                                    onChange={e => {
                                                         onChange(e),
-                                                        handleProdstgChange(index, e.target.value);
+                                                            handleProdstgChange(index, e.target.value);
                                                     }
                                                     }
                                                     id='auth-login-v2-password'
@@ -481,13 +475,12 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             <Checkbox
                                                 {...field}
                                                 checked={field.value} // Set the checked prop to the field value
-                                                onChange={(e) =>
-                                                    {
-                                                        field.onChange(e.target.checked),
-                                                        handleCheckboxChange(index,e)
-                                                        
-                                                    }
-                                                    } // Update the field value on change
+                                                onChange={(e) => {
+                                                    field.onChange(e.target.checked),
+                                                        handleCheckboxChange(index, e)
+
+                                                }
+                                                } // Update the field value on change
                                             />
                                         )}
                                     />
@@ -504,7 +497,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     stg: "",
                                                     test: "",
                                                     prod: "",
-                                                    Checked:false
+                                                    Checked: false
                                                 })
                                             }
                                         >

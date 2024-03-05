@@ -71,7 +71,7 @@ import {
   SESSIONSTORAGE_CONSTANTS
 } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
-import { getItemFromSessionStorage,removeItemFromSessionStorage,setItemToSessionStorage } from "src/services/sessionstorageService";
+import { getItemFromSessionStorage, removeItemFromSessionStorage, setItemToSessionStorage } from "src/services/sessionstorageService";
 import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
 import EnvVariables from "./envVariables";
@@ -163,21 +163,19 @@ const LoaderComponent = () => {
 const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
-  env_variables: [{ key: "", value: "", stg: false, test: false, prod: false }],
+  instance_detail: { ram: "", vcpu: "", stg: false, vertical_auto_scale: false, max: 1, min: 1 },
 };
 
 const ConfigurationSchema = yup.object().shape({
   port: yup.number().required(),
   http_path: yup.string().required(),
-  env_variables: yup.array().of(
-    yup.object({
-      key: yup.string(),
-      value: yup.string(),
-      stg: yup.boolean(),
-      test: yup.boolean(),
-      prod: yup.boolean(),
-    })
-  ),
+  instance_detail: yup.object({
+    ram: yup.string(),
+    vcpu: yup.string(),
+    vertical_auto_scale: yup.boolean(),
+    max: yup.number(),
+    min: yup.number()
+  })
 });
 
 const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
@@ -193,7 +191,7 @@ const CreateApp = () => {
     src_code_path: "",
     workspace_id: "",
   };
-  
+
   const sourceCodeSchema = yup.object().shape({
     application_name: yup.string().required(),
     workspace_id: yup.string().required(),
@@ -268,11 +266,6 @@ const CreateApp = () => {
   } = useForm({
     defaultValues: defaultConfigurationValues,
     resolver: yupResolver(ConfigurationSchema),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    name: "env_variables",
-    control: configurationControl,
   });
 
   const router = useRouter();
@@ -379,33 +372,35 @@ const CreateApp = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");
-    
+
     }
-   
+
   };
   // configuration
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    if (getConfigurationValue("env_variables").length === 0) {
+    /* if (getConfigurationValue("env_variables").length === 0) {
       setConfigurationValue("env_variables", [
         { key: "", value: "", stg: false, test: false, prod: false },
       ]);
-    }
+    } */
     setOpen(true);
   };
   const handleClose = () => {
-    const environmentVariables = getConfigurationValue("env_variables").filter(
-      (variable) => variable.key && variable.value
-    );
-    setConfigurationValue("env_variables", environmentVariables);
+    /*  const environmentVariables = getConfigurationValue("env_variables").filter(
+       (variable) => variable.key && variable.value
+     );
+     setConfigurationValue("env_variables", environmentVariables); */
     setOpen(false);
   };
   //configuration page environment variable
-  const environmentVariables = getConfigurationValue("env_variables");
-  const environmentVariablesCount = environmentVariables.filter(
-    (variable) => variable.key && variable.value
-  ).length;
+  /*  const environmentVariables = getConfigurationValue("env_variables");
+   const environmentVariablesCount = environmentVariables.filter(
+     (variable) => variable.key && variable.value
+   ).length; */
+
+  const environmentVariablesCount = 0
 
   const onConfigurationSubmit = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -416,12 +411,12 @@ const CreateApp = () => {
 
   const handleFinalSubmit = () => {
     startLoading();
-    
+
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
     data.env_variables = convertData(data.env_variables);
     data.application_name = data.application_name.trim();
-    if(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)){
+    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
     saveApp(data)
@@ -499,14 +494,14 @@ const CreateApp = () => {
                     name="application_name"
                     control={sourceCodeControl}
                     rules={{ required: true }}
-                    render={({ field: {onChange } }) => (
+                    render={({ field: { onChange } }) => (
                       <TextField
                         value={getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)}
                         label="Application Name"
                         onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
-                          setItemToSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName,e.target.value)
+                          setItemToSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName, e.target.value)
                         }}
                         onBlur={() => {
                           checkAppNameExists(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName));
@@ -833,151 +828,6 @@ const CreateApp = () => {
 
                 {/* Environment Variable Dialog */}
                 <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} />
-                {/* <Dialog
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                  style={{ zIndex: 100 }}
-                  fullWidth
-                >
-                  <DialogTitle
-                    id="max-width-dialog-title"
-                    style={{ fontSize: "24px", textAlign: "center" }}
-                  >
-                    Edit Environment Variables
-                  </DialogTitle>
-                  <DialogContent>
-                    <div>
-                      {fields.map((field, index) => {
-                        return (
-                          <Grid
-                            container
-                            spacing={5}
-                            key={field.id}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <Grid item xs={4} sm={4}>
-                              <FormControl>
-                                <TextField
-                                  label="Key"
-                                  sx={{ width: "110%" }}
-                                  {...configurationRegister(
-                                    `env_variables.${index}.key` as const
-                                  )}
-                                ></TextField>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={4} sm={4}>
-                              <FormControl>
-                                <TextField
-                                  label="Value"
-                                  sx={{ width: "120%" }}
-                                  {...configurationRegister(
-                                    `env_variables.${index}.value` as const
-                                  )}
-                                ></TextField>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Test"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.test}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "test"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Stg"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.stg}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "stg"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Prod"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.prod}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "prod"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              {index === fields.length - 1 && (
-                                <IconButton
-                                  aria-label="add"
-                                  size="large"
-                                  onClick={() =>
-                                    append({
-                                      key: "",
-                                      value: "",
-                                      stg: false,
-                                      test: false,
-                                      prod: false,
-                                    })
-                                  }
-                                >
-                                  <AddIcon fontSize="inherit" />
-                                </IconButton>
-                              )}
-                              {index < fields.length - 1 && (
-                                <IconButton
-                                  aria-label="delete"
-                                  size="large"
-                                  onClick={() => remove(index)}
-                                >
-                                  <DeleteIcon fontSize="inherit" />
-                                </IconButton>
-                              )}
-                            </Grid>
-                          </Grid>
-                        );
-                      })}
-                    </div>
-                  </DialogContent>
-
-                  <DialogActions
-                    className="dialog-actions-dense"
-                    sx={{ justifyContent: "center" }}
-                    style={{ marginBottom: "15px" }}
-                  >
-                    <Button variant="contained" onClick={handleClose}>
-                      Save
-                    </Button>
-                    <Button onClick={handleClose}>Close</Button>
-                  </DialogActions>
-                </Dialog> */}
               </Grid>
 
               <Grid
