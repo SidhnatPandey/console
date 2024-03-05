@@ -60,7 +60,7 @@ const ApexChart: React.FC<Props> = (props) => {
   };
   useEffect(() => {
     getListOfCveHIstory(appId, securityContext.runType, workspaceId);
-  }, []);
+  }, [securityContext.runType]);
 
   useEffect(() => {
     const TotalCriticalCVEsArray: [number, number][] = [];
