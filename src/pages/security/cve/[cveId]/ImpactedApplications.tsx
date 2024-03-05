@@ -15,6 +15,7 @@ import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { useRouter } from "next/router";
 
 interface AppsAffectedByCVEDataProps {
   appsAffectedData?: {
@@ -76,9 +77,6 @@ const ImpactedApplications = ({
     });
   };
 
-  const handleAppNameClick = (workspaceId: string) => {
-    localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
-  };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -89,6 +87,7 @@ const ImpactedApplications = ({
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  const router = useRouter();
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -166,19 +165,10 @@ const ImpactedApplications = ({
                       <TableCell>
                         <Link
                           href={{
-                            pathname: `/security/app/${row?.AppID}`,
-                            query: {
-                              data: JSON.stringify({
-                                appName: row?.AppName,
-                                wid: row?.WorkspaceId,
-                              }),
-                            },
+                            pathname: "/workspace/app-dashboard",
+                            query: { appId: row?.AppID },
                           }}
-                          as={`/security/app/${row?.AppID}`}
                           style={{ textDecoration: "none" }}
-                          onClick={() => {
-                            handleAppNameClick(row?.WorkspaceId);
-                          }}
                         >
                           {row?.AppName}
                         </Link>
