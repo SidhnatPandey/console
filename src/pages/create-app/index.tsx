@@ -72,7 +72,10 @@ import {
 import { AuthContext } from "src/context/AuthContext";
 import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
-import EnvVariables from "./evnVariables";
+import EnvVariables from "./envVariables";
+
+
+
 
 /* 
 type FormValues = {
