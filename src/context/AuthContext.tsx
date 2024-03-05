@@ -172,9 +172,9 @@ const AuthProvider = ({ children }: Props) => {
           );
           params.rememberMe
             ? localStorage.setItem(
-                LOCALSTORAGE_CONSTANTS.userInfo,
-                JSON.stringify(user)
-              )
+              LOCALSTORAGE_CONSTANTS.userInfo,
+              JSON.stringify(user)
+            )
             : null;
           fetchOrg();
           fetchOrganisation();
@@ -216,25 +216,25 @@ const AuthProvider = ({ children }: Props) => {
       setLoading(false);
 
       setWorkspaces(response?.data.workspaces);
-      if (response?.data === null || response?.status === 400) {
+      if (!response?.data.workspaces && organisations.length > 0) {
         router.push("/workspaceError");
-      }
-
-      const newWorkspace = response?.data.workspaces?.find(
-        (workspace: { name: string | null }) => workspace.name === name
-      );
-      if (setHomeRoute) {
-        localStorage.setItem(
-          LOCALSTORAGE_CONSTANTS.homeRoute,
-          `/workspace/${response?.data.workspaces[0].id}`
+      } else {
+        const newWorkspace = response?.data.workspaces?.find(
+          (workspace: { name: string | null }) => workspace.name === name
         );
-      }
-      if (navigate || name) {
-        const returnUrl = router.query.returnUrl;
-        const id = name ? newWorkspace?.id : response?.data?.workspaces[0].id;
-        const redirectURL =
-          returnUrl && returnUrl !== "/" ? returnUrl : `/workspace/${id}`;
-        router.replace(redirectURL as string);
+        if (setHomeRoute) {
+          localStorage.setItem(
+            LOCALSTORAGE_CONSTANTS.homeRoute,
+            `/workspace/${response?.data.workspaces[0].id}`
+          );
+        }
+        if (navigate || name) {
+          const returnUrl = router.query.returnUrl;
+          const id = name ? newWorkspace?.id : response?.data?.workspaces[0].id;
+          const redirectURL =
+            returnUrl && returnUrl !== "/" ? returnUrl : `/workspace/${id}`;
+          router.replace(redirectURL as string);
+        }
       }
     });
   };
