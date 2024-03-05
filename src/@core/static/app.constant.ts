@@ -32,4 +32,6 @@ export const PERMISSION_CONSTANTS = {
   appDashboard: "app-dashboard",
   deleteApp: "app-delete",
   createApp: "create-app",
+  orgError: "orgError",
+  workspaceError: "workspaceError",
 };

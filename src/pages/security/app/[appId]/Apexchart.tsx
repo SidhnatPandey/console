@@ -31,26 +31,25 @@ const ApexChart: React.FC<Props> = (props) => {
   const [Time, setTime] = useState<string>('1 M');
   const [Subheading, setSubheading] = useState<string>('1 M');
   const setting = JSON.parse(getItemFromLocalstorage('settings')!);
-  console.log(setting.mode);
   useEffect(() => {
     setOptions({
       ...options,
       tooltip: {
         ...options.tooltip,
-        theme: setting.mode,
+        theme: setting?.mode,
         x: {
           format: 'dd MMM yyyy'
         },
       },
     })
-  }, [setting.mode]);
+  }, [setting?.mode]);
 
   const workspaceId = (getItemFromLocalstorage('workspaceId')!);
   const securityContext = useContext(SecurityContext);
   const [cveData, setCveData] = useState<Row[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  
-  const getListOfCveHIstory = (appId: string,runtype: string,workspaceId: string) => {
+
+  const getListOfCveHIstory = (appId: string, runtype: string, workspaceId: string) => {
     setLoading(true);
     cveHistory(appId, runtype, workspaceId).then((response) => {
       if (response) {
@@ -64,26 +63,26 @@ const ApexChart: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
-        const TotalCriticalCVEsArray: [number, number][] = [];
-        const TotalHighCVEsArray: [number, number][] = [];
-        const TotalMediumCVEsArray: [number, number][] = [];
-        const TotalLowCVEsArray: [number, number][] = [];
-        const TotalUnknownCVEsArray: [number, number][] = [];
-      cveData.forEach(entry => {
-          const lastScannedTimestamp = new Date(entry.LastScanned).getTime();
-          TotalCriticalCVEsArray.push([lastScannedTimestamp, entry.TotalCriticalCVEs]);
-          TotalHighCVEsArray.push([lastScannedTimestamp, entry.TotalHighCVEs]);
-          TotalMediumCVEsArray.push([lastScannedTimestamp, entry.TotalMediumCVEs]);
-          TotalLowCVEsArray.push([lastScannedTimestamp, entry.TotalLowCVEs]);
-          TotalUnknownCVEsArray.push([lastScannedTimestamp, entry.TotalUnknownCVEs + entry.TotalNegligibleCVEs]);
-        });
-        setSeries([
-          { name: 'Critical', data: TotalCriticalCVEsArray },
-          { name: 'High', data: TotalHighCVEsArray },
-          { name: 'Medium', data: TotalMediumCVEsArray },
-          { name: 'Low', data: TotalLowCVEsArray },
-          { name: 'Negligible', data: TotalUnknownCVEsArray }
-        ]);
+    const TotalCriticalCVEsArray: [number, number][] = [];
+    const TotalHighCVEsArray: [number, number][] = [];
+    const TotalMediumCVEsArray: [number, number][] = [];
+    const TotalLowCVEsArray: [number, number][] = [];
+    const TotalUnknownCVEsArray: [number, number][] = [];
+    cveData.forEach(entry => {
+      const lastScannedTimestamp = new Date(entry.LastScanned).getTime();
+      TotalCriticalCVEsArray.push([lastScannedTimestamp, entry.TotalCriticalCVEs]);
+      TotalHighCVEsArray.push([lastScannedTimestamp, entry.TotalHighCVEs]);
+      TotalMediumCVEsArray.push([lastScannedTimestamp, entry.TotalMediumCVEs]);
+      TotalLowCVEsArray.push([lastScannedTimestamp, entry.TotalLowCVEs]);
+      TotalUnknownCVEsArray.push([lastScannedTimestamp, entry.TotalUnknownCVEs + entry.TotalNegligibleCVEs]);
+    });
+    setSeries([
+      { name: 'Critical', data: TotalCriticalCVEsArray },
+      { name: 'High', data: TotalHighCVEsArray },
+      { name: 'Medium', data: TotalMediumCVEsArray },
+      { name: 'Low', data: TotalLowCVEsArray },
+      { name: 'Negligible', data: TotalUnknownCVEsArray }
+    ]);
   }, [cveData]);
 
   const [options, setOptions] = useState<ApexOptions>({
@@ -224,7 +223,7 @@ const ApexChart: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    
+
     <div>
       <div id="chart">
         <Card sx={{ marginTop: "20px" }} >
