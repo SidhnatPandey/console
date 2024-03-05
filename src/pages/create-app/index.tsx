@@ -173,7 +173,7 @@ const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
   env_variables: [{ key: "", value: "", stg: false, test: false, prod: false }],
-  no_of_Instances: [{ram: "", vcpu: "", vertical_auto_scale: false, min: "" , max: "", }]
+  // no_of_Instances: [{ram: "", vcpu: "", vertical_auto_scale: false, max: 1, min: 1 }]
 };
 
 const ConfigurationSchema = yup.object().shape({
@@ -188,15 +188,15 @@ const ConfigurationSchema = yup.object().shape({
       prod: yup.boolean(),
     })
   ),
-  no_of_Instances: yup.array().of(
-    yup.object({
-      ram: yup.string().required(),
-      vcpu: yup.string().required(),
-      vertical_auto_scale: yup.boolean(),
-      max: yup.number().max(1),
-      min: yup.number().min(1)
-    })
-  )
+  // instance_details: yup.array().of(
+  //   yup.object({
+  //     ram: yup.string().required(),
+  //     vcpu: yup.string().required(),
+  //     vertical_auto_scale: yup.boolean(),
+  //     max: yup.number(),
+  //     min: yup.number()
+  //   })
+  // )
 });
 
 //App instance Configuration
@@ -226,6 +226,11 @@ const CreateApp = () => {
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
+  const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
+  const [isChecked, setIsChecked] = useState(false);
+  const [minValue, setMinValue] = useState('1');
+  const [maxValue, setMaxValue] = useState('1');
+  const [error, setError] = useState('');
 
   // Handle Stepper
   const handleBack = () => {
@@ -242,11 +247,6 @@ const CreateApp = () => {
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
   const [branches, setBranches] = useState<string[]>(["No Branch"]);
   const [repoError, setRepoError] = useState(false);
-  const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
-  const [isChecked, setIsChecked] = useState(false);
-  const [minValue, setMinValue] = useState('1');
-  const [maxValue, setMaxValue] = useState('1');
-  const [error, setError] = useState('');
 
 
 
@@ -293,6 +293,7 @@ const CreateApp = () => {
     name: "env_variables",
     control: configurationControl,
   });
+
 
   const router = useRouter();
 
@@ -492,6 +493,7 @@ const CreateApp = () => {
     data.application_name = data.application_name.trim();
     saveApp(data)
       .then((response) => {
+        console.log(data)
         toast.success("App Created Successfully");
         router.push({
           pathname: "/workspace/app-dashboard",
@@ -795,7 +797,7 @@ const CreateApp = () => {
                 xs={12}
                 sx={{ display: "flex", justifyContent: "space-between" }}
               >
-                <Button
+                <Button 
                   size="large"
                   variant="outlined"
                   color="secondary"
@@ -901,9 +903,11 @@ const CreateApp = () => {
                   <>
                     <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
                       <Select
+                      id="no_of_Instances"
                         displayEmpty
                         value={instanceSize.type}
                         sx={{ width: 325 }}
+                        // {...configurationRegister("no_of_Instances.0.")}
                         onChange={handleInstanceChange}
                         input={<OutlinedInput />}
                         renderValue={() => {
@@ -952,7 +956,7 @@ const CreateApp = () => {
                       // disabled={true}
                     />
                     <Tooltip title={"Vertical Auto-Scaling allows the App to use resources beyond the request when needed"} arrow>
-                      <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} />
+                      <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} id="vertical_auto_scale" />
                     </Tooltip>
                   </FormGroup>
                 </Grid>
@@ -1284,6 +1288,21 @@ const CreateApp = () => {
                               {getConfigurationValue("http_path")}
                             </Typography>
                           </TableCell>
+                        {/* <TableRow>
+                          <TableCell>
+                            <Typography
+                              noWrap
+                              sx={{ fontWeight: 500, color: "text.secondary" }}
+                            >
+                              Number of Instances
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography sx={{ color: "text.secondary" }}>
+                              {getConfigurationValue("no_of_Instances")}
+                            </Typography>
+                          </TableCell>
+                        </TableRow> */}
                         </TableRow>
                       </TableBody>
                     </Table>
