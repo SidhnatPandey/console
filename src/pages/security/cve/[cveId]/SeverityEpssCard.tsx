@@ -44,10 +44,10 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
     const percentage = score * 100;
 
     if (percentage < 1) {
-      obj.color = "success";
+      obj.color = "info";
       obj.label = "Negligible";
     } else if (percentage < 25) {
-      obj.color = "info";
+      obj.color = "secondary";
       obj.label = "Low";
     } else if (percentage < 50) {
       obj.color = "primary";
@@ -59,7 +59,7 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
       obj.color = "error";
       obj.label = "Critical";
     } else {
-      obj.color = "secondary";
+      obj.color = "info";
       obj.label = "Unknown";
     }
 
@@ -85,7 +85,11 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
           <Box display="flex" alignItems="center" gap={10}>
             <Typography variant="h5">SEVERITY</Typography>
             <ChipsRounded
-              label={appsAffectedData?.Severity === 'Unknown' ? 'Negligible' : appsAffectedData?.Severity || "N/A"}
+              label={
+                appsAffectedData?.Severity === "Unknown"
+                  ? "Negligible"
+                  : appsAffectedData?.Severity || "N/A"
+              }
               color={getCVEColor(appsAffectedData?.Severity || "N/A")}
             />
           </Box>
@@ -119,8 +123,8 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
                     ? epssData?.epss < 1
                       ? "< 1%"
                       : `${getEPSSCategory(epssData?.epss).percentage.toFixed(
-                        2
-                      )}%`
+                          2
+                        )}%`
                     : "N/A"
                 }
                 color={getEPSSCategory(epssData?.epss || "N/A").color}
