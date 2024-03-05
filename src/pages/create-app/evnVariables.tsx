@@ -5,6 +5,8 @@ import { useFieldArray, useForm } from "react-hook-form";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import DropzoneWrapper from "src/@core/styles/libs/react-dropzone";
+import DropZone from "src/component/DropZone";
 
 const defaultConfigurationValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "" }],
@@ -208,6 +210,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             <DeleteIcon fontSize="inherit" />
                                         </IconButton>
                                     )}
+                                </Grid>
+                                <Grid item xs={12} sm={12} >
+                                    <DropzoneWrapper>
+                                        <DropZone type={["json", "yml", "env"]} dropText={"Drag and drop a .env, .json or .yml file here to upload bulk variables"} />
+                                    </DropzoneWrapper>
                                 </Grid>
                             </Grid>
                         );
