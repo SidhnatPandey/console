@@ -22,6 +22,9 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+
+
 
 // ** Third Party Imports
 import toast from "react-hot-toast";
@@ -58,7 +61,9 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  FormGroup,
   FormHelperText,
+  OutlinedInput,
   Radio,
   RadioGroup,
   Table,
@@ -66,6 +71,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  Tooltip,
 } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -77,20 +83,9 @@ import {
 import { AuthContext } from "src/context/AuthContext";
 import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
+import { APP_API } from "src/@core/static/api.constant"
+// import { width } from "@mui/system";
 
-/* 
-type FormValues = {
-  application_name: string;
-  git_repo: string;
-  git_branch: string;
-  src_code_path: string;
-};
-
-type ConfigurationValues = {
-  port: number;
-  http_path: string;
-  env_variables: EnvironmentVariable[];
-}; */
 
 type EnvironmentVariable = {
   key: string;
@@ -194,6 +189,16 @@ const ConfigurationSchema = yup.object().shape({
   ),
 });
 
+//App instance Configuration
+
+// const AppInstanceSchema = yup.object().shape({
+//     ram: yup.string().required(),
+//     vcpu: yup.string().required(),
+//     vertical_auto_scale: yup.boolean(),
+//     max: yup.number().max(25),
+//     min: yup.number().min(1)
+// })
+
 const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
 
 const CreateApp = () => {
@@ -227,6 +232,14 @@ const CreateApp = () => {
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
   const [branches, setBranches] = useState<string[]>([]);
   const [repoError, setRepoError] = useState(false);
+  const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
+  const [isChecked, setIsChecked] = useState(false);
+  // const [minValue, setMinValue] = useState('');
+  // const [maxValue, setMaxValue] = useState('');
+  // const [minError, setMinError] = useState('');
+  // const [maxError, setMaxError] = useState('');
+
+
 
   useEffect(() => {
     if (!gitUser) {
@@ -362,6 +375,45 @@ const CreateApp = () => {
     }
   };
 
+  //handled events
+  const handleInstanceChange = (event: { target: { value: any; }; }) => {
+    const { value } = event.target;
+    const selectedInstance = (APP_API.instanceSizes).find((instance: { type: any; }) => instance.type === value);
+    if (selectedInstance != null) {
+      setInstanceSize(selectedInstance);
+    }
+    console.log("Instance size is ", selectedInstance);
+  };
+
+  // const handleMinChange = (event: { target: { value: any; }; }) => {
+  //   const value = event.target.value;
+  //   if (/^[0-9]*$/.test(value) && value >= 1 && value <= 25) {
+  //     setMinValue(value);
+  //     if (value <= maxValue || !maxValue) {
+  //       setMinError('');
+  //     } else {
+  //       setMinError('Min must be less than or equal to Max');
+  //     }
+  //   }
+  // };
+
+  // const handleMaxChange = (event: { target: { value: any; }; }) => {
+  //   const value = event.target.value;
+  //   if (/^[0-9]*$/.test(value) && value >= 1 && value <= 25) {
+  //     setMaxValue(value);
+  //     if (value >= minValue || !minValue) {
+  //       setMaxError('');
+  //     } else {
+  //       setMaxError('Max must be greater than or equal to Min');
+  //     }
+  //   }
+  // };
+
+  const handleverticalScalling = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
+    setIsChecked(event.target.checked);
+    console.log("vertical Scalling : ", event.target.checked)
+  };
+
   const handleWorkspaceChange = (event: SelectChangeEvent) => {
     const workspace_id = event.target.value;
     // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
@@ -475,6 +527,9 @@ const CreateApp = () => {
     return nData;
   };
 
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -766,14 +821,13 @@ const CreateApp = () => {
                     Edit
                   </Button>
                 </Grid>
-
                 <Grid item xs={12} sm={12}>
                   <h2>Resource Settings</h2>
                 </Grid>
 
                 {/* HTTP Port */}
                 <Grid item xs={4} sm={4}>
-                  <div style={{ alignItems: "center" }}>HTTP Port:</div>
+                  <div style={{ alignItems: "center" }}><Typography variant="body1" component="span" fontWeight="bold">HTTP Port</Typography></div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -797,9 +851,8 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* HTTP Path */}
-
                 <Grid item xs={4} sm={4}>
-                  <div>HTTP Path:</div>
+                  <div><Typography variant="body1" component="span" fontWeight="bold">HTTP Path</Typography></div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -817,6 +870,119 @@ const CreateApp = () => {
                     </FormHelperText>
                   )}
                 </Grid>
+
+                {/* App Instance */}
+                <Grid item xs={4} sm={4}>
+                  <div><Typography variant="body1" component="span" fontWeight="bold">App Instance (AI)Size</Typography></div>
+                </Grid>
+                <Grid item xs={8} sm={8} style={{ marginTop: "-0.9rem" }}>
+                  <>
+                    <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
+                      <Select
+                        displayEmpty
+                        value={instanceSize.type}
+                        sx={{ width: 325 }}
+                        onChange={handleInstanceChange}
+                        input={<OutlinedInput />}
+                        renderValue={() => {
+                          return (
+                            <Typography>
+                              <Typography variant="body2" component="span" fontWeight="bold">
+                                {instanceSize.type + "-"}
+                              </Typography>
+                              {instanceSize.ram + " RAM | " + instanceSize.vcpu + " vCPU"}
+                            </Typography>
+                          );
+                        }}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                              width: 250,
+                            },
+                          },
+                        }}
+                        inputProps={{ 'aria-label': 'Without label' }}
+                      // disabled={true}
+                      >
+                        {APP_API.instanceSizes.map((instance, index) => (
+                          <MenuItem key={index} value={instance.type}>
+                            <Typography variant="body1" component="span" fontWeight="bold">
+                              {instance.type + "-"}
+                            </Typography>
+                            {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </>
+                </Grid>
+
+                {/* Select Instances */}
+                <Grid item xs={4} sm={4}>
+                  <div></div>
+                </Grid>
+                <Grid item xs={8} sm={8} >
+                  <FormGroup style={{ display: "block" }}>
+                    <FormControlLabel
+                      control={<Checkbox checked={isChecked} onChange={handleverticalScalling} />}
+                      label='Enable Vertical Auto-Scaling'
+                      disabled={true}
+                    />
+                    <Tooltip title={"Vertical Auto-Scaling allows the App to use resources beyond the request when needed"} arrow>
+                      <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} />
+                    </Tooltip>
+                  </FormGroup>
+                </Grid>
+
+                {/* Numebr of instances */}
+                <Grid item xs={4} sm={4}>
+                  <div><Typography variant="body1" component="span" fontWeight="bold">Number of Instances</Typography></div>
+                </Grid>
+                {/* <Grid item xs={8} sm={4}>
+                  <FormGroup>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                      <p style={{ margin: 0 }}>Min</p>
+                      <input type="text" id="min" value={minValue} onChange={handleMinChange} style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", }} placeholder="1" />
+                      {minError && <span style={{ color: 'red' }}>{minError}</span>}
+                      <OutlinedInput sx={{ width: 60, height: 40 }} inputProps={{ type: 'number', min: 0, max: 25, value: minValue }} onChange={handleMinChange}  />
+                      <p style={{ margin: 0 }}>Max</p>
+                      <input type="text" id="max" value={maxValue} onChange={handleMaxChange} style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", }} placeholder="1" />
+                      {maxError && <span style={{ color: 'red' }}>{maxError}</span>}
+                      <OutlinedInput sx={{ width: 60, height: 40 }} inputProps={{ type: 'number', min: 0, max: 25, value: maxValue }} onChange={handleMaxChange} />
+                    </Box> 
+                   
+
+                  </FormGroup>
+
+                  </Grid> */}
+                {/* <Grid item xs={4} sm={4}>
+                  <FormGroup>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                      <label htmlFor="min">Min</label>
+                      <input
+                        type="text"
+                        id="min"
+                        onChange={handleMinChange}
+                        style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                        placeholder="1"
+                      />
+                      {minError && <span style={{ color: 'red' }}>{minError}</span>}
+                      
+                      <label htmlFor="max">Max</label>
+                      <input
+                        type="text"
+                        id="max"
+                        onChange={handleMaxChange}
+                        style={{ width: "3rem", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                        placeholder="1"
+                      />
+                      {maxError && <span style={{ color: 'red' }}>{maxError}</span>}
+                    </Box>
+                  </FormGroup>
+                </Grid> */}
+          
+                {/* </Grid> */}
 
                 {/* Environment Variable Dialog */}
                 <Dialog
