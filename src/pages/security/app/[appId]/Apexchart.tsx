@@ -171,7 +171,7 @@ const ApexChart: React.FC<Props> = (props) => {
     stroke: {
       width: 3,
     },
-    colors: ["#ff0000", "#ffa500", "#B39DDB", "#a9a9a9", "#00bfff"],
+    colors: ["#CE4A4B", "#FF9F43", "#7367F0", "#A8AAAE", "#00CFE8"],
     legend: {
       position: "bottom",
       horizontalAlign: "center",
