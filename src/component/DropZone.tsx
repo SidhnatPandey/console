@@ -13,7 +13,8 @@ interface FileProp {
     name?: string
     type: string[]
     size?: number,
-    dropText: string
+    dropText: string,
+    onDrop(file: File): void
 }
 
 // Styled component for the upload image inside the dropzone area
@@ -25,7 +26,7 @@ const Img = styled('img')(({ theme }) => ({
 
 const DropZone = (props: FileProp) => {
 
-    const { name, type, size, dropText } = props;
+    const { name, type, size, dropText, onDrop } = props;
     // ** State
     const [files, setFiles] = useState<File[]>([])
 
@@ -39,6 +40,7 @@ const DropZone = (props: FileProp) => {
             'application/x-yaml': []
         },
         onDrop: (acceptedFiles: File[]) => {
+            onDrop(acceptedFiles[0]);
             setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
         }
     })

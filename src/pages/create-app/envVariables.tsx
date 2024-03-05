@@ -7,6 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
+import DragDropFile from "./dragdropfile";
 
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
@@ -518,6 +519,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                             </Grid>
                         );
                     })}
+                    <Grid item xs={12} sm={12}>
+                        <DragDropFile />
+                    </Grid>
                 </div>
             </DialogContent>
 
