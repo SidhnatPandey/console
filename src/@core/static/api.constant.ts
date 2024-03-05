@@ -46,6 +46,8 @@ export const APP_API = {
   sbom: "sbom?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
   downloadAppVulCve:
     "vulernabilities/downloadAppVuln?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
+  overallExpo:
+    "overallexpo?workspace_id={workspace_id}&run_type={run_type}&app_id={app_id}",
 
   //Workspace
   createWorkspace: "workspace",

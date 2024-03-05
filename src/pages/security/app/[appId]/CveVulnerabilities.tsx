@@ -23,6 +23,8 @@ interface CVESecurityData {
   CveID: string;
   Severity: string;
   PackageName: string;
+  ExploitProbability: string;
+  FixedInVersion: string;
   Version: string;
   Description: string;
 }
@@ -69,19 +71,44 @@ const CveVulnerabilities = (props: Props) => {
 
     setVulnerabilityData((prevData) =>
       [...prevData].sort((a, b) => {
-        const valueA = a[columnName];
-        const valueB = b[columnName];
+        if (columnName === "Severity") {
+          const severityOrder: { [key: string]: number } = {
+            Critical: 0,
+            High: 1,
+            Medium: 2,
+            Low: 3,
+            Negligible: 4,
+            Unknown: 5,
+          };
 
-        if (typeof valueA === "number" && typeof valueB === "number") {
-          return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+          const severityA =
+            severityOrder[a[columnName] as keyof typeof severityOrder];
+          const severityB =
+            severityOrder[b[columnName] as keyof typeof severityOrder];
+
+          if (severityA === severityB) {
+            return sort.direction === "asc"
+              ? a[columnName].localeCompare(b[columnName])
+              : b[columnName].localeCompare(a[columnName]);
+          }
+          return sort.direction === "asc"
+            ? severityA - severityB
+            : severityB - severityA;
+        } else {
+          const valueA = a[columnName];
+          const valueB = b[columnName];
+
+          if (typeof valueA === "number" && typeof valueB === "number") {
+            return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+          }
+
+          const stringA = String(valueA);
+          const stringB = String(valueB);
+
+          return sort.direction === "asc"
+            ? stringA.localeCompare(stringB)
+            : stringB.localeCompare(stringA);
         }
-
-        const stringA = String(valueA);
-        const stringB = String(valueB);
-
-        return sort.direction === "asc"
-          ? stringA.localeCompare(stringB)
-          : stringB.localeCompare(stringA);
       })
     );
   };
@@ -117,7 +144,26 @@ const CveVulnerabilities = (props: Props) => {
   ) => {
     setLoading(true);
     cveVulnerabilitiesList(appId, runType, workspaceId).then((res) => {
-      setVulnerabilityData(res?.data || []);
+      const severityOrder: Record<string, number> = {
+        Critical: 0,
+        High: 1,
+        Medium: 2,
+        Low: 3,
+        Negligible: 4,
+        Unknown: 5,
+      };
+
+      const sortedData = res?.data?.sort(
+        (a: { Severity: string }, b: { Severity: string }) => {
+          const severityA =
+            severityOrder[a.Severity as keyof typeof severityOrder];
+          const severityB =
+            severityOrder[b.Severity as keyof typeof severityOrder];
+          return severityA - severityB;
+        }
+      );
+
+      setVulnerabilityData(sortedData || []);
       setLoading(false);
     });
   };
@@ -206,6 +252,20 @@ const CveVulnerabilities = (props: Props) => {
                     </Box>
                   </Box>
                 </TableCell>
+                {/* style={{ whiteSpace: 'nowrap' }} */}
+                <TableCell onClick={() => handleSort("ExploitProbability")}>
+                  <Box display="flex" alignItems="center">
+                    <span>EXPLOIT PROBABILITY</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
                 <TableCell onClick={() => handleSort("PackageName")}>
                   <Box display="flex" alignItems="center">
                     <span>PACKAGE</span>
@@ -222,6 +282,19 @@ const CveVulnerabilities = (props: Props) => {
                 <TableCell onClick={() => handleSort("Version")}>
                   <Box display="flex" alignItems="center">
                     <span>VERSION</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell onClick={() => handleSort("FixedInVersion")}>
+                  <Box display="flex" alignItems="center">
+                    <span>FIXED-IN</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -271,8 +344,30 @@ const CveVulnerabilities = (props: Props) => {
                           color={getCVEColor(row?.Severity)}
                         ></ChipsRounded>
                       </TableCell>
+                      <TableCell>
+                        <ChipsRounded
+                          label={
+                            row?.ExploitProbability
+                              ? row?.ExploitProbability === "Unknown"
+                                ? "Negligible"
+                                : row?.ExploitProbability
+                              : row?.Severity // Showing Severity data if ExploitProbability is empty
+                          }
+                          color={
+                            row?.ExploitProbability
+                              ? getCVEColor(row?.ExploitProbability)
+                              : getCVEColor(row?.Severity)
+                          }
+                        ></ChipsRounded>
+                      </TableCell>
                       <TableCell>{row?.PackageName}</TableCell>
                       <TableCell>{row?.Version}</TableCell>
+                      <TableCell>
+                        {row?.FixedInVersion === null ||
+                        row?.FixedInVersion.length === 0
+                          ? "Not available"
+                          : row?.FixedInVersion}
+                      </TableCell>
                       <TableCell>
                         {expandedRows[index] ? (
                           <div>
@@ -309,7 +404,7 @@ const CveVulnerabilities = (props: Props) => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={7}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",

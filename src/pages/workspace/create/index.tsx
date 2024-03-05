@@ -43,8 +43,12 @@ const CreateWorkspace = () => {
       workspace(params)
         .then((response) => {
           if (response.status === 201) {
-            Toaster.successToast("Workspace created successfully");
-            authContext.fetchWorkspaces(data.workspace_name);
+            if (window.location.pathname.includes('workspaceError')) {
+              window.location.reload();
+            } else {
+              Toaster.successToast("Workspace created successfully");
+              authContext.fetchWorkspaces(data.workspace_name);
+            }
             reset();
           } else if (response.status === 409) {
             Toaster.infoToast(
