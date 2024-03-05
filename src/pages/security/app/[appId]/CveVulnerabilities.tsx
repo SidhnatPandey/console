@@ -347,16 +347,27 @@ const CveVulnerabilities = (props: Props) => {
                       <TableCell>
                         <ChipsRounded
                           label={
-                            row?.ExploitProbability === "Unknown"
-                              ? "Negligible"
-                              : row?.ExploitProbability
+                            row?.ExploitProbability
+                              ? row?.ExploitProbability === "Unknown"
+                                ? "Negligible"
+                                : row?.ExploitProbability
+                              : row?.Severity // Showing Severity data if ExploitProbability is empty
                           }
-                          color={getCVEColor(row?.ExploitProbability)}
+                          color={
+                            row?.ExploitProbability
+                              ? getCVEColor(row?.ExploitProbability)
+                              : getCVEColor(row?.Severity)
+                          }
                         ></ChipsRounded>
                       </TableCell>
                       <TableCell>{row?.PackageName}</TableCell>
                       <TableCell>{row?.Version}</TableCell>
-                      <TableCell>{row?.FixedInVersion}</TableCell>
+                      <TableCell>
+                        {row?.FixedInVersion === null ||
+                        row?.FixedInVersion.length === 0
+                          ? "Not available"
+                          : row?.FixedInVersion}
+                      </TableCell>
                       <TableCell>
                         {expandedRows[index] ? (
                           <div>

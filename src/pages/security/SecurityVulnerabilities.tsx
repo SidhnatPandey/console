@@ -86,12 +86,15 @@ const SecurityVulnerabilities = (props: Props) => {
       let negligibleCount = 0;
 
       data.forEach((ele: CVE) => {
-        if (ele.Severity === 'Unknown' || ele.Severity === 'Negligible') {
+        if (ele.Severity === "Unknown" || ele.Severity === "Negligible") {
           negligibleCount = negligibleCount + ele.Count;
         }
       });
 
-      const filteredArr = data.filter((ele: CVE) => (ele.Severity !== 'Unknown' && ele.Severity !== 'Negligible'));
+      const filteredArr = data.filter(
+        (ele: CVE) =>
+          ele.Severity !== "Unknown" && ele.Severity !== "Negligible"
+      );
 
       const totalV = data.reduce(
         (total: number, cve: any) => total + cve.Count,
@@ -107,10 +110,10 @@ const SecurityVulnerabilities = (props: Props) => {
 
       if (negligibleCount > 0) {
         newArr.push({
-          name: 'Negligible',
+          name: "Negligible",
           value: negligibleCount,
-          color: COLOR_PALLET.info
-        })
+          color: COLOR_PALLET.info,
+        });
       }
 
       setVulnerabilities(newArr);
@@ -248,10 +251,22 @@ const SecurityVulnerabilities = (props: Props) => {
           sx={{
             display: "flex",
             flexWrap: "wrap",
-            mb: 4,
             justifyContent: "center",
           }}
         >
+          <Box
+            sx={{
+              mr: 5,
+              display: "flex",
+              alignItems: "center",
+              "& svg": { mr: 1.5, color: "#00CFE8" },
+            }}
+          >
+            <Icon icon="mdi:circle" fontSize="0.9rem" />
+            <Typography variant="body2" data-testid="unknown-severity">
+              Negligible
+            </Typography>
+          </Box>
           <Box
             sx={{
               mr: 5,
@@ -302,18 +317,6 @@ const SecurityVulnerabilities = (props: Props) => {
             <Icon icon="mdi:circle" fontSize="0.9rem" />
             <Typography variant="body2" data-testid="critical-severity">
               Critical
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              "& svg": { mr: 1.5, color: "#00CFE8" },
-            }}
-          >
-            <Icon icon="mdi:circle" fontSize="0.9rem" />
-            <Typography variant="body2" data-testid="unknown-severity">
-              Negligible
             </Typography>
           </Box>
         </Box>
