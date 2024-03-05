@@ -73,4 +73,40 @@ export const APP_API = {
   makeCardDefault: "cards/{paymentMethod}/setdefault?customer_id={customerId}",
   updateCard: "cards/{cardId}",
   listOfInvoices: "invoices",
+
+  //instances
+  instanceSizes : [
+    {
+      type: "Default",
+      ram: "2GB",
+      vcpu: 1,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
+    },
+    {
+      type: "Small",
+      ram: "1 GB",
+      vcpu: 0.5,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
+    }, 
+    {
+      type: "Large",
+      ram: "4 GB",
+      vcpu: 2,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
+    },
+    {
+      type: "Extra Small",
+      ram: "0.5 GB",
+      vcpu: 0.1,
+      vertical_auto_scale:false,
+      max:1,
+      min:1
+    }
+  ],
 };
