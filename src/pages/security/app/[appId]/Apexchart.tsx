@@ -128,7 +128,7 @@ const ApexChart: React.FC<Props> = (props) => {
       },
     },
     tooltip: {
-      theme: "light",
+      theme: setting?.mode,
       x: {
         format: 'dd MMM yyyy'
       },

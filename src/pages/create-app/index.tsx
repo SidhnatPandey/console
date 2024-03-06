@@ -21,6 +21,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
+import usePlan from "src/hooks/plan";
 
 
 // ** Third Party Imports
@@ -191,6 +192,8 @@ const CreateApp = () => {
     src_code_path: yup.string(),
   });
 
+  const {isDeveloperPlan} = usePlan();
+  
   const storedWorkspace = localStorage.getItem(
     LOCALSTORAGE_CONSTANTS.workspace
   )!;
@@ -203,7 +206,7 @@ const CreateApp = () => {
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
-  const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
+  const [instanceSize, setInstanceSize] = useState(!isDeveloperPlan ? APP_API.instanceSizes[0] : APP_API.instanceSizes[3]);
   const [isChecked, setIsChecked] = useState(false);
   const [minValue, setMinValue] = useState('1');
   const [maxValue, setMaxValue] = useState('1');
@@ -460,8 +463,7 @@ const CreateApp = () => {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
     const obj = {
-      ram: instanceSize.ram,
-      vcpu: instanceSize.vcpu,
+      type: instanceSize.type,
       vertical_auto_scale: isChecked,
       max: maxValue,
       min: minValue
@@ -910,7 +912,7 @@ const CreateApp = () => {
                         },
                       }}
                       inputProps={{ 'aria-label': 'Without label' }}
-                    // disabled={true}
+                      disabled={!!isDeveloperPlan}
                     >
                       {APP_API.instanceSizes.map((instance, index) => (
                         <MenuItem key={index} value={instance.type}>
@@ -933,7 +935,7 @@ const CreateApp = () => {
                     <FormControlLabel
                       control={<Checkbox checked={isChecked} onChange={handleverticalScalling} />}
                       label='Enable Vertical Auto-Scaling'
-                    // disabled={true}
+                      disabled={!!isDeveloperPlan}
                     />
                     <Tooltip title={"Vertical Auto-Scaling allows the App to use resources beyond the request when needed"} arrow>
                       <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} id="vertical_auto_scale" />
@@ -949,9 +951,9 @@ const CreateApp = () => {
                   <FormGroup>
                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                       <label htmlFor="min">Min</label>
-                      <TextField type="text" id="min" value={minValue} onChange={handleMinChange} placeholder="1" style={{ width: "3rem" }} />
+                      <TextField type="text" id="min" value={minValue} onChange={handleMinChange} placeholder="1" style={{ width: "3rem" }} disabled={!!isDeveloperPlan} />
                       <label htmlFor="max">Max</label>
-                      <TextField type="text" id="max" value={maxValue} onChange={handleMaxChange} placeholder="1" style={{ width: "3rem" }} />
+                      <TextField type="text" id="max" value={maxValue} onChange={handleMaxChange} placeholder="1" style={{ width: "3rem" }} disabled={!!isDeveloperPlan} />
                     </Box>
                   </FormGroup>
                 </Grid>
