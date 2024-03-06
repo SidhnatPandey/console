@@ -10,7 +10,6 @@ import { styled, useTheme } from '@mui/material/styles'
 import { useDropzone } from 'react-dropzone'
 
 interface FileProp {
-    name?: string
     type: string[]
     size?: number,
     dropText: string,
@@ -26,7 +25,7 @@ const Img = styled('img')(({ theme }) => ({
 
 const DropZone = (props: FileProp) => {
 
-    const { name, type, size, dropText, onDrop } = props;
+    const { type, size, dropText, onDrop } = props;
     // ** State
     const [files, setFiles] = useState<File[]>([])
 
@@ -50,10 +49,10 @@ const DropZone = (props: FileProp) => {
      )) */
 
     return (
-        <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 150 } : {}}>
+        <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 100 } : {}}>
             <input {...getInputProps()} />
             {files.length ? (
-                <Typography>File uploaded</Typography>
+                <Typography>{files[0].name}</Typography>
             ) : (
                 <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
                     <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />

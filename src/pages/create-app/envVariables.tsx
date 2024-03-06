@@ -7,7 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
-import DragDropFile from "./dragdropfile";
+import DragDropFile, { FileData } from "./dragdropfile";
 
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
@@ -35,7 +35,6 @@ interface EnvVariablesProps {
 const EnvVariables = (props: EnvVariablesProps) => {
 
     const { open, handleEnvDialogClose } = props;
-
 
     const {
         control: EnvVariableControl,
@@ -73,41 +72,22 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
         if (checkboxValue) {
-            console.log("i did it");
             const currentValues = getEnvVariableValue();
             const { test, stg, prod } = currentValues.env_variables[index];
-            console.log("fvalue", getEnvVariableValue());
 
             if ((!test && !stg && prod) || (!test && stg && prod) || (test && !stg && prod) || (test && stg && prod)) {
                 setEnvVariableValue(`env_variables.${index}.test`, prod);
                 setEnvVariableValue(`env_variables.${index}.stg`, prod);
             }
-
             if ((!test && stg && (!prod || prod === '')) || (test && stg && (!prod || prod === ''))) {
                 setEnvVariableValue(`env_variables.${index}.prod`, stg);
                 setEnvVariableValue(`env_variables.${index}.test`, stg);
             }
-
             if (test && (!stg || stg === '') && (!prod || prod === '')) {
                 setEnvVariableValue(`env_variables.${index}.prod`, test);
                 setEnvVariableValue(`env_variables.${index}.stg`, test);
             }
-
-
         }
-        else {
-            console.log("i couldn't")
-            setEnvVariableValue(`env_variables.${index}.test`, "hiiii");
-            setEnvVariableValue(`env_variables.${index}.stg`, "hiiii");
-            setEnvVariableValue(`env_variables.${index}.prod`, "hiiii");
-        }
-
-
-
-
-
-        //  setEnvVariableValue("env_variables", currentValues.env_variables);
-
     };
 
     const [toggle, settoggle] = useState<boolean>(false);
@@ -146,10 +126,69 @@ const EnvVariables = (props: EnvVariablesProps) => {
     };
 
     const getKeyTypeofIndex = (index: number) => {
-        const val = getEnvVariableValue('env_variables')[index].KeyType as string;
-        // console.log(val);
-        return val;
+        return getEnvVariableValue('env_variables')[index].KeyType as string;
+
     }
+
+    const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
+        if (isTest) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.test`, ele.value);
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: ele.value, prod: '', stg: '', Checked: false })
+                }
+            });
+        }
+        if (isProd) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.prod`, ele.value);
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value, stg: '', Checked: false })
+                }
+            });
+        }
+        if (isStg) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.stg`, ele.value);
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value, Checked: false })
+                }
+            });
+        }
+    }
+
+    const convertData = (envVariables: any[]) => {
+        const nData: {
+            test: FileData[];
+            stg: FileData[];
+            prod: FileData[];
+        } = { test: [], stg: [], prod: [] };
+        envVariables.forEach((ele: any) => {
+            if (ele.test) {
+                nData.test.push({ key: ele.key, value: ele.value });
+            }
+            if (ele.stg) {
+                nData.stg.push({ key: ele.key, value: ele.value });
+            }
+            if (ele.prod) {
+                nData.prod.push({ key: ele.key, value: ele.value });
+            }
+        });
+        return nData;
+    };
+
+    const checkIfKeyExists = (key: string) => {
+        const existingValues = getEnvVariableValue().env_variables;
+        const index = existingValues.map(e => e.key).indexOf(key);
+        return index;
+    }
+
     return (
 
 
@@ -520,7 +559,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                         );
                     })}
                     <Grid item xs={12} sm={12}>
-                        <DragDropFile />
+                        <DragDropFile updateForm={handleUpdateForm} />
                     </Grid>
                 </div>
             </DialogContent>

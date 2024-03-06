@@ -1,15 +1,26 @@
-import { Button, Dialog, DialogActions, DialogContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import React, { useState } from 'react'
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
-import DropZone from 'src/component/DropZone'
+import DropZone from 'src/component/DropZone';
 
-export default function DragDropFile() {
+interface DragDropFilePorps {
+    updateForm(data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean): void
+}
+
+export interface FileData {
+    key: string,
+    value: string
+}
+
+export default function DragDropFile({ updateForm }: DragDropFilePorps) {
 
     const [open, setOpen] = useState<boolean>(false);
-    const [selectedEnv, setSelectedEnv] = useState<string>('prod');
+    const [fileData, setFileData] = useState<FileData[]>([]);
+    const [isProd, setIsProd] = useState<boolean>(false);
+    const [isStg, setIsStg] = useState<boolean>(false);
+    const [isTest, setIsTest] = useState<boolean>(true);
 
     const handleDrop = (file: File) => {
-        console.log(file);
         hanldeUploadedFile(file);
         setOpen(true);
     }
@@ -33,16 +44,18 @@ export default function DragDropFile() {
 
     function onReaderLoad(event: any) {
         const obj = JSON.parse(event.target.result);
-        console.log(obj);
-    }
-
-    const handleEnvChange = (e: any) => {
-        setSelectedEnv(e.target.value);
+        const arr = [];
+        for (const key in obj) {
+            arr.push({ 'key': key, 'value': obj[key] })
+        }
+        setFileData(arr);
     }
 
     const handleEnvClick = () => {
+        updateForm(fileData, isTest, isStg, isProd);
         setOpen(false);
     }
+
     return (
         <>
             <DropzoneWrapper>
@@ -53,17 +66,9 @@ export default function DragDropFile() {
                 <DialogContent>
                     <FormControl>
                         <FormLabel id="env-radio-buttons-group-label">Select environment</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="env-radio-buttons-group-label"
-                            defaultValue="prod"
-                            name="radio-buttons-group"
-                            value={selectedEnv}
-                            onChange={handleEnvChange}
-                        >
-                            <FormControlLabel value="prod" control={<Radio />} label="Prod" />
-                            <FormControlLabel value="stg" control={<Radio />} label="Stage" />
-                            <FormControlLabel value="test" control={<Radio />} label="Test" />
-                        </RadioGroup>
+                        <FormControlLabel control={<Checkbox checked={isTest} onChange={(e) => { setIsTest(e.target.checked) }} />} label="Test" />
+                        <FormControlLabel control={<Checkbox checked={isStg} onChange={(e) => { setIsStg(e.target.checked) }} />} label="Stg" />
+                        <FormControlLabel control={<Checkbox checked={isProd} onChange={(e) => { setIsProd(e.target.checked) }} />} label="Prod" />
                     </FormControl>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center' }}>

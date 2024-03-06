@@ -82,10 +82,6 @@ import { APP_API } from "src/@core/static/api.constant"
 // import { width } from "@mui/system";
 import EnvVariables from "./envVariables";
 
-
-
-
-
 type EnvironmentVariable = {
   key: string;
   value: string;
