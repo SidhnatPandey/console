@@ -9,7 +9,8 @@ interface DragDropFilePorps {
 
 export interface FileData {
     key: string,
-    value: string
+    value: string,
+  
 }
 
 export default function DragDropFile({ updateForm }: DragDropFilePorps) {
@@ -46,7 +47,7 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
         const obj = JSON.parse(event.target.result);
         const arr = [];
         for (const key in obj) {
-            arr.push({ 'key': key, 'value': obj[key] })
+            arr.push({ 'key': key, 'value': obj[key]  })
         }
         setFileData(arr);
     }
