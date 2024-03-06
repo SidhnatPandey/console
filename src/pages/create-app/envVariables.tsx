@@ -7,7 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
-import DragDropFile from "./dragdropfile";
+import DragDropFile, { FileData } from "./dragdropfile";
 
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
@@ -26,16 +26,21 @@ const EnvVariableSchema = yup.object().shape({
     ),
 });
 
+export interface envArray {
+    key: string,
+    value: string,
+    type: boolean
+}
 
 interface EnvVariablesProps {
     open: boolean,
-    handleEnvDialogClose(): void
+    handleEnvDialogClose(env: any, count: number): void;
+    handleEnvClose(): void;
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
 
-    const { open, handleEnvDialogClose } = props;
-
+    const { open, handleEnvDialogClose, handleEnvClose } = props;
 
     const {
         control: EnvVariableControl,
@@ -58,71 +63,37 @@ const EnvVariables = (props: EnvVariablesProps) => {
     });
 
     const initialItems = fields.length;
-    const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [isSelectedSecret, setSelectedSecret] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [dropDownValue, setDropDownValue] = useState<string[]>([]);
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showPass, setShowPass] = useState<boolean>(false)
 
     const handleClose = () => {
-        handleEnvDialogClose();
+        handleEnvClose();
     };
 
     const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
 
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
+
         if (checkboxValue) {
-            console.log("i did it");
             const currentValues = getEnvVariableValue();
             const { test, stg, prod } = currentValues.env_variables[index];
-            console.log("fvalue", getEnvVariableValue());
 
             if ((!test && !stg && prod) || (!test && stg && prod) || (test && !stg && prod) || (test && stg && prod)) {
                 setEnvVariableValue(`env_variables.${index}.test`, prod);
                 setEnvVariableValue(`env_variables.${index}.stg`, prod);
             }
-
             if ((!test && stg && (!prod || prod === '')) || (test && stg && (!prod || prod === ''))) {
                 setEnvVariableValue(`env_variables.${index}.prod`, stg);
                 setEnvVariableValue(`env_variables.${index}.test`, stg);
             }
-
             if (test && (!stg || stg === '') && (!prod || prod === '')) {
                 setEnvVariableValue(`env_variables.${index}.prod`, test);
                 setEnvVariableValue(`env_variables.${index}.stg`, test);
             }
-
-
         }
-        else {
-            console.log("i couldn't")
-            setEnvVariableValue(`env_variables.${index}.test`, "hiiii");
-            setEnvVariableValue(`env_variables.${index}.stg`, "hiiii");
-            setEnvVariableValue(`env_variables.${index}.prod`, "hiiii");
-        }
-
-
-
-
-
-        //  setEnvVariableValue("env_variables", currentValues.env_variables);
-
     };
 
-    const [toggle, settoggle] = useState<boolean>(false);
-    // Function to toggle password visibility
     const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
-        // const check = getEnvVariableValue().env_variables[index].passwordVisible
-        // //  setEnvVariableValue(`env_variables.${index}.passwordVisible`,!check);
-
-        // if (check) {
-        //     setEnvVariableValue(`env_variables.${index}.passwordVisible`, false);
-        // }
-        // else {
-        //     setEnvVariableValue(`env_variables.${index}.passwordVisible`, true);
-        // }
-        // settoggle(!check);
         setPasswordVisible((prevState) => {
             const updatedVisible = [...prevState]; // Create a copy of the array
             updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
@@ -138,18 +109,78 @@ const EnvVariables = (props: EnvVariablesProps) => {
         setEnvVariableValue(`env_variables.${i}.prod`, value);
     }
 
-
-    const [selectedValue, setSelectedValue] = useState("");
+    const handleSave = () => {
+        const env = convertData(getEnvVariableValue('env_variables'));
+        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length);
+    }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         setShowPass(!showPass);
     };
 
     const getKeyTypeofIndex = (index: number) => {
-        const val = getEnvVariableValue('env_variables')[index].KeyType as string;
-        // console.log(val);
-        return val;
+        return getEnvVariableValue('env_variables')[index].KeyType as string;
     }
+
+    const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
+        if (isTest) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.test`, ele.value.toString());
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: ele.value.toString(), prod: '', stg: '', Checked: false })
+                }
+            });
+        }
+        if (isProd) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.prod`, ele.value.toString());
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value.toString(), stg: '', Checked: false })
+                }
+            });
+        }
+        if (isStg) {
+            data.forEach((ele: FileData) => {
+                const index = checkIfKeyExists(ele.key);
+                if (index >= 0) {
+                    setEnvVariableValue(`env_variables.${index}.stg`, ele.value.toString());
+                } else {
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value.toString(), Checked: false })
+                }
+            });
+        }
+    }
+
+    const convertData = (envVariables: any[]) => {
+        const nData: {
+            test: envArray[];
+            stg: envArray[];
+            prod: envArray[];
+        } = { test: [], stg: [], prod: [] };
+        envVariables.forEach((ele: any) => {
+            if (ele.test) {
+                nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
+            }
+            if (ele.stg) {
+                nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
+            }
+            if (ele.prod) {
+                nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
+            }
+        });
+        return nData;
+    };
+
+    const checkIfKeyExists = (key: string) => {
+        const existingValues = getEnvVariableValue().env_variables;
+        const index = existingValues.map(e => e.key).indexOf(key);
+        return index;
+    }
+
     return (
 
 
@@ -168,7 +199,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
             >
                 Edit Environment Variables
             </DialogTitle>
-
 
             <DialogContent>
                 <div>
@@ -194,7 +224,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                         <Grid item xs={1} sm={1}>
                             <h3>ALL</h3>
                         </Grid>
-
                     </Grid>
 
                     {fields.map((field, index) => {
@@ -384,8 +413,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             )}
                                         />
                                     }
-
-
                                 </Grid>
 
                                 <Grid item xs={2.75} sm={2.75}>
@@ -454,35 +481,20 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
 
                                 <Grid item xs={0.5} sm={0.5}>
-                                    {/* <FormControlLabel
-                                        label=""
-                                        labelPlacement="top"
-                                        control={
-                                            <Checkbox
-                                                checked={checkedItems[index]}
-                                                onChange={(e) =>
-                                                    handleCheckboxChange(
-                                                        index,
-                                                        e
-                                                    )
-                                                }
-                                            />
-                                        }
-                                    /> */}
                                     <Controller
                                         name={`env_variables.${index}.Checked`}
                                         control={EnvVariableControl}
-                                        defaultValue={false} // Set the initial value
+                                        defaultValue={false}
                                         render={({ field }) => (
                                             <Checkbox
                                                 {...field}
-                                                checked={field.value} // Set the checked prop to the field value
+                                                checked={field.value}
                                                 onChange={(e) => {
                                                     field.onChange(e.target.checked),
                                                         handleCheckboxChange(index, e)
 
                                                 }
-                                                } // Update the field value on change
+                                                }
                                             />
                                         )}
                                     />
@@ -520,7 +532,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                         );
                     })}
                     <Grid item xs={12} sm={12}>
-                        <DragDropFile />
+                        <DragDropFile updateForm={handleUpdateForm} />
                     </Grid>
                 </div>
             </DialogContent>
@@ -530,7 +542,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 sx={{ justifyContent: "center" }}
                 style={{ marginBottom: "15px" }}
             >
-                <Button variant="contained" onClick={handleClose}>
+                <Button variant="contained" onClick={handleSave}>
                     Save
                 </Button>
                 <Button onClick={handleClose}>Close</Button>
