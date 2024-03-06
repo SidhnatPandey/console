@@ -467,8 +467,7 @@ const CreateApp = () => {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
     const obj = {
-      ram: instanceSize.ram,
-      vcpu: instanceSize.vcpu,
+      type: instanceSize.type,
       vertical_auto_scale: isChecked,
       max: maxValue,
       min: minValue
