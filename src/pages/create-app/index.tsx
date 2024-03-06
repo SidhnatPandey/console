@@ -48,7 +48,7 @@ import {
   saveApp,
   appNameExists,
 } from "src/services/appService";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
@@ -80,7 +80,6 @@ import { getItemFromSessionStorage, removeItemFromSessionStorage, setItemToSessi
 import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
 import { APP_API } from "src/@core/static/api.constant"
-// import { width } from "@mui/system";
 import EnvVariables from "./envVariables";
 
 type EnvironmentVariable = {
@@ -160,16 +159,6 @@ const ConfigurationSchema = yup.object().shape({
   http_path: yup.string().required()
 });
 
-//App instance Configuration
-
-// const AppInstanceSchema = yup.object().shape({
-//     ram: yup.string().required(),
-//     vcpu: yup.string().required(),
-//     vertical_auto_scale: yup.boolean(),
-//     max: yup.number().max(25),
-//     min: yup.number().min(1)
-// })
-
 const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
 
 const CreateApp = () => {
@@ -192,13 +181,13 @@ const CreateApp = () => {
     src_code_path: yup.string(),
   });
 
-  const {isDeveloperPlan} = usePlan();
-  
+  const { isDeveloperPlan } = usePlan();
+
   const storedWorkspace = localStorage.getItem(
     LOCALSTORAGE_CONSTANTS.workspace
   )!;
   const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
-  const [activeStep, setActiveStep] = useState<number>(1);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
@@ -419,31 +408,20 @@ const CreateApp = () => {
     }
 
   };
-  // configuration
+  // configuration environment dialog
   const [open, setOpen] = useState(false);
+  const [environmentVariables, setEnvironmentVariables] = useState<any>();
+  const [envCount, setEnvCount] = useState<number>(0);
 
-  const handleClickOpen = () => {
-    /* if (getConfigurationValue("env_variables").length === 0) {
-      setConfigurationValue("env_variables", [
-        { key: "", value: "", stg: false, test: false, prod: false },
-      ]);
-    } */
+  const handleEnvDialogOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => {
-    /*  const environmentVariables = getConfigurationValue("env_variables").filter(
-       (variable) => variable.key && variable.value
-     );
-     setConfigurationValue("env_variables", environmentVariables); */
+
+  const handleEnvDialogClose = (envVariables: any, count: number) => {
+    setEnvironmentVariables(envVariables);
+    setEnvCount(count);
     setOpen(false);
   };
-  //configuration page environment variable
-  /*  const environmentVariables = getConfigurationValue("env_variables");
-   const environmentVariablesCount = environmentVariables.filter(
-     (variable) => variable.key && variable.value
-   ).length; */
-
-  const environmentVariablesCount = 0
 
   const onConfigurationSubmit = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -457,16 +435,16 @@ const CreateApp = () => {
 
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
-    data.env_variables = convertData(data.env_variables);
+    data.env_variables = environmentVariables;
     data.application_name = data.application_name?.trim();
     if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
     const obj = {
-      type: instanceSize.type,
+      instance_type: instanceSize.type,
       vertical_auto_scale: isChecked,
-      max: maxValue,
-      min: minValue
+      max: Number(maxValue),
+      min: Number(minValue)
     }
     data.instance_details = obj;
 
@@ -488,50 +466,6 @@ const CreateApp = () => {
       .finally(() => {
         stopLoading();
       })
-  };
-
-  /* const handleCheckboxChange = (
-    index: number,
-    checked: boolean,
-    type: string
-  ) => {
-    const currentValues = getConfigurationValue();
-    switch (type) {
-      case "test":
-        currentValues.env_variables[index].test = checked;
-        break;
-      case "stg":
-        currentValues.env_variables[index].stg = checked;
-        break;
-      case "prod":
-        currentValues.env_variables[index].prod = checked;
-        break;
-    }
-    setConfigurationValue("env_variables", currentValues.env_variables);
-  }; */
-
-  const handleEnvDialogClose = () => {
-    setOpen(false);
-  }
-
-  const convertData = (envVariables: any[]) => {
-    const nData: {
-      test: EnvironmentVariable[];
-      stg: EnvironmentVariable[];
-      prod: EnvironmentVariable[];
-    } = { test: [], stg: [], prod: [] };
-    envVariables.forEach((ele: any) => {
-      if (ele.test) {
-        nData.test.push({ key: ele.key, value: ele.value });
-      }
-      if (ele.stg) {
-        nData.stg.push({ key: ele.key, value: ele.value });
-      }
-      if (ele.prod) {
-        nData.prod.push({ key: ele.key, value: ele.value });
-      }
-    });
-    return nData;
   };
 
   const ITEM_HEIGHT = 48;
@@ -818,12 +752,12 @@ const CreateApp = () => {
                   <div>{getSoruceCodeValue("application_name")}</div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
-                  <span>{environmentVariablesCount} Environment Variable</span>
+                  <span>{envCount} Environment Variable</span>
                   <Button
                     aria-describedby="popover"
                     variant="contained"
                     style={{ float: "right" }}
-                    onClick={handleClickOpen}
+                    onClick={handleEnvDialogOpen}
                   >
                     {" "}
                     Edit
@@ -965,7 +899,7 @@ const CreateApp = () => {
                 {/* </Grid> */}
 
                 {/* Environment Variable Dialog */}
-                <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} />
+                <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} />
               </Grid>
 
               <Grid
@@ -1094,7 +1028,7 @@ const CreateApp = () => {
                           </TableCell>
                           <TableCell>
                             <Typography sx={{ color: "text.secondary" }}>
-                              {environmentVariablesCount}
+                              {envCount}
                             </Typography>
                           </TableCell>
                         </TableRow>
