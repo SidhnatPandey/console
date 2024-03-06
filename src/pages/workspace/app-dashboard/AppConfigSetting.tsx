@@ -14,7 +14,7 @@ const AppConfigSetting = (Prop:any) => {
 
   const {http_path,port,instance_details,} =Prop
 
-  console.log(Prop.data)
+  
  // console.log(port)
   const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
 

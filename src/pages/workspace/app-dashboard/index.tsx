@@ -36,6 +36,7 @@ import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppSetting from "./AppConfigSetting";
 import AppConfigSetting from "./AppConfigSetting";
+import AppEnvVaribale from "./AppEnvVaribale";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -120,6 +121,7 @@ const AppDashboard = () => {
       });
   };
 
+ // console.log(appData?.env_variables );
   const getIcon = (status: string | undefined) => {
     if (status) {
       const lstatus = status.toLowerCase();
@@ -336,10 +338,20 @@ const AppDashboard = () => {
 
 
         <TabPanel value="4" data-testid="tab-panel-4">
+
+
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
                 <AppConfigSetting   data={appData} />
+              </CardContent> 
+            </Card>
+          </Typography>
+
+          <Typography sx={{ marginBottom: 10 }}>
+            <Card sx={{ margin: "-25px" }}>
+              <CardContent>
+                <AppEnvVaribale   data={appData} />
               </CardContent> 
             </Card>
           </Typography>
