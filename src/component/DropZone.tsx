@@ -44,10 +44,6 @@ const DropZone = (props: FileProp) => {
         }
     })
 
-    /*  const img = files.map((file: FileProp) => (
-         <img key={file.name} alt={file.name} className='single-file-image' src={URL.createObjectURL(file as any)} />
-     )) */
-
     return (
         <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 100 } : {}}>
             <input {...getInputProps()} />

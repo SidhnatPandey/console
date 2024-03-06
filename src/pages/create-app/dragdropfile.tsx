@@ -59,7 +59,7 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     return (
         <>
             <DropzoneWrapper>
-                <DropZone type={[]} dropText={"Drag and drop a .emv, .json or .yml file here to add bulk variables"} onDrop={handleDrop} />
+                <DropZone type={[]} dropText={"Drag and drop a .env, .json or .yml file here to add bulk variables"} onDrop={handleDrop} />
             </DropzoneWrapper>
 
             <Dialog open={open}>
