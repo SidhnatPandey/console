@@ -26,6 +26,11 @@ const EnvVariableSchema = yup.object().shape({
     ),
 });
 
+export interface envArray {
+    key: string,
+    value: string,
+   is_secret: boolean
+}
 
 interface EnvVariablesProps {
     open: boolean,
@@ -57,11 +62,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
     });
 
     const initialItems = fields.length;
-    const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [isSelectedSecret, setSelectedSecret] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [dropDownValue, setDropDownValue] = useState<string[]>([]);
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(initialItems).fill(false));
-    const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showPass, setShowPass] = useState<boolean>(false)
 
     const handleClose = () => {
@@ -71,6 +72,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
 
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
+       
         if (checkboxValue) {
             const currentValues = getEnvVariableValue();
             const { test, stg, prod } = currentValues.env_variables[index];
@@ -90,19 +92,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         }
     };
 
-    const [toggle, settoggle] = useState<boolean>(false);
-    // Function to toggle password visibility
-    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
-        // const check = getEnvVariableValue().env_variables[index].passwordVisible
-        // //  setEnvVariableValue(`env_variables.${index}.passwordVisible`,!check);
-
-        // if (check) {
-        //     setEnvVariableValue(`env_variables.${index}.passwordVisible`, false);
-        // }
-        // else {
-        //     setEnvVariableValue(`env_variables.${index}.passwordVisible`, true);
-        // }
-        // settoggle(!check);
+    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => { 
         setPasswordVisible((prevState) => {
             const updatedVisible = [...prevState]; // Create a copy of the array
             updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
@@ -118,8 +108,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
         setEnvVariableValue(`env_variables.${i}.prod`, value);
     }
 
-
-    const [selectedValue, setSelectedValue] = useState("");
+    const handleSave=()=>{
+        console.log(convertData(getEnvVariableValue('env_variables')));
+    }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         setShowPass(!showPass);
@@ -127,7 +118,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const getKeyTypeofIndex = (index: number) => {
         return getEnvVariableValue('env_variables')[index].KeyType as string;
-
     }
 
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
@@ -165,19 +155,19 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const convertData = (envVariables: any[]) => {
         const nData: {
-            test: FileData[];
-            stg: FileData[];
-            prod: FileData[];
+            test: envArray[];
+            stg: envArray[];
+            prod: envArray[];
         } = { test: [], stg: [], prod: [] };
         envVariables.forEach((ele: any) => {
             if (ele.test) {
-                nData.test.push({ key: ele.key, value: ele.value });
+                nData.test.push({ key: ele.key, value: ele.test , is_secret: ele.KeyType==='secret'});
             }
             if (ele.stg) {
-                nData.stg.push({ key: ele.key, value: ele.value });
+                nData.stg.push({ key: ele.key, value: ele.stg , is_secret: ele.KeyType==='secret' });
             }
             if (ele.prod) {
-                nData.prod.push({ key: ele.key, value: ele.value });
+                nData.prod.push({ key: ele.key, value: ele.prod ,is_secret: ele.KeyType==='secret' });
             }
         });
         return nData;
@@ -208,7 +198,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 Edit Environment Variables
             </DialogTitle>
 
-
             <DialogContent>
                 <div>
 
@@ -233,7 +222,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                         <Grid item xs={1} sm={1}>
                             <h3>ALL</h3>
                         </Grid>
-
                     </Grid>
 
                     {fields.map((field, index) => {
@@ -423,8 +411,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             )}
                                         />
                                     }
-
-
                                 </Grid>
 
                                 <Grid item xs={2.75} sm={2.75}>
@@ -493,35 +479,20 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
 
                                 <Grid item xs={0.5} sm={0.5}>
-                                    {/* <FormControlLabel
-                                        label=""
-                                        labelPlacement="top"
-                                        control={
-                                            <Checkbox
-                                                checked={checkedItems[index]}
-                                                onChange={(e) =>
-                                                    handleCheckboxChange(
-                                                        index,
-                                                        e
-                                                    )
-                                                }
-                                            />
-                                        }
-                                    /> */}
                                     <Controller
                                         name={`env_variables.${index}.Checked`}
                                         control={EnvVariableControl}
-                                        defaultValue={false} // Set the initial value
+                                        defaultValue={false} 
                                         render={({ field }) => (
                                             <Checkbox
                                                 {...field}
-                                                checked={field.value} // Set the checked prop to the field value
+                                                checked={field.value} 
                                                 onChange={(e) => {
                                                     field.onChange(e.target.checked),
                                                         handleCheckboxChange(index, e)
 
                                                 }
-                                                } // Update the field value on change
+                                                } 
                                             />
                                         )}
                                     />
@@ -569,7 +540,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 sx={{ justifyContent: "center" }}
                 style={{ marginBottom: "15px" }}
             >
-                <Button variant="contained" onClick={handleClose}>
+                <Button variant="contained" onClick={handleSave}>
                     Save
                 </Button>
                 <Button onClick={handleClose}>Close</Button>
