@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
@@ -34,6 +34,8 @@ import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/a
 import { AbilityContext } from "src/layouts/components/acl/Can";
 import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
+import AppSetting from "./AppConfigSetting";
+import AppConfigSetting from "./AppConfigSetting";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -328,10 +330,25 @@ const AppDashboard = () => {
         <TabPanel value="3" sx={{ p: 0 }} data-testid="tab-panel-3">
           <AppLogs appId={appData?.id ? appData.id : '0'} />
         </TabPanel>
+
+
+
+
+
         <TabPanel value="4" data-testid="tab-panel-4">
+          <Typography sx={{ marginBottom: 10 }}>
+            <Card sx={{ margin: "-25px" }}>
+              <CardContent>
+                <AppConfigSetting   data={appData} />
+              </CardContent> 
+            </Card>
+          </Typography>
+
+
           <Typography>
             {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp appName={undefined} appId={appData?.id} metricsTimer={0} />}
           </Typography>
+
         </TabPanel>
       </TabContext>
     </>
