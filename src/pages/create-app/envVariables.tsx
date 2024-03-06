@@ -29,17 +29,18 @@ const EnvVariableSchema = yup.object().shape({
 export interface envArray {
     key: string,
     value: string,
-   is_secret: boolean
+    type: boolean
 }
 
 interface EnvVariablesProps {
     open: boolean,
-    handleEnvDialogClose(): void
+    handleEnvDialogClose(env: any, count: number): void;
+    handleEnvClose(): void;
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
 
-    const { open, handleEnvDialogClose } = props;
+    const { open, handleEnvDialogClose, handleEnvClose } = props;
 
     const {
         control: EnvVariableControl,
@@ -66,13 +67,13 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [showPass, setShowPass] = useState<boolean>(false)
 
     const handleClose = () => {
-        handleEnvDialogClose();
+        handleEnvClose();
     };
 
     const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
 
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
-       
+
         if (checkboxValue) {
             const currentValues = getEnvVariableValue();
             const { test, stg, prod } = currentValues.env_variables[index];
@@ -92,7 +93,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         }
     };
 
-    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => { 
+    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
         setPasswordVisible((prevState) => {
             const updatedVisible = [...prevState]; // Create a copy of the array
             updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
@@ -108,8 +109,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
         setEnvVariableValue(`env_variables.${i}.prod`, value);
     }
 
-    const handleSave=()=>{
-        console.log(convertData(getEnvVariableValue('env_variables')));
+    const handleSave = () => {
+        const env = convertData(getEnvVariableValue('env_variables'));
+        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length);
     }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -125,9 +127,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
                 if (index >= 0) {
-                    setEnvVariableValue(`env_variables.${index}.test`, ele.value);
+                    setEnvVariableValue(`env_variables.${index}.test`, ele.value.toString());
                 } else {
-                    append({ key: ele.key, KeyType: 'env', test: ele.value, prod: '', stg: '', Checked: false })
+                    append({ key: ele.key, KeyType: 'env', test: ele.value.toString(), prod: '', stg: '', Checked: false })
                 }
             });
         }
@@ -135,9 +137,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
                 if (index >= 0) {
-                    setEnvVariableValue(`env_variables.${index}.prod`, ele.value);
+                    setEnvVariableValue(`env_variables.${index}.prod`, ele.value.toString());
                 } else {
-                    append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value, stg: '', Checked: false })
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value.toString(), stg: '', Checked: false })
                 }
             });
         }
@@ -145,9 +147,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
                 if (index >= 0) {
-                    setEnvVariableValue(`env_variables.${index}.stg`, ele.value);
+                    setEnvVariableValue(`env_variables.${index}.stg`, ele.value.toString());
                 } else {
-                    append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value, Checked: false })
+                    append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value.toString(), Checked: false })
                 }
             });
         }
@@ -161,13 +163,13 @@ const EnvVariables = (props: EnvVariablesProps) => {
         } = { test: [], stg: [], prod: [] };
         envVariables.forEach((ele: any) => {
             if (ele.test) {
-                nData.test.push({ key: ele.key, value: ele.test , is_secret: ele.KeyType==='secret'});
+                nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
             }
             if (ele.stg) {
-                nData.stg.push({ key: ele.key, value: ele.stg , is_secret: ele.KeyType==='secret' });
+                nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
             }
             if (ele.prod) {
-                nData.prod.push({ key: ele.key, value: ele.prod ,is_secret: ele.KeyType==='secret' });
+                nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
             }
         });
         return nData;
@@ -482,17 +484,17 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                     <Controller
                                         name={`env_variables.${index}.Checked`}
                                         control={EnvVariableControl}
-                                        defaultValue={false} 
+                                        defaultValue={false}
                                         render={({ field }) => (
                                             <Checkbox
                                                 {...field}
-                                                checked={field.value} 
+                                                checked={field.value}
                                                 onChange={(e) => {
                                                     field.onChange(e.target.checked),
                                                         handleCheckboxChange(index, e)
 
                                                 }
-                                                } 
+                                                }
                                             />
                                         )}
                                     />
