@@ -8,62 +8,79 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import CreateApp from 'src/pages/create-app';
-import {App} from './index'
-import { string } from 'yup';
-interface EnvVariableArrayProp {
+
+interface EnvFormType {
     key: string,
-    type: string,
+    KeyType: string,
+    prod: string,
     stg: string,
     test: string,
-    prod: string
-}[];
-
-interface AppEnvVaribaleProp{
-    Data : App
+    Checked: boolean
 }
 
 const AppEnvVaribale = (Prop: any) => {
 
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
-    const [open,setOpen]=useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
     const [environmentVariables, setEnvironmentVariables] = useState<any>();
-    const {Data} = Prop ;
-    const EnvData= Data.env_variables;
-    console.log("new", Prop);
+    const EnvData = { ...Prop.data.env_variables };
+    const envArr: any[] = [];
 
+    const checkIfKeyExists = (key: string) => {
+        const existingValues = envArr;
+        const index = existingValues.map(e => e.key).indexOf(key);
+        return index;
+    }
 
-   
+    const pushToArr = (node: string, ele: any) => {
+        const obj = {
+            key: ele.key,
+            KeyType: ele.type,
+            prod: '',
+            test: '',
+            stg: '',
+            Checked: false
+        }
+        switch (node) {
+            case 'prod':
+                obj.prod = ele.value
+                break;
+            case 'stg':
+                obj.stg = ele.value
+                break;
+            case 'test':
+                obj.test = ele.value;
+                break;
+        }
+        envArr.push(obj);
+    }
 
+    for (const node in EnvData) {
+        const arr = [...EnvData[node]];
+        arr.forEach((element: any) => {
+            const index = checkIfKeyExists(element.key);
+            if (index >= 0) {
+                envArr[index][node] = element.value;
+            } else {
+                pushToArr(node, element);
+            }
+        });
+    }
 
-    const EnvVariableArray = Object.keys(EnvData?.test).map(index => {
-        const key = EnvData.test[index].key.trim();
-        const type= EnvData.test[index].type.trim();
-        return {
-            key,
-            type,
-            stg: EnvData.stg[index].value,
-            test: EnvData.test[index].value,
-            prod: EnvData.prod[index].value,
-            //  isSecret:  EnvData.stg[index].is_secret
-        };
-    });
-    // const EnvVariableArray = (EnvData?.test || []).map((item, index) => {
-    //     const key = item.key.trim();
+    //console.log(envArr);
 
-    //     return {
-    //         key,
-    //         stg: (EnvData?.stg || [])[index]?.value,
-    //         test: item.value,
-    //         prod: (EnvData?.prod || [])[index]?.value,
-    //         //  isSecret:  (EnvData?.stg || [])[index]?.is_secret
-    //     };
-    // });
-
-    console.log("val", EnvVariableArray);
-
-
-
-
+    /*  const EnvVariableArray = Object.keys(EnvData?.test).map(index => {
+         const key = EnvData.test[index].key.trim();
+         const type = EnvData.test[index].type.trim();
+         return {
+             key,
+             type,
+             stg: EnvData.stg[index].value,
+             test: EnvData.test[index].value,
+             prod: EnvData.prod[index].value,
+             //  isSecret:  EnvData.stg[index].is_secret
+         };
+     }); */
 
     const togglePasswordVisibility = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         setPasswordVisible((prevState) => {
@@ -72,22 +89,17 @@ const AppEnvVaribale = (Prop: any) => {
             return updatedVisible;
         });
     }
-    const handleEnvDialogClose=()=>{
+    const handleEnvDialogClose = () => {
         setEnvironmentVariables(EnvData);
         setOpen(false);
-     }
-    const handleClickOpen=(event: React.MouseEvent<HTMLButtonElement, MouseEvent>)=> {
-       console.log("hello");
-    //  handleEnvDialogOpen()
-     setOpen(true);
-     
-   
+    }
+    const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        //console.log("hello");
+        //  handleEnvDialogOpen()
+        setOpen(true);
     }
 
     return (
-
-
-
         <Grid container spacing={1}>
             <Grid item xs={6} sm={6}><Typography variant="h4">
                 Environment Variables
@@ -99,14 +111,14 @@ const AppEnvVaribale = (Prop: any) => {
                         aria-describedby="popover"
                         variant="contained"
                         color="inherit"
-                    onClick={handleClickOpen}
+                        onClick={handleClickOpen}
                     >
                         {" "}
                         Edit
                     </Button>
                 </Box>
             </Typography></Grid>
-            <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} />
+            <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} editData={envArr} />
 
             <Grid item xs={3} sm={3}><Typography variant="h4">
                 Environments
@@ -123,7 +135,7 @@ const AppEnvVaribale = (Prop: any) => {
 
             {
 
-                EnvVariableArray.map((item, index) => (
+                envArr.map((item, index) => (
                     <>
                         {/* <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' ,marginBottom: 1 }}>
                             <CustomChip sx={{ height: 20, marginRight: 0.5 }} rounded label={"secret"} skin='light' color={"secondary"} />
