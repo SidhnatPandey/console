@@ -30,11 +30,13 @@ import { APP_API } from "src/@core/static/api.constant";
 import useSWR from "swr";
 import { getFetcher } from "src/services/fetcherService";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
-import { LOCALSTORAGE_CONSTANTS, PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
+import {
+  LOCALSTORAGE_CONSTANTS,
+  PERMISSION_CONSTANTS,
+} from "src/@core/static/app.constant";
 import { AbilityContext } from "src/layouts/components/acl/Can";
 import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
-import AppSetting from "./AppConfigSetting";
 import AppConfigSetting from "./AppConfigSetting";
 import AppEnvVaribale from "./AppEnvVaribale";
 
@@ -53,22 +55,49 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   },
 }));
 
-interface App {
+export interface App {
   application_name: string;
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables: { Key: string; Value: string }[];
+  env_variables: { key: string; value: string, type: string }[];
   id: string;
   port: number;
   stage: string;
   status: string;
   http_path: string;
   description: string;
-  url: string
-  last_deployed: string
+  url: string;
+  last_deployed: string;
+  instance_details: {
+    instance_type: string,
+    vertical_auto_scale: boolean,
+    max: number,
+    min: number
+  },
 }
 
+const defaultApp = {
+  application_name: 'N/A',
+  git_branch: 'N/A',
+  git_repo: 'N/A',
+  git_user: 'N/A',
+  env_variables: [],
+  id: 'N/A',
+  port: 0,
+  stage: 'N/A',
+  status: 'N/A',
+  http_path: 'N/A',
+  description: 'N/A',
+  url: 'N/A',
+  last_deployed: 'N/A',
+  instance_details: {
+    instance_type: 'N/A',
+    vertical_auto_scale: false,
+    max: 0,
+    min: 0
+  },
+}
 const AppDashboard = () => {
   const router = useRouter();
   const workspaceHook = useWorkspace();
@@ -77,26 +106,25 @@ const AppDashboard = () => {
   const [value, setValue] = useState<string>("1");
   const [loading, setLoading] = useState<boolean>(false);
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
-  const [appData, setAppData] = useState<App>(); // State to hold the fetched data
-  const [runType, setRunType] = useState<string>('current');
+  const [appData, setAppData] = useState<App>(defaultApp); // State to hold the fetched data
+  const [runType, setRunType] = useState<string>("current");
   const ability = useContext(AbilityContext);
-
 
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
-  key = key?.replace('{appId}', updatedAppId)
-  const nkey = key + '&run_type=' + runType
+  key = key?.replace("{appId}", updatedAppId);
+  const nkey = key + "&run_type=" + runType;
   setApiBaseUrl();
   const { data: supplyChainRunsData, mutate } = useSWR(nkey, getFetcher, {
-    refreshInterval: timer
+    refreshInterval: timer,
   });
 
   const triggerSupplyChainRun = (selectedValue: string) => {
     setRunType(selectedValue);
-  }
+  };
 
   useEffect(() => {
-    mutate
+    mutate;
   }, [runType]);
 
   useEffect(() => {
@@ -138,7 +166,10 @@ const AppDashboard = () => {
                 marginBottom: -1,
               }}
             >
-              <Icon style={{ fontSize: '1rem', padding: '4px 0 0 3px' }} icon={"ph:check-light"} />
+              <Icon
+                style={{ fontSize: "1rem", padding: "4px 0 0 3px" }}
+                icon={"ph:check-light"}
+              />
             </CustomAvatar>
           );
         case "inprogress":
@@ -220,11 +251,10 @@ const AppDashboard = () => {
                 background: "rgba(101, 91, 211, 0.2)",
               }}
               rotate={3}
-
             />
           )}
         </span>
-        <span style={{ marginTop: "3.5rem", width: '250%' }}>
+        <span style={{ marginTop: "3.5rem", width: "250%" }}>
           <h1 style={{ marginBottom: "0" }} data-testid="title">
             {loading ? <Skeleton /> : appData?.application_name || "N/A"}
           </h1>
@@ -247,8 +277,15 @@ const AppDashboard = () => {
                   <>
                     <span className="mr-2">
                       {" "}
-                      <StackedBarChartOutlinedIcon className="icon-bottom" data-testid="stage-icon" />
-                      <b data-testid="stage"> Current Stage : {supplyChainRunsData?.data?.current_stage || "N/A"} </b>
+                      <StackedBarChartOutlinedIcon
+                        className="icon-bottom"
+                        data-testid="stage-icon"
+                      />
+                      <b data-testid="stage">
+                        {" "}
+                        Current Stage :{" "}
+                        {supplyChainRunsData?.data?.current_stage || "N/A"}{" "}
+                      </b>
                     </span>
                     <span className="mr-2" data-testid="status-icon">
                       {" "}
@@ -259,10 +296,31 @@ const AppDashboard = () => {
                     </span>
                     <span className="mr-2" data-testid="website-link">
                       {" "}
-                      <LocationOnOutlinedIcon className="icon-bottom" data-testid="location-icon" />
-                      {supplyChainRunsData?.data?.url ? <a href={supplyChainRunsData?.data?.url.startsWith('http://') || supplyChainRunsData?.data?.url.startsWith('https://') ? supplyChainRunsData?.data?.url : `https://${supplyChainRunsData?.data?.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#655bd3" }} >
-                        {supplyChainRunsData?.data?.url}
-                      </a> : "N/A"}
+                      <LocationOnOutlinedIcon
+                        className="icon-bottom"
+                        data-testid="location-icon"
+                      />
+                      {supplyChainRunsData?.data?.url ? (
+                        <a
+                          href={
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "http://"
+                            ) ||
+                              supplyChainRunsData?.data?.url.startsWith(
+                                "https://"
+                              )
+                              ? supplyChainRunsData?.data?.url
+                              : `https://${supplyChainRunsData?.data?.url}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "#655bd3" }}
+                        >
+                          {supplyChainRunsData?.data?.url}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
                     </span>
                   </>
                 )}
@@ -270,9 +328,24 @@ const AppDashboard = () => {
             </>
           )}
         </span>
-        <span style={{ textAlign: 'end', marginRight: '20px', marginTop: '3rem', width: '100%' }}>
-          <p style={{ fontSize: '20px', marginBottom: '10px', textAlign: 'end' }}>Workspace: <b>{workspaceHook.getWorkspaceNameById(workspaceId)}</b></p>
-          <SwitcherButton handleBtnClick={triggerSupplyChainRun} btnNames={['prod', 'current']} defaultValue={'current'}></SwitcherButton>
+        <span
+          style={{
+            textAlign: "end",
+            marginRight: "20px",
+            marginTop: "3rem",
+            width: "100%",
+          }}
+        >
+          <p
+            style={{ fontSize: "20px", marginBottom: "10px", textAlign: "end" }}
+          >
+            Workspace: <b>{workspaceHook.getWorkspaceNameById(workspaceId)}</b>
+          </p>
+          <SwitcherButton
+            handleBtnClick={triggerSupplyChainRun}
+            btnNames={["prod", "current"]}
+            defaultValue={"current"}
+          ></SwitcherButton>
         </span>
       </Card>
 
@@ -313,7 +386,11 @@ const AppDashboard = () => {
           />
         </TabList>
         <TabPanel value="1" sx={{ p: 0 }} data-testid="tab-panel-1">
-          <AppSummary loading={loading} appName={appData?.application_name} metricsTimer={timer} />
+          <AppSummary
+            loading={loading}
+            appName={appData?.application_name}
+            metricsTimer={timer}
+          />
           <br />
           <AppCreationFlow
             loading={loading}
@@ -325,17 +402,11 @@ const AppDashboard = () => {
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
-          <Typography>
-            Under Development
-          </Typography>
+          <Typography>Under Development</Typography>
         </TabPanel>
         <TabPanel value="3" sx={{ p: 0 }} data-testid="tab-panel-3">
-          <AppLogs appId={appData?.id ? appData.id : '0'} />
+          <AppLogs appId={appData?.id ? appData.id : "0"} />
         </TabPanel>
-
-
-
-
 
         <TabPanel value="4" data-testid="tab-panel-4">
 
@@ -343,11 +414,10 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppConfigSetting   data={appData} />
-              </CardContent> 
+                <AppConfigSetting data={appData} runType={runType} />
+              </CardContent>
             </Card>
           </Typography>
-
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
@@ -358,9 +428,14 @@ const AppDashboard = () => {
 
 
           <Typography>
-            {ability?.can('read', PERMISSION_CONSTANTS.deleteApp) && <DestroyApp appName={undefined} appId={appData?.id} metricsTimer={0} />}
+            {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (
+              <DestroyApp
+                appName={undefined}
+                appId={appData?.id}
+                metricsTimer={0}
+              />
+            )}
           </Typography>
-
         </TabPanel>
       </TabContext>
     </>
@@ -368,8 +443,8 @@ const AppDashboard = () => {
 };
 
 AppDashboard.acl = {
-  action: 'read',
-  subject: PERMISSION_CONSTANTS.appDashboard
-}
+  action: "read",
+  subject: PERMISSION_CONSTANTS.appDashboard,
+};
 
 export default AppDashboard;
