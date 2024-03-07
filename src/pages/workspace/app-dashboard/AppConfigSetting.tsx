@@ -19,15 +19,17 @@ import { APP_API } from "src/@core/static/api.constant";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { editApp } from "src/services/appService";
 import toast from "react-hot-toast";
-import { App } from './index';
+import { App } from "./index";
+import usePlan from "src/hooks/plan";
 
 interface AppConfigSettingProps {
-  data: App,
-  runType: string
+  data: App;
+  runType: string;
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
   const { runType, data } = props;
+  const { isDeveloperPlan } = usePlan();
   const [obj, setObj] = useState({
     port: data.port,
     http_path: data.http_path,
@@ -75,14 +77,16 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
   const handlePortChange = (event: { target: { value: string } }) => {
     const value = event.target.value.trim();
-    setPort(value);
+    setPort(Number(value));
   };
   const handlePathChange = (event: { target: { value: string } }) => {
     const value = event.target.value.trim();
     setPath(value);
   };
   const handleClickOpen = () => {
-    setEdit(!isEdit);
+    if (!isDeveloperPlan) {
+      setEdit(!isEdit);
+    }
   };
 
   const handleCancel = () => {
@@ -147,40 +151,42 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         {/* Button */}
 
         <Grid item xs={6} sm={6}>
-          {runType === "current" && <Box display="flex" justifyContent="flex-end" alignItems="center">
-            {!isEdit ? (
-              <Button
-                aria-describedby="popover"
-                variant="contained"
-                onClick={handleClickOpen}
-              >
-                {" "}
-                Edit
-              </Button>
-            ) : (
-              <>
-                {" "}
+          {runType === "current" && (
+            <Box display="flex" justifyContent="flex-end" alignItems="center">
+              {!isEdit ? (
                 <Button
                   aria-describedby="popover"
                   variant="contained"
-                  onClick={handleSave}
+                  onClick={handleClickOpen}
                 >
                   {" "}
-                  save
+                  Edit
                 </Button>
-                <Button
-                  aria-describedby="popover"
-                  variant="contained"
-                  color="inherit"
-                  style={{ margin: 10 }}
-                  onClick={handleCancel}
-                >
+              ) : (
+                <>
                   {" "}
-                  Cancel
-                </Button>
-              </>
-            )}
-          </Box>}
+                  <Button
+                    aria-describedby="popover"
+                    variant="contained"
+                    onClick={handleSave}
+                  >
+                    {" "}
+                    save
+                  </Button>
+                  <Button
+                    aria-describedby="popover"
+                    variant="contained"
+                    color="inherit"
+                    style={{ margin: 10 }}
+                    onClick={handleCancel}
+                  >
+                    {" "}
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </Box>
+          )}
         </Grid>
 
         {/* HTTP Port*/}

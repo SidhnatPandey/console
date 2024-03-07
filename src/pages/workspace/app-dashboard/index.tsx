@@ -59,7 +59,7 @@ export interface App {
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables: { key: string; value: string, type: string }[];
+  env_variables: { key: string; value: string; type: string }[];
   id: string;
   port: number;
   stage: string;
@@ -69,34 +69,34 @@ export interface App {
   url: string;
   last_deployed: string;
   instance_details: {
-    instance_type: string,
-    vertical_auto_scale: boolean,
-    max: number,
-    min: number
-  },
+    instance_type: string;
+    vertical_auto_scale: boolean;
+    max: number;
+    min: number;
+  };
 }
 
 const defaultApp = {
-  application_name: 'N/A',
-  git_branch: 'N/A',
-  git_repo: 'N/A',
-  git_user: 'N/A',
+  application_name: "N/A",
+  git_branch: "N/A",
+  git_repo: "N/A",
+  git_user: "N/A",
   env_variables: [],
-  id: 'N/A',
+  id: "N/A",
   port: 0,
-  stage: 'N/A',
-  status: 'N/A',
-  http_path: 'N/A',
-  description: 'N/A',
-  url: 'N/A',
-  last_deployed: 'N/A',
+  stage: "N/A",
+  status: "N/A",
+  http_path: "N/A",
+  description: "N/A",
+  url: "N/A",
+  last_deployed: "N/A",
   instance_details: {
-    instance_type: 'N/A',
+    instance_type: "N/A",
     vertical_auto_scale: false,
-    max: 0,
-    min: 0
+    max: 1,
+    min: 1,
   },
-}
+};
 const AppDashboard = () => {
   const router = useRouter();
   const workspaceHook = useWorkspace();
@@ -304,9 +304,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                              supplyChainRunsData?.data?.url.startsWith(
-                                "https://"
-                              )
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "https://"
+                            )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
