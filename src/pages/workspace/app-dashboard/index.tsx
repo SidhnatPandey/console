@@ -54,12 +54,12 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   },
 }));
 
-interface App {
+export interface App {
   application_name: string;
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables: { Key: string; Value: string }[];
+  env_variables: { key: string; value: string, type: string }[];
   id: string;
   port: number;
   stage: string;
@@ -68,8 +68,35 @@ interface App {
   description: string;
   url: string;
   last_deployed: string;
+  instance_details: {
+    instance_type: string,
+    vertical_auto_scale: boolean,
+    max: number,
+    min: number
+  },
 }
 
+const defaultApp = {
+  application_name: 'N/A',
+  git_branch: 'N/A',
+  git_repo: 'N/A',
+  git_user: 'N/A',
+  env_variables: [],
+  id: 'N/A',
+  port: 0,
+  stage: 'N/A',
+  status: 'N/A',
+  http_path: 'N/A',
+  description: 'N/A',
+  url: 'N/A',
+  last_deployed: 'N/A',
+  instance_details: {
+    instance_type: 'N/A',
+    vertical_auto_scale: false,
+    max: 0,
+    min: 0
+  },
+}
 const AppDashboard = () => {
   const router = useRouter();
   const workspaceHook = useWorkspace();
@@ -78,7 +105,7 @@ const AppDashboard = () => {
   const [value, setValue] = useState<string>("1");
   const [loading, setLoading] = useState<boolean>(false);
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
-  const [appData, setAppData] = useState<App>(); // State to hold the fetched data
+  const [appData, setAppData] = useState<App>(defaultApp); // State to hold the fetched data
   const [runType, setRunType] = useState<string>("current");
   const ability = useContext(AbilityContext);
 
@@ -277,9 +304,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                            supplyChainRunsData?.data?.url.startsWith(
-                              "https://"
-                            )
+                              supplyChainRunsData?.data?.url.startsWith(
+                                "https://"
+                              )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
@@ -383,7 +410,7 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppConfigSetting data={appData} />
+                <AppConfigSetting data={appData} runType={runType} />
               </CardContent>
             </Card>
           </Typography>

@@ -19,15 +19,22 @@ import { APP_API } from "src/@core/static/api.constant";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { editApp } from "src/services/appService";
 import toast from "react-hot-toast";
+import { App } from './index';
 
-const AppConfigSetting = (Prop: any) => {
+interface AppConfigSettingProps {
+  data: App,
+  runType: string
+}
+
+const AppConfigSetting = (props: AppConfigSettingProps) => {
+  const { runType, data } = props;
   const [obj, setObj] = useState({
-    port: Prop.data.port,
-    http_path: Prop.data.http_path,
-    type: Prop.data.instance_details.instance_type,
-    vertical_auto_scale: Prop.data.instance_details.vertical_auto_scale,
-    max: Prop.data.instance_details.max,
-    min: Prop.data.instance_details.min,
+    port: data.port,
+    http_path: data.http_path,
+    type: data.instance_details.instance_type,
+    vertical_auto_scale: data.instance_details.vertical_auto_scale,
+    max: data.instance_details.max,
+    min: data.instance_details.min,
   });
   // console.log(obj);
 
@@ -96,7 +103,7 @@ const AppConfigSetting = (Prop: any) => {
     // console.log("vertical Scalling : ", event.target.checked)
   };
 
-  const { instance_details } = Prop.data.instance_details;
+  const instance_details = data.instance_details;
   const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
 
   const [minValue, setMinValue] = useState<string>(obj.min + "");
@@ -106,24 +113,24 @@ const AppConfigSetting = (Prop: any) => {
   );
   const [error, setError] = useState<string>("");
   const [isEdit, setEdit] = useState<boolean>(false);
-  const [port, setPort] = useState(obj.port);
+  const [port, setPort] = useState<number>(obj.port);
   const [http_path, setPath] = useState<string>(obj.http_path);
 
   const handleSave = (appId: any) => {
     setEdit(false);
-    Prop.data.port = Number(port);
-    Prop.data.http_path = http_path;
+    data.port = Number(port);
+    data.http_path = http_path;
     const obj = {
       instance_type: instanceSize.type,
       vertical_auto_scale: isChecked,
       max: Number(maxValue),
       min: Number(minValue),
     };
-    Prop.data.instance_details = obj;
-    appId = Prop.data.id;
-    editApp(Prop.data, appId)
+    data.instance_details = obj;
+    appId = data.id;
+    editApp(data, appId)
       .then((response) => {
-        console.log(Prop.data);
+        console.log(data);
         console.log(response);
         toast.success("App Edited Successfully");
       })
@@ -140,7 +147,7 @@ const AppConfigSetting = (Prop: any) => {
         {/* Button */}
 
         <Grid item xs={6} sm={6}>
-          <Box display="flex" justifyContent="flex-end" alignItems="center">
+          {runType === "current" && <Box display="flex" justifyContent="flex-end" alignItems="center">
             {!isEdit ? (
               <Button
                 aria-describedby="popover"
@@ -173,7 +180,7 @@ const AppConfigSetting = (Prop: any) => {
                 </Button>
               </>
             )}
-          </Box>
+          </Box>}
         </Grid>
 
         {/* HTTP Port*/}
