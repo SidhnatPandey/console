@@ -351,7 +351,7 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale   data={appData} />
+                <AppEnvVaribale   data={appData}  />
               </CardContent> 
             </Card>
           </Typography>

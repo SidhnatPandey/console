@@ -148,7 +148,7 @@ const AppConfigSetting = (Prop:any) => {
                   )}
           </Grid> */}
           <Grid item xs={3} sm={3}>
-            <div style={{ alignItems: "center" }}><Typography variant="body1" component="span" >{Prop.data.port}</Typography></div>
+            <div style={{ alignItems: "center" }}><Typography variant="body1" component="span" >{Prop.data?.port}</Typography></div>
           </Grid>
 
 
