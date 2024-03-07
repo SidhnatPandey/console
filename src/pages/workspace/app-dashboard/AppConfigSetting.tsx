@@ -17,6 +17,8 @@ import {
 import React, { useState } from "react";
 import { APP_API } from "src/@core/static/api.constant";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { editApp } from "src/services/appService";
+import toast from "react-hot-toast";
 
 const AppConfigSetting = (Prop: any) => {
   const [obj, setObj] = useState({
@@ -76,7 +78,7 @@ const AppConfigSetting = (Prop: any) => {
     setEdit(!isEdit);
   };
 
-  const handleCancle = () => {
+  const handleCancel = () => {
     setPort(obj.port);
     setPath(obj.http_path);
     setMinValue(obj.min + "");
@@ -97,29 +99,37 @@ const AppConfigSetting = (Prop: any) => {
   const { instance_details } = Prop.data.instance_details;
   const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
 
-  const [minValue, setMinValue] = useState(obj.min + "");
-  const [maxValue, setMaxValue] = useState(obj.max + "");
-  const [isChecked, setIsChecked] = useState(
+  const [minValue, setMinValue] = useState<string>(obj.min + "");
+  const [maxValue, setMaxValue] = useState<string>(obj.max + "");
+  const [isChecked, setIsChecked] = useState<boolean>(
     instance_details?.vertical_auto_scale
   );
-  const [error, setError] = useState("");
-  const [isEdit, setEdit] = useState(false);
+  const [error, setError] = useState<string>("");
+  const [isEdit, setEdit] = useState<boolean>(false);
   const [port, setPort] = useState(obj.port);
-  const [http_path, setPath] = useState(obj.http_path);
+  const [http_path, setPath] = useState<string>(obj.http_path);
 
-  const handleSave = () => {
-    console.log(obj);
-    setObj({
-      port: port,
-      http_path: http_path,
-      type: instanceSize.type,
+  const handleSave = (appId: any) => {
+    setEdit(false);
+    Prop.data.port = Number(port);
+    Prop.data.http_path = http_path;
+    const obj = {
+      instance_type: instanceSize.type,
       vertical_auto_scale: isChecked,
       max: Number(maxValue),
       min: Number(minValue),
-    });
-    console.log({ port, http_path, maxValue, minValue, instanceSize });
-    console.log(obj);
-    setEdit(false);
+    };
+    Prop.data.instance_details = obj;
+    appId = Prop.data.id;
+    editApp(Prop.data, appId)
+      .then((response) => {
+        console.log(Prop.data);
+        console.log(response);
+        toast.success("App Edited Successfully");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
   };
   return (
     <form>
@@ -156,7 +166,7 @@ const AppConfigSetting = (Prop: any) => {
                   variant="contained"
                   color="inherit"
                   style={{ margin: 10 }}
-                  onClick={handleCancle}
+                  onClick={handleCancel}
                 >
                   {" "}
                   Cancel
@@ -179,6 +189,7 @@ const AppConfigSetting = (Prop: any) => {
         {isEdit ? (
           <Grid item xs={3} sm={3}>
             <TextField
+              required
               variant="outlined"
               size="small"
               label="HTTP Port"
