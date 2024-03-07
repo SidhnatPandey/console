@@ -38,6 +38,7 @@ import { AbilityContext } from "src/layouts/components/acl/Can";
 import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppConfigSetting from "./AppConfigSetting";
+import AppEnvVaribale from "./AppEnvVaribale";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -148,6 +149,7 @@ const AppDashboard = () => {
       });
   };
 
+ // console.log(appData?.env_variables );
   const getIcon = (status: string | undefined) => {
     if (status) {
       const lstatus = status.toLowerCase();
@@ -407,6 +409,8 @@ const AppDashboard = () => {
         </TabPanel>
 
         <TabPanel value="4" data-testid="tab-panel-4">
+
+
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
@@ -414,6 +418,14 @@ const AppDashboard = () => {
               </CardContent>
             </Card>
           </Typography>
+          <Typography sx={{ marginBottom: 10 }}>
+            <Card sx={{ margin: "-25px" }}>
+              <CardContent>
+                <AppEnvVaribale   data={appData}  />
+              </CardContent> 
+            </Card>
+          </Typography>
+
 
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (

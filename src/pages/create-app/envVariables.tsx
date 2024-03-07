@@ -63,7 +63,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
     });
 
     const initialItems = fields.length;
-    const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(initialItems).fill(false));
+    const [passwordVisibletest, setPasswordVisibletest] = useState<boolean[]>(Array(initialItems).fill(false));
+    const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
+    const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
 
     const handleClose = () => {
@@ -93,12 +95,30 @@ const EnvVariables = (props: EnvVariablesProps) => {
         }
     };
 
-    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
-        setPasswordVisible((prevState) => {
+    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number,type:string) => { 
+       
+       if(type=='test'){
+        setPasswordVisibletest((prevState) => {
             const updatedVisible = [...prevState]; // Create a copy of the array
             updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
             return updatedVisible;
         });
+       }
+       else if(type=='stg'){
+        setPasswordVisiblestg((prevState) => {
+            const updatedVisible = [...prevState]; // Create a copy of the array
+            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+            return updatedVisible;
+        });
+       }
+       else{
+        setPasswordVisibleprod((prevState) => {
+            const updatedVisible = [...prevState]; // Create a copy of the array
+            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+            return updatedVisible;
+        });
+       }
+       
 
     };
 
@@ -331,7 +351,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
-                                                    type={passwordVisible[index] ? 'text' : 'password'}
+                                                    type={passwordVisibletest[index] ? 'text' : 'password'}
                                                     InputProps={{
                                                         endAdornment: (
                                                             <InputAdornment position='end'>
@@ -340,9 +360,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     onMouseDown={(e: { preventDefault: () => any; }) => {
                                                                         return e.preventDefault();
                                                                     }}
-                                                                    onClick={(e) => togglePasswordVisibility(e, index)}
+                                                                    onClick={(e) => togglePasswordVisibility(e, index,"test")}
                                                                 >
-                                                                    <Icon fontSize='1.25rem' icon={passwordVisible[index] ? 'tabler:eye' : 'tabler:eye-off'} />
+                                                                    <Icon fontSize='1.25rem' icon={passwordVisibletest[index] ? 'tabler:eye' : 'tabler:eye-off'} />
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
@@ -393,7 +413,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
-                                                    type={passwordVisible[index] ? 'text' : 'password'}
+                                                    type={passwordVisiblestg[index] ? 'text' : 'password'}
                                                     InputProps={{
                                                         endAdornment: (
                                                             <InputAdornment position='end'>
@@ -402,9 +422,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     onMouseDown={(e: { preventDefault: () => any; }) => {
                                                                         return e.preventDefault();
                                                                     }}
-                                                                    onClick={(e) => togglePasswordVisibility(e, index)}
+                                                                    onClick={(e) => togglePasswordVisibility(e, index, "stg")}
                                                                 >
-                                                                    <Icon fontSize='1.25rem' icon={passwordVisible[index] ? 'tabler:eye' : 'tabler:eye-off'} />
+                                                                    <Icon fontSize='1.25rem' icon={passwordVisiblestg[index] ? 'tabler:eye' : 'tabler:eye-off'} />
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
@@ -456,7 +476,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     id='auth-login-v2-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
-                                                    type={passwordVisible[index] ? 'text' : 'password'}
+                                                    type={passwordVisibleprod[index] ? 'text' : 'password'}
                                                     InputProps={{
                                                         endAdornment: (
                                                             <InputAdornment position='end'>
@@ -465,9 +485,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     onMouseDown={(e: { preventDefault: () => any; }) => {
                                                                         return e.preventDefault();
                                                                     }}
-                                                                    onClick={(e) => togglePasswordVisibility(e, index)}
+                                                                    onClick={(e) => togglePasswordVisibility(e, index,"prod")}
                                                                 >
-                                                                    <Icon fontSize='1.25rem' icon={passwordVisible[index] ? 'tabler:eye' : 'tabler:eye-off'} />
+                                                                    <Icon fontSize='1.25rem' icon={passwordVisibleprod[index] ? 'tabler:eye' : 'tabler:eye-off'} />
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
