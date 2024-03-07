@@ -8,13 +8,27 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import CreateApp from 'src/pages/create-app';
+import {App} from './index'
+import { string } from 'yup';
+interface EnvVariableArrayProp {
+    key: string,
+    type: string,
+    stg: string,
+    test: string,
+    prod: string
+}[];
+
+interface AppEnvVaribaleProp{
+    Data : App
+}
 
 const AppEnvVaribale = (Prop: any) => {
 
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
     const [open,setOpen]=useState<boolean>(false)
     const [environmentVariables, setEnvironmentVariables] = useState<any>();
-    const EnvData = Prop.data.env_variables;
+    const {Data} = Prop ;
+    const EnvData= Data.env_variables;
     console.log("new", Prop);
 
 
