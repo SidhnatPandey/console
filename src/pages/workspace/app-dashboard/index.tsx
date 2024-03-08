@@ -39,7 +39,7 @@ import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppConfigSetting from "./AppConfigSetting";
 import AppEnvVaribale from "./AppEnvVaribale";
-import { AppDomain } from "./AppDomain";
+import AppDomain from "./AppDomain";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
