@@ -18,11 +18,11 @@ interface EnvFormType {
 const AppEnvVaribale = (Prop: any) => {
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
     const [open, setOpen] = useState<boolean>(false)
-    const { Data } = Prop;
+    const { runType,Data } = Prop;
     const EnvData = Data.env_variables
     const envArr: any[] = [];
     const envArr2:any[]=[];
-    let envArr3:any[]=[];
+    
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
         const index = existingValues.map(e => e.key).indexOf(key);
@@ -113,6 +113,8 @@ const AppEnvVaribale = (Prop: any) => {
             </Typography></Grid>
 
             <Grid item xs={6} sm={6}><Typography variant="h4">
+              {
+                runType==="current"&&
                 <Box display="flex" justifyContent="flex-end" alignItems="center"   >
                     <Button
                         aria-describedby="popover"
@@ -124,6 +126,7 @@ const AppEnvVaribale = (Prop: any) => {
                         Edit
                     </Button>
                 </Box>
+             }
             </Typography></Grid>
             <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
