@@ -138,7 +138,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
             </Grid>
 
             {dataArr.length > 0 ? dataArr.map((item, index) => (
-                <Grid container spacing={1} sx={{ marginBottom: 1 }}>
+                <Grid container spacing={1} sx={{ marginBottom: 1 }} key={index}>
                     <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
 
                         {item.KeyType === 'secret' ?
@@ -187,7 +187,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                     </Grid>
                 </Grid>
             )) : envArr.map((item, index) => (
-                <Grid container spacing={1} sx={{ marginBottom: 1 }}>
+                <Grid container spacing={1} sx={{ marginBottom: 1 }} key={index}>
                     <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
                         {item.KeyType === 'secret' ?
                             <CustomChip sx={{ height: 20, marginRight: 0.5, paddingBottom: '2px' }} rounded label={"secret"} skin='light' color={"primary"} /> :
