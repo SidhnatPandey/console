@@ -19,10 +19,9 @@ import FormControl from "@mui/material/FormControl";
 import MuiStep, { StepProps } from "@mui/material/Step";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import usePlan from "src/hooks/plan";
-
 
 // ** Third Party Imports
 import toast from "react-hot-toast";
@@ -73,19 +72,18 @@ import { env } from "next-runtime-env";
 import {
   LOCALSTORAGE_CONSTANTS,
   PERMISSION_CONSTANTS,
-  SESSIONSTORAGE_CONSTANTS
+  SESSIONSTORAGE_CONSTANTS,
 } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
-import { getItemFromSessionStorage, removeItemFromSessionStorage, setItemToSessionStorage } from "src/services/sessionstorageService";
-import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
+import {
+  getItemFromSessionStorage,
+  removeItemFromSessionStorage,
+  setItemToSessionStorage,
+} from "src/services/sessionstorageService";
+import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
-import { APP_API } from "src/@core/static/api.constant"
+import { APP_API } from "src/@core/static/api.constant";
 import EnvVariables from "./envVariables";
-
-type EnvironmentVariable = {
-  key: string;
-  value: string;
-};
 
 const steps = [
   {
@@ -139,8 +137,6 @@ const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   },
 }));
 
-
-
 const LoaderComponent = () => {
   return (
     <Box sx={{ display: "flex" }}>
@@ -156,7 +152,7 @@ const defaultConfigurationValues = {
 
 const ConfigurationSchema = yup.object().shape({
   port: yup.number().required(),
-  http_path: yup.string().required()
+  http_path: yup.string().required(),
 });
 
 const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
@@ -166,7 +162,9 @@ const CreateApp = () => {
 
   const defaultSourceCodeValues = {
     appNameExist: "",
-    application_name: getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName),
+    application_name: getItemFromSessionStorage(
+      SESSIONSTORAGE_CONSTANTS.creatAppName
+    ),
     git_repo: "",
     git_branch: "",
     src_code_path: "",
@@ -195,11 +193,13 @@ const CreateApp = () => {
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
-  const [instanceSize, setInstanceSize] = useState(!isDeveloperPlan ? APP_API.instanceSizes[0] : APP_API.instanceSizes[3]);
+  const [instanceSize, setInstanceSize] = useState(
+    !isDeveloperPlan ? APP_API.instanceSizes[0] : APP_API.instanceSizes[3]
+  );
   const [isChecked, setIsChecked] = useState(false);
-  const [minValue, setMinValue] = useState('1');
-  const [maxValue, setMaxValue] = useState('1');
-  const [error, setError] = useState('');
+  const [minValue, setMinValue] = useState("1");
+  const [maxValue, setMaxValue] = useState("1");
+  const [error, setError] = useState("");
 
   // Handle Stepper
   const handleBack = () => {
@@ -216,8 +216,6 @@ const CreateApp = () => {
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
   const [branches, setBranches] = useState<string[]>(["No Branch"]);
   const [repoError, setRepoError] = useState(false);
-
-
 
   useEffect(() => {
     if (!gitUser) {
@@ -264,13 +262,13 @@ const CreateApp = () => {
     if (router.query?.code) {
       sendCode(router.query?.code as string, workspaceId).then((response) => {
         if (response?.data.git_user) {
-          router.replace('/create-app')
+          router.replace("/create-app");
           setGitUser(response.git_user);
           fetchUserRepositories(response.git_user as string);
         }
-      })
+      });
     }
-  }, [router.query.code])
+  }, [router.query.code]);
 
   const isNextButtonDisabled =
     appNameExist || !isConfigurationFormValid || repoError;
@@ -327,7 +325,7 @@ const CreateApp = () => {
         setBranches(response.data);
       } else {
         setBranches([]);
-        setSourceCodeValue('git_branch', '');
+        setSourceCodeValue("git_branch", "");
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
@@ -349,45 +347,49 @@ const CreateApp = () => {
   };
 
   //handled events
-  const handleInstanceChange = (event: { target: { value: any; }; }) => {
+  const handleInstanceChange = (event: { target: { value: any } }) => {
     const { value } = event.target;
-    const selectedInstance = (APP_API.instanceSizes).find((instance: { type: any; }) => instance.type === value);
+    const selectedInstance = APP_API.instanceSizes.find(
+      (instance: { type: any }) => instance.type === value
+    );
     if (selectedInstance != null) {
       setInstanceSize(selectedInstance);
     }
   };
 
-  const handleMinChange = (event: { target: { value: string; }; }) => {
+  const handleMinChange = (event: { target: { value: string } }) => {
     const value = event.target.value.trim();
     if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
       setMinValue(value);
       if (maxValue && Number(value) > Number(maxValue)) {
-        setError('Min must be less than or equal to Max');
+        setError("Min must be less than or equal to Max");
       } else {
-        setError('');
+        setError("");
       }
     } else {
-      setError('Min value must be in between 1 and 25');
+      setError("Min value must be in between 1 and 25");
     }
   };
 
-  const handleMaxChange = (event: { target: { value: string; }; }) => {
+  const handleMaxChange = (event: { target: { value: string } }) => {
     const value = event.target.value.trim();
     if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
       setMaxValue(value);
       if (minValue && Number(value) < Number(minValue)) {
-        setError('Max must be greater than or equal to Min');
+        setError("Max must be greater than or equal to Min");
       } else {
-        setError('');
+        setError("");
       }
     } else {
-      setError('Max value must be in between 1 and 25');
+      setError("Max value must be in between 1 and 25");
     }
   };
 
-  const handleverticalScalling = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
+  const handleverticalScalling = (event: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
     setIsChecked(event.target.checked);
-    console.log("vertical Scalling : ", event.target.checked)
+    console.log("vertical Scalling : ", event.target.checked);
   };
 
   const handleWorkspaceChange = (event: SelectChangeEvent) => {
@@ -404,9 +406,7 @@ const CreateApp = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");
-
     }
-
   };
   // configuration environment dialog
   const [open, setOpen] = useState(false);
@@ -444,13 +444,13 @@ const CreateApp = () => {
       instance_type: instanceSize.type,
       vertical_auto_scale: isChecked,
       max: Number(maxValue),
-      min: Number(minValue)
-    }
+      min: Number(minValue),
+    };
     data.instance_details = obj;
 
     saveApp(data)
       .then((response) => {
-        console.log(data)
+        console.log(data);
         toast.success("App Created Successfully");
         router.push({
           pathname: "/workspace/app-dashboard",
@@ -465,7 +465,7 @@ const CreateApp = () => {
       })
       .finally(() => {
         stopLoading();
-      })
+      });
   };
 
   const ITEM_HEIGHT = 48;
@@ -485,15 +485,24 @@ const CreateApp = () => {
                     rules={{ required: true }}
                     render={({ field: { onChange } }) => (
                       <TextField
-                        value={getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)}
+                        value={getItemFromSessionStorage(
+                          SESSIONSTORAGE_CONSTANTS.creatAppName
+                        )}
                         label="Application Name"
                         onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
-                          setItemToSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName, e.target.value)
+                          setItemToSessionStorage(
+                            SESSIONSTORAGE_CONSTANTS.creatAppName,
+                            e.target.value
+                          );
                         }}
                         onBlur={() => {
-                          checkAppNameExists(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName));
+                          checkAppNameExists(
+                            getItemFromSessionStorage(
+                              SESSIONSTORAGE_CONSTANTS.creatAppName
+                            )
+                          );
                         }}
                         placeholder="Name your app"
                         error={
@@ -655,9 +664,7 @@ const CreateApp = () => {
                       <LoaderComponent />
                     ) : (
                       <FormControl fullWidth>
-                        <InputLabel id="git-branch">
-                          Branch
-                        </InputLabel>
+                        <InputLabel id="git-branch">Branch</InputLabel>
                         <Controller
                           name="git_branch"
                           control={sourceCodeControl}
@@ -666,19 +673,20 @@ const CreateApp = () => {
                             <Select
                               value={value}
                               label="Branch"
-                              onChange={(e) =>
-                                onChange(e)
-                              }
+                              onChange={(e) => onChange(e)}
                               error={Boolean(sourceCodeErrors.git_branch)}
                               labelId="stepper-linear-personal-country"
                               aria-describedby="stepper-linear-personal-country-helper"
                             >
-                              {branches.length === 0 && <MenuItem disabled>No Branch</MenuItem>}
-                              {branches.length > 0 && branches.map((branch) => (
-                                <MenuItem key={branch} value={branch}>
-                                  {branch}
-                                </MenuItem>
-                              ))}
+                              {branches.length === 0 && (
+                                <MenuItem disabled>No Branch</MenuItem>
+                              )}
+                              {branches.length > 0 &&
+                                branches.map((branch) => (
+                                  <MenuItem key={branch} value={branch}>
+                                    {branch}
+                                  </MenuItem>
+                                ))}
                             </Select>
                           )}
                         />
@@ -769,7 +777,15 @@ const CreateApp = () => {
 
                 {/* HTTP Port */}
                 <Grid item xs={4} sm={4}>
-                  <div style={{ alignItems: "center" }}><Typography variant="body1" component="span" fontWeight="bold">HTTP Port</Typography></div>
+                  <div style={{ alignItems: "center" }}>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      HTTP Port
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -794,7 +810,15 @@ const CreateApp = () => {
 
                 {/* HTTP Path */}
                 <Grid item xs={4} sm={4}>
-                  <div><Typography variant="body1" component="span" fontWeight="bold">HTTP Path</Typography></div>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      HTTP Path
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -815,7 +839,15 @@ const CreateApp = () => {
 
                 {/* App Instance */}
                 <Grid item xs={4} sm={4}>
-                  <div><Typography variant="body1" component="span" fontWeight="bold">App Instance (AI)Size</Typography></div>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      App Instance (AI)Size
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8} style={{ marginTop: "-0.9rem" }}>
                   <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
@@ -830,10 +862,17 @@ const CreateApp = () => {
                       renderValue={() => {
                         return (
                           <Typography>
-                            <Typography variant="body2" component="span" fontWeight="bold">
+                            <Typography
+                              variant="body2"
+                              component="span"
+                              fontWeight="bold"
+                            >
                               {instanceSize.type + "-"}
                             </Typography>
-                            {instanceSize.ram + " RAM | " + instanceSize.vcpu + " vCPU"}
+                            {instanceSize.ram +
+                              " RAM | " +
+                              instanceSize.vcpu +
+                              " vCPU"}
                           </Typography>
                         );
                       }}
@@ -845,12 +884,16 @@ const CreateApp = () => {
                           },
                         },
                       }}
-                      inputProps={{ 'aria-label': 'Without label' }}
+                      inputProps={{ "aria-label": "Without label" }}
                       disabled={!!isDeveloperPlan}
                     >
                       {APP_API.instanceSizes.map((instance, index) => (
                         <MenuItem key={index} value={instance.type}>
-                          <Typography variant="body1" component="span" fontWeight="bold">
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            fontWeight="bold"
+                          >
                             {instance.type + "-"}
                           </Typography>
                           {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
@@ -864,42 +907,95 @@ const CreateApp = () => {
                 <Grid item xs={4} sm={4}>
                   <div></div>
                 </Grid>
-                <Grid item xs={8} sm={8} style={{ paddingTop: '0px' }}>
+                <Grid item xs={8} sm={8} style={{ paddingTop: "0px" }}>
                   <FormGroup style={{ display: "block" }}>
                     <FormControlLabel
-                      control={<Checkbox checked={isChecked} onChange={handleverticalScalling} />}
-                      label='Enable Vertical Auto-Scaling'
+                      control={
+                        <Checkbox
+                          checked={isChecked}
+                          onChange={handleverticalScalling}
+                        />
+                      }
+                      label="Enable Vertical Auto-Scaling"
                       disabled={!!isDeveloperPlan}
                     />
-                    <Tooltip title={"Vertical Auto-Scaling allows the App to use resources beyond the request when needed"} arrow>
-                      <InfoOutlinedIcon style={{ marginBottom: '-7px', marginLeft: '-12px', padding: 0 }} id="vertical_auto_scale" />
+                    <Tooltip
+                      title={
+                        "Vertical Auto-Scaling allows the App to use resources beyond the request when needed"
+                      }
+                      arrow
+                    >
+                      <InfoOutlinedIcon
+                        style={{
+                          marginBottom: "-7px",
+                          marginLeft: "-12px",
+                          padding: 0,
+                        }}
+                        id="vertical_auto_scale"
+                      />
                     </Tooltip>
                   </FormGroup>
                 </Grid>
 
                 {/* Numebr of instances */}
                 <Grid item xs={4} sm={4}>
-                  <div><Typography variant="body1" component="span" fontWeight="bold">Number of Instances</Typography></div>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      Number of Instances
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <FormGroup>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "16px",
+                        alignItems: "center",
+                      }}
+                    >
                       <label htmlFor="min">Min</label>
-                      <TextField type="text" id="min" value={minValue} onChange={handleMinChange} placeholder="1" style={{ width: "3rem" }} disabled={!!isDeveloperPlan} />
+                      <TextField
+                        type="text"
+                        id="min"
+                        value={minValue}
+                        onChange={handleMinChange}
+                        placeholder="1"
+                        style={{ width: "3rem" }}
+                        disabled={!!isDeveloperPlan}
+                      />
                       <label htmlFor="max">Max</label>
-                      <TextField type="text" id="max" value={maxValue} onChange={handleMaxChange} placeholder="1" style={{ width: "3rem" }} disabled={!!isDeveloperPlan} />
+                      <TextField
+                        type="text"
+                        id="max"
+                        value={maxValue}
+                        onChange={handleMaxChange}
+                        placeholder="1"
+                        style={{ width: "3rem" }}
+                        disabled={!!isDeveloperPlan}
+                      />
                     </Box>
                   </FormGroup>
                 </Grid>
-
                 {/* Error */}
-                <Grid xs={8} sm={8} item> <Box sx={{ marginLeft: "16rem" }}>
-                  {error && <span style={{ color: 'red' }}>{error}</span>} </Box>
+                <Grid xs={8} sm={8} item>
+                  {" "}
+                  <Box sx={{ marginLeft: "16rem" }}>
+                    {error && <span style={{ color: "red" }}>{error}</span>}{" "}
+                  </Box>
                 </Grid>
-                {/* </Grid> */}
 
                 {/* Environment Variable Dialog */}
-                <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)}   />
+                <EnvVariables
+                  open={open}
+                  handleEnvDialogClose={handleEnvDialogClose}
+                  handleEnvClose={() => setOpen(false)}
+                />
               </Grid>
 
               <Grid
@@ -1061,21 +1157,6 @@ const CreateApp = () => {
                               {getConfigurationValue("http_path")}
                             </Typography>
                           </TableCell>
-                          {/* <TableRow>
-                          <TableCell>
-                            <Typography
-                              noWrap
-                              sx={{ fontWeight: 500, color: "text.secondary" }}
-                            >
-                              Number of Instances
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography sx={{ color: "text.secondary" }}>
-                              {getConfigurationValue("no_of_Instances")}
-                            </Typography>
-                          </TableCell>
-                        </TableRow> */}
                         </TableRow>
                       </TableBody>
                     </Table>
@@ -1143,7 +1224,18 @@ const CreateApp = () => {
                 onClick={handleFinalSubmit}
               >
                 {/* {activeStep === steps.length - 1 ? "Submit" : "Next"} */}
-                {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Submitting</> : 'Submit'}
+                {loading ? (
+                  <>
+                    <CircularProgress
+                      size="1.2rem"
+                      color="secondary"
+                      style={{ marginRight: "5px" }}
+                    />
+                    Submitting
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </Grid>
           </Grid>

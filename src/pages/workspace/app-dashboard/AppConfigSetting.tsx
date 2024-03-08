@@ -107,6 +107,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     setMinValue(obj.min + "");
     setMaxValue(obj.max + "");
     setEdit(false);
+    setError("");
   };
 
   const ITEM_HEIGHT = 48;
@@ -133,37 +134,47 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   const [http_path, setPath] = useState<string>(obj.http_path);
 
   const handleSave = (appId: any) => {
-    startLoading();
-    setEdit(false);
-    data.port = Number(port);
-    data.http_path = http_path;
-    const obj = {
-      instance_type: instanceSize.type,
-      vertical_auto_scale: isChecked,
-      max: Number(maxValue),
-      min: Number(minValue),
-    };
-    data.instance_details = obj;
-    appId = data.id;
-    editApp(data, appId)
-      .then((response) => {
-        if (response.status == 200) {
-          toast.success("App Edited Successfully");
-          // router.push({
-          //   pathname: "/workspace/app-dashboard",
-          //   query: { appId: data.id },
-          // });
-          // handleSubmit("1");
-        } else {
-          toast.error("App is not able to edit due to some error message");
-        }
-      })
-      .catch((error) => {
-        toast.error(error);
-      })
-      .finally(() => {
-        stopLoading();
-      });
+    if (Number(minValue) > 0 && Number(maxValue) > 0) {
+      startLoading();
+      setEdit(false);
+      data.port = Number(port);
+      data.http_path = http_path;
+      const obj = {
+        instance_type: instanceSize.type,
+        vertical_auto_scale: isChecked,
+        max: Number(maxValue),
+        min: Number(minValue),
+      };
+      data.instance_details = obj;
+      appId = data.id;
+      editApp(data, appId)
+        .then((response) => {
+          if (response.status == 200) {
+            toast.success("App Edited Successfully");
+            // router.push({
+            //   pathname: "/workspace/app-dashboard",
+            //   query: { appId: data.id },
+            // });
+            // handleSubmit("1");
+          } else {
+            toast.error("App is not able to edit due to some error message");
+          }
+        })
+        .catch((error) => {
+          toast.error(error);
+        })
+        .finally(() => {
+          stopLoading();
+        });
+    } else {
+      if (Number(minValue) == 0 && Number(maxValue) == 0) {
+        setError("min and max is required");
+      } else if (Number(minValue) == 0) {
+        setError("min is required");
+      } else {
+        setError("max is required");
+      }
+    }
   };
   return (
     <form>
@@ -181,6 +192,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                   aria-describedby="popover"
                   variant="contained"
                   onClick={handleClickOpen}
+                  color="inherit"
                 >
                   {" "}
                   Edit
@@ -329,7 +341,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 },
               }}
               inputProps={{ "aria-label": "Without label" }}
-              disabled={!isEdit}
+              disabled={!isEdit || !!isDeveloperPlan}
             >
               {APP_API.instanceSizes.map((instance, index) => (
                 <MenuItem key={index} value={instance.type}>
@@ -363,7 +375,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 />
               }
               label="Enable Vertical Auto-Scaling"
-              disabled={!isEdit}
+              disabled={!isEdit || !!isDeveloperPlan}
             />
             <Tooltip
               title={
@@ -411,7 +423,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMinChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit}
+                disabled={!isEdit || !!isDeveloperPlan}
               />
               <label htmlFor="max">Max</label>
               <TextField
@@ -423,7 +435,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMaxChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit}
+                disabled={!isEdit || !!isDeveloperPlan}
               />
             </Box>
           </FormGroup>
