@@ -186,7 +186,7 @@ const CreateApp = () => {
     LOCALSTORAGE_CONSTANTS.workspace
   )!;
   const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
-  const [activeStep, setActiveStep] = useState<number>(1);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
