@@ -8,12 +8,12 @@ import EnvVariables from 'src/pages/create-app/envVariables';
 import { editApp } from 'src/services/appService';
 import toast from 'react-hot-toast';
 interface EnvFormType {
-    key: string,
-    KeyType: string,
-    prod: string,
-    stg: string,
-    test: string,
-    Checked: boolean
+  key: string;
+  KeyType: string;
+  prod: string;
+  stg: string;
+  test: string;
+  Checked: boolean;
 }
 const AppEnvVaribale = (Prop: any) => {
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
@@ -127,24 +127,22 @@ const AppEnvVaribale = (Prop: any) => {
             </Typography></Grid>
             <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
-            <Grid item xs={3} sm={3}><Typography variant="h4">
-                Environments
-            </Typography></Grid>
-            <Grid item xs={3} sm={3}><Typography variant="h4">
-                Test
-            </Typography></Grid>
-            <Grid item xs={3} sm={3}><Typography variant="h4">
-                Stage
-            </Typography></Grid>
-            <Grid item xs={3} sm={3}><Typography variant="h4">
-                Production
-            </Typography></Grid>
+      <Grid item xs={3} sm={3}>
+        <Typography variant="h4">Environments</Typography>
+      </Grid>
+      <Grid item xs={3} sm={3}>
+        <Typography variant="h4">Test</Typography>
+      </Grid>
+      <Grid item xs={3} sm={3}>
+        <Typography variant="h4">Stage</Typography>
+      </Grid>
+      <Grid item xs={3} sm={3}>
+        <Typography variant="h4">Production</Typography>
+      </Grid>
 
-            {
-
-                envArr.map((item, index) => (
-                    <>
-                        {/* <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' ,marginBottom: 1 }}>
+      {envArr.map((item, index) => (
+        <>
+          {/* <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' ,marginBottom: 1 }}>
                             <CustomChip sx={{ height: 20, marginRight: 0.5 }} rounded label={"secret"} skin='light' color={"secondary"} />
                             <TextField
                                 variant="standard"
@@ -234,6 +232,7 @@ const AppEnvVaribale = (Prop: any) => {
     )
 }
 export default AppEnvVaribale
+
 
 
 

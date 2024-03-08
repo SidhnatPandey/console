@@ -61,7 +61,23 @@ export interface App {
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables:{ key: string; value: string; type: string }[];
+  env_variables: {
+    test: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+    stg: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+    prod: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+  };
   id: string;
   port: number;
   stage: string;
@@ -83,7 +99,11 @@ const defaultApp = {
   git_branch: "N/A",
   git_repo: "N/A",
   git_user: "N/A",
-  env_variables: [],
+  env_variables: {
+    test: [],
+    stg: [],
+    prod: [],
+  },
   id: "N/A",
   port: 0,
   stage: "N/A",
@@ -150,7 +170,7 @@ const AppDashboard = () => {
       });
   };
 
- // console.log(appData?.env_variables );
+  // console.log(appData?.env_variables );
   const getIcon = (status: string | undefined) => {
     if (status) {
       const lstatus = status.toLowerCase();
@@ -410,20 +430,22 @@ const AppDashboard = () => {
         </TabPanel>
 
         <TabPanel value="4" data-testid="tab-panel-4">
-
-
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppConfigSetting data={appData} runType={runType} />
+                <AppConfigSetting
+                  data={appData}
+                  runType={runType}
+                  handleSubmit={handleChange}
+                />
               </CardContent>
             </Card>
           </Typography>
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale   Data={appData}  />
-              </CardContent> 
+                <AppEnvVaribale Data={appData} />
+              </CardContent>
             </Card>
           </Typography>
           <Typography sx={{ marginBottom: 10 }}>
@@ -433,7 +455,6 @@ const AppDashboard = () => {
               </CardContent> 
             </Card>
           </Typography>
-
 
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (
