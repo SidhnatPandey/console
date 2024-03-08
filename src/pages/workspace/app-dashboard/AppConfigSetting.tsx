@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -21,15 +22,20 @@ import { editApp } from "src/services/appService";
 import toast from "react-hot-toast";
 import { App } from "./index";
 import usePlan from "src/hooks/plan";
+import useLoading from "src/hooks/loading";
+import router from "next/router";
 
 interface AppConfigSettingProps {
   data: App;
   runType: string;
+  handleSubmit: any;
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
-  const { runType, data } = props;
+  const { data, runType, handleSubmit } = props;
   const { isDeveloperPlan } = usePlan();
+  const { loading, startLoading, stopLoading } = useLoading();
+
   const [obj, setObj] = useState({
     port: data.port,
     http_path: data.http_path,
@@ -38,7 +44,6 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     max: data.instance_details.max,
     min: data.instance_details.min,
   });
-  // console.log(obj);
 
   const handleInstanceChange = (event: { target: { value: any } }) => {
     const { value } = event.target;
@@ -83,10 +88,17 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     const value = event.target.value.trim();
     setPath(value);
   };
+
   const handleClickOpen = () => {
-    if (!isDeveloperPlan) {
-      setEdit(!isEdit);
-    }
+    // if (!(data.status === "inprogress")) {
+    //   if (isDeveloperPlan()) {
+    setEdit(!isEdit);
+    //   } else {
+    //     toast.error("You don't have Developer Plan");
+    //   }
+    // } else {
+    //   toast.error("please wait while the app is rebuilding");
+    // }
   };
 
   const handleCancel = () => {
@@ -121,6 +133,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   const [http_path, setPath] = useState<string>(obj.http_path);
 
   const handleSave = (appId: any) => {
+    startLoading();
     setEdit(false);
     data.port = Number(port);
     data.http_path = http_path;
@@ -134,12 +147,22 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     appId = data.id;
     editApp(data, appId)
       .then((response) => {
-        console.log(data);
-        console.log(response);
-        toast.success("App Edited Successfully");
+        if (response.status == 200) {
+          toast.success("App Edited Successfully");
+          // router.push({
+          //   pathname: "/workspace/app-dashboard",
+          //   query: { appId: data.id },
+          // });
+          // handleSubmit("1");
+        } else {
+          toast.error("App is not able to edit due to some error message");
+        }
       })
       .catch((error) => {
         toast.error(error);
+      })
+      .finally(() => {
+        stopLoading();
       });
   };
   return (
@@ -153,7 +176,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         <Grid item xs={6} sm={6}>
           {runType === "current" && (
             <Box display="flex" justifyContent="flex-end" alignItems="center">
-              {!isEdit ? (
+              {!isEdit && !loading ? (
                 <Button
                   aria-describedby="popover"
                   variant="contained"
@@ -169,9 +192,20 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     aria-describedby="popover"
                     variant="contained"
                     onClick={handleSave}
+                    disabled={loading}
                   >
-                    {" "}
-                    save
+                    {loading ? (
+                      <>
+                        <CircularProgress
+                          size="1.2rem"
+                          color="secondary"
+                          style={{ marginRight: "5px" }}
+                        />
+                        Saving
+                      </>
+                    ) : (
+                      "Save"
+                    )}
                   </Button>
                   <Button
                     aria-describedby="popover"
@@ -262,7 +296,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
           </div>
         </Grid>
         <Grid item xs={4} sm={4} style={{ marginTop: "-0.9rem" }}>
-          <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
+          <FormControl sx={{ ml: "-5.3rem", width: 300, mt: 3 }}>
             <Select
               variant="outlined"
               size="small"
@@ -358,7 +392,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
           </div>
         </Grid>
         <Grid item xs={8} sm={8}>
-          <FormGroup>
+          <FormGroup sx={{ ml: "-5.3rem", mt: "-0.2rem" }}>
             <Box
               sx={{
                 display: "flex",

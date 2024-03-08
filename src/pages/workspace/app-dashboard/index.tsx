@@ -149,7 +149,7 @@ const AppDashboard = () => {
       });
   };
 
- // console.log(appData?.env_variables );
+  // console.log(appData?.env_variables );
   const getIcon = (status: string | undefined) => {
     if (status) {
       const lstatus = status.toLowerCase();
@@ -409,23 +409,24 @@ const AppDashboard = () => {
         </TabPanel>
 
         <TabPanel value="4" data-testid="tab-panel-4">
-
-
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppConfigSetting data={appData} runType={runType} />
+                <AppConfigSetting
+                  data={appData}
+                  runType={runType}
+                  handleSubmit={handleChange}
+                />
               </CardContent>
             </Card>
           </Typography>
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale   data={appData}  />
-              </CardContent> 
+                <AppEnvVaribale data={appData} />
+              </CardContent>
             </Card>
           </Typography>
-
 
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (
