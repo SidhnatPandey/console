@@ -77,12 +77,12 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
         getUser();
+        await fetchOrganisation();
         fetchOrg();
         const isNavigate = !localStorage.getItem(
           LOCALSTORAGE_CONSTANTS.workspace
         );
         fetchWorkspaces(null, isNavigate, true);
-        fetchOrganisation();
         /* if (user) {
           setLoading(false)
           setUser({ ...user })
@@ -217,14 +217,14 @@ const AuthProvider = ({ children }: Props) => {
       setWorkspaces(response?.data.workspaces);
       if (!response?.data.workspaces && organisations.length > 0) {
         router.push("/workspaceError");
-      } else {
+      } else if (response?.data.workspaces) {
         const newWorkspace = response?.data.workspaces?.find(
           (workspace: { name: string | null }) => workspace.name === name
         );
         if (setHomeRoute) {
           localStorage.setItem(
             LOCALSTORAGE_CONSTANTS.homeRoute,
-            `/workspace/${response?.data.workspaces[0].id}`
+            `/workspace/${response?.data?.workspaces[0].id}`
           );
         }
         if (navigate || name) {

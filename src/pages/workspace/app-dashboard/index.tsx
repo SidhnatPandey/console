@@ -130,6 +130,7 @@ const AppDashboard = () => {
   const [appData, setAppData] = useState<App>(defaultApp); // State to hold the fetched data
   const [runType, setRunType] = useState<string>("current");
   const [showSettingEdit, setShowSettingEdit] = useState<boolean>(false);
+  const [hideEdit, setHideEdit] = useState<boolean>(false);
   const ability = useContext(AbilityContext);
 
   let key = APP_API.supplyChainRuns;
@@ -250,13 +251,17 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && (lstatus === 'pending approval' || lstatus === 'failed')
+    show = runType === "current" && lstatus !== 'inpogress' && !hideEdit
     setShowSettingEdit(show);
   }
 
   useEffect(() => {
     isShowEdit();
-  }, [supplyChainRunsData, runType])
+  }, [supplyChainRunsData, runType, hideEdit])
+
+  const handleHideEdit = (state: boolean) => {
+    setHideEdit(state);
+  }
 
   return (
     <>
@@ -448,6 +453,7 @@ const AppDashboard = () => {
                 <AppConfigSetting
                   data={appData}
                   showEdit={showSettingEdit}
+                  setHideEdit={handleHideEdit}
                 />
               </CardContent>
             </Card>
@@ -455,7 +461,7 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale Data={appData} showEdit={showSettingEdit} />
+                <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
               </CardContent>
             </Card>
           </Typography>

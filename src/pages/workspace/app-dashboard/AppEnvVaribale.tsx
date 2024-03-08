@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import { editApp } from 'src/services/appService';
-import toast from 'react-hot-toast';
+import Toaster from 'src/utils/toaster';
 interface EnvFormType {
     key: string;
     KeyType: string;
@@ -18,12 +18,13 @@ interface EnvFormType {
 
 interface AppEnvVaribaleProps {
     Data: any;
-    showEdit: boolean
+    showEdit: boolean,
+    setHideEdit(state: boolean): void
 }
 const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
     const [open, setOpen] = useState<boolean>(false)
-    const { showEdit, Data } = props;
+    const { showEdit, Data, setHideEdit } = props;
     const EnvData = Data.env_variables
     const envArr: any[] = [];
     const [dataArr, setDataArr] = useState<any[]>([]);
@@ -88,15 +89,18 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     const updateAppData = (envVariables: any) => {
+        setHideEdit(true);
         const updatedAppData = { ...Data, env_variables: envVariables }
         const appId = Data.id;
         editApp(updatedAppData, appId)
             .then((response) => {
-                console.log(response);
-                toast.success("App Edited Successfully");
+                setTimeout(() => {
+                    setHideEdit(false);
+                }, 60000)
+                Toaster.successToast("Updating Environment Variables. Please wait!");
             })
             .catch((error) => {
-                toast.error(error);
+                Toaster.errorToast(error);
             });
     };
 
