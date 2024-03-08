@@ -886,7 +886,7 @@ const CreateApp = () => {
                         },
                       }}
                       inputProps={{ "aria-label": "Without label" }}
-                      disabled={!!isDeveloperPlan}
+                      disabled={isDeveloperPlan()}
                     >
                       {AI_SIZE.map((instance, index) => (
                         <MenuItem key={index} value={instance.type}>
@@ -918,7 +918,7 @@ const CreateApp = () => {
                         />
                       }
                       label="Enable Vertical Auto-Scaling"
-                      disabled={!!isDeveloperPlan}
+                      disabled={isDeveloperPlan()}
                     />
                     <Tooltip
                       title={
@@ -968,7 +968,7 @@ const CreateApp = () => {
                         onChange={handleMinChange}
                         placeholder="1"
                         style={{ width: "3rem" }}
-                        disabled={!!isDeveloperPlan}
+                        disabled={isDeveloperPlan()}
                       />
                       <label htmlFor="max">Max</label>
                       <TextField
@@ -978,7 +978,7 @@ const CreateApp = () => {
                         onChange={handleMaxChange}
                         placeholder="1"
                         style={{ width: "3rem" }}
-                        disabled={!!isDeveloperPlan}
+                        disabled={isDeveloperPlan()}
                       />
                     </Box>
                   </FormGroup>

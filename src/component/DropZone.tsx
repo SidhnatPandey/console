@@ -28,6 +28,7 @@ const DropZone = (props: FileProp) => {
     const { type, size, dropText, onDrop } = props;
     // ** State
     const [files, setFiles] = useState<File[]>([])
+    const [showError, setShowError] = useState<boolean>(false);
 
     // ** Hooks
     const theme = useTheme()
@@ -35,12 +36,17 @@ const DropZone = (props: FileProp) => {
         multiple: false,
         accept: {
             'application/json': ['.json'],
-            'text/plain': ['.env', '.yml'],
-            'application/x-yaml': []
+            'text/plain': [],
+            'application/x-yaml': ['.yml']
         },
         onDrop: (acceptedFiles: File[]) => {
-            onDrop(acceptedFiles[0]);
-            setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
+            if (!acceptedFiles[0]) {
+                setShowError(true);
+            } else {
+                setShowError(false);
+                onDrop(acceptedFiles[0]);
+                setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
+            }
         }
     })
 
@@ -51,10 +57,13 @@ const DropZone = (props: FileProp) => {
                 <Typography>{files[0].name}</Typography>
             ) : (
                 <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                    <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
-                    <Typography variant='h5' sx={{ mb: 2.5 }}>
-                        {dropText ?? 'Drop files here or click to upload.'}
-                    </Typography>
+                    {showError ?
+                        <Typography sx={{ color: 'red' }}>!! Please upload a valid file.</Typography> :
+                        <>
+                            <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
+                            <Typography variant='h5' sx={{ mb: 2.5 }}>
+                                {dropText ?? 'Drop files here or click to upload.'}
+                            </Typography></>}
                 </Box>
             )}
         </Box>

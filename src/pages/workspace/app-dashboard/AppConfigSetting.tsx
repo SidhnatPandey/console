@@ -18,21 +18,23 @@ import {
 import React, { useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { editApp } from "src/services/appService";
-import toast from "react-hot-toast";
 import { App } from "./index";
 import usePlan from "src/hooks/plan";
 import useLoading from "src/hooks/loading";
 import { AI_SIZE } from "src/@core/static/app.constant";
+import Toaster from "src/utils/toaster";
 
 interface AppConfigSettingProps {
   data: App;
-  showEdit: boolean
+  showEdit: boolean,
+  setHideEdit(state: boolean): void
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
-  const { data, showEdit } = props;
+  const { data, showEdit, setHideEdit } = props;
   const { isDeveloperPlan } = usePlan();
   const { loading, startLoading, stopLoading } = useLoading();
+
 
   const [obj, setObj] = useState({
     port: data.port,
@@ -124,6 +126,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   const [http_path, setPath] = useState<string>(obj.http_path);
 
   const handleSave = (appId: any) => {
+    setHideEdit(true);
     if (Number(minValue) > 0 && Number(maxValue) > 0) {
       startLoading();
       setEdit(false);
@@ -139,14 +142,17 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
       appId = data.id;
       editApp(data, appId)
         .then((response) => {
+          setTimeout(() => {
+            setHideEdit(false);
+          }, 60000)
           if (response.status == 200) {
-            toast.success("App Edited Successfully");
+            Toaster.successToast("Applying updated settings. Please wait!");
           } else {
-            toast.error("App is not able to edit due to some error message");
+            Toaster.errorToast("App is not able to edit due to some error message");
           }
         })
         .catch((error) => {
-          toast.error(error);
+          Toaster.errorToast(error);
         })
         .finally(() => {
           stopLoading();
@@ -171,7 +177,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         {/* Button */}
 
         <Grid item xs={6} sm={6}>
-          {showEdit && (
+          {(showEdit) && (
             <Box display="flex" justifyContent="flex-end" alignItems="center">
               {!isEdit && !loading ? (
                 <Button
@@ -327,7 +333,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 },
               }}
               inputProps={{ "aria-label": "Without label" }}
-              disabled={!isEdit || !!isDeveloperPlan}
+              disabled={!isEdit || isDeveloperPlan()}
             >
               {AI_SIZE.map((instance, index) => (
                 <MenuItem key={index} value={instance.type}>
@@ -361,7 +367,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 />
               }
               label="Enable Vertical Auto-Scaling"
-              disabled={!isEdit || !!isDeveloperPlan}
+              disabled={!isEdit || isDeveloperPlan()}
             />
             <Tooltip
               title={
@@ -409,7 +415,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMinChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit || !!isDeveloperPlan}
+                disabled={!isEdit || isDeveloperPlan()}
               />
               <label htmlFor="max">Max</label>
               <TextField
@@ -421,7 +427,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMaxChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit || !!isDeveloperPlan}
+                disabled={!isEdit || isDeveloperPlan()}
               />
             </Box>
           </FormGroup>
