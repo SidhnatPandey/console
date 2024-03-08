@@ -36,7 +36,7 @@ const DestroyApp = (props: DestroyAppProps) => {
       setConfirmationDialogOpen(true);
     }
   };
- const { loading, startLoading, stopLoading } = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
   const authContext = useContext(AuthContext)
 
   const confirmDestroyApp = () => {
@@ -47,7 +47,8 @@ const DestroyApp = (props: DestroyAppProps) => {
           setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
-            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/'; setTimeout(() => {
+            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            setTimeout(() => {
               authContext.fetchOrg();
             }, 2000);
             router.push(defaultRoute);

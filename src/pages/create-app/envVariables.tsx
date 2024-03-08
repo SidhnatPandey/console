@@ -34,16 +34,15 @@ export interface envArray {
 
 interface EnvVariablesProps {
     open: boolean,
-    handleEnvDialogClose(env: any, count: number,editData?:any): void;
+    handleEnvDialogClose(env: any, count: number, editData?: any): void;
     handleEnvClose(): void;
     envArr?: any[]
-
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
 
     const { open, handleEnvDialogClose, handleEnvClose, envArr } = props;
-    
+
 
     const {
         control: EnvVariableControl,
@@ -135,7 +134,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const handleSave = () => {
         const env = convertData(getEnvVariableValue('env_variables'));
-        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length,getEnvVariableValue("env_variables"));
+        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length, getEnvVariableValue("env_variables"));
     }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -182,24 +181,24 @@ const EnvVariables = (props: EnvVariablesProps) => {
     useEffect(() => {
         if (envArr) {
             envArr.map((item, index) => {
-                        if(index==0){
-                            setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
-                            setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
-                            setEnvVariableValue(`env_variables.${index}.test`, item.test);
-                            setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
-                            setEnvVariableValue(`env_variables.${index}.key`, item.key);
-                            setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
+                if (index == 0) {
+                    setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
+                    setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
+                    setEnvVariableValue(`env_variables.${index}.test`, item.test);
+                    setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
+                    setEnvVariableValue(`env_variables.${index}.key`, item.key);
+                    setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
+                }
+                else {
+                    const ispresent = checkIfKeyExists(item.key); {
+                        if (ispresent < 0) {
+                            append(item);
                         }
-                        else{
-                            const ispresent  = checkIfKeyExists(item.key);{
-                            if(ispresent<0){
-                                append(item);
-                            }   
-                          }  
-                }  
+                    }
+                }
             })
         }
-    },[envArr])
+    }, [envArr])
 
 
 

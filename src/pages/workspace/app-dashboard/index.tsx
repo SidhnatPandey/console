@@ -129,6 +129,7 @@ const AppDashboard = () => {
   // const [supplyChainRunData, setSupplyChainRunData] = useState<any>(null); // State to hold the fetched data
   const [appData, setAppData] = useState<App>(defaultApp); // State to hold the fetched data
   const [runType, setRunType] = useState<string>("current");
+  const [showSettingEdit, setShowSettingEdit] = useState<boolean>(false);
   const ability = useContext(AbilityContext);
 
   let key = APP_API.supplyChainRuns;
@@ -246,6 +247,17 @@ const AppDashboard = () => {
     }
   };
 
+  const isShowEdit = () => {
+    const lstatus = supplyChainRunsData?.data.status.toLowerCase();
+    let show = false;
+    show = runType === "current" && (lstatus === 'pending approval' || lstatus === 'failed')
+    setShowSettingEdit(show);
+  }
+
+  useEffect(() => {
+    isShowEdit();
+  }, [supplyChainRunsData, runType])
+
   return (
     <>
       <Card
@@ -327,9 +339,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                            supplyChainRunsData?.data?.url.startsWith(
-                              "https://"
-                            )
+                              supplyChainRunsData?.data?.url.startsWith(
+                                "https://"
+                              )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
@@ -435,8 +447,7 @@ const AppDashboard = () => {
               <CardContent>
                 <AppConfigSetting
                   data={appData}
-                  runType={runType}
-                  handleSubmit={handleChange}
+                  showEdit={showSettingEdit}
                 />
               </CardContent>
             </Card>
@@ -444,17 +455,17 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale Data={appData} runType={runType} />
+                <AppEnvVaribale Data={appData} showEdit={showSettingEdit} />
               </CardContent>
             </Card>
           </Typography>
-          <Typography sx={{ marginBottom: 10 }}>
+          {/*   <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
                 <AppDomain   url={appData.url}  />
               </CardContent> 
             </Card>
-          </Typography>
+          </Typography> */}
 
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (

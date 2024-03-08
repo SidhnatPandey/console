@@ -1,8 +1,9 @@
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
-import { Box, display, flexbox, margin, width } from '@mui/system';
+import { Box } from '@mui/system';
 import React, { useState } from 'react'
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import DropZone from 'src/component/DropZone';
+import jsyaml from 'js-yaml';
 
 interface DragDropFilePorps {
     updateForm(data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean): void
@@ -11,7 +12,6 @@ interface DragDropFilePorps {
 export interface FileData {
     key: string,
     value: string,
-
 }
 
 export default function DragDropFile({ updateForm }: DragDropFilePorps) {
@@ -22,8 +22,8 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     const [isStg, setIsStg] = useState<boolean>(false);
     const [isTest, setIsTest] = useState<boolean>(true);
     const [isAll, setIsAll] = useState(false);
-
-    const handleAllCheckboxChange = (checked:boolean) => {
+    let type: string | undefined;
+    const handleAllCheckboxChange = (checked: boolean) => {
         setIsTest(checked);
         setIsStg(checked);
         setIsProd(checked);
@@ -32,17 +32,12 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     const handleDrop = (file: File) => {
         hanldeUploadedFile(file);
         setOpen(true);
-        
+
     }
 
     const hanldeUploadedFile = (file: File) => {
-        const type = file.name.split('.').pop();
-        switch (type) {
-            case 'json':
-                hanldeJsonFile(file);
-                break;
-        }
-        
+        type = file.name.split('.').pop();
+        hanldeJsonFile(file);
     }
 
     const hanldeJsonFile = (file: File) => {
@@ -53,12 +48,25 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
 
 
     function onReaderLoad(event: any) {
-        const obj = JSON.parse(event.target.result);
+
+        let obj: any = {}
         const arr = [];
-        for (const key in obj) {
-            arr.push({ 'key': key, 'value': obj[key] })
+        switch (type) {
+            case 'json':
+                obj = JSON.parse(event.target.result);
+                for (const key in obj) {
+                    arr.push({ 'key': key, 'value': obj[key] })
+                }
+                setFileData(arr);
+                break;
+            case 'yml':
+                obj = jsyaml.load(event.target.result);
+                for (const key in obj) {
+                    arr.push({ 'key': key, 'value': obj[key] })
+                }
+                setFileData(arr);
+                break;
         }
-        setFileData(arr);
     }
 
     const handleEnvClick = () => {
@@ -97,8 +105,8 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
                             <FormControlLabel control={<Checkbox checked={isProd} onChange={(e) => { setIsProd(e.target.checked) }} />} label="Prod" labelPlacement="top" />
                         </Grid>
                         <Grid item xs={2} sm={2}>
-                        <FormControlLabel control={<Checkbox checked={isAll} onChange={(e) => { setIsAll(e.target.checked); handleAllCheckboxChange(e.target.checked) }} />} label="All" labelPlacement="top" />
-                            
+                            <FormControlLabel control={<Checkbox checked={isAll} onChange={(e) => { setIsAll(e.target.checked); handleAllCheckboxChange(e.target.checked) }} />} label="All" labelPlacement="top" />
+
                         </Grid>
 
                     </Grid>

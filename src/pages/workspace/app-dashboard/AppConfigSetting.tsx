@@ -16,23 +16,21 @@ import {
 } from "@mui/material";
 
 import React, { useState } from "react";
-import { APP_API } from "src/@core/static/api.constant";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { editApp } from "src/services/appService";
 import toast from "react-hot-toast";
 import { App } from "./index";
 import usePlan from "src/hooks/plan";
 import useLoading from "src/hooks/loading";
-import router from "next/router";
+import { AI_SIZE } from "src/@core/static/app.constant";
 
 interface AppConfigSettingProps {
   data: App;
-  runType: string;
-  handleSubmit: any;
+  showEdit: boolean
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
-  const { data, runType, handleSubmit } = props;
+  const { data, showEdit } = props;
   const { isDeveloperPlan } = usePlan();
   const { loading, startLoading, stopLoading } = useLoading();
 
@@ -47,7 +45,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
 
   const handleInstanceChange = (event: { target: { value: any } }) => {
     const { value } = event.target;
-    const selectedInstance = APP_API.instanceSizes.find(
+    const selectedInstance = AI_SIZE.find(
       (instance: { type: any }) => instance.type === value
     );
     if (selectedInstance != null) {
@@ -90,15 +88,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   const handleClickOpen = () => {
-    // if (!(data.status === "inprogress")) {
-    //   if (isDeveloperPlan()) {
     setEdit(!isEdit);
-    //   } else {
-    //     toast.error("You don't have Developer Plan");
-    //   }
-    // } else {
-    //   toast.error("please wait while the app is rebuilding");
-    // }
   };
 
   const handleCancel = () => {
@@ -117,11 +107,11 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
     setIsChecked(event.target.checked);
-    // console.log("vertical Scalling : ", event.target.checked)
   };
 
   const instance_details = data.instance_details;
-  const [instanceSize, setInstanceSize] = useState(APP_API.instanceSizes[0]);
+  const aiSizeIndex = AI_SIZE.map(e => e.type).indexOf(instance_details.instance_type);
+  const [instanceSize, setInstanceSize] = useState(AI_SIZE[aiSizeIndex]);
 
   const [minValue, setMinValue] = useState<string>(obj.min + "");
   const [maxValue, setMaxValue] = useState<string>(obj.max + "");
@@ -151,11 +141,6 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         .then((response) => {
           if (response.status == 200) {
             toast.success("App Edited Successfully");
-            // router.push({
-            //   pathname: "/workspace/app-dashboard",
-            //   query: { appId: data.id },
-            // });
-            // handleSubmit("1");
           } else {
             toast.error("App is not able to edit due to some error message");
           }
@@ -176,6 +161,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
       }
     }
   };
+
   return (
     <form>
       <Grid container spacing={5}>
@@ -185,7 +171,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         {/* Button */}
 
         <Grid item xs={6} sm={6}>
-          {runType === "current" && (
+          {showEdit && (
             <Box display="flex" justifyContent="flex-end" alignItems="center">
               {!isEdit && !loading ? (
                 <Button
@@ -326,9 +312,9 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                       component="span"
                       fontWeight="bold"
                     >
-                      {instanceSize.type + "-"}
+                      {instanceSize?.type + "-"}
                     </Typography>
-                    {instanceSize.ram + " RAM | " + instanceSize.vcpu + " vCPU"}
+                    {instanceSize?.ram + " RAM | " + instanceSize?.vcpu + " vCPU"}
                   </Typography>
                 );
               }}
@@ -343,7 +329,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
               inputProps={{ "aria-label": "Without label" }}
               disabled={!isEdit || !!isDeveloperPlan}
             >
-              {APP_API.instanceSizes.map((instance, index) => (
+              {AI_SIZE.map((instance, index) => (
                 <MenuItem key={index} value={instance.type}>
                   <Typography
                     variant="body1"

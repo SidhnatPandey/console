@@ -70,6 +70,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from "next-runtime-env";
 import {
+  AI_SIZE,
   LOCALSTORAGE_CONSTANTS,
   PERMISSION_CONSTANTS,
   SESSIONSTORAGE_CONSTANTS,
@@ -185,7 +186,7 @@ const CreateApp = () => {
     LOCALSTORAGE_CONSTANTS.workspace
   )!;
   const [workspaceId, setWorkspaceId] = useState<string>(storedWorkspace);
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(1);
   const [repoSelected, setRepoSelected] = useState<boolean>(false);
   const [isLoadingRepositories, setLoadingRepositories] =
     useState<boolean>(false);
@@ -194,7 +195,7 @@ const CreateApp = () => {
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
   const [instanceSize, setInstanceSize] = useState(
-    !isDeveloperPlan ? APP_API.instanceSizes[0] : APP_API.instanceSizes[3]
+    !isDeveloperPlan ? AI_SIZE[0] : AI_SIZE[3]
   );
   const [isChecked, setIsChecked] = useState(false);
   const [minValue, setMinValue] = useState("1");
@@ -349,7 +350,7 @@ const CreateApp = () => {
   //handled events
   const handleInstanceChange = (event: { target: { value: any } }) => {
     const { value } = event.target;
-    const selectedInstance = APP_API.instanceSizes.find(
+    const selectedInstance = AI_SIZE.find(
       (instance: { type: any }) => instance.type === value
     );
     if (selectedInstance != null) {
@@ -887,7 +888,7 @@ const CreateApp = () => {
                       inputProps={{ "aria-label": "Without label" }}
                       disabled={!!isDeveloperPlan}
                     >
-                      {APP_API.instanceSizes.map((instance, index) => (
+                      {AI_SIZE.map((instance, index) => (
                         <MenuItem key={index} value={instance.type}>
                           <Typography
                             variant="body1"
