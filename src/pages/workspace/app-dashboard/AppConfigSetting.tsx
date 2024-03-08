@@ -327,7 +327,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 },
               }}
               inputProps={{ "aria-label": "Without label" }}
-              disabled={!isEdit || !!isDeveloperPlan}
+              disabled={!isEdit || isDeveloperPlan()}
             >
               {AI_SIZE.map((instance, index) => (
                 <MenuItem key={index} value={instance.type}>
@@ -361,7 +361,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 />
               }
               label="Enable Vertical Auto-Scaling"
-              disabled={!isEdit || !!isDeveloperPlan}
+              disabled={!isEdit || isDeveloperPlan()}
             />
             <Tooltip
               title={
@@ -409,7 +409,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMinChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit || !!isDeveloperPlan}
+                disabled={!isEdit || isDeveloperPlan()}
               />
               <label htmlFor="max">Max</label>
               <TextField
@@ -421,7 +421,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 onChange={handleMaxChange}
                 placeholder="1"
                 style={{ width: "3rem" }}
-                disabled={!isEdit || !!isDeveloperPlan}
+                disabled={!isEdit || isDeveloperPlan()}
               />
             </Box>
           </FormGroup>

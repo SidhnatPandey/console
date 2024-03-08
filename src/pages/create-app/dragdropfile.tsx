@@ -55,14 +55,14 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
             case 'json':
                 obj = JSON.parse(event.target.result);
                 for (const key in obj) {
-                    arr.push({ 'key': key, 'value': obj[key] })
+                    if (typeof (obj[key]) !== 'object') arr.push({ 'key': key, 'value': obj[key] })
                 }
                 setFileData(arr);
                 break;
             case 'yml':
                 obj = jsyaml.load(event.target.result);
                 for (const key in obj) {
-                    arr.push({ 'key': key, 'value': obj[key] })
+                    if (typeof (obj[key]) !== 'object') arr.push({ 'key': key, 'value': obj[key] })
                 }
                 setFileData(arr);
                 break;

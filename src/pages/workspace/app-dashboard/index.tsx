@@ -248,7 +248,7 @@ const AppDashboard = () => {
   };
 
   const isShowEdit = () => {
-    const lstatus = supplyChainRunsData?.data.status.toLowerCase();
+    const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
     show = runType === "current" && (lstatus === 'pending approval' || lstatus === 'failed')
     setShowSettingEdit(show);
