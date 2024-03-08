@@ -9,8 +9,10 @@ import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
 
+const defaultValue = { key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }
+
 const defaultEnvVariableValues = {
-    env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
+    env_variables: [defaultValue],
 };
 
 const EnvVariableSchema = yup.object().shape({
@@ -36,11 +38,12 @@ interface EnvVariablesProps {
     open: boolean,
     handleEnvDialogClose(env: any, count: number): void;
     handleEnvClose(): void;
+    editData?: any;
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
 
-    const { open, handleEnvDialogClose, handleEnvClose } = props;
+    const { open, handleEnvDialogClose, handleEnvClose, editData } = props;
 
     const {
         control: EnvVariableControl,
@@ -61,6 +64,15 @@ const EnvVariables = (props: EnvVariablesProps) => {
         name: "env_variables",
         control: EnvVariableControl,
     });
+
+    if (editData) {
+        editData.forEach((element: any, index: number) => {
+            /* setEnvVariableValue(`env_variables.${index}`, element);
+            if (index < element.length - 1) append(defaultValue); */
+            append(element)
+        });
+
+    }
 
     const initialItems = fields.length;
     const [passwordVisibletest, setPasswordVisibletest] = useState<boolean[]>(Array(initialItems).fill(false));
@@ -95,30 +107,30 @@ const EnvVariables = (props: EnvVariablesProps) => {
         }
     };
 
-    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number,type:string) => { 
-       
-       if(type=='test'){
-        setPasswordVisibletest((prevState) => {
-            const updatedVisible = [...prevState]; // Create a copy of the array
-            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
-            return updatedVisible;
-        });
-       }
-       else if(type=='stg'){
-        setPasswordVisiblestg((prevState) => {
-            const updatedVisible = [...prevState]; // Create a copy of the array
-            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
-            return updatedVisible;
-        });
-       }
-       else{
-        setPasswordVisibleprod((prevState) => {
-            const updatedVisible = [...prevState]; // Create a copy of the array
-            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
-            return updatedVisible;
-        });
-       }
-       
+    const togglePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>, index: number, type: string) => {
+
+        if (type == 'test') {
+            setPasswordVisibletest((prevState) => {
+                const updatedVisible = [...prevState]; // Create a copy of the array
+                updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+                return updatedVisible;
+            });
+        }
+        else if (type == 'stg') {
+            setPasswordVisiblestg((prevState) => {
+                const updatedVisible = [...prevState]; // Create a copy of the array
+                updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+                return updatedVisible;
+            });
+        }
+        else {
+            setPasswordVisibleprod((prevState) => {
+                const updatedVisible = [...prevState]; // Create a copy of the array
+                updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+                return updatedVisible;
+            });
+        }
+
 
     };
 
@@ -360,7 +372,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     onMouseDown={(e: { preventDefault: () => any; }) => {
                                                                         return e.preventDefault();
                                                                     }}
-                                                                    onClick={(e) => togglePasswordVisibility(e, index,"test")}
+                                                                    onClick={(e) => togglePasswordVisibility(e, index, "test")}
                                                                 >
                                                                     <Icon fontSize='1.25rem' icon={passwordVisibletest[index] ? 'tabler:eye' : 'tabler:eye-off'} />
                                                                 </IconButton>
@@ -485,7 +497,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     onMouseDown={(e: { preventDefault: () => any; }) => {
                                                                         return e.preventDefault();
                                                                     }}
-                                                                    onClick={(e) => togglePasswordVisibility(e, index,"prod")}
+                                                                    onClick={(e) => togglePasswordVisibility(e, index, "prod")}
                                                                 >
                                                                     <Icon fontSize='1.25rem' icon={passwordVisibleprod[index] ? 'tabler:eye' : 'tabler:eye-off'} />
                                                                 </IconButton>

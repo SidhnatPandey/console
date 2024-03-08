@@ -60,7 +60,23 @@ export interface App {
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables: { key: string; value: string; type: string }[];
+  env_variables: {
+    test: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+    stg: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+    prod: {
+      key: string;
+      value: string;
+      type: string;
+    }[];
+  };
   id: string;
   port: number;
   stage: string;
@@ -82,7 +98,11 @@ const defaultApp = {
   git_branch: "N/A",
   git_repo: "N/A",
   git_user: "N/A",
-  env_variables: [],
+  env_variables: {
+    test: [],
+    stg: [],
+    prod: [],
+  },
   id: "N/A",
   port: 0,
   stage: "N/A",
@@ -423,7 +443,7 @@ const AppDashboard = () => {
           <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
-                <AppEnvVaribale data={appData} />
+                <AppEnvVaribale Data={appData} />
               </CardContent>
             </Card>
           </Typography>

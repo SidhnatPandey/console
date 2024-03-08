@@ -9,44 +9,81 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EnvVariables from "src/pages/create-app/envVariables";
 import CreateApp from "src/pages/create-app";
 
+interface EnvFormType {
+  key: string;
+  KeyType: string;
+  prod: string;
+  stg: string;
+  test: string;
+  Checked: boolean;
+}
+
 const AppEnvVaribale = (Prop: any) => {
+  console.log("new", Prop);
+
   const [passwordVisible, setPasswordVisible] = useState<boolean[]>(
     Array(10).fill(true)
   );
   const [open, setOpen] = useState<boolean>(false);
   const [environmentVariables, setEnvironmentVariables] = useState<any>();
-  const EnvData = Prop.data.env_variables;
-  console.log("new", Prop);
+  const EnvData = { ...Prop.data.env_variables };
+  const envArr: any[] = [];
 
-  const EnvVariableArray =
-    EnvData && EnvData.test
-      ? Object.keys(EnvData.test).map((index) => {
-          const key = EnvData.test[index].key.trim();
-          const type = EnvData.test[index].type.trim();
-          return {
-            key,
-            type,
-            stg: EnvData.stg[index]?.value || "", // Perform null check here
-            test: EnvData.test[index].value,
-            prod: EnvData.prod[index]?.value || "", // Perform null check here
-            //  isSecret:  EnvData.stg[index].is_secret
-          };
-        })
-      : [];
+  const checkIfKeyExists = (key: string) => {
+    const existingValues = envArr;
+    const index = existingValues.map((e) => e.key).indexOf(key);
+    return index;
+  };
 
-  // const EnvVariableArray = (EnvData?.test || []).map((item, index) => {
-  //     const key = item.key.trim();
+  const pushToArr = (node: string, ele: any) => {
+    const obj = {
+      key: ele.key,
+      KeyType: ele.type,
+      prod: "",
+      test: "",
+      stg: "",
+      Checked: false,
+    };
+    switch (node) {
+      case "prod":
+        obj.prod = ele.value;
+        break;
+      case "stg":
+        obj.stg = ele.value;
+        break;
+      case "test":
+        obj.test = ele.value;
+        break;
+    }
+    envArr.push(obj);
+  };
 
-  //     return {
-  //         key,
-  //         stg: (EnvData?.stg || [])[index]?.value,
-  //         test: item.value,
-  //         prod: (EnvData?.prod || [])[index]?.value,
-  //         //  isSecret:  (EnvData?.stg || [])[index]?.is_secret
-  //     };
-  // });
+  for (const node in EnvData) {
+    const arr = [...EnvData[node]];
+    arr.forEach((element: any) => {
+      const index = checkIfKeyExists(element.key);
+      if (index >= 0) {
+        envArr[index][node] = element.value;
+      } else {
+        pushToArr(node, element);
+      }
+    });
+  }
 
-  console.log("val", EnvVariableArray);
+  //console.log(envArr);
+
+  /*  const EnvVariableArray = Object.keys(EnvData?.test).map(index => {
+         const key = EnvData.test[index].key.trim();
+         const type = EnvData.test[index].type.trim();
+         return {
+             key,
+             type,
+             stg: EnvData.stg[index].value,
+             test: EnvData.test[index].value,
+             prod: EnvData.prod[index].value,
+             //  isSecret:  EnvData.stg[index].is_secret
+         };
+     }); */
 
   const togglePasswordVisibility = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -65,7 +102,7 @@ const AppEnvVaribale = (Prop: any) => {
   const handleClickOpen = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log("hello");
+    //console.log("hello");
     //  handleEnvDialogOpen()
     setOpen(true);
   };
@@ -95,6 +132,7 @@ const AppEnvVaribale = (Prop: any) => {
         open={open}
         handleEnvDialogClose={handleEnvDialogClose}
         handleEnvClose={() => setOpen(false)}
+        editData={envArr}
       />
 
       <Grid item xs={3} sm={3}>
@@ -110,7 +148,7 @@ const AppEnvVaribale = (Prop: any) => {
         <Typography variant="h4">Production</Typography>
       </Grid>
 
-      {EnvVariableArray.map((item, index) => (
+      {envArr.map((item, index) => (
         <>
           {/* <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' ,marginBottom: 1 }}>
                             <CustomChip sx={{ height: 20, marginRight: 0.5 }} rounded label={"secret"} skin='light' color={"secondary"} />
