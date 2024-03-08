@@ -39,6 +39,7 @@ import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppConfigSetting from "./AppConfigSetting";
 import AppEnvVaribale from "./AppEnvVaribale";
+import { AppDomain } from "./AppDomain";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -60,17 +61,7 @@ export interface App {
   git_branch: string;
   git_repo: string;
   git_user: string;
-  env_variables: {
-    "test":{
-      key: string; value: string; type: string }[]
-     ,
-     "stg":{
-      key: string; value: string; type: string }[]
-     ,
-     "prod":{
-      key: string; value: string; type: string }[]
-  
-   };
+  env_variables:{ key: string; value: string; type: string }[];
   id: string;
   port: number;
   stage: string;
@@ -92,11 +83,7 @@ const defaultApp = {
   git_branch: "N/A",
   git_repo: "N/A",
   git_user: "N/A",
-  env_variables: {
-    "test":[],
-    "stg":[],
-    "prod":[]
-  },
+  env_variables: [],
   id: "N/A",
   port: 0,
   stage: "N/A",
@@ -436,6 +423,13 @@ const AppDashboard = () => {
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
                 <AppEnvVaribale   Data={appData}  />
+              </CardContent> 
+            </Card>
+          </Typography>
+          <Typography sx={{ marginBottom: 10 }}>
+            <Card sx={{ margin: "-25px" }}>
+              <CardContent>
+                <AppDomain   url={appData.url}  />
               </CardContent> 
             </Card>
           </Typography>

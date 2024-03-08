@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -9,10 +9,8 @@ import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
 
-const defaultValue = { key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }
-
 const defaultEnvVariableValues = {
-    env_variables: [defaultValue],
+    env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
 
 const EnvVariableSchema = yup.object().shape({
@@ -36,14 +34,16 @@ export interface envArray {
 
 interface EnvVariablesProps {
     open: boolean,
-    handleEnvDialogClose(env: any, count: number): void;
+    handleEnvDialogClose(env: any, count: number,editData?:any): void;
     handleEnvClose(): void;
-    editData?: any;
+    envArr?: any[]
+
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
 
-    const { open, handleEnvDialogClose, handleEnvClose, editData } = props;
+    const { open, handleEnvDialogClose, handleEnvClose, envArr } = props;
+    
 
     const {
         control: EnvVariableControl,
@@ -51,6 +51,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         register: EnvVariableRegister,
         getValues: getEnvVariableValue,
         setValue: setEnvVariableValue,
+        reset: resetEnvVariableForm,
         formState: {
             errors: EnvVariableErrors,
             isValid: isEnvVariableFormValid,
@@ -65,15 +66,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
         control: EnvVariableControl,
     });
 
-    if (editData) {
-        editData.forEach((element: any, index: number) => {
-            /* setEnvVariableValue(`env_variables.${index}`, element);
-            if (index < element.length - 1) append(defaultValue); */
-            append(element)
-        });
-
-    }
-
     const initialItems = fields.length;
     const [passwordVisibletest, setPasswordVisibletest] = useState<boolean[]>(Array(initialItems).fill(false));
     const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
@@ -81,11 +73,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [showPass, setShowPass] = useState<boolean>(false)
 
     const handleClose = () => {
+        resetEnvVariableForm();
         handleEnvClose();
     };
 
     const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
-
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
 
         if (checkboxValue) {
@@ -143,7 +135,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const handleSave = () => {
         const env = convertData(getEnvVariableValue('env_variables'));
-        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length);
+        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length,getEnvVariableValue("env_variables"));
     }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -187,6 +179,31 @@ const EnvVariables = (props: EnvVariablesProps) => {
         }
     }
 
+    useEffect(() => {
+        if (envArr) {
+            envArr.map((item, index) => {
+                        if(index==0){
+                            setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
+                            setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
+                            setEnvVariableValue(`env_variables.${index}.test`, item.test);
+                            setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
+                            setEnvVariableValue(`env_variables.${index}.key`, item.key);
+                            setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
+                        }
+                        else{
+                            const ispresent  = checkIfKeyExists(item.key);{
+                            if(ispresent<0){
+                                append(item);
+                            }   
+                          }  
+                }  
+            })
+        }
+    },[envArr])
+
+
+
+
     const convertData = (envVariables: any[]) => {
         const nData: {
             test: envArray[];
@@ -212,6 +229,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
+
+
 
     return (
 

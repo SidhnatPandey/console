@@ -1,14 +1,12 @@
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
-import { height } from '@mui/system';
 import React, { useState } from 'react'
 import CustomChip from 'src/@core/components/mui/chip'
 import { IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
-import CreateApp from 'src/pages/create-app';
-
+import { editApp } from 'src/services/appService';
+import toast from 'react-hot-toast';
 interface EnvFormType {
     key: string,
     KeyType: string,
@@ -17,21 +15,19 @@ interface EnvFormType {
     test: string,
     Checked: boolean
 }
-
 const AppEnvVaribale = (Prop: any) => {
-
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
     const [open, setOpen] = useState<boolean>(false)
-    const [environmentVariables, setEnvironmentVariables] = useState<any>();
-    const EnvData = { ...Prop.data.env_variables };
+    const { Data } = Prop;
+    const EnvData = Data.env_variables
     const envArr: any[] = [];
-
+    const envArr2:any[]=[];
+    let envArr3:any[]=[];
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
-
     const pushToArr = (node: string, ele: any) => {
         const obj = {
             key: ele.key,
@@ -54,7 +50,6 @@ const AppEnvVaribale = (Prop: any) => {
         }
         envArr.push(obj);
     }
-
     for (const node in EnvData) {
         const arr = [...EnvData[node]];
         arr.forEach((element: any) => {
@@ -66,38 +61,50 @@ const AppEnvVaribale = (Prop: any) => {
             }
         });
     }
-
-    //console.log(envArr);
-
-    /*  const EnvVariableArray = Object.keys(EnvData?.test).map(index => {
-         const key = EnvData.test[index].key.trim();
-         const type = EnvData.test[index].type.trim();
-         return {
-             key,
-             type,
-             stg: EnvData.stg[index].value,
-             test: EnvData.test[index].value,
-             prod: EnvData.prod[index].value,
-             //  isSecret:  EnvData.stg[index].is_secret
-         };
-     }); */
-
     const togglePasswordVisibility = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         setPasswordVisible((prevState) => {
-            const updatedVisible = [...prevState]; // Create a copy of the array
-            updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
-            return updatedVisible;
+        const updatedVisible = [...prevState]; // Create a copy of the array
+        updatedVisible[index] = !updatedVisible[index]; // Toggle the visibility of the clicked item
+        return updatedVisible;
         });
     }
-    const handleEnvDialogClose = () => {
-        setEnvironmentVariables(EnvData);
+    const handleEnvDialogClose = (envVariables: any, count: number, editData: any) => {
+        editData.forEach((item:any) => {
+            const obj = {
+                key: item.key,
+                KeyType: item.KeyType,
+                prod: item.prod,
+                test: item.test,
+                stg: item.stg,
+                Checked: false
+            }
+            envArr2.push(obj)
+            
+        });
+        console.log("envArr2",envArr2);
+        console.log("envArr",envArr);
+        if (count > 0) {
+            putData(envVariables);
+        }
         setOpen(false);
-    }
+    };
     const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        //console.log("hello");
-        //  handleEnvDialogOpen()
         setOpen(true);
     }
+
+    const putData = (envVariables: any) => {
+        const updatedAppData = { ...Data, env_variables: envVariables }
+        const appId = Data.id;
+        editApp(updatedAppData, appId)
+            .then((response) => {
+                console.log(response);
+                toast.success("App Edited Successfully");
+            })
+            .catch((error) => {
+                toast.error(error);
+            });
+    };
+
 
     return (
         <Grid container spacing={1}>
@@ -118,7 +125,7 @@ const AppEnvVaribale = (Prop: any) => {
                     </Button>
                 </Box>
             </Typography></Grid>
-            <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} editData={envArr} />
+            <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
             <Grid item xs={3} sm={3}><Typography variant="h4">
                 Environments
@@ -179,7 +186,8 @@ const AppEnvVaribale = (Prop: any) => {
                         </Grid> */}
                         <Grid container spacing={1} sx={{ marginBottom: 1 }}>
                             <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <CustomChip sx={{ height: 20, marginRight: 0.5 }} rounded label={"secret"} skin='light' color={"secondary"} />
+                              
+                               <CustomChip sx={{ height: 20, marginRight: 0.5 }} rounded label={"secret"} skin='light' color={"secondary"} />
                                 <TextField
                                     variant="standard"
                                     type="text"
@@ -213,27 +221,18 @@ const AppEnvVaribale = (Prop: any) => {
                                 <IconButton
                                     aria-label="toggle password visibility"
                                     onClick={(e) => (togglePasswordVisibility(e, index))}
-                                    // onMouseDown={handleMouseDownPassword}
                                     edge="end"
                                 >
                                     {passwordVisible[index] ? <VisibilityOffIcon /> : <VisibilityIcon />}
                                 </IconButton>
                             </Grid>
                         </Grid>
-
-
-
                     </>
-
                 ))
             }
-
-
-
         </Grid>
     )
 }
-
 export default AppEnvVaribale
 
 
