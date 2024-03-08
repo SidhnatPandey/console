@@ -24,6 +24,7 @@ export const APP_API = {
   appList: "apps",
   supplyChainSteps: "supplychainruns/{runId}/steps?stage={stage}",
   appDetails: "apps/{appId}",
+  editApp: "apps/{appId}",
   appMatrix: "app/metrics?deployment={appName}",
   approval: "changeapprovalstatus",
   appLogs: "apps/{appId}/logs?env=",

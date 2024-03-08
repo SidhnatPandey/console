@@ -35,3 +35,27 @@ export const PERMISSION_CONSTANTS = {
   orgError: "orgError",
   workspaceError: "workspaceError",
 };
+
+//instances
+export const AI_SIZE = [
+  {
+    type: "Default",
+    ram: "2GB",
+    vcpu: 1,
+  },
+  {
+    type: "Small",
+    ram: "1 GB",
+    vcpu: 0.5,
+  },
+  {
+    type: "Large",
+    ram: "4 GB",
+    vcpu: 2,
+  },
+  {
+    type: "Extra Small",
+    ram: "0.5 GB",
+    vcpu: 0.1,
+  },
+];

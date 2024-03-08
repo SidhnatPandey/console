@@ -14,14 +14,14 @@ import { styled } from "@mui/material/styles";
 import StepLabel from "@mui/material/StepLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MuiStep, { StepProps } from "@mui/material/Step";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CardContent, { CardContentProps } from "@mui/material/CardContent";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+import usePlan from "src/hooks/plan";
 
 // ** Third Party Imports
 import toast from "react-hot-toast";
@@ -47,18 +47,16 @@ import {
   saveApp,
   appNameExists,
 } from "src/services/appService";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
   Checkbox,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
+  FormGroup,
   FormHelperText,
+  OutlinedInput,
   Radio,
   RadioGroup,
   Table,
@@ -66,38 +64,27 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  Tooltip,
 } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { env } from "next-runtime-env";
 import {
+  AI_SIZE,
   LOCALSTORAGE_CONSTANTS,
   PERMISSION_CONSTANTS,
-  SESSIONSTORAGE_CONSTANTS
+  SESSIONSTORAGE_CONSTANTS,
 } from "src/@core/static/app.constant";
 import { AuthContext } from "src/context/AuthContext";
-import { getItemFromSessionStorage,removeItemFromSessionStorage,setItemToSessionStorage } from "src/services/sessionstorageService";
-import { getItemFromLocalstorage, removeItemFromLocalstorage, setItemToLocalstorage } from "src/services/locastorageService";
+import {
+  getItemFromSessionStorage,
+  removeItemFromSessionStorage,
+  setItemToSessionStorage,
+} from "src/services/sessionstorageService";
+import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
-
-/* 
-type FormValues = {
-  application_name: string;
-  git_repo: string;
-  git_branch: string;
-  src_code_path: string;
-};
-
-type ConfigurationValues = {
-  port: number;
-  http_path: string;
-  env_variables: EnvironmentVariable[];
-}; */
-
-type EnvironmentVariable = {
-  key: string;
-  value: string;
-};
+import { APP_API } from "src/@core/static/api.constant";
+import EnvVariables from "./envVariables";
 
 const steps = [
   {
@@ -151,8 +138,6 @@ const Step = styled(MuiStep)<StepProps>(({ theme }: any) => ({
   },
 }));
 
-
-
 const LoaderComponent = () => {
   return (
     <Box sx={{ display: "flex" }}>
@@ -164,21 +149,11 @@ const LoaderComponent = () => {
 const defaultConfigurationValues = {
   port: 8080,
   http_path: "/",
-  env_variables: [{ key: "", value: "", stg: false, test: false, prod: false }],
 };
 
 const ConfigurationSchema = yup.object().shape({
   port: yup.number().required(),
   http_path: yup.string().required(),
-  env_variables: yup.array().of(
-    yup.object({
-      key: yup.string(),
-      value: yup.string(),
-      stg: yup.boolean(),
-      test: yup.boolean(),
-      prod: yup.boolean(),
-    })
-  ),
 });
 
 const githubUrl = env("NEXT_PUBLIC_GITHUB_URL");
@@ -188,13 +163,15 @@ const CreateApp = () => {
 
   const defaultSourceCodeValues = {
     appNameExist: "",
-    application_name: getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName),
+    application_name: getItemFromSessionStorage(
+      SESSIONSTORAGE_CONSTANTS.creatAppName
+    ),
     git_repo: "",
     git_branch: "",
     src_code_path: "",
     workspace_id: "",
   };
-  
+
   const sourceCodeSchema = yup.object().shape({
     application_name: yup.string().required(),
     workspace_id: yup.string().required(),
@@ -202,6 +179,8 @@ const CreateApp = () => {
     git_branch: yup.string().required(),
     src_code_path: yup.string(),
   });
+
+  const { isDeveloperPlan } = usePlan();
 
   const storedWorkspace = localStorage.getItem(
     LOCALSTORAGE_CONSTANTS.workspace
@@ -215,6 +194,13 @@ const CreateApp = () => {
   const [appNameExist, setAppNameExist] = useState(false);
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
+  const [instanceSize, setInstanceSize] = useState(
+    !isDeveloperPlan ? AI_SIZE[0] : AI_SIZE[3]
+  );
+  const [isChecked, setIsChecked] = useState(false);
+  const [minValue, setMinValue] = useState("1");
+  const [maxValue, setMaxValue] = useState("1");
+  const [error, setError] = useState("");
 
   // Handle Stepper
   const handleBack = () => {
@@ -229,7 +215,7 @@ const CreateApp = () => {
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
-  const [branches, setBranches] = useState<string[]>([]);
+  const [branches, setBranches] = useState<string[]>(["No Branch"]);
   const [repoError, setRepoError] = useState(false);
 
   useEffect(() => {
@@ -271,24 +257,19 @@ const CreateApp = () => {
     resolver: yupResolver(ConfigurationSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
-    name: "env_variables",
-    control: configurationControl,
-  });
-
   const router = useRouter();
 
   useEffect(() => {
     if (router.query?.code) {
       sendCode(router.query?.code as string, workspaceId).then((response) => {
         if (response?.data.git_user) {
-          router.replace('/create-app')
+          router.replace("/create-app");
           setGitUser(response.git_user);
           fetchUserRepositories(response.git_user as string);
         }
-      })
+      });
     }
-  }, [router.query.code])
+  }, [router.query.code]);
 
   const isNextButtonDisabled =
     appNameExist || !isConfigurationFormValid || repoError;
@@ -345,7 +326,7 @@ const CreateApp = () => {
         setBranches(response.data);
       } else {
         setBranches([]);
-        setSourceCodeValue('git_branch', '');
+        setSourceCodeValue("git_branch", "");
       }
     } catch (error) {
       toast.error("Could not fetch branches.");
@@ -366,6 +347,52 @@ const CreateApp = () => {
     }
   };
 
+  //handled events
+  const handleInstanceChange = (event: { target: { value: any } }) => {
+    const { value } = event.target;
+    const selectedInstance = AI_SIZE.find(
+      (instance: { type: any }) => instance.type === value
+    );
+    if (selectedInstance != null) {
+      setInstanceSize(selectedInstance);
+    }
+  };
+
+  const handleMinChange = (event: { target: { value: string } }) => {
+    const value = event.target.value.trim();
+    if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
+      setMinValue(value);
+      if (maxValue && Number(value) > Number(maxValue)) {
+        setError("Min must be less than or equal to Max");
+      } else {
+        setError("");
+      }
+    } else {
+      setError("Min value must be in between 1 and 25");
+    }
+  };
+
+  const handleMaxChange = (event: { target: { value: string } }) => {
+    const value = event.target.value.trim();
+    if (!value || (Number(value) >= 1 && Number(value) <= 25)) {
+      setMaxValue(value);
+      if (minValue && Number(value) < Number(minValue)) {
+        setError("Max must be greater than or equal to Min");
+      } else {
+        setError("");
+      }
+    } else {
+      setError("Max value must be in between 1 and 25");
+    }
+  };
+
+  const handleverticalScalling = (event: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
+    setIsChecked(event.target.checked);
+    console.log("vertical Scalling : ", event.target.checked);
+  };
+
   const handleWorkspaceChange = (event: SelectChangeEvent) => {
     const workspace_id = event.target.value;
     // const workspace = authContext.workspaces.filter(workspace => workspace.id === workspace_id)[0];
@@ -380,34 +407,22 @@ const CreateApp = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (activeStep === steps.length - 1) {
       toast.success("Form Submitted");
-    
     }
-   
   };
-
-  // configuration
+  // configuration environment dialog
   const [open, setOpen] = useState(false);
+  const [environmentVariables, setEnvironmentVariables] = useState<any>();
+  const [envCount, setEnvCount] = useState<number>(0);
 
-  const handleClickOpen = () => {
-    if (getConfigurationValue("env_variables").length === 0) {
-      setConfigurationValue("env_variables", [
-        { key: "", value: "", stg: false, test: false, prod: false },
-      ]);
-    }
+  const handleEnvDialogOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => {
-    const environmentVariables = getConfigurationValue("env_variables").filter(
-      (variable) => variable.key && variable.value
-    );
-    setConfigurationValue("env_variables", environmentVariables);
+
+  const handleEnvDialogClose = (envVariables: any, count: number) => {
+    setEnvironmentVariables(envVariables);
+    setEnvCount(count);
     setOpen(false);
   };
-  //configuration page environment variable
-  const environmentVariables = getConfigurationValue("env_variables");
-  const environmentVariablesCount = environmentVariables.filter(
-    (variable) => variable.key && variable.value
-  ).length;
 
   const onConfigurationSubmit = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -418,16 +433,25 @@ const CreateApp = () => {
 
   const handleFinalSubmit = () => {
     startLoading();
-    
+
     const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
     data["git_user"] = gitUser;
-    data.env_variables = convertData(data.env_variables);
-    data.application_name = data.application_name.trim();
-    if(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)){
+    data.env_variables = environmentVariables;
+    data.application_name = data.application_name?.trim();
+    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
       removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
     }
+    const obj = {
+      instance_type: instanceSize.type,
+      vertical_auto_scale: isChecked,
+      max: Number(maxValue),
+      min: Number(minValue),
+    };
+    data.instance_details = obj;
+
     saveApp(data)
       .then((response) => {
+        console.log(data);
         toast.success("App Created Successfully");
         router.push({
           pathname: "/workspace/app-dashboard",
@@ -442,48 +466,11 @@ const CreateApp = () => {
       })
       .finally(() => {
         stopLoading();
-      })
+      });
   };
 
-  const handleCheckboxChange = (
-    index: number,
-    checked: boolean,
-    type: string
-  ) => {
-    const currentValues = getConfigurationValue();
-    switch (type) {
-      case "test":
-        currentValues.env_variables[index].test = checked;
-        break;
-      case "stg":
-        currentValues.env_variables[index].stg = checked;
-        break;
-      case "prod":
-        currentValues.env_variables[index].prod = checked;
-        break;
-    }
-    setConfigurationValue("env_variables", currentValues.env_variables);
-  };
-
-  const convertData = (envVariables: any[]) => {
-    const nData: {
-      test: EnvironmentVariable[];
-      stg: EnvironmentVariable[];
-      prod: EnvironmentVariable[];
-    } = { test: [], stg: [], prod: [] };
-    envVariables.forEach((ele: any) => {
-      if (ele.test) {
-        nData.test.push({ key: ele.key, value: ele.value });
-      }
-      if (ele.stg) {
-        nData.stg.push({ key: ele.key, value: ele.value });
-      }
-      if (ele.prod) {
-        nData.prod.push({ key: ele.key, value: ele.value });
-      }
-    });
-    return nData;
-  };
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
 
   const getStepContent = (step: number) => {
     switch (step) {
@@ -497,17 +484,26 @@ const CreateApp = () => {
                     name="application_name"
                     control={sourceCodeControl}
                     rules={{ required: true }}
-                    render={({ field: {onChange } }) => (
+                    render={({ field: { onChange } }) => (
                       <TextField
-                        value={getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)}
+                        value={getItemFromSessionStorage(
+                          SESSIONSTORAGE_CONSTANTS.creatAppName
+                        )}
                         label="Application Name"
                         onChange={(e: any) => {
                           onChange(e);
                           setAppNameExist(false);
-                          setItemToSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName,e.target.value)
+                          setItemToSessionStorage(
+                            SESSIONSTORAGE_CONSTANTS.creatAppName,
+                            e.target.value
+                          );
                         }}
                         onBlur={() => {
-                          checkAppNameExists(getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName));
+                          checkAppNameExists(
+                            getItemFromSessionStorage(
+                              SESSIONSTORAGE_CONSTANTS.creatAppName
+                            )
+                          );
                         }}
                         placeholder="Name your app"
                         error={
@@ -669,9 +665,7 @@ const CreateApp = () => {
                       <LoaderComponent />
                     ) : (
                       <FormControl fullWidth>
-                        <InputLabel id="git-branch">
-                          Branch
-                        </InputLabel>
+                        <InputLabel id="git-branch">Branch</InputLabel>
                         <Controller
                           name="git_branch"
                           control={sourceCodeControl}
@@ -680,19 +674,20 @@ const CreateApp = () => {
                             <Select
                               value={value}
                               label="Branch"
-                              onChange={(e) =>
-                                onChange(e)
-                              }
+                              onChange={(e) => onChange(e)}
                               error={Boolean(sourceCodeErrors.git_branch)}
                               labelId="stepper-linear-personal-country"
                               aria-describedby="stepper-linear-personal-country-helper"
                             >
-                              {branches.length === 0 && <MenuItem disabled>No Branch</MenuItem>}
-                              {branches.length > 0 && branches.map((branch) => (
-                                <MenuItem key={branch} value={branch}>
-                                  {branch}
-                                </MenuItem>
-                              ))}
+                              {branches.length === 0 && (
+                                <MenuItem disabled>No Branch</MenuItem>
+                              )}
+                              {branches.length > 0 &&
+                                branches.map((branch) => (
+                                  <MenuItem key={branch} value={branch}>
+                                    {branch}
+                                  </MenuItem>
+                                ))}
                             </Select>
                           )}
                         />
@@ -766,25 +761,32 @@ const CreateApp = () => {
                   <div>{getSoruceCodeValue("application_name")}</div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
-                  <span>{environmentVariablesCount} Environment Variable</span>
+                  <span>{envCount} Environment Variable</span>
                   <Button
                     aria-describedby="popover"
                     variant="contained"
                     style={{ float: "right" }}
-                    onClick={handleClickOpen}
+                    onClick={handleEnvDialogOpen}
                   >
                     {" "}
                     Edit
                   </Button>
                 </Grid>
-
                 <Grid item xs={12} sm={12}>
                   <h2>Resource Settings</h2>
                 </Grid>
 
                 {/* HTTP Port */}
                 <Grid item xs={4} sm={4}>
-                  <div style={{ alignItems: "center" }}>HTTP Port:</div>
+                  <div style={{ alignItems: "center" }}>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      HTTP Port
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -808,9 +810,16 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* HTTP Path */}
-
                 <Grid item xs={4} sm={4}>
-                  <div>HTTP Path:</div>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      HTTP Path
+                    </Typography>
+                  </div>
                 </Grid>
                 <Grid item xs={8} sm={8}>
                   <TextField
@@ -829,152 +838,165 @@ const CreateApp = () => {
                   )}
                 </Grid>
 
-                {/* Environment Variable Dialog */}
-                <Dialog
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                  style={{ zIndex: 100 }}
-                  fullWidth
-                >
-                  <DialogTitle
-                    id="max-width-dialog-title"
-                    style={{ fontSize: "24px", textAlign: "center" }}
-                  >
-                    Edit Environment Variables
-                  </DialogTitle>
-                  <DialogContent>
-                    <div>
-                      {fields.map((field, index) => {
+                {/* App Instance */}
+                <Grid item xs={4} sm={4}>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      App Instance (AI)Size
+                    </Typography>
+                  </div>
+                </Grid>
+                <Grid item xs={8} sm={8} style={{ marginTop: "-0.9rem" }}>
+                  <FormControl sx={{ m: 1, width: 300, mt: 3 }}>
+                    <Select
+                      id="no_of_Instances"
+                      displayEmpty
+                      value={instanceSize}
+                      sx={{ width: 325 }}
+                      // {...configurationRegister("no_of_Instances.0.")}
+                      onChange={handleInstanceChange}
+                      input={<OutlinedInput />}
+                      renderValue={() => {
                         return (
-                          <Grid
-                            container
-                            spacing={5}
-                            key={field.id}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <Grid item xs={4} sm={4}>
-                              <FormControl>
-                                <TextField
-                                  label="Key"
-                                  sx={{ width: "110%" }}
-                                  {...configurationRegister(
-                                    `env_variables.${index}.key` as const
-                                  )}
-                                ></TextField>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={4} sm={4}>
-                              <FormControl>
-                                <TextField
-                                  label="Value"
-                                  sx={{ width: "120%" }}
-                                  {...configurationRegister(
-                                    `env_variables.${index}.value` as const
-                                  )}
-                                ></TextField>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Test"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.test}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "test"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Stg"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.stg}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "stg"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              <FormControlLabel
-                                label="Prod"
-                                labelPlacement="top"
-                                control={
-                                  <Checkbox
-                                    checked={field.prod}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(
-                                        index,
-                                        e.target.checked,
-                                        "prod"
-                                      )
-                                    }
-                                  />
-                                }
-                              />
-                            </Grid>
-                            <Grid item xs={1} sm={1}>
-                              {index === fields.length - 1 && (
-                                <IconButton
-                                  aria-label="add"
-                                  size="large"
-                                  onClick={() =>
-                                    append({
-                                      key: "",
-                                      value: "",
-                                      stg: false,
-                                      test: false,
-                                      prod: false,
-                                    })
-                                  }
-                                >
-                                  <AddIcon fontSize="inherit" />
-                                </IconButton>
-                              )}
-                              {index < fields.length - 1 && (
-                                <IconButton
-                                  aria-label="delete"
-                                  size="large"
-                                  onClick={() => remove(index)}
-                                >
-                                  <DeleteIcon fontSize="inherit" />
-                                </IconButton>
-                              )}
-                            </Grid>
-                          </Grid>
+                          <Typography>
+                            <Typography
+                              variant="body2"
+                              component="span"
+                              fontWeight="bold"
+                            >
+                              {instanceSize.type + "-"}
+                            </Typography>
+                            {instanceSize.ram +
+                              " RAM | " +
+                              instanceSize.vcpu +
+                              " vCPU"}
+                          </Typography>
                         );
-                      })}
-                    </div>
-                  </DialogContent>
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                            width: 250,
+                          },
+                        },
+                      }}
+                      inputProps={{ "aria-label": "Without label" }}
+                      disabled={!!isDeveloperPlan}
+                    >
+                      {AI_SIZE.map((instance, index) => (
+                        <MenuItem key={index} value={instance.type}>
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            fontWeight="bold"
+                          >
+                            {instance.type + "-"}
+                          </Typography>
+                          {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-                  <DialogActions
-                    className="dialog-actions-dense"
-                    sx={{ justifyContent: "center" }}
-                    style={{ marginBottom: "15px" }}
-                  >
-                    <Button variant="contained" onClick={handleClose}>
-                      Save
-                    </Button>
-                    <Button onClick={handleClose}>Close</Button>
-                  </DialogActions>
-                </Dialog>
+                {/* Select Instances */}
+                <Grid item xs={4} sm={4}>
+                  <div></div>
+                </Grid>
+                <Grid item xs={8} sm={8} style={{ paddingTop: "0px" }}>
+                  <FormGroup style={{ display: "block" }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={isChecked}
+                          onChange={handleverticalScalling}
+                        />
+                      }
+                      label="Enable Vertical Auto-Scaling"
+                      disabled={!!isDeveloperPlan}
+                    />
+                    <Tooltip
+                      title={
+                        "Vertical Auto-Scaling allows the App to use resources beyond the request when needed"
+                      }
+                      arrow
+                    >
+                      <InfoOutlinedIcon
+                        style={{
+                          marginBottom: "-7px",
+                          marginLeft: "-12px",
+                          padding: 0,
+                        }}
+                        id="vertical_auto_scale"
+                      />
+                    </Tooltip>
+                  </FormGroup>
+                </Grid>
+
+                {/* Numebr of instances */}
+                <Grid item xs={4} sm={4}>
+                  <div>
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      fontWeight="bold"
+                    >
+                      Number of Instances
+                    </Typography>
+                  </div>
+                </Grid>
+                <Grid item xs={8} sm={8}>
+                  <FormGroup>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "16px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <label htmlFor="min">Min</label>
+                      <TextField
+                        type="text"
+                        id="min"
+                        value={minValue}
+                        onChange={handleMinChange}
+                        placeholder="1"
+                        style={{ width: "3rem" }}
+                        disabled={!!isDeveloperPlan}
+                      />
+                      <label htmlFor="max">Max</label>
+                      <TextField
+                        type="text"
+                        id="max"
+                        value={maxValue}
+                        onChange={handleMaxChange}
+                        placeholder="1"
+                        style={{ width: "3rem" }}
+                        disabled={!!isDeveloperPlan}
+                      />
+                    </Box>
+                  </FormGroup>
+                </Grid>
+                {/* Error */}
+                <Grid xs={8} sm={8} item>
+                  {" "}
+                  <Box sx={{ marginLeft: "16rem" }}>
+                    {error && <span style={{ color: "red" }}>{error}</span>}{" "}
+                  </Box>
+                </Grid>
+
+                {/* Environment Variable Dialog */}
+                <EnvVariables
+                  open={open}
+                  handleEnvDialogClose={handleEnvDialogClose}
+                  handleEnvClose={() => setOpen(false)}
+                />
               </Grid>
 
               <Grid
@@ -995,6 +1017,7 @@ const CreateApp = () => {
                   variant="contained"
                   type="submit"
                   onClick={handleConfigurationSubmit(onConfigurationSubmit)}
+                  disabled={!!error}
                 >
                   Next
                 </Button>
@@ -1102,7 +1125,7 @@ const CreateApp = () => {
                           </TableCell>
                           <TableCell>
                             <Typography sx={{ color: "text.secondary" }}>
-                              {environmentVariablesCount}
+                              {envCount}
                             </Typography>
                           </TableCell>
                         </TableRow>
@@ -1202,7 +1225,18 @@ const CreateApp = () => {
                 onClick={handleFinalSubmit}
               >
                 {/* {activeStep === steps.length - 1 ? "Submit" : "Next"} */}
-                {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Submitting</> : 'Submit'}
+                {loading ? (
+                  <>
+                    <CircularProgress
+                      size="1.2rem"
+                      color="secondary"
+                      style={{ marginRight: "5px" }}
+                    />
+                    Submitting
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </Grid>
           </Grid>

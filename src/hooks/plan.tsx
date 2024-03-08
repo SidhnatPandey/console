@@ -20,8 +20,12 @@ function usePlan() {
 
   const fetchPlans = () => {
     getPlans().then((res) => {
-      setPlans(res.data);
-    });
+      if (res && res.data) {
+        setPlans(res.data);
+      } else {
+        console.error("Invalid response format:", res);
+      }
+    })
   };
   const isDeveloperPlan = () => {
     return authContext.org?.tier === 1;

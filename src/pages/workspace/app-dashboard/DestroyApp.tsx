@@ -47,7 +47,8 @@ const DestroyApp = (props: DestroyAppProps) => {
           setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
-            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/'; setTimeout(() => {
+            const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            setTimeout(() => {
               authContext.fetchOrg();
             }, 2000);
             router.push(defaultRoute);
@@ -71,15 +72,15 @@ const DestroyApp = (props: DestroyAppProps) => {
 
   return (
     <Card sx={{ margin: "-25px" }}>
-      <CardHeader
+      {/* <CardHeader
         title="App Settings"
         sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
-      />
+      /> */}
       <CardContent sx={{ pt: (theme) => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="h5">Destroy</Typography>
+              <Typography variant="h5">Destroy MY APP</Typography>
               <Typography variant="body1">Delete App</Typography>
             </Box>
           </Grid>

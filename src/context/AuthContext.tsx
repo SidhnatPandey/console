@@ -81,7 +81,7 @@ const AuthProvider = ({ children }: Props) => {
         const isNavigate = !localStorage.getItem(
           LOCALSTORAGE_CONSTANTS.workspace
         );
-        fetchWorkspaces(null, isNavigate);
+        fetchWorkspaces(null, isNavigate, true);
         fetchOrganisation();
         /* if (user) {
           setLoading(false)
@@ -214,7 +214,6 @@ const AuthProvider = ({ children }: Props) => {
   ) => {
     getWorkspaces().then((response) => {
       setLoading(false);
-
       setWorkspaces(response?.data.workspaces);
       if (!response?.data.workspaces && organisations.length > 0) {
         router.push("/workspaceError");
