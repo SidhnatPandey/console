@@ -1,10 +1,10 @@
-export type ErrCallbackType = (err: { [key: string]: string }) => void
+export type ErrCallbackType = (err: { [key: string]: string }) => void;
 
 export type LoginParams = {
-  email: string
-  password: string
-  rememberMe?: boolean
-}
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+};
 
 export type UserDataType = {
   id: string;
@@ -34,51 +34,54 @@ export type UserDataType = {
     };
   };
   status: string;
-}
+};
 
 export type AuthValuesType = {
-  loading: boolean
-  logout: () => void
-  user: UserDataType | null
-  setLoading: (value: boolean) => void
-  setUser: (value: UserDataType | null) => void
-  login: (params: LoginParams, errorCallback?: ErrCallbackType) => void,
-  workspaces: Workspace[],
-  organisations: Organisation[],
-  setWorkspaces: (value: Workspace[]) => void,
-  setOrganisations: (value: Organisation[]) => void,
-  fetchWorkspaces: (value: string | null) => void,
-  org: Org | null,
-  setOrg: (value: any) => void,
-  fetchOrg: () => void,
-}
+  loading: boolean;
+  logout: () => void;
+  user: UserDataType | null;
+  setLoading: (value: boolean) => void;
+  setUser: (value: UserDataType | null) => void;
+  login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
+  workspaces: Workspace[];
+  organisations: Organisation[];
+  setWorkspaces: (value: Workspace[]) => void;
+  setOrganisations: (value: Organisation[]) => void;
+  fetchWorkspaces: (
+    value: string | null,
+    isNavigate?: boolean,
+    setHomeRoute?: boolean
+  ) => void;
+  org: Org | null;
+  setOrg: (value: any) => void;
+  fetchOrg: () => void;
+};
 
 export type Workspace = {
-  id: string,
-  role: string,
-  name: string
-}
+  id: string;
+  role: string;
+  name: string;
+};
 
 export type Organisation = {
-  org_id: string,
-  org_name: string
-}
+  org_id: string;
+  org_name: string;
+};
 
 export type Org = {
-  created_by: string,
-  customer_id: string,
-  id: string,
-  name: string,
-  plan_id: string,
-  role: string,
-  app_count: number,
-  tier: number
-}
+  created_by: string;
+  customer_id: string;
+  id: string;
+  name: string;
+  plan_id: string;
+  role: string;
+  app_count: number;
+  tier: number;
+};
 
 export type SecurityValueTypes = {
-  workspace: string,
-  runType: string,
-  setWorkspace: (value: string) => void
-  setRunType: (value: string) => void
-}
-
+  workspace: string;
+  runType: string;
+  setWorkspace: (value: string) => void;
+  setRunType: (value: string) => void;
+};

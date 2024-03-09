@@ -1,26 +1,25 @@
 import toast from "react-hot-toast";
 
 const Toaster = {
+  successToast: (message: string) => {
+    toast.success(message, { duration: 5000 });
+  },
 
-    successToast: (message: string) => {
-        toast.success(message);
-    },
+  errorToast: (message: string) => {
+    toast.error(message, { duration: 5000 });
+  },
 
-    errorToast: (message: string) => {
-        toast.error(message);
-    },
+  infoToast: (message: string) => {
+    toast(message, {
+      icon: "ℹ️",
+    });
+  },
 
-    infoToast: (message: string) => {
-        toast(message, {
-            icon: 'ℹ️',
-        });
-    },
+  warningToast: (message: string) => {
+    toast(message, {
+      icon: "⚠️",
+    });
+  },
+};
 
-    warningToast: (message: string) => {
-        toast(message, {
-            icon: '⚠️',
-        });
-    }
-}
-
-export default Toaster; 
+export default Toaster;
