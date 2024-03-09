@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState } from "react";
+import { ReactNode, useContext, useState } from "react";
 
 // ** MUI Components
 import Button from "@mui/material/Button";
@@ -14,6 +14,8 @@ import BlankLayout from "src/@core/layouts/BlankLayout";
 import FooterIllustrations from "src/views/pages/misc/FooterIllustrations";
 import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 import CreateWorkspace from "./workspace/create";
+import useUser from "src/hooks/user";
+import { AuthContext } from "src/context/AuthContext";
 
 // ** Styled Components
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -38,7 +40,15 @@ const Img = styled("img")(({ theme }) => ({
 const workspaceError = () => {
   // const router = useRouter();
 
+  const { isAdmin, isWorkspaceAdmin } = useUser();
+
   const [showCreateWorkspace, setShowCreateWorkspcae] = useState<boolean>(false);
+
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+  };
 
   const handleRedirect = () => {
     //router.push("/workspace/create");
@@ -64,12 +74,19 @@ const workspaceError = () => {
               <Typography sx={{ mb: 6, color: "text.secondary" }}>
                 Create Atleast One Workspace!.
               </Typography>
-              <Button
+              {(isAdmin() || isWorkspaceAdmin()) && <Button
                 onClick={handleRedirect}
                 variant="contained"
                 style={{ color: "white" }}
               >
                 Create Workspace
+              </Button>}
+              <Button
+                onClick={handleLogout}
+                variant="contained"
+                style={{ color: "white" }}
+              >
+                Log Out
               </Button>
             </BoxWrapper>
             <Img

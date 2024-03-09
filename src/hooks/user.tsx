@@ -9,7 +9,12 @@ export default function useUser() {
         return authContext.user?.role === 'admin' ? true : false;
     };
 
+    const isWorkspaceAdmin = () => {
+        return authContext.user?.role === 'workspace-admin' ? true : false;
+    };
+
     return {
-        isAdmin
+        isAdmin,
+        isWorkspaceAdmin
     };
 }
