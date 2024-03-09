@@ -8,7 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
-
+import { ENV_TYPE } from "src/@core/static/app.constant";
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
@@ -329,9 +329,12 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 labelId="stepper-linear-personal-country"
                                                 aria-describedby="stepper-linear-personal-country-helper"
                                             >
-                                                <MenuItem value='secret_ref'>Secret_ref</MenuItem>
-                                                <MenuItem value='secret'>Secret</MenuItem>
-                                                <MenuItem value='env'>env</MenuItem>
+                                                {ENV_TYPE.map((env, index) => (
+                                                    <MenuItem value={env}>{env}</MenuItem>
+                                                ))
+                                                }
+
+
                                             </Select>
                                         )}
                                     />
