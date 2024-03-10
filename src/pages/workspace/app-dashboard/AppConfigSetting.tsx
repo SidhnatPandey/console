@@ -172,7 +172,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     <form>
       <Grid container spacing={5}>
         <Grid item xs={6} sm={6}>
-          <Typography variant="h3">App Settings</Typography>
+          <Typography variant="h5">App Settings</Typography>
         </Grid>
         {/* Button */}
 
@@ -251,7 +251,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
             />
           </Grid>
         ) : (
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={3} sm={4}>
             <div style={{ alignItems: "center" }}>
               <Typography variant="body1" component="span">
                 {port + ""}
@@ -261,7 +261,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         )}
 
         {/* HTTP Path */}
-        <Grid item xs={3} sm={3}>
+        <Grid item xs={3} sm={2}>
           <Typography variant="body1" component="span" fontWeight="bold">
             HTTP Path
           </Typography>
@@ -292,22 +292,21 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         </Grid>
 
         {/* App Instance */}
-        <Grid item xs={4} sm={4}>
+        <Grid item xs={3} sm={3}>
           <div>
             <Typography variant="body1" component="span" fontWeight="bold">
-              App Instance (AI)Size
+              App Instance(AI) Size
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={4} sm={4} style={{ marginTop: "-0.9rem" }}>
-          <FormControl sx={{ ml: "-5.3rem", width: 300, mt: 3 }}>
+        <Grid item xs={3} sm={4} style={{ marginTop: "-0.9rem" }}>
+          <FormControl sx={{ mt: 3 }}>
             <Select
               variant="outlined"
               size="small"
               id="no_of_Instances"
               displayEmpty
               value={instanceSize}
-              sx={{ maxWidth: 250 }}
               onChange={handleInstanceChange}
               input={<OutlinedInput />}
               renderValue={() => {
@@ -318,9 +317,9 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                       component="span"
                       fontWeight="bold"
                     >
-                      {instanceSize?.type + "-"}
+                      {instanceSize?.type? instanceSize?.type + " - " : "ExtraSmall" + " - "}
                     </Typography>
-                    {instanceSize?.ram + " RAM | " + instanceSize?.vcpu + " vCPU"}
+                    {instanceSize?.ram? instanceSize?.ram + " RAM | " : "256 GB RAM | "} {instanceSize?.vcpu === undefined ? "0.1 vCPU" : instanceSize?.vcpu + " vCPU"}
                   </Typography>
                 );
               }}
@@ -328,7 +327,6 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 PaperProps: {
                   style: {
                     maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                    width: 270,
                   },
                 },
               }}
@@ -342,7 +340,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     component="span"
                     fontWeight="bold"
                   >
-                    {instance.type + "-"}
+                    {instance.type + " - "}
                   </Typography>
                   {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
                 </MenuItem>
@@ -354,7 +352,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         {/* Select Instances */}
         <Grid
           item
-          xs={4}
+          xs={3}
           sm={4}
           style={{ paddingTop: "0px", marginTop: "12px" }}
         >
@@ -388,15 +386,15 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         </Grid>
 
         {/* Numebr of instances */}
-        <Grid item xs={4} sm={4}>
+        <Grid item xs={3} sm={3}>
           <div>
             <Typography variant="body1" component="span" fontWeight="bold">
               Number of Instances
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={8} sm={8}>
-          <FormGroup sx={{ ml: "-5.3rem", mt: "-0.2rem" }}>
+        <Grid item xs={3} sm={4}>
+          <FormGroup sx={{ mt: "-0.2rem" }}>
             <Box
               sx={{
                 display: "flex",
@@ -405,7 +403,8 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 alignItems: "center",
               }}
             >
-              <label htmlFor="min">Min</label>
+              <label htmlFor="min" style={{fontWeight:"bold"}}>Min:</label>
+              { isEdit? (
               <TextField
                 variant="outlined"
                 size="small"
@@ -416,8 +415,16 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 placeholder="1"
                 style={{ width: "3rem" }}
                 disabled={!isEdit || isDeveloperPlan()}
-              />
-              <label htmlFor="max">Max</label>
+              /> ) : (
+                <div style={{ alignItems: "center" }}>
+                  <Typography variant="body1" component="span">
+                    {minValue === "0"? "1" : minValue + ""}
+                  </Typography>
+                </div>
+              )
+              }
+              <label htmlFor="max" style={{fontWeight:"bold"}}>Max:</label>
+              { isEdit? (
               <TextField
                 variant="outlined"
                 size="small"
@@ -428,7 +435,14 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 placeholder="1"
                 style={{ width: "3rem" }}
                 disabled={!isEdit || isDeveloperPlan()}
-              />
+              /> ) : (
+                <div style={{ alignItems: "center" }}>
+                  <Typography variant="body1" component="span">
+                    {maxValue === "0" ? "1": maxValue + ""}
+                  </Typography>
+                </div>
+              )
+            }
             </Box>
           </FormGroup>
         </Grid>
