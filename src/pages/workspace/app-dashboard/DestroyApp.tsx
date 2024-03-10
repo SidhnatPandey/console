@@ -25,6 +25,7 @@ interface DestroyAppProps {
 
 const DestroyApp = (props: DestroyAppProps) => {
   const {
+    appName,
     appId,
   } = props
   const router = useRouter();
@@ -80,7 +81,7 @@ const DestroyApp = (props: DestroyAppProps) => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="h5">Destroy MY APP</Typography>
+              <Typography variant="h5">Destroy <b>{appName?.toUpperCase()}</b></Typography>
               <Typography variant="body1">Delete App</Typography>
             </Box>
           </Grid>

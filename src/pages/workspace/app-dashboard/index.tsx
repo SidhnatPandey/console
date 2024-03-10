@@ -381,7 +381,7 @@ const AppDashboard = () => {
           </p>
           <SwitcherButton
             handleBtnClick={triggerSupplyChainRun}
-            btnNames={["prod", "current"]}
+            btnNames={["current", "prod"]}
             defaultValue={"current"}
           ></SwitcherButton>
         </span>
@@ -476,7 +476,7 @@ const AppDashboard = () => {
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (
               <DestroyApp
-                appName={undefined}
+                appName={appData?.application_name}
                 appId={appData?.id}
                 metricsTimer={0}
               />
