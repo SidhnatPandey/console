@@ -272,7 +272,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
             variant="h5"
             sx={{
               marginLeft: "25px",
-              color: "rgba(0, 0, 0, 0.5)",
               fontWeight: "normal",
             }}
           >
