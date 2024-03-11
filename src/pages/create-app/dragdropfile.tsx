@@ -23,6 +23,26 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     const [isTest, setIsTest] = useState<boolean>(true);
     const [isAll, setIsAll] = useState(false);
     let type: string | undefined;
+    const flattenJSON = (json: any, prefix = ''): Record<string, string> => {
+        let result: Record<string, string> = {};
+    
+        for (const key in json) {
+            if (json.hasOwnProperty(key)) {
+                const newKey = prefix ? `${prefix}.${key}` : key;
+    
+                if (typeof json[key] === 'object') {
+                    const flattened = flattenJSON(json[key], newKey);
+                    result = { ...result, ...flattened };
+                } else {
+                    result[newKey] = json[key];
+                }
+            }
+        }
+    
+        return result;
+    };
+    
+    
     const handleAllCheckboxChange = (checked: boolean) => {
         setIsTest(checked);
         setIsStg(checked);
@@ -32,7 +52,6 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     const handleDrop = (file: File) => {
         hanldeUploadedFile(file);
         setOpen(true);
-
     }
 
     const hanldeUploadedFile = (file: File) => {
@@ -61,8 +80,9 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
                 break;
             case 'yml':
                 obj = jsyaml.load(event.target.result);
-                for (const key in obj) {
-                    if (typeof (obj[key]) !== 'object') arr.push({ 'key': key, 'value': obj[key] })
+                const flattened = flattenJSON(obj);
+                for (const key in flattened) {
+                    if (typeof (flattened[key]) !== 'object') arr.push({ 'key': key, 'value': String(flattened[key]) })
                 }
                 setFileData(arr);
                 break;
@@ -72,7 +92,6 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     const handleEnvClick = () => {
         updateForm(fileData, isTest, isStg, isProd);
         setOpen(false);
-        // setIsAll(false)
     }
 
     return (

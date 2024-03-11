@@ -6,6 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import { editApp } from 'src/services/appService';
+import {App} from './index'
 import Toaster from 'src/utils/toaster';
 interface EnvFormType {
     key: string;
@@ -15,6 +16,15 @@ interface EnvFormType {
     test: string;
     Checked: boolean;
 }
+export interface EnvVariables {
+    [key: string]: EnvVariable[]; // Index signature
+  }
+  
+  export interface EnvVariable {
+    key: string;
+    value: string;
+    type: string;
+  }
 
 interface AppEnvVaribaleProps {
     Data: any;
@@ -22,12 +32,13 @@ interface AppEnvVaribaleProps {
     setHideEdit(state: boolean): void
 }
 const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
-    const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(10).fill(true));
-    const [open, setOpen] = useState<boolean>(false)
     const { showEdit, Data, setHideEdit } = props;
-    const EnvData = Data.env_variables
+    const EnvData= Data.env_variables
     const envArr: any[] = [];
+    
+    const [open, setOpen] = useState<boolean>(false)
     const [dataArr, setDataArr] = useState<any[]>([]);
+    const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(100).fill(true));
 
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
@@ -77,7 +88,21 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     const handleEnvDialogClose = (envVariables: any, count: number, editData: any) => {
-        if (count > 0) {
+        if (count >=0) {
+            console.log(editData);
+            console.log("env",envVariables)
+            // editData.foreach((item: any)=>{
+            //     // if(item.key!=null){
+            //     //     filterdata[0].key=item.key;
+            //     //     filterdata[0].KeyType=item.KeyType;
+            //     //     filterdata[0].prod=item.prod;
+            //     //     filterdata[0].test=item.test;
+            //     //     filterdata[0].stg=item.stg;
+            //     //     filterdata[0].Checked=item.Checked;
+            //     // }
+            //     console.log(item.key)
+            // })
+            //const filterdata:EnvFormType[]= editData.filter( (item: EnvFormType)  => item.key.trim() !== '');
             setDataArr(editData);
             updateAppData(envVariables);
         }
