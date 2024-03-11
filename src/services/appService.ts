@@ -1,5 +1,5 @@
 import { APP_API } from "src/@core/static/api.constant";
-import { deleteCall, get, post } from "../@core/services/masterServices";
+import { deleteCall, get, post, put } from "../@core/services/masterServices";
 import { setApiBaseUrl } from "src/@core/services/interceptor";
 
 export const appNameExists = (appName: any) => {
@@ -42,6 +42,14 @@ export const saveApp = (app: any) => {
   return post(APP_API.saveApp, app).then(
     (response) => response?.data
   )
+}
+
+export const editApp = (prop: any, appId: any) =>{
+  setApiBaseUrl();
+  let url = APP_API.editApp;
+  url = url.replace("{appId}", appId);
+
+  return put(url, prop).then((response) => response?.data);  
 }
 
 export const appList = (workspaceId: string) => {

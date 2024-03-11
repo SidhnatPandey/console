@@ -1,21 +1,17 @@
 import { Card, CardContent, Typography, Box } from "@mui/material";
-import router from "next/router";
-import { useEffect, useState } from "react";
-import { convertToString } from "src/@core/utils/string";
 import ChipsRounded from "src/component/Chip";
-import { getEpssScore } from "src/services/securityService";
 
 interface AppsAffectedByCVEDataProps {
   appsAffectedData?: {
     CveId: string;
     Severity: string;
+    ExpoProbability: string;
   };
   setAppsAffectedData?: (value: any) => void;
 }
 
 const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
-  const [epssData, setEpssData] = useState<any>();
-  const getCVEColor = (severity: string) => {
+  const getChipColor = (severity: string) => {
     switch (severity) {
       case "Critical":
         return "error";
@@ -27,55 +23,13 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
         return "secondary";
       case "Unknown":
         return "info";
+      case "Negligible":
+        return "info";
       default:
-        return "secondary";
+        return "success";
     }
   };
 
-  const getEPSSCategory = (score: number) => {
-    const obj: {
-      color: "error" | "warning" | "primary" | "secondary" | "info" | "success";
-      label: string;
-      percentage: number;
-    } = { color: "secondary", label: "", percentage: 0 };
-
-    const percentage = score * 100;
-
-    if (percentage < 1) {
-      obj.color = "success";
-      obj.label = "Negligible";
-    } else if (percentage < 25) {
-      obj.color = "info";
-      obj.label = "Low";
-    } else if (percentage < 50) {
-      obj.color = "primary";
-      obj.label = "Medium";
-    } else if (percentage < 75) {
-      obj.color = "warning";
-      obj.label = "High";
-    } else if (percentage <= 100) {
-      obj.color = "error";
-      obj.label = "Critical";
-    } else {
-      obj.color = "secondary";
-      obj.label = "Unknown";
-    }
-
-    obj.percentage = percentage;
-    return obj;
-  };
-
-  useEffect(() => {
-    if (appsAffectedData?.CveId) {
-      getEpssScores(convertToString(appsAffectedData?.CveId));
-    }
-  }, [appsAffectedData?.CveId]);
-
-  const getEpssScores = (cveId: string) => {
-    getEpssScore(cveId).then((res) => {
-      setEpssData(res?.data);
-    });
-  };
   return (
     <Card sx={{ mt: 4 }}>
       <CardContent>
@@ -83,8 +37,12 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
           <Box display="flex" alignItems="center" gap={10}>
             <Typography variant="h5">SEVERITY</Typography>
             <ChipsRounded
-              label={appsAffectedData?.Severity || "N/A"}
-              color={getCVEColor(appsAffectedData?.Severity || "N/A")}
+              label={
+                appsAffectedData?.Severity === "Unknown"
+                  ? "Negligible"
+                  : appsAffectedData?.Severity || "N/A"
+              }
+              color={getChipColor(appsAffectedData?.Severity || "N/A")}
             />
           </Box>
           <Box display="flex" alignItems="center" gap={10}>
@@ -95,11 +53,11 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
             <Box>
               <ChipsRounded
                 label={
-                  epssData?.epss !== undefined
-                    ? getEPSSCategory(epssData?.epss).label
-                    : "N/A"
+                  appsAffectedData?.ExpoProbability === "Unknown"
+                    ? "Negligible"
+                    : appsAffectedData?.ExpoProbability || "N/A"
                 }
-                color={getEPSSCategory(epssData?.epss || "N/A").color}
+                color={getChipColor(appsAffectedData?.ExpoProbability || "N/A")}
               />
             </Box>
           </Box>
@@ -113,15 +71,20 @@ const SeverityEpss = ({ appsAffectedData }: AppsAffectedByCVEDataProps) => {
             <Box>
               <ChipsRounded
                 label={
-                  epssData?.epss !== undefined
-                    ? epssData?.epss < 1
-                      ? "< 1%"
-                      : `${getEPSSCategory(epssData?.epss).percentage.toFixed(
-                          2
-                        )}%`
+                  appsAffectedData?.ExpoProbability === "Unknown" ||
+                  appsAffectedData?.ExpoProbability === "Negligible"
+                    ? "<1%"
+                    : appsAffectedData?.ExpoProbability === "Low"
+                    ? "<25%"
+                    : appsAffectedData?.ExpoProbability === "Medium"
+                    ? "<50%"
+                    : appsAffectedData?.ExpoProbability === "High"
+                    ? "<75%"
+                    : appsAffectedData?.ExpoProbability === "Critical"
+                    ? "<=100%"
                     : "N/A"
                 }
-                color={getEPSSCategory(epssData?.epss || "N/A").color}
+                color={getChipColor(appsAffectedData?.ExpoProbability || "N/A")}
               />
             </Box>
           </Box>

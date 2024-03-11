@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material"
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PlanDetails from "src/@core/components/plan-details";
 import { PricingPlanType } from "src/@core/components/plan-details/types";
 import Payment from "../payment";
@@ -63,8 +63,8 @@ const Plans = (props: Props) => {
             const planId = getItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId)!;
             saveCardSession(sessionId, customreId, planId).then(
                 () => {
-                    fetchCards();
                     authContext.fetchOrg();
+                    fetchCards();
                     urlParams.delete("session_id");
                     router.replace('/billing');
                     removeItemFromLocalstorage(LOCALSTORAGE_CONSTANTS.planId);

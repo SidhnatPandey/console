@@ -24,6 +24,7 @@ export const APP_API = {
   appList: "apps",
   supplyChainSteps: "supplychainruns/{runId}/steps?stage={stage}",
   appDetails: "apps/{appId}",
+  editApp: "apps/{appId}",
   appMatrix: "app/metrics?deployment={appName}",
   approval: "changeapprovalstatus",
   appLogs: "apps/{appId}/logs?env=",
@@ -46,6 +47,8 @@ export const APP_API = {
   sbom: "sbom?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
   downloadAppVulCve:
     "vulernabilities/downloadAppVuln?app_id={app_id}&run_type={run_type}&workspace_id={workspace_id}",
+  overallExpo:
+    "overallexpo?workspace_id={workspace_id}&run_type={run_type}&app_id={app_id}",
 
   //Workspace
   createWorkspace: "workspace",

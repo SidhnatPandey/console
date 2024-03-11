@@ -11,6 +11,8 @@ import Skeleton from 'react-loading-skeleton';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSettings } from 'src/@core/hooks/useSettings';
+
 
 interface ProcessTileProps {
   stage: string;
@@ -32,6 +34,10 @@ const ProcessTile = (props: ProcessTileProps) => {
   const checkApproval = () => {
     return stage.toLowerCase().includes("approval")
   }
+  const checkDarkMode = () => {
+    const { settings } = useSettings()
+    return settings.mode.toLowerCase().includes("dark")
+  }
   // Rotate the card by 45 degrees for the "Approval" process and set a purple background
   const cardStyle: React.CSSProperties = {
     minWidth: checkApproval() ? "135px" : "120px",
@@ -45,7 +51,7 @@ const ProcessTile = (props: ProcessTileProps) => {
       : "2px solid transparent",
     cursor: "pointer",
     transform: checkApproval() ? "rotate(-45deg)" : "none",
-    backgroundColor: checkApproval() ? "rgb(115, 83, 229)" : "transparent",
+    backgroundColor: checkApproval() ? "rgb(115, 83, 229)" : checkDarkMode() ? "rgb(42, 45, 65)" : "transparent",
     boxShadow: "15",
   };
 

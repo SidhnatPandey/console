@@ -35,9 +35,9 @@ const SecurityCompliance = (props: Props) => {
     chart: {
       sparkline: { enabled: true },
     },
-    stroke: { dashArray: 10 },
+
     labels: ["Policy Compliance"],
-    colors: [hexToRGBA(theme.palette.primary.main, 1)],
+    colors: [hexToRGBA(theme.palette.success.main, 1)],
     states: {
       hover: {
         filter: { type: "none" },
@@ -50,20 +50,20 @@ const SecurityCompliance = (props: Props) => {
       type: "gradient",
       gradient: {
         shade: "dark",
-        opacityTo: 0.5,
+        opacityTo: 1,
         opacityFrom: 1,
-        shadeIntensity: 0.5,
+        shadeIntensity: 1,
         stops: [30, 70, 100],
-        inverseColors: false,
-        gradientToColors: [theme.palette.primary.main],
+        inverseColors: true,
+        gradientToColors: [theme.palette.success.main],
       },
     },
     plotOptions: {
       radialBar: {
-        endAngle: 130,
+        endAngle: 140,
         startAngle: -140,
         hollow: { size: "60%" },
-        track: { background: "transparent" },
+        track: { background: "#CE4A4B" },
         dataLabels: {
           name: {
             offsetY: -15,
@@ -82,6 +82,7 @@ const SecurityCompliance = (props: Props) => {
         },
       },
     },
+
     grid: {
       padding: {
         top: -30,
@@ -113,11 +114,11 @@ const SecurityCompliance = (props: Props) => {
   };
 
   const [scanData, setScanData] = useState({
-    totalScans: 0,
+    totalApps: 0,
     succeeded: 0,
     failed: 0,
   });
-  const [successPercentage, setSuccessPercentage] = useState(100);
+  const [successPercentage, setSuccessPercentage] = useState(0);
   const [chartKey, setChartKey] = useState(Math.random());
 
   useEffect(() => {
@@ -133,7 +134,7 @@ const SecurityCompliance = (props: Props) => {
       .then((response) => {
         setScanData(response?.data || {});
         let percentage =
-          (response?.data.succeeded / response?.data.totalScans) * 100 || 0;
+          (response?.data.succeeded / response?.data.totalApps) * 100 || 0;
         percentage = parseFloat(percentage.toFixed(2));
         setSuccessPercentage(percentage);
         setChartKey(Math.random());
@@ -144,7 +145,10 @@ const SecurityCompliance = (props: Props) => {
   };
 
   return (
-    <Card sx={{ width: "49%" }} data-testid="security-compliance-card">
+    <Card
+      sx={{ width: "49%", height: "500px" }}
+      data-testid="security-compliance-card"
+    >
       <CardHeader title="Scan Compliance" data-testid="card-header" />
       <CardContent style={{ padding: 20, textAlign: "center" }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -166,26 +170,18 @@ const SecurityCompliance = (props: Props) => {
           }}
         >
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={4}>
-              <Typography data-testid="total-scans" sx={{ fontWeight: 500 }}>
-                Total Scans
-              </Typography>
-              <Typography
-                sx={{ mb: 5, color: "text.secondary" }}
-                variant="h6"
-                data-testid="total-scans-data"
-              >
-                {scanData.totalScans}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <Box display="flex" alignItems="center">
                 <CustomAvatar
                   skin="light"
                   variant="rounded"
                   color="success"
-                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                  sx={{
+                    marginRight: 4,
+                    marginLeft: 10,
+                    width: 34,
+                    height: 34,
+                  }}
                 >
                   <Icon icon="tabler:circle-check" />
                 </CustomAvatar>
@@ -200,7 +196,7 @@ const SecurityCompliance = (props: Props) => {
                     sx={{ fontWeight: 500 }}
                     data-testid="succeeded-scans"
                   >
-                    Success
+                    Compliant
                   </Typography>
                   <Typography
                     variant="body2"
@@ -213,13 +209,13 @@ const SecurityCompliance = (props: Props) => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <Box display="flex" alignItems="center">
                 <CustomAvatar
                   skin="light"
                   variant="rounded"
                   color="error"
-                  sx={{ marginRight: 4, width: 34, height: 34 }}
+                  sx={{ marginRight: 4, marginLeft: 10, width: 34, height: 34 }}
                 >
                   <Icon icon="tabler:circle-x" />
                 </CustomAvatar>
@@ -234,7 +230,7 @@ const SecurityCompliance = (props: Props) => {
                     sx={{ fontWeight: 500 }}
                     data-testid="failed-scans"
                   >
-                    Failed
+                    Non-Compliant
                   </Typography>
                   <Typography
                     variant="body2"

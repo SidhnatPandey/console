@@ -1,7 +1,7 @@
+import React from "react";
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import PaymentMethod from "./paymentMethod";
 import Plans from "./plans";
-
 import Tab from '@mui/material/Tab'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
@@ -90,9 +90,7 @@ const Billing = () => {
                 {plan.planTier() > 1 && <PaymentMethod cards={cards} fetchCards={fetchCards} customerId={authContext?.org?.customer_id}></PaymentMethod>}
             </TabPanel>
             <TabPanel value='2' sx={{ p: '20px 0px' }}>
-
                 <InvoiceTable />
-
             </TabPanel>
         </TabContext>
     )

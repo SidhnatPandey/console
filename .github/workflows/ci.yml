@@ -34,7 +34,11 @@ jobs:
     # Step 3: Install Dependencies    
     - name: Install dependencies
       run: npm ci
+
+    # Step 4: Build    
+    - name: Build Node
+      run: npm run build
       
-    # Step 4: Code Quality Scan with ESLint
+    # Step 5: Code Quality Scan with ESLint
     - name: Code Quality Scan with ESLint
       run: npm run lint

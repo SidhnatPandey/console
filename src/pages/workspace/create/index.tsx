@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Card, Grid, TextField, Button } from "@mui/material";
+import { Card, Grid, TextField, Button, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
 import { workspace } from "src/services/appService";
 import { AuthContext } from "src/context/AuthContext";
@@ -28,7 +28,7 @@ const CreateWorkspace = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   useEffect(() => {
-    planHook.isAppCrationAllowed() ? "" : setOpenAlert(true);
+    planHook.isDeveloperPlan() ? setOpenAlert(true) : "";
   }, []);
 
   const onSubmit = (data: FormData) => {
@@ -36,11 +36,19 @@ const CreateWorkspace = () => {
       setOpenAlert(true);
     } else if (!loading) {
       startLoading();
-      workspace(data)
+      const params = {
+        workspace_name: data.workspace_name.trim(),
+        description: data?.description
+      }
+      workspace(params)
         .then((response) => {
           if (response.status === 201) {
-            Toaster.successToast("Workspace created successfully");
-            authContext.fetchWorkspaces(data.workspace_name);
+            if (window.location.pathname.includes('workspaceError')) {
+              window.location.reload();
+            } else {
+              Toaster.successToast("Workspace created successfully");
+              authContext.fetchWorkspaces(data.workspace_name);
+            }
             reset();
           } else if (response.status === 409) {
             Toaster.infoToast(
@@ -84,6 +92,7 @@ const CreateWorkspace = () => {
             <TextField
               data-testid="workspaceDescription"
               fullWidth
+              inputProps={{ maxLength: 200 }}
               label="Workspace Description"
               variant="outlined"
               multiline
@@ -98,8 +107,9 @@ const CreateWorkspace = () => {
               size="large"
               variant="contained"
               type="submit"
+              disabled={loading}
             >
-              Create
+              {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Creating</> : 'Create'}
             </Button>
           </Grid>
         </Grid>

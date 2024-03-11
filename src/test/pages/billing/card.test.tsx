@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
 import Card from 'src/pages/billing/card';
 
 describe('Card Component', () => {
@@ -33,19 +32,16 @@ describe('Card Component', () => {
 
     const mockOpenConfirmation = jest.fn();
 
-    //   test('renders Card component', () => {
-    //     render(
-    //       <Card index={0} item={mockItem} cardsLength={1} openConfirmation={mockOpenConfirmation} />
-    //     );
+      test('renders Card component', () => {
+        render(
+          <Card index={0} item={mockItem} cardsLength={1} openConfirmation={mockOpenConfirmation} />
+        );
 
-    //     // Add assertions based on your component structure
-    //     expect(screen.getByText(/john doe/i)).toBeInTheDocument();
-    //     // expect(screen.getByText(/**** **** **** 1234/i)).toBeInTheDocument();
-    //     expect(screen.getByText(/make as default/i)).toBeInTheDocument();
-    //     expect(screen.getByText(/edit/i)).toBeInTheDocument();
-    //     expect(screen.getByText(/delete/i)).toBeInTheDocument();
-    //     expect(screen.getByText(/Card expires at 12\/23/i)).toBeInTheDocument();
-    //   });
+        // Add assertions based on your component structure
+        expect(screen.getByText(/john doe/i)).toBeInTheDocument();
+        expect(screen.getByText(/make as default/i)).toBeInTheDocument();
+        expect(screen.getByText(/edit/i)).toBeInTheDocument();
+      });
 
     test('handles "Make as Default" button click', () => {
         render(

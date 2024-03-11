@@ -6,11 +6,12 @@ export const LOCALSTORAGE_CONSTANTS = {
   ogrId: "orgId",
   homeRoute: "default_route",
   workspace: "workspaceId",
-  planId: 'selectedPlanId'
+  planId: "selectedPlanId",
 };
 
 export const SESSIONSTORAGE_CONSTANTS = {
   appName: "appName",
+  creatAppName: "createAppName",
 };
 
 export const PERMISSION_CONSTANTS = {
@@ -32,4 +33,30 @@ export const PERMISSION_CONSTANTS = {
   appDashboard: "app-dashboard",
   deleteApp: "app-delete",
   createApp: "create-app",
+  orgError: "orgError",
+  workspaceError: "workspaceError",
 };
+
+//instances
+export const AI_SIZE = [
+  {
+    type: "Default",
+    ram: "2GB",
+    vcpu: 1,
+  },
+  {
+    type: "Small",
+    ram: "1 GB",
+    vcpu: 0.5,
+  },
+  {
+    type: "Large",
+    ram: "4 GB",
+    vcpu: 2,
+  },
+  {
+    type: "Extra Small",
+    ram: "0.5 GB",
+    vcpu: 0.1,
+  },
+];

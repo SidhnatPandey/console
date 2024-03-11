@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -32,10 +32,11 @@ import toast from "react-hot-toast";
 import { Avatar } from "@mui/material";
 import { UserDataType } from "src/context/types";
 import { toTitleCase } from "src/utils/stringUtils";
+import { getUserData } from "src/services/userService";
 
 interface WorkspaceSettingsDataItem {
   profile_picture: any;
-  username: ReactNode;
+  username: string;
   id: number;
   user_full_name: string;
   role: string;
@@ -88,6 +89,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
     getListOfUsersWorkspaces(workspaceId?.id)
       .then((response) => {
         setWorkspaceSettingsData(response?.data || []);
+        getProfilePicture(response?.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -111,6 +113,17 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
       console.error("Error fetching users:", error);
     }
   };
+
+  const getProfilePicture = (userArr: WorkspaceSettingsDataItem[]) => {
+    userArr.forEach((user: WorkspaceSettingsDataItem) => {
+      getUserData(user.user_id).then((resp: any) => {
+        if (resp.data) {
+          user.profile_picture = resp.data.user_info.profile_picture;
+          setWorkspaceSettingsData([...userArr]);
+        }
+      })
+    })
+  }
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -259,7 +272,6 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
             variant="h5"
             sx={{
               marginLeft: "25px",
-              color: "rgba(0, 0, 0, 0.5)",
               fontWeight: "normal",
             }}
           >
@@ -321,6 +333,7 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
                 workspaceSettingsData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, key) => {
+                    const [first_name, last_name] = row.user_full_name.split(" ");
                     return (
                       <TableRow key={key}>
                         <TableCell>
@@ -337,7 +350,25 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
                               }
                               sx={{ marginRight: 2, fontSize: "2rem" }}
                               style={{ alignItems: "center", fontSize: "20px" }}
-                            />
+                            >
+                              {!row.profile_picture &&
+                                (first_name ||
+                                  last_name
+                                  ? `${first_name
+                                    ? toTitleCase(
+                                      first_name[0]
+                                    )
+                                    : ""
+                                  }${last_name
+                                    ? toTitleCase(
+                                      last_name[0]
+                                    )
+                                    : ""
+                                  }`
+                                  : row.username
+                                    ? toTitleCase(row.username[0])
+                                    : "")}
+                            </Avatar>
                             <div>
                               <Typography
                                 variant="body1"
@@ -508,10 +539,10 @@ const WorkspaceSettings: React.FC<WorkspaceSettingsComponent> = ({
             >
               {Array.isArray(fetchedUsers)
                 ? fetchedUsers.map((user) => (
-                    <MenuItem key={user.id} value={user.user_id}>
-                      {user.email}
-                    </MenuItem>
-                  ))
+                  <MenuItem key={user.id} value={user.user_id}>
+                    {user.email}
+                  </MenuItem>
+                ))
                 : null}
             </TextField>
             <TextField

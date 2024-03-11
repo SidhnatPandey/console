@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -10,12 +11,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-hot-toast";
 import { destroyApp } from "src/services/appService";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { AuthContext } from "src/context/AuthContext";
+import useLoading from "src/hooks/loading";
 
 interface DestroyAppProps {
-  loading: boolean;
   appName?: string;
   metricsTimer?: number;
   appId?: string;
@@ -23,7 +25,7 @@ interface DestroyAppProps {
 
 const DestroyApp = (props: DestroyAppProps) => {
   const {
-    loading,
+    appName,
     appId,
   } = props
   const router = useRouter();
@@ -35,15 +37,21 @@ const DestroyApp = (props: DestroyAppProps) => {
       setConfirmationDialogOpen(true);
     }
   };
+  const { loading, startLoading, stopLoading } = useLoading();
+  const authContext = useContext(AuthContext)
 
   const confirmDestroyApp = () => {
     if (appId) {
+      startLoading();
       destroyApp(appId, workspaceId)
         .then((response: any) => {
           setConfirmationDialogOpen(false);
           if (response?.status === 200) {
             toast.success("App deleted successfully!");
             const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
+            setTimeout(() => {
+              authContext.fetchOrg();
+            }, 2000);
             router.push(defaultRoute);
           } else {
             toast.error("App deletion failed. Please try again.");
@@ -55,79 +63,67 @@ const DestroyApp = (props: DestroyAppProps) => {
           toast.error(
             "An error occurred during App deletion. Please try again later."
           );
-        });
+        })
+        .finally(() => {
+          stopLoading();
+        })
     }
   };
 
 
   return (
     <Card sx={{ margin: "-25px" }}>
-      {loading ? (
-        <Skeleton width={200} height={20} style={{ margin: "20px" }} />
-      ) : (
-        <CardHeader
-          title="App Settings"
-          sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
-        />
-      )}
+      {/* <CardHeader
+        title="App Settings"
+        sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
+      /> */}
       <CardContent sx={{ pt: (theme) => `${theme.spacing(7)} !important` }}>
         <Grid container spacing={3}>
-          {loading ? (
-            <Skeleton
-              width={300}
-              height={40}
-              style={{ marginLeft: "20px" }}
-              count={3}
-              inline
-            />
-          ) : (
-            <>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography variant="h5">Destroy</Typography>
-                  <Typography variant="body1">Delete App</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "20px", // Adjust spacing as needed
-                  }}
-                >
-                  <Typography variant="body1" sx={{ whiteSpace: "nowrap" }}>
-                    Destroy App and Associated Components
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button
-                    startIcon={<DeleteIcon />}
-                    style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
-                    onClick={handleDestroyApp}
-                  >
-                    Destroy
-                  </Button>
-                </Box>
-              </Grid>
-            </>
-          )}
+          <Grid item xs={12} md={4}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography variant="h5">Destroy <b>{appName?.toUpperCase()}</b></Typography>
+              <Typography variant="body1">Delete App</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "20px", // Adjust spacing as needed
+              }}
+            >
+              <Typography variant="body1" sx={{ whiteSpace: "nowrap" }}>
+                Destroy App and Associated Components
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                startIcon={<DeleteIcon />}
+                style={{ backgroundColor: "#FF0000", color: "#FFFFFF" }}
+                onClick={handleDestroyApp}
+              >
+                Destroy
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
       </CardContent>
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog
+        loading={loading}
         open={isConfirmationDialogOpen}
         onConfirm={confirmDestroyApp}
         onCancel={() => setConfirmationDialogOpen(false)}

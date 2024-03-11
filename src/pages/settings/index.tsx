@@ -36,6 +36,7 @@ import {
   checkEmail,
   checkUsername,
   getOrganisationsUserList,
+  getUserData,
   inviteUser,
   removeUserFromOrg,
 } from "src/services/userService";
@@ -82,16 +83,35 @@ export const RowOptions: React.FC<RowOptionsProps> = ({
   const removeOrgUsers = () => {
     if (userToRemove) {
       removeUserFromOrg(userToRemove)
-        .then(() => {
-          Toaster.successToast("User Removed successfully");
-          setRemoveConfirmationOpen(false);
-          refreshData();
+        .then((response) => {
+          if (response.status === 200) {
+            // Successful removal
+            Toaster.successToast("User Removed successfully");
+            setRemoveConfirmationOpen(false);
+            refreshData();
+          } else {
+            Toaster.errorToast("Unexpected response status: " + response.status);
+            setRemoveConfirmationOpen(false);
+          }
         })
-        .catch(() => {
+        .catch((error) => {
           setRemoveConfirmationOpen(false);
+  
+          if (error.response && error.response.status === 400) {
+            const errorMessage = error.response.data.message;
+  
+            if (errorMessage === "Oops! It seems like you're trying to remove yourself from organization.") {
+              Toaster.errorToast(errorMessage);
+            } else {
+              Toaster.errorToast("Error: " + errorMessage);
+            }
+          } else {
+            Toaster.errorToast("Oops! It seems like you're trying to remove yourself from organization.");
+          }
         });
     }
   };
+  
 
   return (
     <>
@@ -201,10 +221,24 @@ const UserList = () => {
   const settingsData = () => {
     setLoadingData(true);
     getOrganisationsUserList().then((response) => {
-      setUsers(response.data.users);
+      if (response.data.users) {
+        setUsers(response.data.users);
+        getProfilePicture(response.data.users);
+      }
       setLoadingData(false);
     });
   };
+
+  const getProfilePicture = (userArr: UserDataType[]) => {
+    userArr.forEach((user: UserDataType) => {
+      getUserData(user.user_id).then((resp: any) => {
+        if (resp.data) {
+          user.user_info.profile_picture = resp.data.user_info.profile_picture;
+          setUsers([...userArr]);
+        }
+      })
+    })
+  }
 
   const handleAddUserClick = () => {
     if (!planHook.isDeveloperPlan()) {

@@ -12,6 +12,7 @@ import { appAffected } from "src/services/securityService";
 import ImpactedApplications from "./ImpactedApplications";
 import ImpactedPackages from "./ImpactedPackages";
 import SeverityEpss from "./SeverityEpssCard";
+import BackButton from "src/component/backButton";
 
 export interface AppsAffectedByCVEData {
   AppsAffected: {
@@ -31,6 +32,7 @@ export interface AppsAffectedByCVEData {
     [key: string]: string;
   }[];
   Severity: string;
+  ExpoProbability: string;
 }
 
 const CveDashboard = () => {
@@ -89,6 +91,7 @@ const CveDashboard = () => {
           setAppsAffectedData={setAppsAffectedData}
           loading={loading}
         />
+        <BackButton />
       </Box>
     </>
   );

@@ -11,8 +11,11 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
+import Link from "next/link";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
+import { useRouter } from "next/router";
 
 interface AppsAffectedByCVEDataProps {
   appsAffectedData?: {
@@ -84,6 +87,7 @@ const ImpactedApplications = ({
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  const router = useRouter();
 
   return (
     <Card sx={{ marginTop: "20px" }}>
@@ -158,7 +162,17 @@ const ImpactedApplications = ({
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell>{row?.AppName}</TableCell>
+                      <TableCell>
+                        <Link
+                          href={{
+                            pathname: "/workspace/app-dashboard",
+                            query: { appId: row?.AppID },
+                          }}
+                          style={{ textDecoration: "none" }}
+                        >
+                          {row?.AppName}
+                        </Link>
+                      </TableCell>
                       <TableCell>{row?.WorkspaceName}</TableCell>
                     </TableRow>
                   ))

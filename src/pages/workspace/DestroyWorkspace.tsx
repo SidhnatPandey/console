@@ -34,7 +34,7 @@ const DestroyWorkspace: React.FC<DestroyWorkspaceProps> = ({ workspaceId }) => {
       deleteWorkspace(workspaceId.id)
         .then(() => {
           setTimeout(() => {
-            auth.fetchWorkspaces(null);
+            auth.fetchWorkspaces(null, true, true);
             setConfirmationDialogOpen(false);
             removeWorkspace(workspaceId.id);
             const defaultRoute = localStorage.getItem(LOCALSTORAGE_CONSTANTS.homeRoute) || '/';
