@@ -284,7 +284,7 @@ const ApplicationVulnerabilities = () => {
       case "Negligible":
         return "info";
       default:
-        return "secondary";
+        return "success";
     }
   };
 

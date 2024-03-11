@@ -32,6 +32,7 @@ export interface AppsAffectedByCVEData {
     [key: string]: string;
   }[];
   Severity: string;
+  ExpoProbability: string;
 }
 
 const CveDashboard = () => {
