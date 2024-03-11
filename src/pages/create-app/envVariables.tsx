@@ -145,7 +145,21 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return getEnvVariableValue('env_variables')[index].KeyType as string;
     }
 
+   
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
+        const currentDataList=getEnvVariableValue(`env_variables`);
+        // let prevListLength=getEnvVariableValue(`env_variables`).length;
+        // while(prevListLength>0){
+        //     if(!currentDataList[prevListLength-1].key){
+        //         remove(prevListLength-1);
+        //         prevListLength--;
+        //     }
+        // }
+        if(!currentDataList[0].key){
+            remove(0);
+        }
+       
+       
         if (isTest) {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
@@ -190,11 +204,12 @@ const EnvVariables = (props: EnvVariablesProps) => {
                     setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
                 }
                 else {
-                    const ispresent = checkIfKeyExists(item.key); {
+                    const ispresent = checkIfKeyExists(item.key);
+                    
                         if (ispresent < 0) {
                             append(item);
                         }
-                    }
+                    
                 }
             })
         }
@@ -210,15 +225,17 @@ const EnvVariables = (props: EnvVariablesProps) => {
             prod: envArray[];
         } = { test: [], stg: [], prod: [] };
         envVariables.forEach((ele: any) => {
-            if (ele.test) {
-                nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
-            }
-            if (ele.stg) {
-                nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
-            }
-            if (ele.prod) {
-                nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
-            }
+            
+                if (ele.test) {
+                    nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
+                }
+                if (ele.stg) {
+                    nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
+                }
+                if (ele.prod) {
+                    nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
+                }
+            
         });
         return nData;
     };
@@ -289,15 +306,15 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                         name={`env_variables.${index}.key`}
                                         control={EnvVariableControl}
                                         rules={{ required: true }}
-
                                         render={({ field: { value, onChange, onBlur } }) => (
                                             <CustomTextField
                                                 fullWidth
                                                 autoFocus
-                                                sx={{ height: '50px' }}
+                                                
+                                                sx={{ height: '50px',   }}
                                                 id='user-email-input'
                                                 value={value}
-                                                variant="outlined"
+                                                variant="standard"
                                                 onBlur={onBlur}
                                                 onChange={onChange}
                                                 placeholder='Key'
@@ -317,9 +334,19 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                         render={({ field: { value, onChange } }) => (
                                             <Select
                                                 value={value}
-                                                label="Key Type"
                                                 //defaultValue="KEYTYPE"
-                                                sx={{ width: "100%", maxHeight: '38px' }}
+                                                sx={{
+                                                    width: "100%", maxHeight: '38px', boxShadow: 'none',
+                                                    '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                                                    "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                                                    {
+                                                        border: 0,
+                                                    },
+                                                    "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                                    {
+                                                        border: 0,
+                                                    },
+                                                }}
                                                 onChange={(e) => {
                                                     onChange(e);
                                                     handleChange(e);
