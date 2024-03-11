@@ -83,7 +83,6 @@ import {
 } from "src/services/sessionstorageService";
 import { setItemToLocalstorage } from "src/services/locastorageService";
 import useLoading from "src/hooks/loading";
-import { APP_API } from "src/@core/static/api.constant";
 import EnvVariables from "./envVariables";
 
 const steps = [
@@ -432,41 +431,59 @@ const CreateApp = () => {
   };
 
   const handleFinalSubmit = () => {
-    startLoading();
+    if (Number(minValue) > 0 && Number(maxValue) > 0) {
+      if (Number(minValue) > 0) {
+        if (Number(maxValue) > 0) {
+          setError("");
+          startLoading();
 
-    const data: any = { ...getSoruceCodeValue(), ...getConfigurationValue() };
-    data["git_user"] = gitUser;
-    data.env_variables = environmentVariables;
-    data.application_name = data.application_name?.trim();
-    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
-      removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+          const data: any = {
+            ...getSoruceCodeValue(),
+            ...getConfigurationValue(),
+          };
+          data["git_user"] = gitUser;
+          data.env_variables = environmentVariables;
+          data.application_name = data.application_name?.trim();
+          if (
+            getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)
+          ) {
+            removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+          }
+          const obj = {
+            instance_type: instanceSize.type,
+            vertical_auto_scale: isChecked,
+            max: Number(maxValue),
+            min: Number(minValue),
+          };
+          data.instance_details = obj;
+
+          saveApp(data)
+            .then((response) => {
+              console.log(data);
+              toast.success("App Created Successfully");
+              router.push({
+                pathname: "/workspace/app-dashboard",
+                query: { appId: response.data.app_id },
+              });
+              setTimeout(() => {
+                authContext.fetchOrg();
+              }, 2000);
+            })
+            .catch((error) => {
+              toast.error(error);
+            })
+            .finally(() => {
+              stopLoading();
+            });
+        } else {
+          setError("Max is Required");
+        }
+      } else {
+        setError("Min is Required");
+      }
+    } else {
+      setError("Min and Max is Required");
     }
-    const obj = {
-      instance_type: instanceSize.type,
-      vertical_auto_scale: isChecked,
-      max: Number(maxValue),
-      min: Number(minValue),
-    };
-    data.instance_details = obj;
-
-    saveApp(data)
-      .then((response) => {
-        console.log(data);
-        toast.success("App Created Successfully");
-        router.push({
-          pathname: "/workspace/app-dashboard",
-          query: { appId: response.data.app_id },
-        });
-        setTimeout(() => {
-          authContext.fetchOrg();
-        }, 2000);
-      })
-      .catch((error) => {
-        toast.error(error);
-      })
-      .finally(() => {
-        stopLoading();
-      });
   };
 
   const ITEM_HEIGHT = 48;

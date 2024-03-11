@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -26,15 +28,14 @@ import Toaster from "src/utils/toaster";
 
 interface AppConfigSettingProps {
   data: App;
-  showEdit: boolean,
-  setHideEdit(state: boolean): void
+  showEdit: boolean;
+  setHideEdit(state: boolean): void;
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
   const { data, showEdit, setHideEdit } = props;
   const { isDeveloperPlan } = usePlan();
   const { loading, startLoading, stopLoading } = useLoading();
-
 
   const [obj, setObj] = useState({
     port: data.port,
@@ -94,6 +95,12 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   const handleCancel = () => {
+    const selectedInstance = AI_SIZE.find(
+      (instance: { type: any }) => instance.type === obj.type
+    );
+    if (selectedInstance != null) {
+      setInstanceSize(selectedInstance);
+    }
     setPort(obj.port);
     setPath(obj.http_path);
     setMinValue(obj.min + "");
@@ -112,7 +119,9 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   const instance_details = data.instance_details;
-  const aiSizeIndex = AI_SIZE.map(e => e.type).indexOf(instance_details.instance_type);
+  const aiSizeIndex = AI_SIZE.map((e) => e.type).indexOf(
+    instance_details.instance_type
+  );
   const [instanceSize, setInstanceSize] = useState(AI_SIZE[aiSizeIndex]);
 
   const [minValue, setMinValue] = useState<string>(obj.min + "");
@@ -144,11 +153,13 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         .then((response) => {
           setTimeout(() => {
             setHideEdit(false);
-          }, 60000)
+          }, 60000);
           if (response.status == 200) {
             Toaster.successToast("Applying updated settings. Please wait!");
           } else {
-            Toaster.errorToast("App is not able to edit due to some error message");
+            Toaster.errorToast(
+              "App is not able to edit due to some error message"
+            );
           }
         })
         .catch((error) => {
@@ -177,7 +188,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         {/* Button */}
 
         <Grid item xs={6} sm={6}>
-          {(showEdit) && (
+          {showEdit && (
             <Box display="flex" justifyContent="flex-end" alignItems="center">
               {!isEdit && !loading ? (
                 <Button
@@ -245,7 +256,11 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
               size="small"
               label="HTTP Port"
               type="number"
-              sx={{ maxWidth: 150, height: "auto", marginBottom: "10px" }}
+              sx={{
+                maxWidth: 150,
+                height: "auto",
+                marginBottom: "10px",
+              }}
               value={port}
               onChange={handlePortChange}
             />
@@ -292,7 +307,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         </Grid>
 
         {/* App Instance */}
-        <Grid item xs={4} sm={4}>
+        <Grid item xs={3} sm={3}>
           <div>
             <Typography variant="body1" component="span" fontWeight="bold">
               App Instance (AI)Size
@@ -320,7 +335,10 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     >
                       {instanceSize?.type + "-"}
                     </Typography>
-                    {instanceSize?.ram + " RAM | " + instanceSize?.vcpu + " vCPU"}
+                    {instanceSize?.ram +
+                      " RAM | " +
+                      instanceSize?.vcpu +
+                      " vCPU"}
                   </Typography>
                 );
               }}
@@ -351,7 +369,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
           </FormControl>
         </Grid>
 
-        {/* Select Instances */}
+        {/* Enable auto-scalling of Instances */}
         <Grid
           item
           xs={4}
@@ -395,8 +413,13 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={8} sm={8}>
-          <FormGroup sx={{ ml: "-5.3rem", mt: "-0.2rem" }}>
+        <Grid item xs={6} sm={8}>
+          <FormGroup
+            sx={{
+              ml: "-5.3rem",
+              mt: "-0.2rem",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
