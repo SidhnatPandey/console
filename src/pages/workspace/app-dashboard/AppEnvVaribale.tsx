@@ -106,7 +106,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
 
     return (
         <Grid container spacing={1}>
-            <Grid item xs={6} sm={6}><Typography variant="h4">
+            <Grid item xs={6} sm={6}><Typography variant="h5">
                 Environment Variables
             </Typography></Grid>
 
@@ -129,16 +129,16 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
             <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Environments</Typography>
+                <Typography  variant="body1" component="span" fontWeight="bold">Environments</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Test</Typography>
+                <Typography  variant="body1" component="span" fontWeight="bold">Test</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Stage</Typography>
+                <Typography  variant="body1" component="span" fontWeight="bold">Stage</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Production</Typography>
+                <Typography  variant="body1" component="span" fontWeight="bold">Production</Typography>
             </Grid>
 
             {dataArr.length > 0 ? dataArr.map((item, index) => (

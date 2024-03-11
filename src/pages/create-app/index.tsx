@@ -704,9 +704,8 @@ const CreateApp = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={12}>
-                    <h3 style={{ margin: "0 0 10px 0" }}>
-                      Source Directory (optional)
-                    </h3>
+                    <h3 style={{ margin: "0 0 10px 0", display: "inline-block"}}>
+                      Source Directory (optional) </h3><span><i> - Provide Sub-directory for the App in case of <b>monorepo</b></i></span>
                     <FormControl fullWidth>
                       <TextField
                         type="text"
@@ -777,7 +776,7 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* HTTP Port */}
-                <Grid item xs={4} sm={4}>
+                <Grid item xs={4} sm={4} marginTop={2}>
                   <div style={{ alignItems: "center" }}>
                     <Typography
                       variant="body1"
@@ -810,7 +809,7 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* HTTP Path */}
-                <Grid item xs={4} sm={4}>
+                <Grid item xs={4} sm={4} marginTop={2}>
                   <div>
                     <Typography
                       variant="body1"
@@ -839,14 +838,14 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* App Instance */}
-                <Grid item xs={4} sm={4}>
+                <Grid item xs={4} sm={4} marginTop={2}>
                   <div>
                     <Typography
                       variant="body1"
                       component="span"
                       fontWeight="bold"
                     >
-                      App Instance (AI)Size
+                      App Instance(AI) Size
                     </Typography>
                   </div>
                 </Grid>
@@ -868,7 +867,7 @@ const CreateApp = () => {
                               component="span"
                               fontWeight="bold"
                             >
-                              {instanceSize.type + "-"}
+                              {instanceSize.type + " - "}
                             </Typography>
                             {instanceSize.ram +
                               " RAM | " +
@@ -895,7 +894,7 @@ const CreateApp = () => {
                             component="span"
                             fontWeight="bold"
                           >
-                            {instance.type + "-"}
+                            {instance.type + " - "}
                           </Typography>
                           {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
                         </MenuItem>
@@ -939,7 +938,7 @@ const CreateApp = () => {
                 </Grid>
 
                 {/* Numebr of instances */}
-                <Grid item xs={4} sm={4}>
+                <Grid item xs={4} sm={4} marginTop={4}>
                   <div>
                     <Typography
                       variant="body1"
@@ -1035,7 +1034,7 @@ const CreateApp = () => {
                     Almost done! 🚀
                   </Typography>
                   <Typography sx={{ color: "text.secondary" }}>
-                    Confirm your deal details information and submit to create
+                    Confirm your App details and submit to create
                     it.
                   </Typography>
                 </Grid>
@@ -1156,6 +1155,53 @@ const CreateApp = () => {
                           <TableCell>
                             <Typography sx={{ color: "text.secondary" }}>
                               {getConfigurationValue("http_path")}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Typography
+                              noWrap
+                              sx={{ fontWeight: 500, color: "text.secondary" }}
+                            >
+                              AI Size
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography sx={{ color: "text.secondary" }}>
+                              {instanceSize.type + " - " + instanceSize.ram + " RAM " + instanceSize.vcpu + " vCPU"}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Typography
+                              noWrap
+                              sx={{ fontWeight: 500, color: "text.secondary"}}
+                            >
+                              Vertical Autoscaler
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={isChecked}
+                              disabled={true}
+                              style={{marginLeft: -10, marginTop: -9}}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <Typography
+                              noWrap
+                              sx={{ fontWeight: 500, color: "text.secondary", marginTop: -2}}
+                            >
+                              Number of Instances
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                          <Typography sx={{ color: "text.secondary", marginTop: -2 }}>
+                              {"Min: " + minValue + " Max: " + maxValue}
                             </Typography>
                           </TableCell>
                         </TableRow>
