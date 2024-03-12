@@ -40,6 +40,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     const [dataArr, setDataArr] = useState<any[]>([]);
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(100).fill(true));
 
+  const [firstTime,setFirstTime]=useState<boolean>(false);
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
         const index = existingValues.map(e => e.key).indexOf(key);
@@ -88,28 +89,24 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     const handleEnvDialogClose = (envVariables: any, count: number, editData: any) => {
-        if (count >=0) {
-            console.log(editData);
-            console.log("env",envVariables)
-            // editData.foreach((item: any)=>{
-            //     // if(item.key!=null){
-            //     //     filterdata[0].key=item.key;
-            //     //     filterdata[0].KeyType=item.KeyType;
-            //     //     filterdata[0].prod=item.prod;
-            //     //     filterdata[0].test=item.test;
-            //     //     filterdata[0].stg=item.stg;
-            //     //     filterdata[0].Checked=item.Checked;
-            //     // }
-            //     console.log(item.key)
-            // })
-            //const filterdata:EnvFormType[]= editData.filter( (item: EnvFormType)  => item.key.trim() !== '');
-            setDataArr(editData);
+        if (count>=0) {
+            console.log("editData",editData);
+            console.log("envVariables",envVariables);
+
+           const filterdata:any= editData.filter( (item: any)  => item.key.trim() !== '');
+            setDataArr(filterdata);
+
             updateAppData(envVariables);
+            
         }
+        setFirstTime(true)
         setOpen(false);
     };
 
+
+console.log("dataArr",dataArr);
     const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
         setOpen(true);
     }
 
@@ -121,7 +118,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
             .then((response) => {
                 setTimeout(() => {
                     setHideEdit(false);
-                }, 60000)
+                }, 60)
                 Toaster.successToast("Updating Environment Variables. Please wait!");
             })
             .catch((error) => {
@@ -130,12 +127,13 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     };
 
     return (
-        <Grid container spacing={1}>
-            <Grid item xs={6} sm={6}><Typography variant="h4">
-                Environment Variables
-            </Typography></Grid>
+        <Grid container spacing={1} >
+            <Grid item xs={6} sm={6} style={{paddingLeft:'0rem'}} >
+                <Typography variant="h3" fontWeight='bold'  >   Environment Variables </Typography>
+            </Grid>
 
-            <Grid item xs={6} sm={6}><Typography variant="h4">
+            <Grid item xs={6} sm={6}>
+                
                 {
                     showEdit &&
                     <Box display="flex" justifyContent="flex-end" alignItems="center"   >
@@ -150,11 +148,11 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                         </Button>
                     </Box>
                 }
-            </Typography></Grid>
+            </Grid>
             <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
-            <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Environments</Typography>
+            <Grid item xs={3} sm={3} style={{ paddingLeft:'0rem',paddingTop:'0.5rem'}}>
+                <Typography variant="h4"  >Environments</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
                 <Typography variant="h4">Test</Typography>
@@ -166,7 +164,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                 <Typography variant="h4">Production</Typography>
             </Grid>
 
-            {dataArr.length > 0 ? dataArr.map((item, index) => (
+            {dataArr.length > 0|| firstTime ? dataArr.map((item, index) => (
                 <Grid container spacing={1} sx={{ marginBottom: 1 }} key={index}>
                     <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
 

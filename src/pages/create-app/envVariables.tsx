@@ -9,6 +9,7 @@ import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
 import { ENV_TYPE } from "src/@core/static/app.constant";
+import { color } from "@mui/system";
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
@@ -40,10 +41,7 @@ interface EnvVariablesProps {
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
-
     const { open, handleEnvDialogClose, handleEnvClose, envArr } = props;
-
-
     const {
         control: EnvVariableControl,
         handleSubmit: handleConfigurationSubmit,
@@ -70,9 +68,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
     const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
-
+    console.log("env1", envArr)
     const handleClose = () => {
-        resetEnvVariableForm();
+
+        //resetEnvVariableForm();
         handleEnvClose();
     };
 
@@ -133,8 +132,39 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     const handleSave = () => {
+
+        envArr?.splice(0, envArr.length);
+        const changedFormData = getEnvVariableValue('env_variables');
+        changedFormData.map((item, index) => {
+            envArr?.splice(index, 0, { key: item.key, KeyType: item.KeyType, prod: item.prod, stg: item.stg, test: item.test, Checked: item.Checked })
+
+        })
+        console.log("envNew", envArr)
+        if (envArr) {
+            envArr.map((item, index) => {
+                // if (index == 0) {
+                //     setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
+                //     setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
+                //     setEnvVariableValue(`env_variables.${index}.test`, item.test);
+                //     setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
+                //     setEnvVariableValue(`env_variables.${index}.key`, item.key);
+                //     setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
+                // }
+                // else {
+
+
+                // }
+                const ispresent = checkIfKeyExists(item.key);
+
+                if (ispresent < 0) {
+                    append(item);
+                }
+            })
+        }
+
         const env = convertData(getEnvVariableValue('env_variables'));
-        handleEnvDialogClose(env, getEnvVariableValue('env_variables').length, getEnvVariableValue("env_variables"));
+        const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
+        handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
     }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -145,21 +175,21 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return getEnvVariableValue('env_variables')[index].KeyType as string;
     }
 
-   
+
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
-        const currentDataList=getEnvVariableValue(`env_variables`);
+        const currentDataList = getEnvVariableValue(`env_variables`);
         // let prevListLength=getEnvVariableValue(`env_variables`).length;
         // while(prevListLength>0){
-        //     if(!currentDataList[prevListLength-1].key){
-        //         remove(prevListLength-1);
+        //     if(!currentDataList[prevListLength].key){
+        //         remove(prevListLength);
         //         prevListLength--;
         //     }
         // }
-        if(!currentDataList[0].key){
+        if (!currentDataList[0].key) {
             remove(0);
         }
-       
-       
+
+
         if (isTest) {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
@@ -193,27 +223,29 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
+
         if (envArr) {
             envArr.map((item, index) => {
-                if (index == 0) {
-                    setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
-                    setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
-                    setEnvVariableValue(`env_variables.${index}.test`, item.test);
-                    setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
-                    setEnvVariableValue(`env_variables.${index}.key`, item.key);
-                    setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
-                }
-                else {
-                    const ispresent = checkIfKeyExists(item.key);
-                    
-                        if (ispresent < 0) {
-                            append(item);
-                        }
-                    
+                // if (index == 0) {
+                //     setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
+                //     setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
+                //     setEnvVariableValue(`env_variables.${index}.test`, item.test);
+                //     setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
+                //     setEnvVariableValue(`env_variables.${index}.key`, item.key);
+                //     setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
+                // }
+                // else {
+
+
+                // }
+                const ispresent = checkIfKeyExists(item.key);
+
+                if (ispresent < 0) {
+                    append(item);
                 }
             })
         }
-    }, [envArr])
+    }, [])
 
 
 
@@ -225,17 +257,19 @@ const EnvVariables = (props: EnvVariablesProps) => {
             prod: envArray[];
         } = { test: [], stg: [], prod: [] };
         envVariables.forEach((ele: any) => {
-            
-                if (ele.test) {
-                    nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
-                }
-                if (ele.stg) {
-                    nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
-                }
-                if (ele.prod) {
-                    nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
-                }
-            
+
+            if (ele.test) {
+                nData.test.push({ key: ele.key, value: ele.test, type: ele.KeyType });
+            }
+            if (ele.stg) {
+                nData.stg.push({ key: ele.key, value: ele.stg, type: ele.KeyType });
+            }
+            if (ele.prod) {
+                nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
+            }
+
+
+
         });
         return nData;
     };
@@ -269,21 +303,18 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
             <DialogContent>
                 <div>
-
                     <Grid
                         container
                         spacing={5}
-
-                        style={{ marginBottom: "10px" }}
                     >
-                        <Grid item xs={2.75} sm={2.75}>
-                            <h3>Key</h3>
+                        <Grid item xs={2.75} sm={2.75} style={{}}>
+                            <h3>KEY</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
-                            <h3>Test</h3>
+                            <h3>TEST</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
-                            <h3>Stage</h3>
+                            <h3>STAGE</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
                             <h3>PROD</h3>
@@ -299,73 +330,84 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                 container
                                 spacing={5}
                                 key={field.id}
-                                style={{ marginBottom: "10px" }}
+
                             >
-                                <Grid item xs={1.375} sm={1.375}>
-                                    <Controller
-                                        name={`env_variables.${index}.key`}
-                                        control={EnvVariableControl}
-                                        rules={{ required: true }}
-                                        render={({ field: { value, onChange, onBlur } }) => (
-                                            <CustomTextField
-                                                fullWidth
-                                                autoFocus
-                                                
-                                                sx={{ height: '50px',   }}
-                                                id='user-email-input'
-                                                value={value}
-                                                variant="standard"
-                                                onBlur={onBlur}
-                                                onChange={onChange}
-                                                placeholder='Key'
-                                                error={Boolean(EnvVariableErrors.env_variables)}
-                                                {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
-                                            />
-                                        )}
-                                    />
+                                <Grid item xs={2.75} sm={2.75} display='flex' direction='row'>
+                                    {/* <Grid item xs={1.375} sm={1.375}> */}
+                                    <div style={{ border: '1px solid rgba(47, 43, 61, 0.2', borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }}>
+                                        <Controller
+                                            name={`env_variables.${index}.key`}
+                                            control={EnvVariableControl}
+                                            rules={{ required: true }}
+                                            render={({ field: { value, onChange, onBlur } }) => (
+                                                <TextField
+                                                    fullWidth
+                                                    autoFocus
+                                                    // style={{ border: 'none' }}
+                                                    sx={{ maxWidth: '130px', border: "none" }}
+                                                    style={{ padding: '0px', border: 'none', backgroundColor: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+
+                                                    id='user-email-input'
+                                                    value={value}
+                                                    onBlur={onBlur}
+                                                    onChange={onChange}
+                                                    placeholder='Key'
+                                                    variant="standard"
+                                                    InputProps={{
+                                                        disableUnderline: true,
+                                                    }}
+                                                    error={Boolean(EnvVariableErrors.env_variables)}
+                                                    {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
+                                                />
+                                            )}
+                                        />
+                                        {/* </Grid>
+
+
+                                <Grid item xs={1.375} sm={1.375}> */}
+                                        <Controller
+                                            name={`env_variables.${index}.KeyType`}
+                                            control={EnvVariableControl}
+                                            rules={{ required: true }}
+                                            render={({ field: { value, onChange } }) => (
+                                                <Select key={index}
+                                                    value={value}
+                                                    //defaultValue="KEYTYPE"
+                                                    style={{ border: '0px', boxShadow: 'none' }}
+                                                    sx={{
+                                                        maxWidth: '100px', maxHeight: '38px', boxShadow: 'none',
+                                                        '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                                                        "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                                                        {
+                                                            border: 0,
+                                                        },
+                                                        "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                                        {
+                                                            border: 0,
+                                                        },
+                                                    }}
+                                                    onChange={(e) => {
+                                                        onChange(e);
+                                                        handleChange(e);
+
+                                                    }}
+                                                    error={Boolean(EnvVariableErrors.env_variables)}
+                                                    labelId="stepper-linear-personal-country"
+                                                    aria-describedby="stepper-linear-personal-country-helper"
+                                                >
+                                                    {ENV_TYPE.map((envVar, index) => (
+                                                        <MenuItem value={envVar}>{envVar}</MenuItem>
+                                                    ))
+                                                    }
+
+
+                                                </Select>
+                                            )}
+                                        />
+                                    </div>
                                 </Grid>
+                                {/* </Grid> */}
 
-
-                                <Grid item xs={1.3} sm={1.3}>
-                                    <Controller
-                                        name={`env_variables.${index}.KeyType`}
-                                        control={EnvVariableControl}
-                                        rules={{ required: true }}
-                                        render={({ field: { value, onChange } }) => (
-                                            <Select
-                                                value={value}
-                                                //defaultValue="KEYTYPE"
-                                                sx={{
-                                                    width: "100%", maxHeight: '38px', boxShadow: 'none',
-                                                    '.MuiOutlinedInput-notchedOutline': { border: 0 },
-                                                    "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
-                                                    {
-                                                        border: 0,
-                                                    },
-                                                    "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                                                    {
-                                                        border: 0,
-                                                    },
-                                                }}
-                                                onChange={(e) => {
-                                                    onChange(e);
-                                                    handleChange(e);
-
-                                                }}
-                                                error={Boolean(EnvVariableErrors.env_variables)}
-                                                labelId="stepper-linear-personal-country"
-                                                aria-describedby="stepper-linear-personal-country-helper"
-                                            >
-                                                {ENV_TYPE.map((env, index) => (
-                                                    <MenuItem value={env}>{env}</MenuItem>
-                                                ))
-                                                }
-
-
-                                            </Select>
-                                        )}
-                                    />
-                                </Grid>
 
                                 <Grid item xs={2.75} sm={2.75}>
 

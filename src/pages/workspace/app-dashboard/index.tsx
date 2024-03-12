@@ -458,13 +458,17 @@ const AppDashboard = () => {
               </CardContent>
             </Card>
           </Typography>
+
+
           <Typography sx={{ marginBottom: 10 }}>
-            <Card sx={{ margin: "-25px" }}>
-              <CardContent>
+            <Card sx={{ margin: "-25px"  }}  >
+              <CardContent style={{ paddingTop:'0.70rem'}}>
                 <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
               </CardContent>
             </Card>
           </Typography>
+
+
           {/*   <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>
               <CardContent>
