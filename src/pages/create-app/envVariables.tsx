@@ -269,7 +269,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                             <h3>Stage</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
-                            <h3>PROD</h3>
+                            <h3>Prod</h3>
                         </Grid>
                         <Grid item xs={1} sm={1}>
                             <h3>ALL</h3>
@@ -288,7 +288,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                     <Controller
                                         name={`env_variables.${index}.key`}
                                         control={EnvVariableControl}
-                                        rules={{ required: true }}
+                                        rules={{ required: 'Key is Required' }}
 
                                         render={({ field: { value, onChange, onBlur } }) => (
                                             <CustomTextField
@@ -300,6 +300,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 variant="outlined"
                                                 onBlur={onBlur}
                                                 onChange={onChange}
+                                                required={true}
                                                 placeholder='Key'
                                                 error={Boolean(EnvVariableErrors.env_variables)}
                                                 {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
@@ -329,8 +330,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 labelId="stepper-linear-personal-country"
                                                 aria-describedby="stepper-linear-personal-country-helper"
                                             >
-                                                <MenuItem value='secret_ref'>Secret_ref</MenuItem>
-                                                <MenuItem value='secret'>Secret</MenuItem>
+                                                <MenuItem value='secret_ref'>secretRef</MenuItem>
+                                                <MenuItem value='secret'>secret</MenuItem>
                                                 <MenuItem value='env'>env</MenuItem>
                                             </Select>
                                         )}
