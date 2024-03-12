@@ -170,7 +170,8 @@ export function decryptPrivateKey(
 export function encryptKey(
   privateKey: string,
   key: string,
-  value: string
+  value: string,
+  environment: string
 ): Promise<{
   encrypted_key_iv: string;
   encrypted_value_iv: string;
@@ -178,11 +179,13 @@ export function encryptKey(
   encrypted_value_tag: string;
   encrypted_key_ciphertext: string;
   encrypted_value_ciphertext: string;
+  environment: string;
 }> {
   return new Promise((resolve, reject) => {
     const keyIV = crypto.randomBytes(12); // Generate IV for key
     const valueIV = crypto.randomBytes(12); // Generate IV for value
-
+ 
+ 
     // Encrypt key
     encryptAESGCM(
       Buffer.from(key, "utf8"),
@@ -192,7 +195,7 @@ export function encryptKey(
       .then(({ encryptedData: keyEncryptedData, authTag: keyAuthTag }) => {
         const encrypted_key_ciphertext = keyEncryptedData.toString("hex");
         const encrypted_key_tag = keyAuthTag.toString("hex");
-
+ 
         // Encrypt value
         encryptAESGCM(
           Buffer.from(value, "utf8"),
@@ -204,7 +207,7 @@ export function encryptKey(
               const encrypted_value_ciphertext =
                 valueEncryptedData.toString("hex");
               const encrypted_value_tag = valueAuthTag.toString("hex");
-
+ 
               resolve({
                 encrypted_key_iv: keyIV.toString("hex"),
                 encrypted_value_iv: valueIV.toString("hex"),
@@ -212,6 +215,7 @@ export function encryptKey(
                 encrypted_value_tag,
                 encrypted_key_ciphertext,
                 encrypted_value_ciphertext,
+                environment,
               });
             }
           )
@@ -240,13 +244,14 @@ export function encryptKey(
  */
 export function decryptKey(
   privateKey: string,
+  id: string,
   encrypted_key_iv: string,
   encrypted_key_tag: string,
   encrypted_key_ciphertext: string,
   encrypted_value_iv: string,
   encrypted_value_tag: string,
   encrypted_value_ciphertext: string
-): Promise<{ key: string; value: string }> {
+): Promise<{ key: string; value: string; id: string;}> {
   return new Promise((resolve, reject) => {
     try {
       // Convert IV and tag strings to Buffer
@@ -274,6 +279,7 @@ export function decryptKey(
               resolve({
                 key: decryptedKey.toString("utf8"),
                 value: decryptedValue.toString("utf8"),
+                id: id
               });
             })
             .catch((err) => {

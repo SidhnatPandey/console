@@ -85,3 +85,10 @@ export type SecurityValueTypes = {
   setWorkspace: (value: string) => void;
   setRunType: (value: string) => void;
 };
+
+export type SecretKeysValueTypes = {
+  workspace: string,
+  environment: string,
+  setWorkspace: (value: string) => void
+  setEnvironment: (value: string) => void
+}

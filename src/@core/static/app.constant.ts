@@ -7,6 +7,8 @@ export const LOCALSTORAGE_CONSTANTS = {
   homeRoute: "default_route",
   workspace: "workspaceId",
   planId: "selectedPlanId",
+  orgKey: "orgKey",
+  privateKey: "privateKey",
 };
 
 export const SESSIONSTORAGE_CONSTANTS = {

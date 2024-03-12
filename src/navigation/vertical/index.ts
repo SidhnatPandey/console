@@ -30,7 +30,7 @@ const navigation = (): VerticalNavItemsType => {
       subject: PERMISSION_CONSTANTS.security,
     },
     {
-      title: 'Secret',
+      title: 'Secret Management',
       icon: 'material-symbols:lock-outline',
       path: '/secret',
       action: 'read',
