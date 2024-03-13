@@ -9,7 +9,6 @@ import CustomTextField from "src/@core/components/mui/text-field";
 import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
 import { ENV_TYPE } from "src/@core/static/app.constant";
-import { color } from "@mui/system";
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
@@ -325,7 +324,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                             <h3>STAGE</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
-                            <h3>PROD</h3>
+                            <h3>Prod</h3>
                         </Grid>
                         <Grid item xs={1} sm={1}>
                             <h3>ALL</h3>

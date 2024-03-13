@@ -155,13 +155,13 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                 <Typography variant="h4"  >Environments</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Test</Typography>
+                <Typography variant="body1" component="span" fontWeight="bold">Test</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Stage</Typography>
+                <Typography variant="body1" component="span" fontWeight="bold">Stage</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-                <Typography variant="h4">Production</Typography>
+                <Typography variant="body1" component="span" fontWeight="bold">Production</Typography>
             </Grid>
 
             {dataArr.length > 0 || firstTime ? dataArr.map((item, index) => (

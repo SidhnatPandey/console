@@ -24,10 +24,12 @@ import { SecurityContext } from "src/context/SecurityContext";
 import { calculateDaysFromTodayString } from "src/@core/utils/format";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import Toaster from "src/utils/toaster";
+import ChipsRounded from "src/component/Chip";
 
 interface AppSecurityData {
   AppId: string;
   AppName: string;
+  ExploitProbability: string;
   LastScanned: string;
   WorkspaceId: string;
   WorkspaceName: string;
@@ -89,21 +91,43 @@ const ApplicationVulnerabilities = () => {
           : "asc",
     });
 
+    const exploitProbabilityOrder: Record<string, number> = {
+      Critical: 0,
+      High: 1,
+      Medium: 2,
+      Low: 3,
+      Negligible: 4,
+      Unknown: 5,
+    };
+
     setVulnerabilityData((prevData) =>
       [...prevData].sort((a, b) => {
-        const valueA = a[columnName];
-        const valueB = b[columnName];
-
-        if (typeof valueA === "number" && typeof valueB === "number") {
-          return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+        if (columnName === "ExploitProbability") {
+          const orderA =
+            exploitProbabilityOrder[a.ExploitProbability] ??
+            exploitProbabilityOrder["Unknown"];
+          const orderB =
+            exploitProbabilityOrder[b.ExploitProbability] ??
+            exploitProbabilityOrder["Unknown"];
+          return sort.direction === "asc" ? orderA - orderB : orderB - orderA;
+        } else if (columnName === "Cves") {
+          const totalCVEsA = calculateTotalCVEs(a.Cves);
+          const totalCVEsB = calculateTotalCVEs(b.Cves);
+          return sort.direction === "asc"
+            ? totalCVEsA - totalCVEsB
+            : totalCVEsB - totalCVEsA;
+        } else {
+          const valueA = a[columnName];
+          const valueB = b[columnName];
+          if (typeof valueA === "number" && typeof valueB === "number") {
+            return sort.direction === "asc" ? valueA - valueB : valueB - valueA;
+          }
+          const stringA = String(valueA);
+          const stringB = String(valueB);
+          return sort.direction === "asc"
+            ? stringA.localeCompare(stringB)
+            : stringB.localeCompare(stringA);
         }
-
-        const stringA = String(valueA);
-        const stringB = String(valueB);
-
-        return sort.direction === "asc"
-          ? stringA.localeCompare(stringB)
-          : stringB.localeCompare(stringA);
       })
     );
   };
@@ -129,10 +153,34 @@ const ApplicationVulnerabilities = () => {
 
   const getVulnerabilitesList = (workspaceId: string, runType: string) => {
     setLoading(true);
-    vulnerabilitiesList(workspaceId, runType).then((res) => {
-      setVulnerabilityData(res?.data || []);
-      setLoading(false);
-    });
+    vulnerabilitiesList(workspaceId, runType)
+      .then((res) => {
+        const data = res?.data || [];
+        const exploitProbabilityOrder: Record<string, number> = {
+          Critical: 0,
+          High: 1,
+          Medium: 2,
+          Low: 3,
+          Negligible: 4,
+          Unknown: 5,
+        };
+        const sortedData = data.sort(
+          (
+            a: { ExploitProbability: string | number },
+            b: { ExploitProbability: string | number }
+          ) => {
+            const orderA = exploitProbabilityOrder[a.ExploitProbability];
+            const orderB = exploitProbabilityOrder[b.ExploitProbability];
+            return orderA - orderB;
+          }
+        );
+        setVulnerabilityData(sortedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching vulnerability data:", error);
+        setLoading(false);
+      });
   };
 
   const getSBOMs = (appId: string, appName: string, workspaceId: string) => {
@@ -221,6 +269,25 @@ const ApplicationVulnerabilities = () => {
     localStorage.setItem(LOCALSTORAGE_CONSTANTS.workspace, workspaceId);
   };
 
+  const getExpoColor = (data: string) => {
+    switch (data) {
+      case "Critical":
+        return "error";
+      case "High":
+        return "warning";
+      case "Medium":
+        return "primary";
+      case "Low":
+        return "secondary";
+      case "Unknown":
+        return "info";
+      case "Negligible":
+        return "info";
+      default:
+        return "success";
+    }
+  };
+
   return (
     <Card sx={{ marginTop: "20px" }}>
       <Box display="flex" flexDirection="column">
@@ -266,6 +333,22 @@ const ApplicationVulnerabilities = () => {
                 >
                   <Box display="flex" alignItems="center">
                     <span>App Name</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort("ExploitProbability")}
+                  style={{ width: 300 }}
+                >
+                  <Box display="flex" alignItems="center">
+                    <span>Exploit Probability</span>
                     <Box display="flex" flexDirection="column" ml={6}>
                       <KeyboardArrowUpIcon
                         sx={{ color: "gray", marginBottom: "-6px" }}
@@ -362,6 +445,17 @@ const ApplicationVulnerabilities = () => {
                           {row?.AppName}
                         </Link>
                       </TableCell>
+                      <TableCell>
+                        <ChipsRounded
+                          label={
+                            row?.ExploitProbability === "Unknown"
+                              ? "Negligible"
+                              : row?.ExploitProbability || "N/A"
+                          }
+                          color={getExpoColor(row?.ExploitProbability || "N/A")}
+                        />
+                      </TableCell>
+
                       <TableCell>{row?.WorkspaceName}</TableCell>
                       <TableCell>
                         {calculateDaysFromTodayString(row?.LastScanned)}
@@ -408,7 +502,7 @@ const ApplicationVulnerabilities = () => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={6}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",
