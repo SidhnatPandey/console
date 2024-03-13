@@ -85,7 +85,7 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
         }
         setKeyNameError(null);
         if (!keyData.test.trim() && !keyData.stage.trim() && !keyData.prod.trim()) {
-            setKeyNameError('At least one of the fields (Test, Stage, Prod) must have a value');
+            setKeyNameError('At least one of the fields must have a value');
             return;
         }
         const requests: {
@@ -170,49 +170,50 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', textTransform: 'none' }}>
                                     <Box display="flex" alignItems="center">
-                                        <span>Key</span>
+                                        <h3>Key</h3>
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', textTransform: 'none' }}>
                                     <Box display="flex" alignItems="center">
-                                        <span>Test</span>
+                                        <h3>Test</h3>
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', textTransform: 'none' }}>
                                     <Box display="flex" alignItems="center">
-                                        <span>Stage</span>
+                                        <h3>Stage</h3>
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', textTransform: 'none' }}>
                                     <Box display="flex" alignItems="center">
-                                        <span>Prod</span>
+                                        <h3>Prod</h3>
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', textTransform: 'none' }}>
                                     <Box display="flex" alignItems="center">
-                                        <span>All</span>
+                                        <h3>All</h3>
                                     </Box>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                <TableCell sx={{ borderBottom: 'none' }}>
+                                <TableCell sx={{ borderBottom: 'none', minHeight: '64px' }}>
                                     <TextField
                                         type="text"
                                         value={keyData.keyName}
                                         onChange={(e) => handleInputChange('keyName', e.target.value)}
                                         required
                                         error={!!keyNameError}
-                                        helperText={keyNameError}
+                                        helperText={keyNameError || '\u00A0'}
                                     /></TableCell>
                                 <TableCell sx={{ borderBottom: 'none' }}>
                                     <TextField
                                         type="text"
                                         value={keyData.test}
                                         onChange={(e) => handleInputChange('test', e.target.value)}
+                                        helperText={'\u00A0'}
                                     />
                                 </TableCell>
                                 <TableCell sx={{ borderBottom: 'none' }}>
@@ -220,6 +221,7 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
                                         type="text"
                                         value={keyData.stage}
                                         onChange={(e) => handleInputChange('stage', e.target.value)}
+                                        helperText={'\u00A0'}
                                     />
                                 </TableCell>
                                 <TableCell sx={{ borderBottom: 'none' }}>
@@ -227,6 +229,7 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
                                         type="text"
                                         value={keyData.prod}
                                         onChange={(e) => handleInputChange('prod', e.target.value)}
+                                        helperText={'\u00A0'}
                                     />
                                 </TableCell>
                                 <TableCell sx={{ borderBottom: 'none' }}>
