@@ -21,6 +21,7 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
     const [testValue, setTestValue] = useState("");
     const [stageValue, setStageValue] = useState("");
     const [prodValue, setProdValue] = useState("");
+    const [keyNameError, setKeyNameError] = useState<string | null>(null);
     const [keyData, setKeyData] = useState({
         keyName: '',
         test: '',
@@ -62,10 +63,31 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
         setSelectedEnvironment("test");
         setSecretValue("");
         setCopyToOtherEnvironments(false);
+        setTestValue("");  // If these values are related to keyData.test, keyData.stage, and keyData.prod
+        setStageValue("");
+        setProdValue("");
+        setKeyData({
+            keyName: "",
+            test: "",
+            stage: "",
+            prod: "",
+            checkboxChecked: false,
+        });
+        setKeyNameError(null);
         onDialogClose();
     };
+    
 
     const handleSave: React.MouseEventHandler<HTMLButtonElement> = async (event) => {
+        if (!keyData.keyName.trim()) {
+            setKeyNameError('Key is required');
+            return;
+        }
+        setKeyNameError(null);
+        if (!keyData.test.trim() && !keyData.stage.trim() && !keyData.prod.trim()) {
+            setKeyNameError('At least one of the fields (Test, Stage, Prod) must have a value');
+            return;
+        }
         const requests: {
             workspace_id: string;
             environment: string;
@@ -182,6 +204,9 @@ const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData })
                                         type="text"
                                         value={keyData.keyName}
                                         onChange={(e) => handleInputChange('keyName', e.target.value)}
+                                        required
+                                        error={!!keyNameError}
+                                        helperText={keyNameError}
                                     /></TableCell>
                                 <TableCell sx={{ borderBottom: 'none' }}>
                                     <TextField
