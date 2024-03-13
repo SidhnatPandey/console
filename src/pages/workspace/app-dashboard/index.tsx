@@ -156,6 +156,12 @@ const AppDashboard = () => {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (router?.query?.appId && (value === '4')) {
+      getAppDetails(router?.query?.appId);
+    }
+  }, [value]);
+
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -448,24 +454,16 @@ const AppDashboard = () => {
 
         <TabPanel value="4" data-testid="tab-panel-4">
           <Typography sx={{ marginBottom: 10 }}>
-            <Card sx={{ margin: "-25px" }}>
-              <CardContent>
-                <AppConfigSetting
-                  data={appData}
-                  showEdit={showSettingEdit}
-                  setHideEdit={handleHideEdit}
-                />
-              </CardContent>
-            </Card>
+            <AppConfigSetting
+              data={appData}
+              showEdit={showSettingEdit}
+              setHideEdit={handleHideEdit}
+            />
           </Typography>
 
 
           <Typography sx={{ marginBottom: 10 }}>
-            <Card sx={{ margin: "-25px"  }}  >
-              <CardContent style={{ paddingTop:'0.70rem'}}>
-                <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
-              </CardContent>
-            </Card>
+            <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
           </Typography>
 
 

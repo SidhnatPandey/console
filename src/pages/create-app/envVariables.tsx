@@ -16,7 +16,7 @@ const defaultEnvVariableValues = {
 const EnvVariableSchema = yup.object().shape({
     env_variables: yup.array().of(
         yup.object({
-            key: yup.string().required("Key is required"),
+            key: yup.string(),
             KeyType: yup.string(),
             stg: yup.string(),
             test: yup.string(),
@@ -36,22 +36,21 @@ interface EnvVariablesProps {
     open: boolean,
     handleEnvDialogClose(env: any, count: number, editData?: any): void;
     handleEnvClose(): void;
-    envArr?: any[]
+    envArr?: any[],
+    isEdit?: boolean
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
-    const { open, handleEnvDialogClose, handleEnvClose, envArr } = props;
+    const { open, handleEnvDialogClose, handleEnvClose, envArr, isEdit } = props;
     const {
         control: EnvVariableControl,
-        handleSubmit: handleConfigurationSubmit,
-        register: EnvVariableRegister,
         getValues: getEnvVariableValue,
         setValue: setEnvVariableValue,
-        reset: resetEnvVariableForm,
-        trigger: triggerEnvVariableForm,
+        setError: setEnvError,
         formState: {
             errors: EnvVariableErrors,
-            isValid: isEnvVariableFormValid,
+            isDirty: EnvVariableChanged,
+            isValid: isEnvVeriableFormValid
         },
     } = useForm({
         defaultValues: defaultEnvVariableValues,
@@ -141,33 +140,24 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     const handleSave = () => {
+        console.log(EnvVariableChanged, isEnvVeriableFormValid);
 
-
-        // if(!isEnvVariableFormValid){
-
-        // }
-        // else{
-
-        // }
-        envArr?.splice(0, envArr.length);
-        const changedFormData = getEnvVariableValue('env_variables');
-        changedFormData.map((item, index) => {
-            envArr?.splice(index, 0, { key: item.key, KeyType: item.KeyType, prod: item.prod, stg: item.stg, test: item.test, Checked: item.Checked })
-
-        })
-        console.log("envNew", envArr)
-        if (changedFormData) {
-            changedFormData.map((item, index) => {
-                const ispresent = checkIfKeyExists(item.key);
-                if (ispresent < 0) {
-                    append(item);
-                }
-            })
+        if (EnvVariableChanged && isEnvVeriableFormValid) {
+            const changedFormData = getEnvVariableValue('env_variables');
+            console.log("envNew", envArr)
+            if (changedFormData) {
+                changedFormData.map((item, index) => {
+                    const ispresent = checkIfKeyExists(item.key);
+                    if (ispresent < 0) {
+                        append(item);
+                    }
+                })
+            }
+            setPrevData(changedFormData);
+            const env = convertData(getEnvVariableValue('env_variables'));
+            const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
+            handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
         }
-        setPrevData(changedFormData);
-        const env = convertData(getEnvVariableValue('env_variables'));
-        const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
-        handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
     }
 
     const handleChange = (event: SelectChangeEvent<string>) => {
@@ -175,23 +165,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
     };
 
     const getKeyTypeofIndex = (index: number) => {
-        return getEnvVariableValue('env_variables')[index].KeyType as string;
+        return getEnvVariableValue('env_variables')[index]?.KeyType as string;
     }
 
 
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
-        const currentDataList = getEnvVariableValue(`env_variables`);
-        // let prevListLength=getEnvVariableValue(`env_variables`).length;
-        // while(prevListLength>0){
-        //     if(!currentDataList[prevListLength].key){
-        //         remove(prevListLength);
-        //         prevListLength--;
-        //     }
-        // }
-        if (!currentDataList[0].key) {
-            remove(0);
-        }
-
 
         if (isTest) {
             data.forEach((ele: FileData) => {
@@ -226,35 +204,19 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
-        console.log("useeffect", envArr)
         const currentDataList = getEnvVariableValue(`env_variables`);
         if (!currentDataList[0].key) {
             remove(0);
         }
         if (envArr) {
             envArr.map((item, index) => {
-                // if (index == 0) {
-                //     setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
-                //     setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
-                //     setEnvVariableValue(`env_variables.${index}.test`, item.test);
-                //     setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
-                //     setEnvVariableValue(`env_variables.${index}.key`, item.key);
-                //     setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
-                // }
-                // else {
-
-
-                // }
                 const ispresent = checkIfKeyExists(item.key);
-
                 if (ispresent < 0) {
                     append(item);
                 }
             })
         }
-    }, [])
-
-
+    }, [isEdit])
 
 
     const convertData = (envVariables: any[]) => {
@@ -274,9 +236,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
             if (ele.prod) {
                 nData.prod.push({ key: ele.key, value: ele.prod, type: ele.KeyType });
             }
-
-
-
         });
         return nData;
     };
@@ -287,11 +246,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return index;
     }
 
-
+    const setKeyRequired = (index: number) => {
+        setEnvError(`env_variables.${index}.key`, { type: 'required', message: 'Key is required' })
+    }
 
     return (
-
-
         <Dialog
             open={open}
             onClose={handleClose}
@@ -324,7 +283,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                             <h3>STAGE</h3>
                         </Grid>
                         <Grid item xs={2.75} sm={2.75}>
-                            <h3>Prod</h3>
+                            <h3>PROD</h3>
                         </Grid>
                         <Grid item xs={1} sm={1}>
                             <h3>ALL</h3>
@@ -339,7 +298,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                 key={field.id}
 
                             >
-                                <Grid item xs={2.75} sm={2.75} display='flex' direction='row'>
+                                <Grid item xs={2.75} sm={2.75}>
                                     {/* <Grid item xs={1.375} sm={1.375}> */}
                                     <div style={{ border: '1px solid rgba(47, 43, 61, 0.2', borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }}>
                                         <Controller
@@ -350,11 +309,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 <TextField
                                                     fullWidth
                                                     autoFocus
-                                                    // style={{ border: 'none' }}
                                                     sx={{ maxWidth: '130px', border: "none" }}
                                                     style={{ padding: '0px', border: 'none', backgroundColor: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-
-                                                    id='user-email-input'
                                                     value={value}
                                                     onBlur={onBlur}
                                                     onChange={onChange}
@@ -364,7 +320,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         disableUnderline: true,
                                                     }}
                                                     error={Boolean(EnvVariableErrors?.env_variables?.[index]?.key)}
-                                                    {...(EnvVariableErrors?.env_variables?.[index]?.key && { helperText: "this is wrong" })}
                                                 />
                                             )}
                                         />
@@ -403,15 +358,21 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     aria-describedby="stepper-linear-personal-country-helper"
                                                 >
                                                     {ENV_TYPE.map((envVar, index) => (
-                                                        <MenuItem value={envVar}>{envVar}</MenuItem>
+                                                        <MenuItem value={envVar.value} key={index}>{envVar.displauValue}</MenuItem>
                                                     ))
                                                     }
-
-
                                                 </Select>
                                             )}
                                         />
                                     </div>
+                                    {EnvVariableErrors?.env_variables?.[index]?.key && (
+                                        <FormHelperText
+                                            sx={{ color: "error.main" }}
+                                            id="stepper-linear-account-username"
+                                        >
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
                                 </Grid>
                                 {/* </Grid> */}
 
@@ -433,6 +394,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     onBlur={onBlur}
                                                     onChange={e => {
                                                         onChange(e);
+                                                        setKeyRequired(index);
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
                                                     variant="outlined"
@@ -457,7 +419,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onChange(e);
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
-                                                    id='auth-login-v2-password'
+                                                    id='test-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
                                                     type={passwordVisibletest[index] ? 'text' : 'password'}
@@ -501,8 +463,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
                                                     placeholder='STAGE'
-                                                    error={Boolean(EnvVariableErrors.env_variables)}
-                                                    {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
+                                                /* error={Boolean(EnvVariableErrors.env_variables)} */
+                                                /* {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })} */
                                                 />
                                             )}
                                         /> :
@@ -519,7 +481,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onChange(e);
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
-                                                    id='auth-login-v2-password'
+                                                    id='stg-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
                                                     type={passwordVisiblestg[index] ? 'text' : 'password'}
@@ -563,8 +525,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
                                                     placeholder='PROD'
-                                                    error={Boolean(EnvVariableErrors.env_variables)}
-                                                    {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
+                                                /* error={Boolean(EnvVariableErrors.env_variables)}
+                                                {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })} */
                                                 />
                                             )}
                                         />
@@ -582,7 +544,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onChange(e);
                                                         if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                     }}
-                                                    id='auth-login-v2-password'
+                                                    id='prod-password'
                                                     // error={Boolean(EnvVariableErrors.test)}
                                                     // {...(EnvVariableErrors. && { helperText: "Error" })}
                                                     type={passwordVisibleprod[index] ? 'text' : 'password'}
