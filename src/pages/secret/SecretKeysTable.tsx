@@ -231,7 +231,7 @@ const SecretKeysTable = () => {
                     return [...prevArray];
                 });
                 updateEditedSecrets([...editedSecretDataArray]).then(result => {
-                    if (result.status === 200) {
+                    if (result?.length != null) {
                         fetchData();
                         rowData.isEditingTest = false;
                         rowData.isEditingStage = false;
@@ -344,15 +344,21 @@ const SecretKeysTable = () => {
                     }
                 }
             }
-        }
-
+        }        
+        let saveSecretResponses: [] = [];
         if (putRequests.length > 0) {
-            const saveSecretResponses = await updateEditedSecret(putRequests);
-            return saveSecretResponses;
-        } else if (postRequests.length > 0) {
-            const saveSecretResponse = await saveSecret(postRequests);
-            return saveSecretResponse;
+            saveSecretResponses = await updateEditedSecret(putRequests);
+        } 
+        if (postRequests.length > 0) {
+            saveSecretResponses = await saveSecret(postRequests);
         }
+        const updateResults = await Promise.all([
+            saveSecretResponses
+        ]);
+    
+        let result = updateResults.find((res) => res);
+
+        return result
     };
 
     const setEditedValue = (field: string, id: number, value: string) => {
