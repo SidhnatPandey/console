@@ -50,7 +50,7 @@ const SecretKeysTable = () => {
     const secretContext = useContext(SecretContext);
     const [selectedWorkspace, setSelectedWorkspace] = useState("");
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [tableData, setTableData] = useState<Row[]>([]);
@@ -80,12 +80,13 @@ const SecretKeysTable = () => {
             await fetchData();
             filterData();
         };
+        fetchDataAndFilter();
 
-    }, [searchTerm, decryptedResults, setTableData]);
+    }, [searchTerm, setTableData]);
 
     useEffect(() => {
         fetchData();
-    }, [searchTerm, secretContext.workspace, selectedWorkspace]);
+    }, [ secretContext.workspace, selectedWorkspace]);
 
     const filterData = async () => {
         if (!searchTerm) {
@@ -231,7 +232,7 @@ const SecretKeysTable = () => {
                     return [...prevArray];
                 });
                 updateEditedSecrets([...editedSecretDataArray]).then(result => {
-                    if (result?.length != null) {
+                    if (result) {
                         fetchData();
                         rowData.isEditingTest = false;
                         rowData.isEditingStage = false;
