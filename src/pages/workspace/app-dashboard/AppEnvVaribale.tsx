@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import { editApp } from 'src/services/appService';
-import {App} from './index'
+import { App } from './index'
 import Toaster from 'src/utils/toaster';
 interface EnvFormType {
     key: string;
@@ -18,13 +18,13 @@ interface EnvFormType {
 }
 export interface EnvVariables {
     [key: string]: EnvVariable[]; // Index signature
-  }
-  
-  export interface EnvVariable {
+}
+
+export interface EnvVariable {
     key: string;
     value: string;
     type: string;
-  }
+}
 
 interface AppEnvVaribaleProps {
     Data: any;
@@ -33,14 +33,14 @@ interface AppEnvVaribaleProps {
 }
 const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     const { showEdit, Data, setHideEdit } = props;
-    const EnvData= Data.env_variables
+    const EnvData = Data.env_variables
     const envArr: any[] = [];
-    
+
     const [open, setOpen] = useState<boolean>(false)
     const [dataArr, setDataArr] = useState<any[]>([]);
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(100).fill(true));
 
-  const [firstTime,setFirstTime]=useState<boolean>(false);
+    const [firstTime, setFirstTime] = useState<boolean>(false);
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
         const index = existingValues.map(e => e.key).indexOf(key);
@@ -89,22 +89,22 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     const handleEnvDialogClose = (envVariables: any, count: number, editData: any) => {
-        if (count>=0) {
-            console.log("editData",editData);
-            console.log("envVariables",envVariables);
+        if (count >= 0) {
+            console.log("editData", editData);
+            console.log("envVariables", envVariables);
 
-           const filterdata:any= editData.filter( (item: any)  => item.key.trim() !== '');
+            const filterdata: any = editData.filter((item: any) => item.key.trim() !== '');
             setDataArr(filterdata);
 
             updateAppData(envVariables);
-            
+
         }
         setFirstTime(true)
         setOpen(false);
     };
 
 
-console.log("dataArr",dataArr);
+
     const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 
         setOpen(true);
@@ -128,12 +128,12 @@ console.log("dataArr",dataArr);
 
     return (
         <Grid container spacing={1} >
-            <Grid item xs={6} sm={6} style={{paddingLeft:'0rem'}} >
+            <Grid item xs={6} sm={6} style={{ paddingLeft: '0rem' }} >
                 <Typography variant="h3" fontWeight='bold'  >   Environment Variables </Typography>
             </Grid>
 
             <Grid item xs={6} sm={6}>
-                
+
                 {
                     showEdit &&
                     <Box display="flex" justifyContent="flex-end" alignItems="center"   >
@@ -151,7 +151,7 @@ console.log("dataArr",dataArr);
             </Grid>
             <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} />
 
-            <Grid item xs={3} sm={3} style={{ paddingLeft:'0rem',paddingTop:'0.5rem'}}>
+            <Grid item xs={3} sm={3} style={{ paddingLeft: '0rem', paddingTop: '0.5rem' }}>
                 <Typography variant="h4"  >Environments</Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
@@ -164,7 +164,7 @@ console.log("dataArr",dataArr);
                 <Typography variant="h4">Production</Typography>
             </Grid>
 
-            {dataArr.length > 0|| firstTime ? dataArr.map((item, index) => (
+            {dataArr.length > 0 || firstTime ? dataArr.map((item, index) => (
                 <Grid container spacing={1} sx={{ marginBottom: 1 }} key={index}>
                     <Grid item xs={3} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
 

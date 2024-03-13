@@ -17,7 +17,7 @@ const defaultEnvVariableValues = {
 const EnvVariableSchema = yup.object().shape({
     env_variables: yup.array().of(
         yup.object({
-            key: yup.string(),
+            key: yup.string().required("Key is required"),
             KeyType: yup.string(),
             stg: yup.string(),
             test: yup.string(),
@@ -49,6 +49,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         getValues: getEnvVariableValue,
         setValue: setEnvVariableValue,
         reset: resetEnvVariableForm,
+        trigger: triggerEnvVariableForm,
         formState: {
             errors: EnvVariableErrors,
             isValid: isEnvVariableFormValid,
@@ -68,9 +69,18 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
     const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
+    const [prevData, setPrevData] = useState<any[]>([]);
     console.log("env1", envArr)
     const handleClose = () => {
 
+        if (prevData) {
+            prevData.map((item, index) => {
+                const ispresent = checkIfKeyExists(item.key);
+                if (ispresent < 0) {
+                    append(item);
+                }
+            })
+        }
         //resetEnvVariableForm();
         handleEnvClose();
     };
@@ -133,6 +143,13 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const handleSave = () => {
 
+
+        // if(!isEnvVariableFormValid){
+
+        // }
+        // else{
+
+        // }
         envArr?.splice(0, envArr.length);
         const changedFormData = getEnvVariableValue('env_variables');
         changedFormData.map((item, index) => {
@@ -140,28 +157,15 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
         })
         console.log("envNew", envArr)
-        if (envArr) {
-            envArr.map((item, index) => {
-                // if (index == 0) {
-                //     setEnvVariableValue(`env_variables.${index}.Checked`, item.checked);
-                //     setEnvVariableValue(`env_variables.${index}.prod`, item.prod);
-                //     setEnvVariableValue(`env_variables.${index}.test`, item.test);
-                //     setEnvVariableValue(`env_variables.${index}.stg`, item.stg);
-                //     setEnvVariableValue(`env_variables.${index}.key`, item.key);
-                //     setEnvVariableValue(`env_variables.${index}.KeyType`, item.KeyType);
-                // }
-                // else {
-
-
-                // }
+        if (changedFormData) {
+            changedFormData.map((item, index) => {
                 const ispresent = checkIfKeyExists(item.key);
-
                 if (ispresent < 0) {
                     append(item);
                 }
             })
         }
-
+        setPrevData(changedFormData);
         const env = convertData(getEnvVariableValue('env_variables'));
         const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
         handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
@@ -223,7 +227,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
-
+        console.log("useeffect", envArr)
+        const currentDataList = getEnvVariableValue(`env_variables`);
+        if (!currentDataList[0].key) {
+            remove(0);
+        }
         if (envArr) {
             envArr.map((item, index) => {
                 // if (index == 0) {
@@ -338,7 +346,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                         <Controller
                                             name={`env_variables.${index}.key`}
                                             control={EnvVariableControl}
-                                            rules={{ required: true }}
+                                            rules={{ required: "key is required" }}
                                             render={({ field: { value, onChange, onBlur } }) => (
                                                 <TextField
                                                     fullWidth
@@ -356,8 +364,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     InputProps={{
                                                         disableUnderline: true,
                                                     }}
-                                                    error={Boolean(EnvVariableErrors.env_variables)}
-                                                    {...(EnvVariableErrors.env_variables && { helperText: "this is wrong" })}
+                                                    error={Boolean(EnvVariableErrors?.env_variables?.[index]?.key)}
+                                                    {...(EnvVariableErrors?.env_variables?.[index]?.key && { helperText: "this is wrong" })}
                                                 />
                                             )}
                                         />
