@@ -59,5 +59,9 @@ export const AI_SIZE = [
     vcpu: 0.1,
   },
 ];
- 
-export const ENV_TYPE= ["secret","secret_ref","env"];
+
+export const ENV_TYPE = [
+  { value: "secret", displauValue: "secret" },
+  { value: "secret_ref", displauValue: "secretRef" },
+  { value: "env", displauValue: "env" },
+];
