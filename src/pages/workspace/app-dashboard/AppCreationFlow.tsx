@@ -52,7 +52,6 @@ const AppCreationFlow = (props: AppCreationFlow) => {
   const [rebuilding, setRebuilding] = useState<boolean>(false);
   const [timeDifference, setTimeDifference] = useState(0);
   const [formattedDifference, setFormattedDifference] = useState("");
-  const [initializ, setInitializ] = useState("Initializing");
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem("cStage", stage);
@@ -156,7 +155,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
           </React.Fragment>
         ))}
       </div>
-    ) : status === "Initializing" ? (
+    ) : status === "Initializing" || status === "Initialized" ? (
       <div
         style={{
           fontSize: "20px",
@@ -184,7 +183,16 @@ const AppCreationFlow = (props: AppCreationFlow) => {
         </div>
       </div>
     ) : (
-      <></>
+      <div
+        style={{
+          fontSize: "20px",
+          padding: "40px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        No Data Available
+      </div>
     );
   };
 

@@ -132,7 +132,7 @@ const AppDashboard = () => {
   const [hideEdit, setHideEdit] = useState<boolean>(false);
   const ability = useContext(AbilityContext);
   const [created_at, setCreatedAt] = useState<string>(new Date() + "");
-  const [appStatus, setAppStatus] = useState<string>("Initializing");
+  const [appStatus, setAppStatus] = useState<string>("");
 
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
