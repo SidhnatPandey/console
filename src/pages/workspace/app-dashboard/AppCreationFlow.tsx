@@ -132,66 +132,60 @@ const AppCreationFlow = (props: AppCreationFlow) => {
     calculateTimeDifference();
   }, []);
   const getSupplyChain = () => {
-    if (supplyChainData) {
-      setInitializ("Running");
-      return (
-        <div className={`scroll-container`} style={{ minHeight: "200px" }}>
-          {supplyChainData.steps.map((process, index) => (
-            <React.Fragment key={index}>
-              <ProcessTile
-                stage={process.step_name}
-                status={process.status}
-                onClick={() => {
-                  if (process.status.toLowerCase() !== "waiting") {
-                    getSupplyChainStep(process.step_name);
-                  }
-                }}
-                isSelected={selectedTile === process.step_name}
-                loading={loading}
-              />
-              {index < supplyChainData.steps.length - 1 && (
-                <ArrowRightAltIcon
-                  data-testid="ArrowRightAltIcon"
-                  sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-      );
-    }
-
-    if (status === "Initializing") {
-      return (
-        <div
-          style={{
-            fontSize: "20px",
-            padding: "40px",
-            textAlign: "center",
-            display: "flex",
-          }}
-        >
-          <div style={{ display: "flex" }}>
-            <CircularProgress
-              size="2rem"
-              color="primary"
-              style={{
-                marginRight: "5px",
-                alignItems: "initial",
+    return supplyChainData ? (
+      <div className={`scroll-container`} style={{ minHeight: "200px" }}>
+        {supplyChainData?.steps.map((process, index) => (
+          <React.Fragment key={index}>
+            <ProcessTile
+              stage={process.step_name}
+              status={process.status}
+              onClick={() => {
+                if (process.status.toLowerCase() !== "waiting") {
+                  getSupplyChainStep(process.step_name);
+                }
               }}
+              isSelected={selectedTile === process.step_name}
+              loading={loading}
             />
-          </div>
-          <div style={{ marginLeft: "2rem", marginTop: "-2rem" }}>
-            <h5 style={{ textAlign: "left", marginBottom: "-1.2rem" }}>
-              Initiating Build({formattedDifference})...{" "}
-            </h5>
-            <p>Status: Submitted/Initiated...</p>
-          </div>
+            {index < supplyChainData.steps.length - 1 && (
+              <ArrowRightAltIcon
+                data-testid="ArrowRightAltIcon"
+                sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    ) : status === "Initializing" ? (
+      <div
+        style={{
+          fontSize: "20px",
+          padding: "40px",
+          textAlign: "center",
+          display: "flex",
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <CircularProgress
+            size="2rem"
+            color="primary"
+            style={{
+              marginRight: "5px",
+              alignItems: "initial",
+            }}
+          />
         </div>
-      );
-    }
-
-    return null;
+        <div style={{ marginLeft: "2rem", marginTop: "-2rem" }}>
+          <h5 style={{ textAlign: "left", marginBottom: "-1.2rem" }}>
+            Initiating Build(
+            {formattedDifference})...{" "}
+          </h5>
+          <p>Status: Submitted/Initiated...</p>
+        </div>
+      </div>
+    ) : (
+      <></>
+    );
   };
 
   return (
