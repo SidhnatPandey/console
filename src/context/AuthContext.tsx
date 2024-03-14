@@ -16,7 +16,8 @@ import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
 import { getOrganisations, getUserInfo, getUserOrg, getWorkspaces } from 'src/services/userService';
 import { getkeys } from 'src/services/secretservice';
-import { decryptPrivateKey } from 'src/pages/secret/encryption_decryption';
+import { decryptPrivateKey } from 'src/secrets-util/encryption_decryption';
+
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {

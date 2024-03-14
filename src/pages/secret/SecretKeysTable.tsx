@@ -11,10 +11,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { SecretContext } from "src/context/SecretContext";
-import { decryptKey, encryptKey } from "./encryption_decryption";
 import DragDropFile, { FileData } from "../create-app/dragdropfile";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import AddSecret from "./AddSecret";
+import { decryptKey, encryptKey } from "src/secrets-util/encryption_decryption";
 
 interface Row {
     id: number;

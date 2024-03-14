@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { decryptAESGCM, encryptAESGCM, generateKeyPair } from "./crpto_utis";
+import { decryptAESGCM, encryptAESGCM, generateKeyPair } from "src/secrets-util/crpto_utis";
 
 
 //--------------------------------------Derived Key from Organisation----------------------------------------------//
@@ -241,7 +241,7 @@ export function encryptKey(
  * @param {string} encrypted_value_ciphertext - Encrypted value.
  * @returns {Promise<{ key: string, value: string }>} - Promise resolving to an object containing the decrypted key and value.
  */
-export function decryptKey(
+export  function decryptKey(
   privateKey: string,
   id: string,
   encrypted_key_iv: string,
@@ -295,3 +295,4 @@ export function decryptKey(
     }
   });
 }
+

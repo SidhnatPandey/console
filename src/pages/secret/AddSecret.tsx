@@ -1,8 +1,8 @@
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { useContext, useState } from "react";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
-import { encryptKey } from "./encryption_decryption";
 import { SecretContext } from "src/context/SecretContext";
+import { encryptKey } from "src/secrets-util/encryption_decryption";
 import { saveSecret } from "src/services/secretservice";
 
 interface AddSecretProps {

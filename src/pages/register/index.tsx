@@ -23,8 +23,9 @@ import { signUp } from "src/services/authService";
 import { checkUsername, checkEmail } from "src/services/userService";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
-import { generateEncryptedKeys } from "../secret/encryption_decryption";
+
 import { saveKeys } from "src/services/secretservice";
+import { generateEncryptedKeys } from "src/secrets-util/encryption_decryption";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
