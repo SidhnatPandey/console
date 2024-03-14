@@ -33,14 +33,23 @@ interface AppCreationFlow {
   gitRepo: string | undefined;
   gitBranch: string | undefined;
   workspaceId: string;
+  time: string;
 }
 
 const AppCreationFlow = (props: AppCreationFlow) => {
-  const { supplyChainData, loading, timer, gitRepo, gitBranch, workspaceId } =
-    props;
+  const {
+    supplyChainData,
+    loading,
+    timer,
+    gitRepo,
+    gitBranch,
+    workspaceId,
+    time,
+  } = props;
   const [selectedTile, setSelectedTile] = useState<string>("clone");
   const [rebuilding, setRebuilding] = useState<boolean>(false);
   const [timeDifference, setTimeDifference] = useState(0);
+  const [formattedDifference, setFormattedDifference] = useState("");
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem("cStage", stage);
@@ -81,26 +90,48 @@ const AppCreationFlow = (props: AppCreationFlow) => {
   };
 
   const calculateTimeDifference = () => {
-    const supplyChainStartedAt = new Date(supplyChainData?.started_at);
+    const supplyChainStartedAt = new Date(
+      supplyChainData ? supplyChainData?.started_at : time
+    );
     const currentTime = new Date();
     const difference = currentTime.getTime() - supplyChainStartedAt.getTime();
     setTimeDifference(difference);
   };
-  const formattedDate = new Date(timeDifference);
-  const hours = formattedDate.getUTCHours();
-  const minutes = formattedDate.getUTCMinutes();
-  const seconds = formattedDate.getUTCSeconds();
-  const formattedDifference = `${hours}H ${minutes}m ${seconds}s`;
-  // console.log(formattedDifference1);
+  useEffect(() => {
+    const formattedDate = new Date(timeDifference);
+    const hours = formattedDate.getUTCHours();
+    const minutes = formattedDate.getUTCMinutes();
+    const seconds = formattedDate.getUTCSeconds();
+
+    let newFormattedDifference = "";
+
+    if (hours > 0) {
+      newFormattedDifference += `${hours}H `;
+    }
+
+    if (minutes > 0 || hours > 0) {
+      newFormattedDifference += `${minutes}m `;
+    }
+
+    if (seconds > 0 || minutes > 0 || hours > 0) {
+      newFormattedDifference += `${seconds}s`;
+    } else {
+      newFormattedDifference += "0 sec";
+    }
+
+    setFormattedDifference(newFormattedDifference);
+
+    const intervalId = setInterval(() => {
+      calculateTimeDifference();
+    }, 10);
+
+    return () => clearInterval(intervalId);
+  }, [timeDifference]);
+  console.log(timeDifference);
 
   useEffect(() => {
     calculateTimeDifference();
-    const intervalId = setInterval(() => {
-      calculateTimeDifference();
-    }, 1000);
-    return () => clearInterval(intervalId);
   }, []);
-
   const getSupplyChain = () => {
     return supplyChainData ? (
       <div className={`scroll-container`} style={{ minHeight: "200px" }}>

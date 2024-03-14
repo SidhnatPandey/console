@@ -251,17 +251,17 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && lstatus !== 'inpogress' && !hideEdit
+    show = runType === "current" && lstatus === "success" && !hideEdit;
     setShowSettingEdit(show);
-  }
+  };
 
   useEffect(() => {
     isShowEdit();
-  }, [supplyChainRunsData, runType, hideEdit])
+  }, [supplyChainRunsData, runType, hideEdit]);
 
   const handleHideEdit = (state: boolean) => {
     setHideEdit(state);
-  }
+  };
 
   return (
     <>
@@ -344,9 +344,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                              supplyChainRunsData?.data?.url.startsWith(
-                                "https://"
-                              )
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "https://"
+                            )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
@@ -437,6 +437,7 @@ const AppDashboard = () => {
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
             workspaceId={workspaceId}
+            time={new Date() + ""}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
@@ -459,15 +460,17 @@ const AppDashboard = () => {
             </Card>
           </Typography>
 
-
           <Typography sx={{ marginBottom: 10 }}>
-            <Card sx={{ margin: "-25px"  }}  >
-              <CardContent style={{ paddingTop:'0.70rem'}}>
-                <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
+            <Card sx={{ margin: "-25px" }}>
+              <CardContent style={{ paddingTop: "0.70rem" }}>
+                <AppEnvVaribale
+                  Data={appData}
+                  showEdit={showSettingEdit}
+                  setHideEdit={handleHideEdit}
+                />
               </CardContent>
             </Card>
           </Typography>
-
 
           {/*   <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>

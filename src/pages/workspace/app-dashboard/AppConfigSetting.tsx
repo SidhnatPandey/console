@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -181,14 +179,16 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
 
   return (
     <form>
-      <Grid container spacing={5} >
-        <Grid item xs={6} sm={6} style={{ paddingTop: '0px' }}>
-          <Typography variant="h3" fontWeight='bold'>App Settings</Typography>
+      <Grid container spacing={5}>
+        <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+          <Typography variant="h3" fontWeight="bold">
+            App Settings
+          </Typography>
         </Grid>
         {/* Button */}
 
-        <Grid item xs={6} sm={6} style={{ paddingTop: '0px' }}>
-          {(showEdit) && (
+        <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+          {showEdit && (
             <Box display="flex" justifyContent="flex-end" alignItems="center">
               {!isEdit && !loading ? (
                 <Button
