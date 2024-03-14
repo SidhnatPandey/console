@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TablePagination from '@mui/material/TablePagination';
-import { useRouter } from 'next/router';
-import { appList } from 'src/services/appService';
-import { convertDateFormat } from 'src/utils/dateUtil';
-import CustomChip from 'src/@core/components/mui/chip'
-import { toTitleCase } from 'src/utils/stringUtils';
+import React, { useEffect, useState } from "react";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import TablePagination from "@mui/material/TablePagination";
+import { useRouter } from "next/router";
+import { appList } from "src/services/appService";
+import { convertDateFormat } from "src/utils/dateUtil";
+import CustomChip from "src/@core/components/mui/chip";
+import { toTitleCase } from "src/utils/stringUtils";
 
 interface Row {
   id: number;
@@ -54,16 +54,15 @@ interface AppListProps {
 
 const EnhancedTableHead: React.FC<{
   onRequestSort: (property: keyof Row) => void;
-  order: 'asc' | 'desc';
+  order: "asc" | "desc";
   orderBy: string;
 }> = ({ onRequestSort, order, orderBy }) => {
-
   const headCells: { id: keyof Row; label: string }[] = [
-    { id: 'name', label: 'NAME' },
-    { id: 'currentEnv', label: 'Current Env' },
-    { id: 'lastDeployed', label: 'Last Deployed' },
-    { id: 'liveAppUrl', label: 'LIVE APP URL' },
-    { id: 'status', label: 'STATUS' },
+    { id: "name", label: "NAME" },
+    { id: "currentEnv", label: "Current Env" },
+    { id: "lastDeployed", label: "Last Deployed" },
+    { id: "liveAppUrl", label: "LIVE APP URL" },
+    { id: "status", label: "STATUS" },
   ];
 
   const createSortHandler = (property: keyof Row) => {
@@ -82,9 +81,9 @@ const EnhancedTableHead: React.FC<{
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={() => {
-                createSortHandler(headCell.id)
+                createSortHandler(headCell.id);
               }}
             >
               {headCell.label}
@@ -99,8 +98,8 @@ const EnhancedTableHead: React.FC<{
 const rowsPerPageOptions = [5, 10, 25]; // Options for rows per page
 
 const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<keyof Row>('name'); // Default sorting by 'name'
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<keyof Row>("name"); // Default sorting by 'name'
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [appListData, setAppListData] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
@@ -119,7 +118,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
       appList(workspace_id)
         .then((response: { data: Row[] }) => {
           setLoading(false);
-          const data = response?.data
+          const data = response?.data;
           setAppListData(data);
         })
         .catch((error: any) => {
@@ -127,49 +126,60 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
           console.log(error);
         });
     }
-  }
+  };
 
   const getStatusChipColor = (status: any) => {
     switch (status) {
-      case 'Deployed':
-        return 'success'; // Green color for Deployed status
-      case 'Succeeded':
-        return 'success'; // Green color for Deployed status
-      case 'Running':
-        return 'primary'; // Blue color for Running status
-      case 'Failed':
-        return 'error'; // Red color for Failed status
+      case "Deployed":
+        return "success";
+      case "inProgress":
+        return "primary";
+      case "Running":
+        return "primary";
+      case "Pending Approval":
+        return "warning";
+      case "Initializing":
+        return "secondary";
+      case "Initialized":
+        return "info";
+      case "Error":
+        return "error";
+      case "Failed":
+        return "error";
       default:
-        return 'warning'; // Default color for other statuses
+        return "success";
     }
   };
 
   const getCurrentEnv = (stage: any) => {
     switch (stage) {
-      case 'deploy-test':
-        return 'test';
-      case 'test-approval':
-        return 'test'
-      case 'deploy-stg':
-        return 'stg'
-      case 'prod-approval':
-        return 'stg'
-      case 'deploy-prod':
-        return 'prod'
+      case "deploy-test":
+        return "test";
+      case "test-approval":
+        return "test";
+      case "deploy-stg":
+        return "stg";
+      case "prod-approval":
+        return "stg";
+      case "deploy-prod":
+        return "prod";
       default:
-        return '';
+        return "";
     }
-  }
+  };
 
   const handleRequestSort = (property: keyof Row) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   const handleRowClick = (rowId: number) => {
     setSelectedRow(rowId);
-    router.push({ pathname: '/workspace/app-dashboard', query: { appId: rowId } });
+    router.push({
+      pathname: "/workspace/app-dashboard",
+      query: { appId: rowId },
+    });
     // Render your component here based on the selected row ID
   };
 
@@ -180,7 +190,9 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -204,21 +216,42 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
                     onClick={() => handleRowClick(row.id)}
                     selected={selectedRow === row.id}
                     hover
-                    style={{ cursor: 'pointer', height: '100%' }}
+                    style={{ cursor: "pointer", height: "100%" }}
                   >
-                    <TableCell style={{
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      color: '#7353e5'
-                    }} >{row?.application_name}</TableCell>
-                    <TableCell>{toTitleCase(getCurrentEnv(row?.stage))}</TableCell>
-                    <TableCell>{convertDateFormat(row?.last_deployed)}</TableCell>
-                    <TableCell onClick={(e) => e.stopPropagation()}><a href={row?.url.startsWith('http://') || row?.url.startsWith('https://') ? row?.url : `https://${row?.url}`} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
+                    <TableCell
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        color: "#7353e5",
+                      }}
+                    >
+                      {row?.application_name}
+                    </TableCell>
+                    <TableCell>
+                      {toTitleCase(getCurrentEnv(row?.stage))}
+                    </TableCell>
+                    <TableCell>
+                      {convertDateFormat(row?.last_deployed)}
+                    </TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <a
+                        href={
+                          row?.url.startsWith("http://") ||
+                          row?.url.startsWith("https://")
+                            ? row?.url
+                            : `https://${row?.url}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {row.url}
+                      </a>
+                    </TableCell>
                     <TableCell>
                       <CustomChip
                         rounded
-                        skin='light'
-                        label={row.status ? row.status : 'Pending'}
+                        skin="light"
+                        label={row.status ? row.status : "Pending"}
                         color={getStatusChipColor(row.status)}
                         variant="outlined"
                       />
@@ -230,15 +263,14 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
                 <TableCell
                   colSpan={5}
                   style={{
-                    textAlign: 'center',
-                    fontSize: '18px',
-                    paddingTop: '50px', // Increase the top padding
-                    paddingBottom: '50px', // Increase the bottom padding
+                    textAlign: "center",
+                    fontSize: "18px",
+                    paddingTop: "50px", // Increase the top padding
+                    paddingBottom: "50px", // Increase the bottom padding
                   }}
                 >
-                  {loading ? 'Loading ...' : 'No Apps'}
+                  {loading ? "Loading ..." : "No Apps"}
                 </TableCell>
-
               </TableRow>
             )}
           </TableBody>
