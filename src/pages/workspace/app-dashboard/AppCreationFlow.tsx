@@ -34,6 +34,7 @@ interface AppCreationFlow {
   gitBranch: string | undefined;
   workspaceId: string;
   time: string;
+  status: string;
 }
 
 const AppCreationFlow = (props: AppCreationFlow) => {
@@ -45,11 +46,13 @@ const AppCreationFlow = (props: AppCreationFlow) => {
     gitBranch,
     workspaceId,
     time,
+    status,
   } = props;
   const [selectedTile, setSelectedTile] = useState<string>("clone");
   const [rebuilding, setRebuilding] = useState<boolean>(false);
   const [timeDifference, setTimeDifference] = useState(0);
   const [formattedDifference, setFormattedDifference] = useState("");
+  const [initializ, setInitializ] = useState("Initializing");
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem("cStage", stage);
@@ -90,9 +93,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
   };
 
   const calculateTimeDifference = () => {
-    const supplyChainStartedAt = new Date(
-      supplyChainData ? supplyChainData?.started_at : time
-    );
+    const supplyChainStartedAt = new Date(time);
     const currentTime = new Date();
     const difference = currentTime.getTime() - supplyChainStartedAt.getTime();
     setTimeDifference(difference);
@@ -121,7 +122,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
 
     const intervalId = setInterval(() => {
       calculateTimeDifference();
-    }, 10);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, [timeDifference]);
@@ -131,58 +132,66 @@ const AppCreationFlow = (props: AppCreationFlow) => {
     calculateTimeDifference();
   }, []);
   const getSupplyChain = () => {
-    return supplyChainData ? (
-      <div className={`scroll-container`} style={{ minHeight: "200px" }}>
-        {supplyChainData?.steps.map((process, index) => (
-          <React.Fragment key={index}>
-            <ProcessTile
-              stage={process.step_name}
-              status={process.status}
-              onClick={() => {
-                if (process.status.toLowerCase() !== "waiting") {
-                  getSupplyChainStep(process.step_name);
-                }
-              }}
-              isSelected={selectedTile === process.step_name}
-              loading={loading}
-            />
-            {index < supplyChainData.steps.length - 1 && (
-              <ArrowRightAltIcon
-                data-testid="ArrowRightAltIcon"
-                sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
+    if (supplyChainData) {
+      setInitializ("Running");
+      return (
+        <div className={`scroll-container`} style={{ minHeight: "200px" }}>
+          {supplyChainData.steps.map((process, index) => (
+            <React.Fragment key={index}>
+              <ProcessTile
+                stage={process.step_name}
+                status={process.status}
+                onClick={() => {
+                  if (process.status.toLowerCase() !== "waiting") {
+                    getSupplyChainStep(process.step_name);
+                  }
+                }}
+                isSelected={selectedTile === process.step_name}
+                loading={loading}
               />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    ) : (
-      <div
-        style={{
-          fontSize: "20px",
-          padding: "40px",
-          textAlign: "center",
-          display: "flex",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <CircularProgress
-            size="2rem"
-            color="primary"
-            style={{
-              marginRight: "5px",
-              alignItems: "initial",
-            }}
-          />
+              {index < supplyChainData.steps.length - 1 && (
+                <ArrowRightAltIcon
+                  data-testid="ArrowRightAltIcon"
+                  sx={{ fontSize: "60px", color: "rgb(115, 83, 229)" }}
+                />
+              )}
+            </React.Fragment>
+          ))}
         </div>
-        <div style={{ marginLeft: "2rem", marginTop: "-2rem" }}>
-          <h5 style={{ textAlign: "left", marginBottom: "-1.2rem" }}>
-            Initiating Build(
-            {formattedDifference})...{" "}
-          </h5>
-          <p>Status: Submitted/Initiated...</p>
+      );
+    }
+
+    if (status === "Initializing") {
+      return (
+        <div
+          style={{
+            fontSize: "20px",
+            padding: "40px",
+            textAlign: "center",
+            display: "flex",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <CircularProgress
+              size="2rem"
+              color="primary"
+              style={{
+                marginRight: "5px",
+                alignItems: "initial",
+              }}
+            />
+          </div>
+          <div style={{ marginLeft: "2rem", marginTop: "-2rem" }}>
+            <h5 style={{ textAlign: "left", marginBottom: "-1.2rem" }}>
+              Initiating Build({formattedDifference})...{" "}
+            </h5>
+            <p>Status: Submitted/Initiated...</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -190,7 +199,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
       <Card>
         {loading ? (
           <Skeleton width={200} height={20} style={{ margin: "20px" }} />
-        ) : (
+        ) : supplyChainData ? (
           <CardHeader
             subheader={"RunId: " + supplyChainData?.run_name}
             sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
@@ -215,6 +224,8 @@ const AppCreationFlow = (props: AppCreationFlow) => {
               </Typography>
             }
           />
+        ) : (
+          <></>
         )}
 
         <CardContent
