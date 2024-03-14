@@ -1,9 +1,7 @@
-
 import crypto from "crypto";
-const nacl = require("tweetnacl");
-nacl.util = require("tweetnacl-util");
 
-
+import * as naclUtil from "tweetnacl-util";
+import nacl from "tweetnacl";
 /**
  * Encrypts data using AES-256-GCM symmetric encryption.
  * @param {Buffer} data - Data to encrypt.
@@ -52,8 +50,6 @@ export function decryptAESGCM(
   });
 }
 
-
-
 /**
  * Generate a random public-private key pair.
  * @returns {Promise<{ publicKey: string, privateKey: string }>} - Promise resolving to an object containing the base64-encoded public and private keys.
@@ -62,13 +58,12 @@ export function generateKeyPair() {
   return new Promise((resolve, reject) => {
     try {
       const keyPair = nacl.box.keyPair();
-      const publicKey =  nacl.util.encodeBase64(keyPair.publicKey);
-      const privateKey = nacl.util.encodeBase64(keyPair.secretKey);
-      
+      const publicKey = naclUtil.encodeBase64(keyPair.publicKey);
+      const privateKey = naclUtil.encodeBase64(keyPair.secretKey);
+
       resolve({ publicKey, privateKey });
     } catch (error) {
       reject(error);
     }
   });
 }
-

@@ -11,8 +11,8 @@ export const saveKeys = (org_id: string, user_id: string, keysData: any) => {
 
 export const getkeys = () => {
   setApiBaseUrl("secret");
-  let url = APP_API.getkey;
-  return get(url).then((response) => response?.data);
+  const url  = APP_API.getkey;
+  return get(url ).then((response) => response?.data);
 };
 
 export const getsecretkeys = (workspace_id: string, environment: string) => {
@@ -24,18 +24,18 @@ export const getsecretkeys = (workspace_id: string, environment: string) => {
 
 export const saveSecret = (request: any) => {
   setApiBaseUrl("secret");
-  let url = APP_API.saveSecret;
+  const  url = APP_API.saveSecret;
   return post(url, request).then((response) => response?.data);
 };
 
 export const updateEditedSecret = (request: any) => {
   setApiBaseUrl("secret");
-  let url = APP_API.updateSecret;
+  const  url = APP_API.updateSecret;
   return put(url, request).then((response) => response?.data);
 };
 
 export const deleteSecret = (request: any) => {
   setApiBaseUrl("secret");
-  let url = APP_API.deleteSecret;
+  const  url = APP_API.deleteSecret;
   return deleteCall(url,request).then((response) => response?.data);
 };

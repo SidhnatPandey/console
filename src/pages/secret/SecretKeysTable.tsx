@@ -60,7 +60,7 @@ const SecretKeysTable = () => {
     const environments = ['test', 'stage', 'prod'];
     const [isAddSecretModalOpen, setIsAddSecretModalOpen] = useState(false);
     const [filteredData, setFilteredData] = useState<{ key: string; value: string; environment: string; id: string }[]>([]);
-    const isSecret: boolean = true;
+    const isSecret = true;  //Type boolean trivially inferred from a boolean literal, remove type annotation.
     const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
     const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
@@ -357,7 +357,7 @@ const SecretKeysTable = () => {
             saveSecretResponses
         ]);
     
-        let result = updateResults.find((res) => res);
+        const result = updateResults.find((res) => res);
 
         return result
     };

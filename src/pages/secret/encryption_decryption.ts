@@ -1,8 +1,6 @@
 import crypto from "crypto";
 import { decryptAESGCM, encryptAESGCM, generateKeyPair } from "./crpto_utis";
 
-const nacl = require("tweetnacl");
-nacl.util = require("tweetnacl-util");
 
 //--------------------------------------Derived Key from Organisation----------------------------------------------//
 
@@ -18,9 +16,9 @@ nacl.util = require("tweetnacl-util");
 export function deriveKeyFromOrganisation(
   organizationid: string,
   salt: Buffer,
-  keyLength: number = 32,
-  iterations: number = 169696,
-  digest: string = "sha512"
+  keyLength   = 32,
+  iterations = 169696,
+  digest = "sha512"
 ): Promise<{ key: Buffer }> {
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(
@@ -65,9 +63,10 @@ export function generateEncryptedKeys(orgid: string): Promise<{
 }> {
   return new Promise((resolve, reject) => {
     const iv = crypto.randomBytes(12); // Generate IV
-    let publicKey: string, privateKey: string, orgKey: string, salt: Buffer;
+    let publicKey: string, privateKey: string, orgKey: string;
+    
 
-    salt = crypto.randomBytes(16); // Generate salt for key derivation
+   const  salt = crypto.randomBytes(16); // Generate salt for key derivation
 
     deriveKeyFromOrganisation(orgid, salt)
       .then((derivedKey) => {

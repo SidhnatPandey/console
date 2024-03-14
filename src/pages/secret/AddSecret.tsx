@@ -7,8 +7,8 @@ import { saveSecret } from "src/services/secretservice";
 
 interface AddSecretProps {
     open: boolean,
-    onDialogClose: Function;
-    fetchData: Function;
+    onDialogClose: any; //function
+    fetchData: any; //function
 }
 
 const AddSecret: React.FC<AddSecretProps> = ({ open, onDialogClose, fetchData }) => {
