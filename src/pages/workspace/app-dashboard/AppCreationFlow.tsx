@@ -115,8 +115,6 @@ const AppCreationFlow = (props: AppCreationFlow) => {
 
     if (seconds > 0 || minutes > 0 || hours > 0) {
       newFormattedDifference += `${seconds}s`;
-    } else {
-      newFormattedDifference += "0 sec";
     }
 
     setFormattedDifference(newFormattedDifference);
