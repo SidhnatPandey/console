@@ -16,7 +16,7 @@ import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
 import { getOrganisations, getUserInfo, getUserOrg, getWorkspaces } from 'src/services/userService';
 import { getkeys } from 'src/services/secretservice';
-import { decryptPrivateKey } from 'src/secrets-util/encryption_decryption';
+import { decryptPrivateKey } from 'src/utils/secrets-util/encryption_decryption';
 
 
 // ** Defaults
@@ -211,7 +211,6 @@ const AuthProvider = ({ children }: Props) => {
   const fetchKeys = () => {
     getkeys().then(
       res => {
-        const encryptedpublicKey = res.data[0].publicKey;
         const encryptediv = res.data[0].encryptedPrivateIv;
         const encrptedsalt = res.data[0].encryptedPrivateSalt;
         const encryptedPrivateKey = res.data[0].encryptedPrivateKey;

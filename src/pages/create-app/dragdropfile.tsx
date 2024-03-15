@@ -7,7 +7,7 @@ import jsyaml from 'js-yaml';
 
 interface DragDropFileProps {
     updateForm(data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean): void;
-    isSecret:boolean
+    isSecret?:boolean
 }
 
 export interface FileData {

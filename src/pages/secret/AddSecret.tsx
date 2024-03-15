@@ -2,7 +2,7 @@ import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitl
 import { useContext, useState } from "react";
 import { LOCALSTORAGE_CONSTANTS } from "src/@core/static/app.constant";
 import { SecretContext } from "src/context/SecretContext";
-import { encryptKey } from "src/secrets-util/encryption_decryption";
+import { encryptKey } from "src/utils/secrets-util/encryption_decryption";
 import { saveSecret } from "src/services/secretservice";
 
 interface AddSecretProps {

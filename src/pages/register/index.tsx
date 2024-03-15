@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 
 import { saveKeys } from "src/services/secretservice";
-import { generateEncryptedKeys } from "src/secrets-util/encryption_decryption";
+import { generateEncryptedKeys } from "src/utils/secrets-util/encryption_decryption";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
