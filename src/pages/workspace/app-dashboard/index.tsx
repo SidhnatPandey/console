@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
@@ -39,7 +39,6 @@ import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppConfigSetting from "./AppConfigSetting";
 import AppEnvVaribale from "./AppEnvVaribale";
-import AppDomain from "./AppDomain";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -132,6 +131,8 @@ const AppDashboard = () => {
   const [showSettingEdit, setShowSettingEdit] = useState<boolean>(false);
   const [hideEdit, setHideEdit] = useState<boolean>(false);
   const ability = useContext(AbilityContext);
+  const [created_at, setCreatedAt] = useState<string>(new Date() + "");
+  const [appStatus, setAppStatus] = useState<string>("");
 
   let key = APP_API.supplyChainRuns;
   const updatedAppId: any = router?.query?.appId;
@@ -157,7 +158,7 @@ const AppDashboard = () => {
   }, [router]);
 
   useEffect(() => {
-    if (router?.query?.appId && (value === '4')) {
+    if (router?.query?.appId && value === "4") {
       getAppDetails(router?.query?.appId);
     }
   }, [value]);
@@ -170,6 +171,8 @@ const AppDashboard = () => {
     appDetails(id, workspaceId)
       .then((response: any) => {
         setAppData(response.data);
+        setCreatedAt(response.data.created_at);
+        setAppStatus(response.data.status);
         setLoading(false);
       })
       .catch((error) => {
@@ -257,17 +260,17 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && lstatus !== 'inpogress' && !hideEdit
+    show = runType === "current" && lstatus === "Succeeded" && !hideEdit;
     setShowSettingEdit(show);
-  }
+  };
 
   useEffect(() => {
     isShowEdit();
-  }, [supplyChainRunsData, runType, hideEdit])
+  }, [supplyChainRunsData, runType, hideEdit]);
 
   const handleHideEdit = (state: boolean) => {
     setHideEdit(state);
-  }
+  };
 
   return (
     <>
@@ -350,9 +353,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                              supplyChainRunsData?.data?.url.startsWith(
-                                "https://"
-                              )
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "https://"
+                            )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
@@ -443,6 +446,8 @@ const AppDashboard = () => {
             gitRepo={appData?.git_repo}
             gitBranch={appData?.git_branch}
             workspaceId={workspaceId}
+            time={created_at}
+            status={appStatus}
           />
         </TabPanel>
         <TabPanel value="2" data-testid="tab-panel-2">
@@ -461,11 +466,13 @@ const AppDashboard = () => {
             />
           </Typography>
 
-
           <Typography sx={{ marginBottom: 10 }}>
-            <AppEnvVaribale Data={appData} showEdit={showSettingEdit} setHideEdit={handleHideEdit} />
+            <AppEnvVaribale
+              Data={appData}
+              showEdit={showSettingEdit}
+              setHideEdit={handleHideEdit}
+            />
           </Typography>
-
 
           {/*   <Typography sx={{ marginBottom: 10 }}>
             <Card sx={{ margin: "-25px" }}>

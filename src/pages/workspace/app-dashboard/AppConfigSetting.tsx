@@ -183,15 +183,21 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
     <Card sx={{ margin: "-25px" }}>
       <CardContent>
         <form>
-          <Grid container spacing={5} >
-            <Grid item xs={6} sm={6} style={{ paddingTop: '0px' }}>
-              <Typography variant="h5" fontWeight='bold'>App Settings</Typography>
+          <Grid container spacing={5}>
+            <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+              <Typography variant="h5" fontWeight="bold">
+                App Settings
+              </Typography>
             </Grid>
             {/* Button */}
 
-            <Grid item xs={6} sm={6} style={{ paddingTop: '0px' }}>
-              {(showEdit) && (
-                <Box display="flex" justifyContent="flex-end" alignItems="center">
+            <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+              {showEdit && (
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="center"
+                >
                   {!isEdit && !loading ? (
                     <Button
                       aria-describedby="popover"
@@ -334,9 +340,16 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                           component="span"
                           fontWeight="bold"
                         >
-                          {instanceSize?.type ? instanceSize?.type + " - " : "ExtraSmall" + " - "}
+                          {instanceSize?.type
+                            ? instanceSize?.type + " - "
+                            : "ExtraSmall" + " - "}
                         </Typography>
-                        {instanceSize?.ram ? instanceSize?.ram + " RAM | " : "256 GB RAM | "} {instanceSize?.vcpu === undefined ? "0.1 vCPU" : instanceSize?.vcpu + " vCPU"}
+                        {instanceSize?.ram
+                          ? instanceSize?.ram + " RAM | "
+                          : "256 GB RAM | "}{" "}
+                        {instanceSize?.vcpu === undefined
+                          ? "0.1 vCPU"
+                          : instanceSize?.vcpu + " vCPU"}
                       </Typography>
                     );
                   }}
@@ -424,7 +437,9 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     alignItems: "center",
                   }}
                 >
-                  <label htmlFor="min" style={{ fontWeight: "bold" }}>Min:</label>
+                  <label htmlFor="min" style={{ fontWeight: "bold" }}>
+                    Min:
+                  </label>
                   {isEdit ? (
                     <TextField
                       variant="outlined"
@@ -436,15 +451,17 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                       placeholder="1"
                       style={{ width: "3rem" }}
                       disabled={!isEdit || isDeveloperPlan()}
-                    />) : (
+                    />
+                  ) : (
                     <div style={{ alignItems: "center" }}>
                       <Typography variant="body1" component="span">
                         {minValue === "0" ? "1" : minValue + ""}
                       </Typography>
                     </div>
-                  )
-                  }
-                  <label htmlFor="max" style={{ fontWeight: "bold" }}>Max:</label>
+                  )}
+                  <label htmlFor="max" style={{ fontWeight: "bold" }}>
+                    Max:
+                  </label>
                   {isEdit ? (
                     <TextField
                       variant="outlined"
@@ -456,14 +473,14 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                       placeholder="1"
                       style={{ width: "3rem" }}
                       disabled={!isEdit || isDeveloperPlan()}
-                    />) : (
+                    />
+                  ) : (
                     <div style={{ alignItems: "center" }}>
                       <Typography variant="body1" component="span">
                         {maxValue === "0" ? "1" : maxValue + ""}
                       </Typography>
                     </div>
-                  )
-                  }
+                  )}
                 </Box>
               </FormGroup>
             </Grid>

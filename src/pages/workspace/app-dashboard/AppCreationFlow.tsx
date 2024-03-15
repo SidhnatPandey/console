@@ -33,14 +33,25 @@ interface AppCreationFlow {
   gitRepo: string | undefined;
   gitBranch: string | undefined;
   workspaceId: string;
+  time: string;
+  status: string;
 }
 
 const AppCreationFlow = (props: AppCreationFlow) => {
-  const { supplyChainData, loading, timer, gitRepo, gitBranch, workspaceId } =
-    props;
+  const {
+    supplyChainData,
+    loading,
+    timer,
+    gitRepo,
+    gitBranch,
+    workspaceId,
+    time,
+    status,
+  } = props;
   const [selectedTile, setSelectedTile] = useState<string>("clone");
   const [rebuilding, setRebuilding] = useState<boolean>(false);
   const [timeDifference, setTimeDifference] = useState(0);
+  const [formattedDifference, setFormattedDifference] = useState("");
 
   const handleTileClick = (stage: string) => {
     localStorage.setItem("cStage", stage);
@@ -81,26 +92,44 @@ const AppCreationFlow = (props: AppCreationFlow) => {
   };
 
   const calculateTimeDifference = () => {
-    const supplyChainStartedAt = new Date(supplyChainData?.started_at);
+    const supplyChainStartedAt = new Date(time);
     const currentTime = new Date();
     const difference = currentTime.getTime() - supplyChainStartedAt.getTime();
     setTimeDifference(difference);
   };
-  const formattedDate = new Date(timeDifference);
-  const hours = formattedDate.getUTCHours();
-  const minutes = formattedDate.getUTCMinutes();
-  const seconds = formattedDate.getUTCSeconds();
-  const formattedDifference = `${hours}H ${minutes}m ${seconds}s`;
-  // console.log(formattedDifference1);
-
   useEffect(() => {
-    calculateTimeDifference();
+    const formattedDate = new Date(timeDifference);
+    const hours = formattedDate.getUTCHours();
+    const minutes = formattedDate.getUTCMinutes();
+    const seconds = formattedDate.getUTCSeconds();
+
+    let newFormattedDifference = "";
+
+    if (hours > 0) {
+      newFormattedDifference += `${hours}H `;
+    }
+
+    if (minutes > 0 || hours > 0) {
+      newFormattedDifference += `${minutes}m `;
+    }
+
+    if (seconds > 0 || minutes > 0 || hours > 0) {
+      newFormattedDifference += `${seconds}s`;
+    }
+
+    setFormattedDifference(newFormattedDifference);
+
     const intervalId = setInterval(() => {
       calculateTimeDifference();
     }, 1000);
-    return () => clearInterval(intervalId);
-  }, []);
 
+    return () => clearInterval(intervalId);
+  }, [timeDifference]);
+  console.log(timeDifference);
+
+  useEffect(() => {
+    calculateTimeDifference();
+  }, []);
   const getSupplyChain = () => {
     return supplyChainData ? (
       <div className={`scroll-container`} style={{ minHeight: "200px" }}>
@@ -126,7 +155,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
           </React.Fragment>
         ))}
       </div>
-    ) : (
+    ) : status === "Initializing" || status === "Initialized" ? (
       <div
         style={{
           fontSize: "20px",
@@ -153,6 +182,17 @@ const AppCreationFlow = (props: AppCreationFlow) => {
           <p>Status: Submitted/Initiated...</p>
         </div>
       </div>
+    ) : (
+      <div
+        style={{
+          fontSize: "20px",
+          padding: "40px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        No Data Available
+      </div>
     );
   };
 
@@ -161,7 +201,7 @@ const AppCreationFlow = (props: AppCreationFlow) => {
       <Card>
         {loading ? (
           <Skeleton width={200} height={20} style={{ margin: "20px" }} />
-        ) : (
+        ) : supplyChainData ? (
           <CardHeader
             subheader={"RunId: " + supplyChainData?.run_name}
             sx={{ "& .MuiCardHeader-action": { m: 0, alignSelf: "center" } }}
@@ -186,6 +226,8 @@ const AppCreationFlow = (props: AppCreationFlow) => {
               </Typography>
             }
           />
+        ) : (
+          <></>
         )}
 
         <CardContent
