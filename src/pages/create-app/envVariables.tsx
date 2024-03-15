@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
-import React, { use, useEffect, useState } from "react";
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Grid, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -42,7 +42,7 @@ interface EnvVariablesProps {
 }
 
 const EnvVariables = (props: EnvVariablesProps) => {
-    const { open, handleEnvDialogClose, handleEnvClose, envArr, isEdit } = props;
+    const { open, handleEnvDialogClose, handleEnvClose, envArr } = props;
     const {
         control: EnvVariableControl,
         getValues: getEnvVariableValue,
@@ -55,8 +55,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
             errors: EnvVariableErrors,
             isDirty: EnvVariableChanged,
             isValid: isEnvVeriableFormValid,
-            dirtyFields
-
         },
     } = useForm({
         mode: "onBlur",
@@ -75,7 +73,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
     const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
-    const [prevData, setPrevData] = useState<any[]>([]);
     const [duplicateKey, setDuplicateKey] = useState<boolean>(false);
     const [duplicateKeyIndex, setDuplicateKeyIndex] = useState<number>(-1);
     const [isSubmitted, setIsSubmitted] = useState(false);
