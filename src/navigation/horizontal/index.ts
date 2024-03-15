@@ -1,32 +1,32 @@
 // ** Type import
-import { HorizontalNavItemsType } from 'src/@core/layouts/types'
-import { PERMISSION_CONSTANTS } from 'src/@core/static/app.constant';
+import { HorizontalNavItemsType } from "src/@core/layouts/types";
+import { PERMISSION_CONSTANTS } from "src/@core/static/app.constant";
 
 const navigation = (): HorizontalNavItemsType => {
   return [
     {
-      title: 'Dashboards',
-      icon: 'tabler:smart-home',
-      path: '/dashboard',
-      disabled: true
+      title: "Dashboards",
+      icon: "tabler:smart-home",
+      path: "/dashboard",
+      disabled: true,
     },
     {
-      icon: 'ion:document-outline',
-      badgeContent: '0',
-      title: 'Workspaces',
+      icon: "ion:document-outline",
+      badgeContent: "0",
+      title: "Workspaces",
       children: [
         {
-          icon: 'fluent:add-28-regular',
-          title: 'New Workspace',
-          path: '/workspace/create'
-        }
-      ]
+          icon: "fluent:add-28-regular",
+          title: "New Workspace",
+          path: "/workspace/create",
+        },
+      ],
     },
     {
-      title: 'Security',
-      icon: 'material-symbols:lock-outline',
-      path: '/security',
-      action: 'read',
+      title: "Security",
+      icon: "mdi:shield-check-outline",
+      path: "/security",
+      action: "read",
       subject: PERMISSION_CONSTANTS.security,
     },
     /*  {
@@ -37,34 +37,34 @@ const navigation = (): HorizontalNavItemsType => {
        subject: PERMISSION_CONSTANTS.appDashboard,
      }, */
     {
-      sectionTitle: 'MANAGE'
+      sectionTitle: "MANAGE",
     },
     {
-      title: 'Billing',
-      icon: 'jam:document',
-      path: '/billing',
+      title: "Billing",
+      icon: "jam:document",
+      path: "/billing",
     },
     {
-      title: 'Settings',
-      icon: 'uil:setting',
-      path: '/settings'
+      title: "Settings",
+      icon: "uil:setting",
+      path: "/settings",
     },
     {
-      title: 'Support',
-      icon: 'ri:headphone-line',
-      path: 'https://support.initializ.ai/'
+      title: "Support",
+      icon: "ri:headphone-line",
+      path: "https://support.initializ.ai/",
     },
     {
-      sectionTitle: 'Misc'
+      sectionTitle: "Misc",
     },
     {
-      title: 'Documentation',
-      icon: 'carbon:document',
-      path: 'https://docs.initializ.ai/',
-      action: 'read',
+      title: "Documentation",
+      icon: "carbon:document",
+      path: "https://docs.initializ.ai/",
+      action: "read",
       subject: PERMISSION_CONSTANTS.document,
     },
   ];
-}
+};
 
-export default navigation
+export default navigation;
