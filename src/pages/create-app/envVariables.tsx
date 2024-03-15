@@ -387,9 +387,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                                     return updatedVisible;
                                                                 });
                                                             }
-                                                            {
-
-                                                            }
                                                         }}
                                                         placeholder='Key'
                                                         variant="standard"
