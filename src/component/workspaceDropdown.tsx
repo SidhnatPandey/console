@@ -3,15 +3,21 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { AuthContext } from "src/context/AuthContext";
 import { SecurityContext } from "src/context/SecurityContext";
+import { SecretContext } from "src/context/SecretContext";
 
-const WorkspaceDropdown = () => {
+interface DropdownDefaultText {
+  globalDefault?: boolean;
+}
+
+const WorkspaceDropdown = ({globalDefault} : DropdownDefaultText) => {
   const [workspaceAnchorEl, setWorkspaceAnchorEl] =
     useState<HTMLElement | null>(null);
   const { workspaces } = useContext(AuthContext);
   const securityContext = useContext(SecurityContext);
+  const secretContext = useContext(SecretContext);
 
   const workspaceOpen = Boolean(workspaceAnchorEl);
-  const [selectedWorkspace, setSelectedWorkspace] = useState("All Workspaces");
+  const [selectedWorkspace, setSelectedWorkspace] = useState(globalDefault ? 'Global' : 'All Workspaces');
 
   const handleWorkspaceClick = (event: React.MouseEvent<HTMLElement>) => {
     setWorkspaceAnchorEl(event.currentTarget);
@@ -24,6 +30,7 @@ const WorkspaceDropdown = () => {
   const handleWorkspaceSelect = (workspace: any) => {
     setSelectedWorkspace(workspace.name);
     securityContext.setWorkspace(workspace.id);
+    secretContext.setWorkspace(workspace.id);
     handleWorkspaceClose();
   };
 
@@ -60,10 +67,10 @@ const WorkspaceDropdown = () => {
       >
         <MenuItem
           onClick={() =>
-            handleWorkspaceSelect({ name: "All Workspaces", id: "all" })
+            handleWorkspaceSelect({ name: globalDefault ? 'Global' : 'All Workspaces', id: !globalDefault ?  "all" : "global"})
           }
         >
-          All Workspaces
+          {globalDefault ? 'Global' : 'All Workspaces'}
         </MenuItem>
         {workspaces &&
           workspaces.map((workspace, index) => (

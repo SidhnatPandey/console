@@ -29,6 +29,13 @@ const navigation = (): VerticalNavItemsType => {
       action: "read",
       subject: PERMISSION_CONSTANTS.security,
     },
+    {
+      title: 'Secret Management',
+      icon: 'material-symbols:lock-outline',
+      path: '/secret',
+      action: 'read',
+      subject: PERMISSION_CONSTANTS.secret,
+    },
     /*  {
        title: 'App-Dashboards',
        icon: 'tabler:smart-home',

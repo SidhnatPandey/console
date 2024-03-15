@@ -583,7 +583,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                         );
                     })}
                     <Grid item xs={12} sm={12}>
-                        <DragDropFile updateForm={handleUpdateForm} />
+                        <DragDropFile updateForm={handleUpdateForm}/>
                     </Grid>
                 </div>
             </DialogContent>
