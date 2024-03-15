@@ -33,19 +33,19 @@ interface AppEnvVaribaleProps {
 }
 const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     const { showEdit, Data, setHideEdit } = props;
-    const EnvData = Data.env_variables
+    const EnvData = Data.env_variables;
     const envArr: any[] = [];
     const [open, setOpen] = useState<boolean>(false)
     const [dataArr, setDataArr] = useState<any[]>([]);
     const [passwordVisible, setPasswordVisible] = useState<boolean[]>(Array(100).fill(true));
     const [firstTime, setFirstTime] = useState<boolean>(false);
-
+    const [isEdit, setIsEdit] = useState<boolean>(false);
     const checkIfKeyExists = (key: string) => {
         const existingValues = envArr;
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
-
+    console.log("EnvData", EnvData)
     const pushToArr = (node: string, ele: any) => {
         const obj = {
             key: ele.key,
@@ -70,6 +70,8 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     for (const node in EnvData) {
+
+
         const arr = [...EnvData[node]];
         arr.forEach((element: any) => {
             const index = checkIfKeyExists(element.key);
@@ -79,7 +81,13 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                 pushToArr(node, element);
             }
         });
+
+
     }
+
+    useEffect(() => {
+        setDataArr(envArr);
+    }, []);
 
     const togglePasswordVisibility = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         setPasswordVisible((prevState) => {
@@ -98,8 +106,10 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
         setFirstTime(true)
         setOpen(false);
     };
-
+    console.log("1", dataArr)
+    console.log("2", envArr)
     const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setIsEdit(true)
         setOpen(true);
     }
 
@@ -144,7 +154,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
                             </Box>
                         }
                     </Grid>
-                    {open && <EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => setOpen(false)} envArr={[...envArr]} isEdit={true} />}
+                    {<EnvVariables open={open} handleEnvDialogClose={handleEnvDialogClose} handleEnvClose={() => { setOpen(false); setIsEdit(false) }} envArr={[...dataArr]} isEdit={isEdit} />}
 
                     <Grid item xs={3} sm={3} style={{ paddingLeft: '0rem', paddingTop: '0.5rem' }}>
                         <Typography variant="body1" component="span" fontWeight="bold">Environments</Typography>
