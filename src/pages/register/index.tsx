@@ -217,11 +217,7 @@ const Register = () => {
       validatePassword(value);
       setFormData({ ...formData, password: value });
       setTouched({ ...touched, password: true });
-      if (!value) {
-        setPasswordError("Password cannot be empty.");
-      } else {
-        setPasswordError(null);
-      }
+      setPasswordError(null);
     }
   };
 
