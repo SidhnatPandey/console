@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -26,15 +28,14 @@ import Toaster from "src/utils/toaster";
 
 interface AppConfigSettingProps {
   data: App;
-  showEdit: boolean,
-  setHideEdit(state: boolean): void
+  showEdit: boolean;
+  setHideEdit(state: boolean): void;
 }
 
 const AppConfigSetting = (props: AppConfigSettingProps) => {
   const { data, showEdit, setHideEdit } = props;
   const { isDeveloperPlan } = usePlan();
   const { loading, startLoading, stopLoading } = useLoading();
-
 
   const [obj, setObj] = useState({
     port: data.port,
@@ -94,6 +95,12 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   const handleCancel = () => {
+    const selectedInstance = AI_SIZE.find(
+      (instance: { type: any }) => instance.type === obj.type
+    );
+    if (selectedInstance != null) {
+      setInstanceSize(selectedInstance);
+    }
     setPort(obj.port);
     setPath(obj.http_path);
     setMinValue(obj.min + "");
@@ -112,7 +119,9 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   const instance_details = data.instance_details;
-  const aiSizeIndex = AI_SIZE.map(e => e.type).indexOf(instance_details.instance_type);
+  const aiSizeIndex = AI_SIZE.map((e) => e.type).indexOf(
+    instance_details.instance_type
+  );
   const [instanceSize, setInstanceSize] = useState(AI_SIZE[aiSizeIndex]);
 
   const [minValue, setMinValue] = useState<string>(obj.min + "");
@@ -144,11 +153,13 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         .then((response) => {
           setTimeout(() => {
             setHideEdit(false);
-          }, 60000)
+          }, 60000);
           if (response.status == 200) {
             Toaster.successToast("Applying updated settings. Please wait!");
           } else {
-            Toaster.errorToast("App is not able to edit due to some error message");
+            Toaster.errorToast(
+              "App is not able to edit due to some error message"
+            );
           }
         })
         .catch((error) => {
@@ -169,293 +180,322 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   };
 
   return (
-    <form>
-      <Grid container spacing={5}>
-        <Grid item xs={6} sm={6}>
-          <Typography variant="h5">App Settings</Typography>
-        </Grid>
-        {/* Button */}
-
-        <Grid item xs={6} sm={6}>
-          {(showEdit) && (
-            <Box display="flex" justifyContent="flex-end" alignItems="center">
-              {!isEdit && !loading ? (
-                <Button
-                  aria-describedby="popover"
-                  variant="contained"
-                  onClick={handleClickOpen}
-                  color="inherit"
-                >
-                  {" "}
-                  Edit
-                </Button>
-              ) : (
-                <>
-                  {" "}
-                  <Button
-                    aria-describedby="popover"
-                    variant="contained"
-                    onClick={handleSave}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <CircularProgress
-                          size="1.2rem"
-                          color="secondary"
-                          style={{ marginRight: "5px" }}
-                        />
-                        Saving
-                      </>
-                    ) : (
-                      "Save"
-                    )}
-                  </Button>
-                  <Button
-                    aria-describedby="popover"
-                    variant="contained"
-                    color="inherit"
-                    style={{ margin: 10 }}
-                    onClick={handleCancel}
-                  >
-                    {" "}
-                    Cancel
-                  </Button>
-                </>
-              )}
-            </Box>
-          )}
-        </Grid>
-
-        {/* HTTP Port*/}
-        <Grid item xs={3} sm={3}>
-          <Typography variant="body1" component="span" fontWeight="bold">
-            HTTP Port
-          </Typography>
-          <br />
-          <Typography variant="body2" component="span">
-            Http port for the Application
-          </Typography>
-        </Grid>
-        {isEdit ? (
-          <Grid item xs={3} sm={3}>
-            <TextField
-              required
-              variant="outlined"
-              size="small"
-              label="HTTP Port"
-              type="number"
-              sx={{ maxWidth: 150, height: "auto", marginBottom: "10px" }}
-              value={port}
-              onChange={handlePortChange}
-            />
-          </Grid>
-        ) : (
-          <Grid item xs={3} sm={4}>
-            <div style={{ alignItems: "center" }}>
-              <Typography variant="body1" component="span">
-                {port + ""}
+    <Card sx={{ margin: "-25px" }}>
+      <CardContent>
+        <form>
+          <Grid container spacing={5}>
+            <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+              <Typography variant="h5" fontWeight="bold">
+                App Settings
               </Typography>
-            </div>
-          </Grid>
-        )}
+            </Grid>
+            {/* Button */}
 
-        {/* HTTP Path */}
-        <Grid item xs={3} sm={2}>
-          <Typography variant="body1" component="span" fontWeight="bold">
-            HTTP Path
-          </Typography>
-          <br />
-          <Typography variant="body2" component="span">
-            Http path for the Application
-          </Typography>
-        </Grid>
-        <Grid item xs={3} sm={3}>
-          {isEdit ? (
-            <TextField
-              variant="outlined"
-              size="small"
-              label="HTTP Path"
-              sx={{ maxWidth: 120 }}
-              value={http_path}
-              onChange={handlePathChange} // Fixed this line
-            />
-          ) : (
+            <Grid item xs={6} sm={6} style={{ paddingTop: "0px" }}>
+              {showEdit && (
+                <Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="center"
+                >
+                  {!isEdit && !loading ? (
+                    <Button
+                      aria-describedby="popover"
+                      variant="contained"
+                      onClick={handleClickOpen}
+                      color="inherit"
+                    >
+                      {" "}
+                      Edit
+                    </Button>
+                  ) : (
+                    <>
+                      {" "}
+                      <Button
+                        aria-describedby="popover"
+                        variant="contained"
+                        onClick={handleSave}
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size="1.2rem"
+                              color="secondary"
+                              style={{ marginRight: "5px" }}
+                            />
+                            Saving
+                          </>
+                        ) : (
+                          "Save"
+                        )}
+                      </Button>
+                      <Button
+                        aria-describedby="popover"
+                        variant="contained"
+                        color="inherit"
+                        style={{ margin: 10 }}
+                        onClick={handleCancel}
+                      >
+                        {" "}
+                        Cancel
+                      </Button>
+                    </>
+                  )}
+                </Box>
+              )}
+            </Grid>
+
+            {/* HTTP Port*/}
             <Grid item xs={3} sm={3}>
-              <div style={{ alignItems: "center" }}>
-                <Typography variant="body1" component="span">
-                  {http_path + ""}
+              <Typography variant="body1" component="span" fontWeight="bold">
+                HTTP Port
+              </Typography>
+              <br />
+              <Typography variant="body2" component="span">
+                Http port for the Application
+              </Typography>
+            </Grid>
+            {isEdit ? (
+              <Grid item xs={3} sm={3}>
+                <TextField
+                  required
+                  variant="outlined"
+                  size="small"
+                  label="HTTP Port"
+                  type="number"
+                  sx={{
+                    maxWidth: 150,
+                    height: "auto",
+                    marginBottom: "10px",
+                  }}
+                  value={port}
+                  onChange={handlePortChange}
+                />
+              </Grid>
+            ) : (
+              <Grid item xs={3} sm={4}>
+                <div style={{ alignItems: "center" }}>
+                  <Typography variant="body1" component="span">
+                    {port + ""}
+                  </Typography>
+                </div>
+              </Grid>
+            )}
+
+            {/* HTTP Path */}
+            <Grid item xs={3} sm={2}>
+              <Typography variant="body1" component="span" fontWeight="bold">
+                HTTP Path
+              </Typography>
+              <br />
+              <Typography variant="body2" component="span">
+                Http path for the Application
+              </Typography>
+            </Grid>
+            <Grid item xs={3} sm={3}>
+              {isEdit ? (
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  label="HTTP Path"
+                  sx={{ maxWidth: 120 }}
+                  value={http_path}
+                  onChange={handlePathChange} // Fixed this line
+                />
+              ) : (
+                <Grid item xs={3} sm={3}>
+                  <div style={{ alignItems: "center" }}>
+                    <Typography variant="body1" component="span">
+                      {http_path + ""}
+                    </Typography>
+                  </div>
+                </Grid>
+              )}
+            </Grid>
+
+            {/* App Instance */}
+            <Grid item xs={3} sm={3}>
+              <div>
+                <Typography variant="body1" component="span" fontWeight="bold">
+                  App Instance(AI) Size
                 </Typography>
               </div>
             </Grid>
-          )}
-        </Grid>
+            <Grid item xs={3} sm={4} style={{ marginTop: "-0.9rem" }}>
+              <FormControl sx={{ mt: 3 }}>
+                <Select
+                  variant="outlined"
+                  size="small"
+                  id="no_of_Instances"
+                  displayEmpty
+                  value={instanceSize}
+                  onChange={handleInstanceChange}
+                  input={<OutlinedInput />}
+                  renderValue={() => {
+                    return (
+                      <Typography>
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          fontWeight="bold"
+                        >
+                          {instanceSize?.type
+                            ? instanceSize?.type + " - "
+                            : "ExtraSmall" + " - "}
+                        </Typography>
+                        {instanceSize?.ram
+                          ? instanceSize?.ram + " RAM | "
+                          : "256 GB RAM | "}{" "}
+                        {instanceSize?.vcpu === undefined
+                          ? "0.1 vCPU"
+                          : instanceSize?.vcpu + " vCPU"}
+                      </Typography>
+                    );
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                      },
+                    },
+                  }}
+                  inputProps={{ "aria-label": "Without label" }}
+                  disabled={!isEdit || isDeveloperPlan()}
+                >
+                  {AI_SIZE.map((instance, index) => (
+                    <MenuItem key={index} value={instance.type}>
+                      <Typography
+                        variant="body1"
+                        component="span"
+                        fontWeight="bold"
+                      >
+                        {instance.type + " - "}
+                      </Typography>
+                      {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
 
-        {/* App Instance */}
-        <Grid item xs={3} sm={3}>
-          <div>
-            <Typography variant="body1" component="span" fontWeight="bold">
-              App Instance(AI) Size
-            </Typography>
-          </div>
-        </Grid>
-        <Grid item xs={3} sm={4} style={{ marginTop: "-0.9rem" }}>
-          <FormControl sx={{ mt: 3 }}>
-            <Select
-              variant="outlined"
-              size="small"
-              id="no_of_Instances"
-              displayEmpty
-              value={instanceSize}
-              onChange={handleInstanceChange}
-              input={<OutlinedInput />}
-              renderValue={() => {
-                return (
-                  <Typography>
-                    <Typography
-                      variant="body2"
-                      component="span"
-                      fontWeight="bold"
-                    >
-                      {instanceSize?.type? instanceSize?.type + " - " : "ExtraSmall" + " - "}
-                    </Typography>
-                    {instanceSize?.ram? instanceSize?.ram + " RAM | " : "256 GB RAM | "} {instanceSize?.vcpu === undefined ? "0.1 vCPU" : instanceSize?.vcpu + " vCPU"}
-                  </Typography>
-                );
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                  },
-                },
-              }}
-              inputProps={{ "aria-label": "Without label" }}
-              disabled={!isEdit || isDeveloperPlan()}
+            {/* Enable auto-scalling of Instances */}
+            <Grid
+              item
+              xs={3}
+              sm={4}
+              style={{ paddingTop: "0px", marginTop: "12px" }}
             >
-              {AI_SIZE.map((instance, index) => (
-                <MenuItem key={index} value={instance.type}>
-                  <Typography
-                    variant="body1"
-                    component="span"
-                    fontWeight="bold"
-                  >
-                    {instance.type + " - "}
-                  </Typography>
-                  {instance.ram + " RAM | " + instance.vcpu + " vCPU"}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        {/* Select Instances */}
-        <Grid
-          item
-          xs={3}
-          sm={4}
-          style={{ paddingTop: "0px", marginTop: "12px" }}
-        >
-          <FormGroup style={{ display: "block" }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isChecked}
-                  onChange={handleverticalScalling}
+              <FormGroup style={{ display: "block" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={handleverticalScalling}
+                    />
+                  }
+                  label="Enable Vertical Auto-Scaling"
+                  disabled={!isEdit || isDeveloperPlan()}
                 />
-              }
-              label="Enable Vertical Auto-Scaling"
-              disabled={!isEdit || isDeveloperPlan()}
-            />
-            <Tooltip
-              title={
-                "Vertical Auto-Scaling allows the App to use resources beyond the request when needed"
-              }
-              arrow
-            >
-              <InfoOutlinedIcon
-                style={{
-                  marginBottom: "-7px",
-                  marginLeft: "-12px",
-                  padding: 0,
+                <Tooltip
+                  title={
+                    "Vertical Auto-Scaling allows the App to use resources beyond the request when needed"
+                  }
+                  arrow
+                >
+                  <InfoOutlinedIcon
+                    style={{
+                      marginBottom: "-7px",
+                      marginLeft: "-12px",
+                      padding: 0,
+                    }}
+                    id="vertical_auto_scale"
+                  />
+                </Tooltip>
+              </FormGroup>
+            </Grid>
+
+            {/* Numebr of instances */}
+            <Grid item xs={3} sm={3}>
+              <div>
+                <Typography variant="body1" component="span" fontWeight="bold">
+                  Number of Instances
+                </Typography>
+              </div>
+            </Grid>
+            <Grid item xs={3} sm={4}>
+              <FormGroup
+                sx={{
+                  mt: "-0.2rem",
                 }}
-                id="vertical_auto_scale"
-              />
-            </Tooltip>
-          </FormGroup>
-        </Grid>
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "16px",
+                    alignItems: "center",
+                  }}
+                >
+                  <label htmlFor="min" style={{ fontWeight: "bold" }}>
+                    Min:
+                  </label>
+                  {isEdit ? (
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      type="text"
+                      id="min"
+                      value={minValue}
+                      onChange={handleMinChange}
+                      placeholder="1"
+                      style={{ width: "3rem" }}
+                      disabled={!isEdit || isDeveloperPlan()}
+                    />
+                  ) : (
+                    <div style={{ alignItems: "center" }}>
+                      <Typography variant="body1" component="span">
+                        {minValue === "0" ? "1" : minValue + ""}
+                      </Typography>
+                    </div>
+                  )}
+                  <label htmlFor="max" style={{ fontWeight: "bold" }}>
+                    Max:
+                  </label>
+                  {isEdit ? (
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      type="text"
+                      id="max"
+                      value={maxValue}
+                      onChange={handleMaxChange}
+                      placeholder="1"
+                      style={{ width: "3rem" }}
+                      disabled={!isEdit || isDeveloperPlan()}
+                    />
+                  ) : (
+                    <div style={{ alignItems: "center" }}>
+                      <Typography variant="body1" component="span">
+                        {maxValue === "0" ? "1" : maxValue + ""}
+                      </Typography>
+                    </div>
+                  )}
+                </Box>
+              </FormGroup>
+            </Grid>
 
-        {/* Numebr of instances */}
-        <Grid item xs={3} sm={3}>
-          <div>
-            <Typography variant="body1" component="span" fontWeight="bold">
-              Number of Instances
-            </Typography>
-          </div>
-        </Grid>
-        <Grid item xs={3} sm={4}>
-          <FormGroup sx={{ mt: "-0.2rem" }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "16px",
-                alignItems: "center",
-              }}
-            >
-              <label htmlFor="min" style={{fontWeight:"bold"}}>Min:</label>
-              { isEdit? (
-              <TextField
-                variant="outlined"
-                size="small"
-                type="text"
-                id="min"
-                value={minValue}
-                onChange={handleMinChange}
-                placeholder="1"
-                style={{ width: "3rem" }}
-                disabled={!isEdit || isDeveloperPlan()}
-              /> ) : (
-                <div style={{ alignItems: "center" }}>
-                  <Typography variant="body1" component="span">
-                    {minValue === "0"? "1" : minValue + ""}
-                  </Typography>
-                </div>
-              )
-              }
-              <label htmlFor="max" style={{fontWeight:"bold"}}>Max:</label>
-              { isEdit? (
-              <TextField
-                variant="outlined"
-                size="small"
-                type="text"
-                id="max"
-                value={maxValue}
-                onChange={handleMaxChange}
-                placeholder="1"
-                style={{ width: "3rem" }}
-                disabled={!isEdit || isDeveloperPlan()}
-              /> ) : (
-                <div style={{ alignItems: "center" }}>
-                  <Typography variant="body1" component="span">
-                    {maxValue === "0" ? "1": maxValue + ""}
-                  </Typography>
-                </div>
-              )
-            }
-            </Box>
-          </FormGroup>
-        </Grid>
-
-        {/* Error */}
-        <Grid xs={8} sm={8} item>
-          {" "}
-          <Box sx={{ marginLeft: "16rem" }}>
-            {error && <span style={{ color: "red" }}>{error}</span>}{" "}
-          </Box>
-        </Grid>
-      </Grid>
-    </form>
+            {/* Error */}
+            <Grid xs={8} sm={8} item>
+              {" "}
+              <Box sx={{ marginLeft: "16rem" }}>
+                {error && <span style={{ color: "red" }}>{error}</span>}{" "}
+              </Box>
+            </Grid>
+          </Grid>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

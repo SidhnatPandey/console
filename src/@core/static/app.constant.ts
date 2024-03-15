@@ -42,9 +42,9 @@ export const PERMISSION_CONSTANTS = {
 //instances
 export const AI_SIZE = [
   {
-    type: "Default",
-    ram: "2GB",
-    vcpu: 1,
+    type: "Extra Small",
+    ram: "0.5 GB",
+    vcpu: 0.1,
   },
   {
     type: "Small",
@@ -52,13 +52,19 @@ export const AI_SIZE = [
     vcpu: 0.5,
   },
   {
+    type: "Default",
+    ram: "2GB",
+    vcpu: 1,
+  },
+  {
     type: "Large",
     ram: "4 GB",
     vcpu: 2,
   },
-  {
-    type: "Extra Small",
-    ram: "0.5 GB",
-    vcpu: 0.1,
-  },
+];
+
+export const ENV_TYPE = [
+  { value: "secret", displauValue: "secret" },
+  { value: "secret_ref", displauValue: "secretRef" },
+  { value: "env", displauValue: "env" },
 ];

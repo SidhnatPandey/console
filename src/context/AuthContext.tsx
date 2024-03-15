@@ -11,6 +11,8 @@ import axios from 'axios'
 import { env } from 'next-runtime-env';
 
 // ** Types
+import { get } from "src/@core/services/masterServices";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType, Workspace, Organisation, Org } from './types'
 import { APP_API } from 'src/@core/static/api.constant';
 import { LOCALSTORAGE_CONSTANTS } from 'src/@core/static/app.constant';
@@ -61,39 +63,15 @@ const AuthProvider = ({ children }: Props) => {
       //setLoading(false)
       if (storedToken) {
         //const user = JSON.parse(window.localStorage.getItem('userData')!);
+        const isNavigate = !localStorage.getItem(
+          LOCALSTORAGE_CONSTANTS.workspace
+        );
         getUser();
         await fetchOrganisation();
         fetchOrg();
+        fetchWorkspaces(null, isNavigate, true);
         fetchKeys();
-        const isNavigate = !localStorage.getItem(LOCALSTORAGE_CONSTANTS.workspace);
-        fetchWorkspaces(null, isNavigate);
-        fetchOrganisation();
-        /* if (user) {
-          setLoading(false)
-          setUser({ ...user })
-        } else {
-          setLoading(true)
-          await axios
-            .get(APP_API.userInfo, {
-              headers: {
-                Authorization: `Bearer ${storedToken}`
-              }
-            })
-            .then(async response => {
-              setLoading(false)
-              setUser({ ...response.data.userData })
-            })
-            .catch(() => {
-              localStorage.removeItem('userData')
-              localStorage.removeItem('refreshToken')
-              localStorage.removeItem('accessToken')
-              setUser(null)
-              setLoading(false)
-              if (LOCALSTORAGE_CONSTANTS.refreshToken === 'logout' && !router.pathname.includes('login')) {
-                router.replace('/login')
-              }
-            })
-        } */
+        //fetchAllContent(null, isNavigate, true);
       } else {
         setLoading(false)
       }
@@ -148,7 +126,7 @@ const AuthProvider = ({ children }: Props) => {
           fetchOrg();
           fetchKeys();
           fetchOrganisation();
-          await fetchWorkspaces(null, true, true);
+          fetchWorkspaces(null, true, true);
           getUser();
         }
       })
@@ -167,6 +145,67 @@ const AuthProvider = ({ children }: Props) => {
     window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.userName);
     window.localStorage.removeItem(LOCALSTORAGE_CONSTANTS.ogrId);
     router.push('/login')
+  }
+
+  const fetchAllContent = (name: string | null, navigate = false, setHomeRoute = false) => {
+    setApiBaseUrl();
+    const urls = [
+      APP_API.userProfile,
+      APP_API.OrgList,
+      APP_API.getOrg,
+      APP_API.getListOfWorkspaces,
+    ];
+
+    const requests = urls.map((url) => get(url));
+    Promise.all(requests)
+      .then((responses) => {
+        // Responses is an array of Axios responses in the same order as the URLs
+        responses.forEach((response, index) => {
+          switch (index) {
+            case 0:
+              setUser({ ...response?.data });
+              break;
+            case 1:
+              if (response?.data === null) {
+                router.push("/orgError");
+              } else {
+                setOrganisations(response?.data);
+              }
+              break;
+            case 2:
+              setOrg(response?.data);
+              break;
+            case 3:
+              setWorkspaces(response?.data.workspaces);
+              if (!response?.data.workspaces && organisations.length > 0) {
+                router.push("/workspaceError");
+              } else if (response?.data.workspaces) {
+                const newWorkspace = response?.data.workspaces?.find(
+                  (workspace: { name: string | null }) => workspace.name === name
+                );
+                if (setHomeRoute) {
+                  localStorage.setItem(
+                    LOCALSTORAGE_CONSTANTS.homeRoute,
+                    `/workspace/${response?.data?.workspaces[0].id}`
+                  );
+                }
+                if (navigate || name) {
+                  const returnUrl = router.query.returnUrl;
+                  const id = name ? newWorkspace?.id : response?.data?.workspaces[0].id;
+                  const redirectURL =
+                    returnUrl && returnUrl !== "/" ? returnUrl : `/workspace/${id}`;
+                  router.replace(redirectURL as string);
+                }
+              }
+              break;
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      }).finally(() => {
+        setLoading(false);
+      })
   }
 
   const getUser = () => {
@@ -216,7 +255,7 @@ const AuthProvider = ({ children }: Props) => {
         const encryptedPrivateKey = res.data[0].encryptedPrivateKey;
         const encryptedTag = res.data[0].encryptedPrivateAuthTag;
         const orgid = res.data[0].org_id;
-        
+
         decryptPrivateKey(orgid, encrptedsalt, encryptedPrivateKey, encryptediv, encryptedTag).then((result) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.orgKey, result.orgKey)
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.privateKey, result.privateKey)
