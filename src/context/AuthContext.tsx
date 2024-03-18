@@ -352,7 +352,9 @@ const AuthProvider = ({ children }: Props) => {
                   });
                 }
               })
-              .catch((error: any) => {});
+              .catch((error: any) => {
+                console.log(error);
+              });
           });
         }
       } else {
