@@ -260,7 +260,7 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && lstatus! !== "InProgress" && !hideEdit;
+    show = runType === "current" && lstatus.toLowerCase() !== "inprogress" && !hideEdit;
     setShowSettingEdit(show);
   };
 

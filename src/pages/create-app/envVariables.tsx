@@ -144,14 +144,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     const handleSave = () => {
-        //   console.log(EnvVariableChanged, isEnvVeriableFormValid, EnvVariableErrors, isSubmitted);
         setIsSubmitted(true);
         if (!duplicateKey && !envValueNotPresentArr.includes(true) && !envValuePresentArr.includes(true)) {
 
             const env = convertData(getEnvVariableValue('env_variables'));
-            //    console.log("apisendingdata", env)
             const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
-            //    console.log("filterdata", filterdata)
             handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
             setIsSubmitted(false);
         }
@@ -167,14 +164,12 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
 
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
-        //  console.log("data", data)
         if (isTest) {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.test`, ele.value.toString());
                 } else {
-                    //                console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: ele.value.toString(), prod: '', stg: '', Checked: false })
                 }
             });
@@ -185,7 +180,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.prod`, ele.value.toString());
                 } else {
-                    //             console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value.toString(), stg: '', Checked: false })
                 }
             });
@@ -196,7 +190,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.stg`, ele.value.toString());
                 } else {
-                    //              console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value.toString(), Checked: false })
                 }
             });
@@ -204,13 +197,11 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
-        //    console.log("envUseeffect", envArr)
         const currentDataList = getEnvVariableValue(`env_variables`);
         if (!currentDataList[0]?.key && envArr) {
             if (envArr.length > 1) {
                 remove(0);
             }
-
         }
         if (envArr) {
             envArr.map((item) => {
@@ -251,7 +242,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return index;
     }
 
-    const checkDuplicateKey = (value: string, index: number) => {
+    const checkDuplicateKey = (value: string) => {
         const existingValues = getEnvVariableValue();
         const arrayofKeys = existingValues.env_variables.map((ele: any) => ele.key);
         const arrayOfDuplicateEle: number[] = [];
@@ -260,41 +251,21 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 arrayOfDuplicateEle.push(indexi);
             }
         })
-        console.log("arrayOfDuplicateEle", arrayOfDuplicateEle)
         const isPresent: boolean = arrayOfDuplicateEle.length > 1;
-
-        console.log("duplcatarrayindex", duplicateKeyIndex)
-        console.log("isPresent", isPresent)
-        console.log("duplicatekey", duplicateKey)
-        console.log(arr);
-        //const num = existingValues.map(e => e.key).indexOf(value);
         if (isPresent) {
-            console.log("da2", arrayOfDuplicateEle)
-
             arr = arrayOfDuplicateEle
-            //  setArr(arrayOfDuplicateEle)
-            console.log("arr2", arr);
-
             setDuplicateKey(true);
-            console.log("duplicatekey", duplicateKey)
-
-            arr.forEach((item, index) => {
+            arr.forEach((item) => {
                 setDuplicateKeyIndex((prevState) => {
                     const updatedState = [...prevState];
                     updatedState[item] = true;
                     return updatedState
                 })
             });
-            console.log("startduplcatarrayindex", duplicateKeyIndex)
-
         }
         else if (!isPresent) {
-            console.log("endduplcatarrayindex", duplicateKeyIndex)
-            console.log("arr3", arr);
             setDuplicateKey(() => false);
-
-
-            arr.forEach((item, index) => {
+            arr.forEach((item) => {
                 setDuplicateKeyIndex((prevState) => {
                     const updatedState = [...prevState];
                     updatedState[item] = false;
@@ -302,17 +273,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 })
 
             });
-            console.log("end2duplcatarrayindex", duplicateKeyIndex)
-
-
         }
 
     }
-
-
-    // const resetDuplicateKey = () => {
-    //     console.log("reset", arr)
-    // }
 
     const handleClick = () => {
         setBorderColor('rgba(115, 83, 229, 1)');
@@ -320,8 +283,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const handleOutSideClick = () => {
         setBorderColor(theme === 'light' ? 'rgba(47, 43, 61, 0.2)' : 'rgba(208, 212, 241, 0.2)');
     }
-
-
 
     const KeyIsPresentButValueNot = (index: number, val?: boolean) => {
 
@@ -457,7 +418,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                 >
                                     <Grid item xs={2.75} sm={2.75}>
                                         {/* <Grid item xs={1.375} sm={1.375}> */}
-                                        <div style={{ border: `1px solid ${borderColor}`, borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }} onClick={handleClick} onBlur={handleOutSideClick}>
+                                        <div style={{ border: `1px solid ${borderColor}`, borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }} >
+                                            {/* onClick={handleClick} onBlur={handleOutSideClick} */}
                                             <Controller
                                                 name={`env_variables.${index}.key`}
                                                 control={EnvVariableControl}
@@ -473,7 +435,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onChange={(e) => {
 
                                                             onChange(e);
-                                                            checkDuplicateKey(e.target.value, index)
+                                                            checkDuplicateKey(e.target.value)
 
                                                             // if (duplicateKey && arr.includes(index)) {
                                                             //     resetDuplicateKey()

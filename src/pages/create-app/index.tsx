@@ -194,7 +194,7 @@ const CreateApp = () => {
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
   const [instanceSize, setInstanceSize] = useState(
-    !isDeveloperPlan() ? AI_SIZE[0] : AI_SIZE[3]
+    !isDeveloperPlan() ? AI_SIZE[2] : AI_SIZE[0]
   );
   const [isChecked, setIsChecked] = useState(false);
   const [minValue, setMinValue] = useState("1");

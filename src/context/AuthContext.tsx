@@ -219,14 +219,35 @@ const AuthProvider = ({ children }: Props) => {
   const fetchWorkspaces = (name: string | null, navigate = false, setHomeRoute = false) => {
     getWorkspaces().then(response => {
       setLoading(false);
+      /*  setWorkspaces(response?.data.workspaces);
+       const newWorkspace = response?.data.workspaces?.find((workspace: { name: string | null; }) => workspace.name === name);
+       if (setHomeRoute) { localStorage.setItem(LOCALSTORAGE_CONSTANTS.homeRoute, `/workspace/${response?.data.workspaces[0].id}`) }
+       if (navigate || name) {
+         const returnUrl = router.query.returnUrl;
+         const id = name ? newWorkspace.id : response?.data?.workspaces[0].id;
+         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
+         router.replace(redirectURL as string)
+       } */
       setWorkspaces(response?.data.workspaces);
-      const newWorkspace = response?.data.workspaces?.find((workspace: { name: string | null; }) => workspace.name === name);
-      if (setHomeRoute) { localStorage.setItem(LOCALSTORAGE_CONSTANTS.homeRoute, `/workspace/${response?.data.workspaces[0].id}`) }
-      if (navigate || name) {
-        const returnUrl = router.query.returnUrl;
-        const id = name ? newWorkspace.id : response?.data?.workspaces[0].id;
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : `/workspace/${id}`
-        router.replace(redirectURL as string)
+      if (!response?.data.workspaces && organisations.length > 0) {
+        router.push("/workspaceError");
+      } else if (response?.data.workspaces) {
+        const newWorkspace = response?.data.workspaces?.find(
+          (workspace: { name: string | null }) => workspace.name === name
+        );
+        if (setHomeRoute) {
+          localStorage.setItem(
+            LOCALSTORAGE_CONSTANTS.homeRoute,
+            `/workspace/${response?.data?.workspaces[0].id}`
+          );
+        }
+        if (navigate || name) {
+          const returnUrl = router.query.returnUrl;
+          const id = name ? newWorkspace?.id : response?.data?.workspaces[0].id;
+          const redirectURL =
+            returnUrl && returnUrl !== "/" ? returnUrl : `/workspace/${id}`;
+          router.replace(redirectURL as string);
+        }
       }
     })
   }
