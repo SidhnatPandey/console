@@ -69,13 +69,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [passwordVisiblestg, setPasswordVisiblestg] = useState<boolean[]>(Array(initialItems).fill(false));
     const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
-    const [duplicateKey, setDuplicateKey] = useState<boolean>(false);
-    const [duplicateKeyIndex, setDuplicateKeyIndex] = useState<boolean[]>(Array(initialItems).fill(false));
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [envValuePresentArr, setEnvValuePresentArr] = useState<boolean[]>(Array(initialItems).fill(false));
     const [envValueNotPresentArr, setEnvValueNotPresentArr] = useState<boolean[]>(Array(initialItems).fill(false));
-    let arr: number[] = [];
-    //const [arr, setArr] = useState<number[]>([])
+    const duplicateArr: number[] = []
 
 
     const setting = JSON.parse(getItemFromLocalstorage("settings")!);
@@ -145,7 +142,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const handleSave = () => {
         setIsSubmitted(true);
-        if (!duplicateKey && !envValueNotPresentArr.includes(true) && !envValuePresentArr.includes(true)) {
+        if (!envValueNotPresentArr.includes(true) && !envValuePresentArr.includes(true) && duplicateArr.length === 0) {
 
             const env = convertData(getEnvVariableValue('env_variables'));
             const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
@@ -242,39 +239,62 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return index;
     }
 
-    const checkDuplicateKey = (value: string) => {
-        const existingValues = getEnvVariableValue();
-        const arrayofKeys = existingValues.env_variables.map((ele: any) => ele.key);
-        const arrayOfDuplicateEle: number[] = [];
-        arrayofKeys.map((item, indexi) => {
-            if (item === value && value !== '') {
-                arrayOfDuplicateEle.push(indexi);
+    // const checkDuplicateKey = (value: string) => {
+    //     const existingValues = getEnvVariableValue();
+    //     const arrayofKeys = existingValues.env_variables.map((ele: any) => ele.key);
+    //     const arrayOfDuplicateEle: number[] = [];
+    //     arrayofKeys.map((item, indexi) => {
+    //         if (item === value && value !== '') {
+    //             arrayOfDuplicateEle.push(indexi);
+    //         }
+    //     })
+    //     const isPresent: boolean = arrayOfDuplicateEle.length > 1;
+    //     if (isPresent) {
+    //         arr = arrayOfDuplicateEle
+    //         console.log("arr", arr);
+    //         setDuplicateKey(true);
+    //         console.log("duplicateKey", duplicateKey);
+    //         arr.forEach((item) => {
+    //             setDuplicateKeyIndex((prevState) => {
+    //                 const updatedState = [...prevState];
+    //                 updatedState[item] = true;
+    //                 return updatedState
+    //             })
+    //         });
+    //         console.log(duplicateKeyIndex)
+    //     }
+    //     else if (!isPresent) {
+    //         setDuplicateKey(() => false);
+    //         arr.forEach((item) => {
+    //             setDuplicateKeyIndex((prevState) => {
+    //                 const updatedState = [...prevState];
+    //                 updatedState[item] = false;
+    //                 return updatedState
+    //             })
+
+    //         });
+    //     }
+
+    // }
+
+    const checkCondition = (): number[] => {
+
+        const arrayofKeys = getEnvVariableValue().env_variables.map((ele: any) => ele.key);
+        console.log("array", arrayofKeys)
+
+        for (let i = 0; i < arrayofKeys.length; i++) {
+            for (let j = i + 1; j < arrayofKeys.length; j++) {
+                if (i == j || arrayofKeys[i] == "" || arrayofKeys[j] == "")
+                    continue;
+                if (arrayofKeys[i] === arrayofKeys[j]) {
+                    duplicateArr.push(i);
+                    duplicateArr.push(j);
+                }
             }
-        })
-        const isPresent: boolean = arrayOfDuplicateEle.length > 1;
-        if (isPresent) {
-            arr = arrayOfDuplicateEle
-            setDuplicateKey(true);
-            arr.forEach((item) => {
-                setDuplicateKeyIndex((prevState) => {
-                    const updatedState = [...prevState];
-                    updatedState[item] = true;
-                    return updatedState
-                })
-            });
-        }
-        else if (!isPresent) {
-            setDuplicateKey(() => false);
-            arr.forEach((item) => {
-                setDuplicateKeyIndex((prevState) => {
-                    const updatedState = [...prevState];
-                    updatedState[item] = false;
-                    return updatedState
-                })
-
-            });
         }
 
+        console.log("duplicateArr", duplicateArr)
+        return duplicateArr;
     }
 
     const handleClick = () => {
@@ -435,11 +455,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onChange={(e) => {
 
                                                             onChange(e);
-                                                            checkDuplicateKey(e.target.value)
-
-                                                            // if (duplicateKey && arr.includes(index)) {
-                                                            //     resetDuplicateKey()
-                                                            // }
                                                             valueIsPresentButKeyNot(index)
                                                             KeyIsPresentButValueNot(index);
                                                         }}
@@ -498,7 +513,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 This field is required
                                             </FormHelperText>
                                         )}
-                                        {(duplicateKeyIndex[index] && duplicateKey) && (
+                                        {(checkCondition().includes(index)) && (
                                             <FormHelperText
                                                 sx={{ color: "error.main", marginTop: '-10px' }}
                                                 id="key-field"
@@ -766,13 +781,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     remove(index)
                                                     KeyIsPresentButValueNot(index, false);
                                                     valueIsPresentButKeyNot(index, false)
-                                                    setDuplicateKeyIndex((prevState) => {
-                                                        const updatedState = [...prevState];
-                                                        return updatedState;
-
-                                                    });
-                                                    setDuplicateKey(false)
-
                                                 }
                                                 }
                                             >
