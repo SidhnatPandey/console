@@ -153,7 +153,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
         .then((response) => {
           setTimeout(() => {
             setHideEdit(false);
-          }, 60000);
+          }, 600);
           if (response.status == 200) {
             Toaster.successToast("Applying updated settings. Please wait!");
           } else {
