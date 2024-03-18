@@ -106,7 +106,7 @@ const SecurityDashboard = ({
               }}
             >
               {showWorkspaceDropdown ? (
-                <WorkspaceDropdown />
+                <WorkspaceDropdown/>
               ) : (
                 <div style={{ display: "flex" }}>
                   <Typography

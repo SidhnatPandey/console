@@ -24,6 +24,9 @@ import { checkUsername, checkEmail } from "src/services/userService";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 
+import { saveKeys } from "src/services/secretservice";
+import { generateEncryptedKeys } from "src/utils/secrets-util/encryption_decryption";
+
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
   maxHeight: 600,
@@ -165,6 +168,30 @@ const Register = () => {
           toast.success(
             "Verification Email Sent to your registered email Successfully"
           );
+          const org_id = response?.data?.org_id;
+          const user_id = response?.data?.userId;
+          generateEncryptedKeys(response?.data?.org_id)
+            .then((encryptedKeysResponse) => {
+              const encryptedKeys = {
+                org_id: encryptedKeysResponse?.orgid,
+                publicKey: encryptedKeysResponse?.encryptedpublicKey,
+                encryptedPrivateKey: encryptedKeysResponse?.encryptedPrivateKey,
+                encryptedPrivateIv: encryptedKeysResponse?.encryptediv,
+                encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
+                encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
+              };
+                saveKeys(
+                  org_id,
+                  user_id,
+                  encryptedKeys
+                )
+                  .then((response: any) => {
+                    console.log(response);
+                  })
+                  .catch((error: any) => {
+                    console.error(error);
+                  });
+            }); 
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);

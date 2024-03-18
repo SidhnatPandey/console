@@ -84,7 +84,7 @@ const workspaceError = () => {
               <Button
                 onClick={handleLogout}
                 variant="contained"
-                style={{ color: "white" }}
+                style={{ color: "white", marginLeft: '10px' }}
               >
                 Log Out
               </Button>

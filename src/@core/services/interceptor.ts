@@ -22,6 +22,9 @@ export const setApiBaseUrl = (service = 'core') => {
         case 'billing':
             base_url = env('NEXT_PUBLIC_BILLING_BASE_URL');
             break;
+        case 'secret':
+            base_url = env('NEXT_PUBLIC_SECRET_BASE_URL');
+            break;    
         default:
             base_url = baseUrl;
     }
