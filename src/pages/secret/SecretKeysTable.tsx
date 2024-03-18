@@ -14,7 +14,7 @@ import { SecretContext } from "src/context/SecretContext";
 import DragDropFile, { FileData } from "../create-app/dragdropfile";
 import ConfirmationDialog from "src/component/ConfirmationDialog";
 import AddSecret from "./AddSecret";
-import { decryptKey, encryptKey } from "src/secrets-util/encryption_decryption";
+import { decryptKey, encryptKey } from "src/utils/secrets-util/encryption_decryption";
 
 interface Row {
     id: number;

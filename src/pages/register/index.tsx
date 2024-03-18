@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 
 import { saveKeys } from "src/services/secretservice";
-import { generateEncryptedKeys } from "src/secrets-util/encryption_decryption";
+import { generateEncryptedKeys } from "src/utils/secrets-util/encryption_decryption";
 
 const RegisterIllustration = styled("img")(({ theme }) => ({
   zIndex: 2,
@@ -89,10 +89,10 @@ const validationRules = [
     regex: /^.{8,}$/,
     message: "Minimum length of 8 characters",
   },
-  {
-    regex: /^[!@$%&*?]+$/,
-    message: "only (@, $, !, %, *, ?, or &) as the special characters",
-  },
+  // {
+  //   regex: /^[!@$%&*?]+$/,
+  //   message: "only (@, $, !, %, *, ?, or &) as the special characters",
+  // },
 ];
 
 const Register = () => {
@@ -118,6 +118,7 @@ const Register = () => {
   const [emailExist, setEmailExist] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const theme = useTheme(); // ** Hooks
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
@@ -137,15 +138,19 @@ const Register = () => {
       userNameExist ||
       emailExist ||
       !isValidEmail(formData.email) ||
-      usernameError
+      usernameError ||
+      passwordError
     ) {
       setError("Please fill in all the fields.");
-      return; // Exit early if the form is not valid
+      return;
     }
     if (!formData.agreeToTerms) {
-      //errorToast("Please agree to the Terms and Conditions.");
       toast.error("Please agree to the Terms and Conditions.");
-      return; // Exit early if "agree to terms" checkbox is not checked
+      return;
+    }
+    if (!/^(?=.*[a-zA-Z])[a-zA-Z., ]{3,25}$/.test(formData.org)) {
+      setError("Please use Right Formate for organisation Name");
+      return;
     }
     const user = {
       type: "organisation",
@@ -177,18 +182,18 @@ const Register = () => {
                 encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
                 encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
               };
-                saveKeys(
-                  org_id,
-                  user_id,
-                  encryptedKeys
-                )
-                  .then((response: any) => {
-                    console.log(response);
-                  })
-                  .catch((error: any) => {
-                    console.error(error);
-                  });
-            }); 
+              saveKeys(
+                org_id,
+                user_id,
+                encryptedKeys
+              )
+                .then((response: any) => {
+                  console.log(response);
+                })
+                .catch((error: any) => {
+                  console.error(error);
+                });
+            });
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
@@ -218,23 +223,31 @@ const Register = () => {
     }
   };
 
-  const handleChange = (e: { target: { value: any } }) => {
-    const inputUsername = e.target.value;
+  const handleChange = (e: { target: { name: string; value: any } }) => {
+    const { name, value } = e.target;
     const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-    if (inputUsername.length < 3) {
-      setUsernameError("Username must be at least 3 characters.");
-    } else if (inputUsername.length > 15) {
-      setUsernameError("Username must be a maximum of 15 characters.");
-    } else if (inputUsername.includes(" ")) {
-      setUsernameError("Username can't have space.");
-    } else if (!alphanumericRegex.test(inputUsername)) {
-      setUsernameError("Username can only contain letters and numbers.");
-    } else {
-      setUsernameError(null);
-      const truncatedUsername = inputUsername;
-      setFormData({ ...formData, username: truncatedUsername });
-      setTouched({ ...touched, username: true });
-      checkUserExists(truncatedUsername);
+
+    if (name === "username") {
+      if (value.length < 3) {
+        setUsernameError("Username must be at least 3 characters.");
+      } else if (value.length > 15) {
+        setUsernameError("Username must be a maximum of 15 characters.");
+      } else if (value.includes(" ")) {
+        setUsernameError("Username can't have space.");
+      } else if (!alphanumericRegex.test(value)) {
+        setUsernameError("Username can only contain letters and numbers.");
+      } else {
+        setUsernameError(null);
+        const truncatedUsername = value;
+        setFormData({ ...formData, username: truncatedUsername });
+        setTouched({ ...touched, username: true });
+        checkUserExists(truncatedUsername);
+      }
+    } else if (name === "password") {
+      validatePassword(value);
+      setFormData({ ...formData, password: value });
+      setTouched({ ...touched, password: true });
+      setPasswordError(null);
     }
   };
 
@@ -327,8 +340,8 @@ const Register = () => {
                   setFormData({ ...formData, username: e.target.value })
                 }
                 onBlur={(e) => {
-                  setTouched({ ...touched, username: true });
-                  handleChange(e);
+                  handleChange(e); // Pass the event to handleChange
+                  setTouched({ ...touched, username: true }); // Set touched state
                 }}
                 name="username"
                 error={
@@ -345,6 +358,7 @@ const Register = () => {
                     usernameError)
                 }
               />
+
               <CustomTextField
                 fullWidth
                 label="Email"
@@ -367,13 +381,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email))
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                    ? "Email Already exists"
-                    : ""
+                      ? "Email Already exists"
+                      : ""
                 }
               />
 
@@ -401,20 +415,23 @@ const Register = () => {
                   ),
                 }}
                 value={formData.password}
-                onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
-                  validatePassword(e.target.value);
-                }}
+                onChange={(e) => handleChange(e)}
                 onBlur={() => setTouched({ ...touched, password: true })}
-                error={touched.password && !isValidPassword}
+                error={
+                  (touched.password || submit) &&
+                  (!!passwordError || !isValidPassword)
+                }
                 helperText={
-                  touched.password && !isValidPassword
-                    ? "Password does not meet the requirements. Please ensure it contains:\n" +
+                  (touched.password || submit) &&
+                  ((!!passwordError && passwordError) ||
+                    (formData.password.trim() === "" &&
+                      "Password cannot be empty.") ||
+                    (!isValidPassword &&
+                      "Password does not meet the requirements. Please ensure it contains:\n" +
                       validationRules
                         .filter((rule) => !rule.regex.test(formData.password))
                         .map((rule) => rule.message)
-                        .join("\n")
-                    : ""
+                        .join("\n")))
                 }
               />
 
@@ -429,13 +446,24 @@ const Register = () => {
                   setFormData({ ...formData, org: e.target.value })
                 }
                 onBlur={() => setTouched({ ...touched, org: true })}
-                error={(touched.org || submit) && formData.org.trim() === ""}
+                error={
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3 ||
+                    formData.org.trim().length > 25 ||
+                    !/[a-zA-Z]/.test(formData.org))
+                }
                 helperText={
-                  (touched.org || submit) && formData.org.trim() === ""
-                    ? "Organization cannot be empty."
-                    : ""
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3
+                    ? "Organization must be at least 3 characters."
+                    : formData.org.trim().length > 25
+                      ? "Organization must be at most 25 characters."
+                      : !/[a-zA-Z]/.test(formData.org)
+                        ? "Organization must contain at least one alphabet character also it can Contain hyphen(,) and dot(.)."
+                        : "")
                 }
               />
+
               <FormControl>
                 <FormControlLabel
                   control={

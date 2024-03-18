@@ -6,7 +6,7 @@ import { SecurityContext } from "src/context/SecurityContext";
 import { SecretContext } from "src/context/SecretContext";
 
 interface DropdownDefaultText {
-  globalDefault: boolean;
+  globalDefault?: boolean;
 }
 
 const WorkspaceDropdown = ({globalDefault} : DropdownDefaultText) => {

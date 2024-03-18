@@ -38,10 +38,7 @@ const AppSummary = (props: AppSummaryProps) => {
   if (appName) { key = key?.replace('{appName}', appName); }
   setApiBaseUrl();
   const { data: matrix } = useSWR<{ data: Matrix }>(key, getFetcher, {
-    refreshInterval: metricsTimer,
-    onSuccess: () => {
-      console.log(matrix);
-    }
+    refreshInterval: metricsTimer
   });
 
   return (

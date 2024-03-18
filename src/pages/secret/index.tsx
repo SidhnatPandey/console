@@ -7,12 +7,10 @@ const Secret = () => {
 
     return (
         <SecretProvider>
-        <div>
             <Box sx={{ marginBottom: "20px" }}>
                 <SecretsDashboard title="Secrets Management Dashboard" showWorkspaceDropdown={true} />
             </Box>
             <SecretKeysTable />
-        </div>
         </SecretProvider>
     );
 };
