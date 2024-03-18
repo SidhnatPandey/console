@@ -87,7 +87,7 @@ const AuthProvider = ({ children }: Props) => {
         await fetchOrganisation();
         fetchOrg();
         fetchWorkspaces(null, isNavigate, true);
-        // fetchKeys();
+        fetchKeys();
         //fetchAllContent(null, isNavigate, true);
       } else {
         setLoading(false);
@@ -158,7 +158,7 @@ const AuthProvider = ({ children }: Props) => {
             : null;
           await fetchWorkspaces(null, true, true);
           fetchOrg();
-          // fetchKeys();
+          fetchKeys();
           fetchOrganisation();
           fetchWorkspaces(null, true, true);
           getUser();
