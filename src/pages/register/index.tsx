@@ -137,12 +137,15 @@ const Register = () => {
       usernameError
     ) {
       setError("Please fill in all the fields.");
-      return; // Exit early if the form is not valid
+      return;
     }
     if (!formData.agreeToTerms) {
-      //errorToast("Please agree to the Terms and Conditions.");
       toast.error("Please agree to the Terms and Conditions.");
-      return; // Exit early if "agree to terms" checkbox is not checked
+      return;
+    }
+    if (!/^(?=.*[a-zA-Z])[a-zA-Z., ]{3,25}$/.test(formData.org)) {
+      setError("Please use Right Formate for organisation Name");
+      return;
     }
     const user = {
       type: "organisation",
@@ -193,15 +196,17 @@ const Register = () => {
 
   const handleChange = (e: { target: { value: any } }) => {
     const inputUsername = e.target.value;
-    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+    const alphanumericRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9_-]+$/;
     if (inputUsername.length < 3) {
       setUsernameError("Username must be at least 3 characters.");
-    } else if (inputUsername.length > 15) {
+    } else if (inputUsername.length > 25) {
       setUsernameError("Username must be a maximum of 15 characters.");
     } else if (inputUsername.includes(" ")) {
       setUsernameError("Username can't have space.");
     } else if (!alphanumericRegex.test(inputUsername)) {
-      setUsernameError("Username can only contain letters and numbers.");
+      setUsernameError(
+        "Username must have one character and can contain letters, numbers, hyphon(-) and underscore(_) ."
+      );
     } else {
       setUsernameError(null);
       const truncatedUsername = inputUsername;
@@ -402,13 +407,24 @@ const Register = () => {
                   setFormData({ ...formData, org: e.target.value })
                 }
                 onBlur={() => setTouched({ ...touched, org: true })}
-                error={(touched.org || submit) && formData.org.trim() === ""}
+                error={
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3 ||
+                    formData.org.trim().length > 25 ||
+                    !/[a-zA-Z]/.test(formData.org))
+                }
                 helperText={
-                  (touched.org || submit) && formData.org.trim() === ""
-                    ? "Organization cannot be empty."
-                    : ""
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3
+                    ? "Organization must be at least 3 characters."
+                    : formData.org.trim().length > 25
+                    ? "Organization must be at most 25 characters."
+                    : !/[a-zA-Z]/.test(formData.org)
+                    ? "Organization must contain at least one alphabet character also it can Contain hyphen(,) and dot(.)."
+                    : "")
                 }
               />
+
               <FormControl>
                 <FormControlLabel
                   control={

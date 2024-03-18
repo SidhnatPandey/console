@@ -38,12 +38,12 @@ const CreateWorkspace = () => {
       startLoading();
       const params = {
         workspace_name: data.workspace_name.trim(),
-        description: data?.description
-      }
+        description: data?.description,
+      };
       workspace(params)
         .then((response) => {
           if (response.status === 201) {
-            if (window.location.pathname.includes('workspaceError')) {
+            if (window.location.pathname.includes("workspaceError")) {
               window.location.reload();
             } else {
               Toaster.successToast("Workspace created successfully");
@@ -67,6 +67,20 @@ const CreateWorkspace = () => {
     }
   };
 
+  const validateWorkspaceName = (value: string) => {
+    value = value.trim();
+    if (!value) {
+      return "Workspace name is required";
+    }
+    if (value.length < 3 || value.length > 25) {
+      return "Workspace name must be between 3 and 25 characters";
+    }
+    if (!/^[a-zA-Z0-9_-\s]+$/.test(value)) {
+      return "Workspace name can only contain alphanumeric characters, hyphens, underscores, and spaces";
+    }
+    return true;
+  };
+
   return (
     <Card sx={{ p: 7, pt: 1 }} data-testid="card">
       <h2>Create New Workspace</h2>
@@ -76,14 +90,14 @@ const CreateWorkspace = () => {
           <Grid item xs={8}>
             <TextField
               data-testid="workspaceName"
-              inputProps={{ maxLength: 20 }}
+              inputProps={{ minLength: 3, maxLength: 25 }}
               fullWidth
               label="Workspace Name *"
               variant="outlined"
               error={Boolean(errors.workspace_name)}
               helperText={errors.workspace_name?.message}
               {...register("workspace_name", {
-                required: "Workspace name is required",
+                validate: validateWorkspaceName,
               })}
             />
           </Grid>
@@ -109,7 +123,18 @@ const CreateWorkspace = () => {
               type="submit"
               disabled={loading}
             >
-              {loading ? <><CircularProgress size="1.2rem" color='secondary' style={{ marginRight: '5px' }} />Creating</> : 'Create'}
+              {loading ? (
+                <>
+                  <CircularProgress
+                    size="1.2rem"
+                    color="secondary"
+                    style={{ marginRight: "5px" }}
+                  />
+                  Creating
+                </>
+              ) : (
+                "Create"
+              )}
             </Button>
           </Grid>
         </Grid>

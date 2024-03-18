@@ -424,66 +424,64 @@ const CreateApp = () => {
   };
 
   const onConfigurationSubmit = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
-    }
-  };
-
-  const handleFinalSubmit = () => {
     if (Number(minValue) > 0 && Number(maxValue) > 0) {
       if (Number(minValue) > 0) {
         if (Number(maxValue) > 0) {
           setError("");
-          startLoading();
-
-          const data: any = {
-            ...getSoruceCodeValue(),
-            ...getConfigurationValue(),
-          };
-          data["git_user"] = gitUser;
-          data.env_variables = environmentVariables;
-          data.application_name = data.application_name?.trim();
-          if (
-            getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)
-          ) {
-            removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          if (activeStep === steps.length - 1) {
+            toast.success("Form Submitted");
           }
-          const obj = {
-            instance_type: instanceSize.type,
-            vertical_auto_scale: isChecked,
-            max: Number(maxValue),
-            min: Number(minValue),
-          };
-          data.instance_details = obj;
-
-          saveApp(data)
-            .then((response) => {
-              console.log(data);
-              toast.success("App Created Successfully");
-              router.push({
-                pathname: "/workspace/app-dashboard",
-                query: { appId: response.data.app_id },
-              });
-              setTimeout(() => {
-                authContext.fetchOrg();
-              }, 2000);
-            })
-            .catch((error) => {
-              toast.error(error);
-            })
-            .finally(() => {
-              stopLoading();
-            });
         } else {
-          setError("Max is Required");
+          setError("Max value is required");
         }
       } else {
-        setError("Min is Required");
+        setError("Min value is required");
       }
     } else {
       setError("Min and Max is Required");
     }
+  };
+
+  const handleFinalSubmit = () => {
+    startLoading();
+
+    const data: any = {
+      ...getSoruceCodeValue(),
+      ...getConfigurationValue(),
+    };
+    data["git_user"] = gitUser;
+    data.env_variables = environmentVariables;
+    data.application_name = data.application_name?.trim();
+    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
+      removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+    }
+    const obj = {
+      instance_type: instanceSize.type,
+      vertical_auto_scale: isChecked,
+      max: Number(maxValue),
+      min: Number(minValue),
+    };
+    data.instance_details = obj;
+
+    saveApp(data)
+      .then((response) => {
+        console.log(data);
+        toast.success("App Created Successfully");
+        router.push({
+          pathname: "/workspace/app-dashboard",
+          query: { appId: response.data.app_id },
+        });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+      .finally(() => {
+        stopLoading();
+      });
   };
 
   const ITEM_HEIGHT = 48;
@@ -500,14 +498,13 @@ const CreateApp = () => {
                   <Controller
                     name="application_name"
                     control={sourceCodeControl}
-                    rules={{ required: true }}
                     render={({ field: { onChange } }) => (
                       <TextField
                         value={getItemFromSessionStorage(
                           SESSIONSTORAGE_CONSTANTS.creatAppName
                         )}
                         label="Application Name"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           onChange(e);
                           setAppNameExist(false);
                           setItemToSessionStorage(
@@ -543,6 +540,7 @@ const CreateApp = () => {
                       This field is required
                     </FormHelperText>
                   )}
+
                   {appNameExist && (
                     <FormHelperText
                       sx={{ color: "error.main" }}
@@ -553,6 +551,7 @@ const CreateApp = () => {
                   )}
                 </FormControl>
               </Grid>
+
               <Grid item xs={6} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel
@@ -721,8 +720,18 @@ const CreateApp = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={12}>
-                    <h3 style={{ margin: "0 0 10px 0", display: "inline-block"}}>
-                      Source Directory (optional) </h3><span><i> - Provide Sub-directory for the App in case of <b>monorepo</b></i></span>
+                    <h3
+                      style={{ margin: "0 0 10px 0", display: "inline-block" }}
+                    >
+                      Source Directory (optional){" "}
+                    </h3>
+                    <span>
+                      <i>
+                        {" "}
+                        - Provide Sub-directory for the App in case of{" "}
+                        <b>monorepo</b>
+                      </i>
+                    </span>
                     <FormControl fullWidth>
                       <TextField
                         type="text"
@@ -1051,8 +1060,7 @@ const CreateApp = () => {
                     Almost done! 🚀
                   </Typography>
                   <Typography sx={{ color: "text.secondary" }}>
-                    Confirm your App details and submit to create
-                    it.
+                    Confirm your App details and submit to create it.
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -1186,7 +1194,12 @@ const CreateApp = () => {
                           </TableCell>
                           <TableCell>
                             <Typography sx={{ color: "text.secondary" }}>
-                              {instanceSize.type + " - " + instanceSize.ram + " RAM " + instanceSize.vcpu + " vCPU"}
+                              {instanceSize.type +
+                                " - " +
+                                instanceSize.ram +
+                                " RAM " +
+                                instanceSize.vcpu +
+                                " vCPU"}
                             </Typography>
                           </TableCell>
                         </TableRow>
@@ -1194,7 +1207,7 @@ const CreateApp = () => {
                           <TableCell>
                             <Typography
                               noWrap
-                              sx={{ fontWeight: 500, color: "text.secondary"}}
+                              sx={{ fontWeight: 500, color: "text.secondary" }}
                             >
                               Vertical Autoscaler
                             </Typography>
@@ -1203,7 +1216,7 @@ const CreateApp = () => {
                             <Checkbox
                               checked={isChecked}
                               disabled={true}
-                              style={{marginLeft: -10, marginTop: -9}}
+                              style={{ marginLeft: -10, marginTop: -9 }}
                             />
                           </TableCell>
                         </TableRow>
@@ -1211,13 +1224,19 @@ const CreateApp = () => {
                           <TableCell>
                             <Typography
                               noWrap
-                              sx={{ fontWeight: 500, color: "text.secondary", marginTop: -2}}
+                              sx={{
+                                fontWeight: 500,
+                                color: "text.secondary",
+                                marginTop: -2,
+                              }}
                             >
                               Number of Instances
                             </Typography>
                           </TableCell>
                           <TableCell>
-                          <Typography sx={{ color: "text.secondary", marginTop: -2 }}>
+                            <Typography
+                              sx={{ color: "text.secondary", marginTop: -2 }}
+                            >
                               {"Min: " + minValue + " Max: " + maxValue}
                             </Typography>
                           </TableCell>
