@@ -271,11 +271,11 @@ const AuthProvider = ({ children }: Props) => {
   const fetchKeys = () => {
     getkeys().then(
       res => {
-        const encryptediv = res.data[0].encryptedPrivateIv;
-        const encrptedsalt = res.data[0].encryptedPrivateSalt;
-        const encryptedPrivateKey = res.data[0].encryptedPrivateKey;
-        const encryptedTag = res.data[0].encryptedPrivateAuthTag;
-        const orgid = res.data[0].org_id;
+        const encryptediv = res?.data[0].encryptedPrivateIv;
+        const encrptedsalt = res?.data[0].encryptedPrivateSalt;
+        const encryptedPrivateKey = res?.data[0].encryptedPrivateKey;
+        const encryptedTag = res?.data[0].encryptedPrivateAuthTag;
+        const orgid = res?.data[0].org_id;
 
         decryptPrivateKey(orgid, encrptedsalt, encryptedPrivateKey, encryptediv, encryptedTag).then((result) => {
           localStorage.setItem(LOCALSTORAGE_CONSTANTS.orgKey, result.orgKey)
