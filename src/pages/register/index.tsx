@@ -89,10 +89,10 @@ const validationRules = [
     regex: /^.{8,}$/,
     message: "Minimum length of 8 characters",
   },
-  {
-    regex: /^[!@$%&*?]+$/,
-    message: "only (@, $, !, %, *, ?, or &) as the special characters",
-  },
+  // {
+  //   regex: /^[!@$%&*?]+$/,
+  //   message: "only (@, $, !, %, *, ?, or &) as the special characters",
+  // },
 ];
 
 const Register = () => {
@@ -118,6 +118,7 @@ const Register = () => {
   const [emailExist, setEmailExist] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const theme = useTheme(); // ** Hooks
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
@@ -137,7 +138,8 @@ const Register = () => {
       userNameExist ||
       emailExist ||
       !isValidEmail(formData.email) ||
-      usernameError
+      usernameError ||
+      passwordError
     ) {
       setError("Please fill in all the fields.");
       return; // Exit early if the form is not valid
@@ -218,23 +220,31 @@ const Register = () => {
     }
   };
 
-  const handleChange = (e: { target: { value: any } }) => {
-    const inputUsername = e.target.value;
+  const handleChange = (e: { target: { name: string; value: any } }) => {
+    const { name, value } = e.target;
     const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-    if (inputUsername.length < 3) {
-      setUsernameError("Username must be at least 3 characters.");
-    } else if (inputUsername.length > 15) {
-      setUsernameError("Username must be a maximum of 15 characters.");
-    } else if (inputUsername.includes(" ")) {
-      setUsernameError("Username can't have space.");
-    } else if (!alphanumericRegex.test(inputUsername)) {
-      setUsernameError("Username can only contain letters and numbers.");
-    } else {
-      setUsernameError(null);
-      const truncatedUsername = inputUsername;
-      setFormData({ ...formData, username: truncatedUsername });
-      setTouched({ ...touched, username: true });
-      checkUserExists(truncatedUsername);
+
+    if (name === "username") {
+      if (value.length < 3) {
+        setUsernameError("Username must be at least 3 characters.");
+      } else if (value.length > 15) {
+        setUsernameError("Username must be a maximum of 15 characters.");
+      } else if (value.includes(" ")) {
+        setUsernameError("Username can't have space.");
+      } else if (!alphanumericRegex.test(value)) {
+        setUsernameError("Username can only contain letters and numbers.");
+      } else {
+        setUsernameError(null);
+        const truncatedUsername = value;
+        setFormData({ ...formData, username: truncatedUsername });
+        setTouched({ ...touched, username: true });
+        checkUserExists(truncatedUsername);
+      }
+    } else if (name === "password") {
+      validatePassword(value);
+      setFormData({ ...formData, password: value });
+      setTouched({ ...touched, password: true });
+      setPasswordError(null);
     }
   };
 
@@ -327,8 +337,8 @@ const Register = () => {
                   setFormData({ ...formData, username: e.target.value })
                 }
                 onBlur={(e) => {
-                  setTouched({ ...touched, username: true });
-                  handleChange(e);
+                  handleChange(e); // Pass the event to handleChange
+                  setTouched({ ...touched, username: true }); // Set touched state
                 }}
                 name="username"
                 error={
@@ -345,6 +355,7 @@ const Register = () => {
                     usernameError)
                 }
               />
+
               <CustomTextField
                 fullWidth
                 label="Email"
@@ -401,20 +412,23 @@ const Register = () => {
                   ),
                 }}
                 value={formData.password}
-                onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
-                  validatePassword(e.target.value);
-                }}
+                onChange={(e) => handleChange(e)}
                 onBlur={() => setTouched({ ...touched, password: true })}
-                error={touched.password && !isValidPassword}
+                error={
+                  (touched.password || submit) &&
+                  (!!passwordError || !isValidPassword)
+                }
                 helperText={
-                  touched.password && !isValidPassword
-                    ? "Password does not meet the requirements. Please ensure it contains:\n" +
-                      validationRules
-                        .filter((rule) => !rule.regex.test(formData.password))
-                        .map((rule) => rule.message)
-                        .join("\n")
-                    : ""
+                  (touched.password || submit) &&
+                  ((!!passwordError && passwordError) ||
+                    (formData.password.trim() === "" &&
+                      "Password cannot be empty.") ||
+                    (!isValidPassword &&
+                      "Password does not meet the requirements. Please ensure it contains:\n" +
+                        validationRules
+                          .filter((rule) => !rule.regex.test(formData.password))
+                          .map((rule) => rule.message)
+                          .join("\n")))
                 }
               />
 
