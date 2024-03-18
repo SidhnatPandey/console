@@ -37,14 +37,14 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   const { isDeveloperPlan } = usePlan();
   const { loading, startLoading, stopLoading } = useLoading();
 
-  const [obj, setObj] = useState({
+  const obj = {
     port: data.port,
     http_path: data.http_path,
     type: data.instance_details.instance_type,
     vertical_auto_scale: data.instance_details.vertical_auto_scale,
     max: data.instance_details.max,
     min: data.instance_details.min,
-  });
+  };
 
   const handleInstanceChange = (event: { target: { value: any } }) => {
     const { value } = event.target;

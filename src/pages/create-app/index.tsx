@@ -172,7 +172,13 @@ const CreateApp = () => {
   };
 
   const sourceCodeSchema = yup.object().shape({
-    application_name: yup.string().required(),
+    application_name: yup
+      .string()
+      .required("This field is required")
+      .matches(
+        /^(?=.*[a-zA-Z0-9])[\w\s-]{3,25}$/,
+        "Only alpha-numeric characters, hyphens, underscores, and spaces are allowed, it's length should be in between 3 to 25 there must be one alphanumeric character."
+      ),
     workspace_id: yup.string().required(),
     git_repo: yup.string().required(),
     git_branch: yup.string().required(),
@@ -424,66 +430,64 @@ const CreateApp = () => {
   };
 
   const onConfigurationSubmit = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
-    }
-  };
-
-  const handleFinalSubmit = () => {
     if (Number(minValue) > 0 && Number(maxValue) > 0) {
       if (Number(minValue) > 0) {
         if (Number(maxValue) > 0) {
           setError("");
-          startLoading();
-
-          const data: any = {
-            ...getSoruceCodeValue(),
-            ...getConfigurationValue(),
-          };
-          data["git_user"] = gitUser;
-          data.env_variables = environmentVariables;
-          data.application_name = data.application_name?.trim();
-          if (
-            getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)
-          ) {
-            removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          if (activeStep === steps.length - 1) {
+            toast.success("Form Submitted");
           }
-          const obj = {
-            instance_type: instanceSize.type,
-            vertical_auto_scale: isChecked,
-            max: Number(maxValue),
-            min: Number(minValue),
-          };
-          data.instance_details = obj;
-
-          saveApp(data)
-            .then((response) => {
-              console.log(data);
-              toast.success("App Created Successfully");
-              router.push({
-                pathname: "/workspace/app-dashboard",
-                query: { appId: response.data.app_id },
-              });
-              setTimeout(() => {
-                authContext.fetchOrg();
-              }, 2000);
-            })
-            .catch((error) => {
-              toast.error(error);
-            })
-            .finally(() => {
-              stopLoading();
-            });
         } else {
-          setError("Max is Required");
+          setError("Max value is required");
         }
       } else {
-        setError("Min is Required");
+        setError("Min value is required");
       }
     } else {
       setError("Min and Max is Required");
     }
+  };
+
+  const handleFinalSubmit = () => {
+    startLoading();
+
+    const data: any = {
+      ...getSoruceCodeValue(),
+      ...getConfigurationValue(),
+    };
+    data["git_user"] = gitUser;
+    data.env_variables = environmentVariables;
+    data.application_name = data.application_name?.trim();
+    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
+      removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+    }
+    const obj = {
+      instance_type: instanceSize.type,
+      vertical_auto_scale: isChecked,
+      max: Number(maxValue),
+      min: Number(minValue),
+    };
+    data.instance_details = obj;
+
+    saveApp(data)
+      .then((response) => {
+        console.log(data);
+        toast.success("App Created Successfully");
+        router.push({
+          pathname: "/workspace/app-dashboard",
+          query: { appId: response.data.app_id },
+        });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+      .finally(() => {
+        stopLoading();
+      });
   };
 
   const ITEM_HEIGHT = 48;
@@ -500,15 +504,31 @@ const CreateApp = () => {
                   <Controller
                     name="application_name"
                     control={sourceCodeControl}
-                    rules={{ required: true }}
-                    render={({ field: { onChange } }) => (
+                    // rules={{
+                    //   required: true,
+                    //   pattern: {
+                    //     value: /^[a-zA-Z0-9][_ -]*[a-zA-Z0-9]$/,
+                    //     message:
+                    //       "Invalid application name. Only alphanumeric characters, hyphens, underscores, and spaces are allowed.",
+                    //   },
+                    // }}
+                    render={({
+                      field: { onChange },
+                      fieldState: { error },
+                    }) => (
                       <TextField
-                        value={getItemFromSessionStorage(
-                          SESSIONSTORAGE_CONSTANTS.creatAppName
-                        )}
+                        value={
+                          getItemFromSessionStorage(
+                            SESSIONSTORAGE_CONSTANTS.creatAppName
+                          ) !== null
+                            ? getItemFromSessionStorage(
+                                SESSIONSTORAGE_CONSTANTS.creatAppName
+                              )
+                            : ""
+                        }
                         label="Application Name"
-                        onChange={(e: any) => {
-                          onChange(e);
+                        onChange={(e) => {
+                          onChange(e.target.value);
                           setAppNameExist(false);
                           setItemToSessionStorage(
                             SESSIONSTORAGE_CONSTANTS.creatAppName,
@@ -523,36 +543,28 @@ const CreateApp = () => {
                           );
                         }}
                         placeholder="Name your app"
-                        error={
-                          (Boolean(sourceCodeErrors.application_name) ||
-                            appNameExist) &&
-                          !(
-                            sourceCodeErrors.application_name === undefined &&
-                            !appNameExist
-                          )
+                        error={Boolean(error) || appNameExist}
+                        helperText={
+                          error
+                            ? error.message
+                            : appNameExist &&
+                              "This application name already exists"
                         }
                         aria-describedby="stepper-linear-account-username"
                       />
                     )}
                   />
-                  {sourceCodeErrors.application_name && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-account-username"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                  {appNameExist && (
+                  {/* {appNameExist && (
                     <FormHelperText
                       sx={{ color: "error.main" }}
                       id="app-exists-error"
                     >
                       This application name already exists
                     </FormHelperText>
-                  )}
+                  )} */}
                 </FormControl>
               </Grid>
+
               <Grid item xs={6} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel

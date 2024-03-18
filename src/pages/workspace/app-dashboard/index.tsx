@@ -260,7 +260,7 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && lstatus.toLowerCase() !== "inprogress" && !hideEdit;
+    show = runType === "current" && lstatus !== "inprogress" && !hideEdit;
     setShowSettingEdit(show);
   };
 
@@ -353,9 +353,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                              supplyChainRunsData?.data?.url.startsWith(
-                                "https://"
-                              )
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "https://"
+                            )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
