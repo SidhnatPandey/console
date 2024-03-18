@@ -214,7 +214,7 @@ const CreateApp = () => {
   const [repo, setRepo] = useState<string>("");
   const [gitUser, setGitUser] = useState<string>("");
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
-  const [branches, setBranches] = useState<string[]>(["No Branch"]);
+  const [branches, setBranches] = useState<string[]>([]);
   const [repoError, setRepoError] = useState(false);
 
   useEffect(() => {
@@ -721,8 +721,18 @@ const CreateApp = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={12}>
-                    <h3 style={{ margin: "0 0 10px 0", display: "inline-block"}}>
-                      Source Directory (optional) </h3><span><i> - Provide Sub-directory for the App in case of <b>monorepo</b></i></span>
+                    <h3
+                      style={{ margin: "0 0 10px 0", display: "inline-block" }}
+                    >
+                      Source Directory (optional){" "}
+                    </h3>
+                    <span>
+                      <i>
+                        {" "}
+                        - Provide Sub-directory for the App in case of{" "}
+                        <b>monorepo</b>
+                      </i>
+                    </span>
                     <FormControl fullWidth>
                       <TextField
                         type="text"
@@ -1051,8 +1061,7 @@ const CreateApp = () => {
                     Almost done! 🚀
                   </Typography>
                   <Typography sx={{ color: "text.secondary" }}>
-                    Confirm your App details and submit to create
-                    it.
+                    Confirm your App details and submit to create it.
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -1186,7 +1195,12 @@ const CreateApp = () => {
                           </TableCell>
                           <TableCell>
                             <Typography sx={{ color: "text.secondary" }}>
-                              {instanceSize.type + " - " + instanceSize.ram + " RAM " + instanceSize.vcpu + " vCPU"}
+                              {instanceSize.type +
+                                " - " +
+                                instanceSize.ram +
+                                " RAM " +
+                                instanceSize.vcpu +
+                                " vCPU"}
                             </Typography>
                           </TableCell>
                         </TableRow>
@@ -1194,7 +1208,7 @@ const CreateApp = () => {
                           <TableCell>
                             <Typography
                               noWrap
-                              sx={{ fontWeight: 500, color: "text.secondary"}}
+                              sx={{ fontWeight: 500, color: "text.secondary" }}
                             >
                               Vertical Autoscaler
                             </Typography>
@@ -1203,7 +1217,7 @@ const CreateApp = () => {
                             <Checkbox
                               checked={isChecked}
                               disabled={true}
-                              style={{marginLeft: -10, marginTop: -9}}
+                              style={{ marginLeft: -10, marginTop: -9 }}
                             />
                           </TableCell>
                         </TableRow>
@@ -1211,13 +1225,19 @@ const CreateApp = () => {
                           <TableCell>
                             <Typography
                               noWrap
-                              sx={{ fontWeight: 500, color: "text.secondary", marginTop: -2}}
+                              sx={{
+                                fontWeight: 500,
+                                color: "text.secondary",
+                                marginTop: -2,
+                              }}
                             >
                               Number of Instances
                             </Typography>
                           </TableCell>
                           <TableCell>
-                          <Typography sx={{ color: "text.secondary", marginTop: -2 }}>
+                            <Typography
+                              sx={{ color: "text.secondary", marginTop: -2 }}
+                            >
                               {"Min: " + minValue + " Max: " + maxValue}
                             </Typography>
                           </TableCell>

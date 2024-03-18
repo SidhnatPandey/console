@@ -1,12 +1,13 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, FormControlLabel, FormLabel, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react'
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import DropZone from 'src/component/DropZone';
 import jsyaml from 'js-yaml';
 
-interface DragDropFilePorps {
-    updateForm(data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean): void
+interface DragDropFileProps {
+    updateForm(data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean): void;
+    isSecret?: boolean
 }
 
 export interface FileData {
@@ -14,7 +15,7 @@ export interface FileData {
     value: string,
 }
 
-export default function DragDropFile({ updateForm }: DragDropFilePorps) {
+export default function DragDropFile({ updateForm, isSecret }: DragDropFileProps) {
 
     const [open, setOpen] = useState<boolean>(false);
     const [fileData, setFileData] = useState<FileData[]>([]);
@@ -25,11 +26,11 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     let type: string | undefined;
     const flattenJSON = (json: any, prefix = ''): Record<string, string> => {
         let result: Record<string, string> = {};
-    
+
         for (const key in json) {
-            if (json.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(json, key)) {
                 const newKey = prefix ? `${prefix}.${key}` : key;
-    
+
                 if (typeof json[key] === 'object') {
                     const flattened = flattenJSON(json[key], newKey);
                     result = { ...result, ...flattened };
@@ -38,11 +39,11 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
                 }
             }
         }
-    
+
         return result;
     };
-    
-    
+
+
     const handleAllCheckboxChange = (checked: boolean) => {
         setIsTest(checked);
         setIsStg(checked);
@@ -70,6 +71,7 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
 
         let obj: any = {}
         const arr = [];
+        let flattened;
         switch (type) {
             case 'json':
                 obj = JSON.parse(event.target.result);
@@ -80,7 +82,7 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
                 break;
             case 'yml':
                 obj = jsyaml.load(event.target.result);
-                const flattened = flattenJSON(obj);
+                flattened = flattenJSON(obj);
                 for (const key in flattened) {
                     if (typeof (flattened[key]) !== 'object') arr.push({ 'key': key, 'value': String(flattened[key]) })
                 }
@@ -97,7 +99,7 @@ export default function DragDropFile({ updateForm }: DragDropFilePorps) {
     return (
         <>
             <DropzoneWrapper>
-                <DropZone type={[]} dropText={"Drag and drop a .env, .json or .yml file here to add bulk variables"} onDrop={handleDrop} />
+                <DropZone type={[]} dropText={isSecret ? "Drag and drop a .env, .json or .yml file here to add bulk secrets" : "Drag and drop a .env, .json or .yml file here to add bulk variables"} onDrop={handleDrop} />
             </DropzoneWrapper>
 
             <Dialog open={open} fullWidth maxWidth='md'  >

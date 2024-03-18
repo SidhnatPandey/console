@@ -27,9 +27,9 @@ export const put = async (url: string, data: any) => {
   }
 };
 
-export const deleteCall = async (url: string) => {
+export const deleteCall = async (url: string, request: any = null) => {
   try {
-    const response = await axiosInstance.delete(url);
+    const response = await axiosInstance.delete(url, { data: request });
     return response;
   } catch (error) {
     console.error('Error :', error);
