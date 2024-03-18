@@ -6,8 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EnvVariables from 'src/pages/create-app/envVariables';
 import { editApp } from 'src/services/appService';
-import { App } from './index'
-import Toaster from 'src/utils/toaster';
+import Toaster from 'src/utils/toaster';/* 
 interface EnvFormType {
     key: string;
     KeyType: string;
@@ -15,7 +14,7 @@ interface EnvFormType {
     stg: string;
     test: string;
     Checked: boolean;
-}
+} */
 export interface EnvVariables {
     [key: string]: EnvVariable[]; // Index signature
 }
@@ -45,7 +44,6 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
-    console.log("EnvData", EnvData)
     const pushToArr = (node: string, ele: any) => {
         const obj = {
             key: ele.key,
@@ -70,19 +68,17 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
     }
 
     for (const node in EnvData) {
-
-
-        const arr = [...EnvData[node]];
-        arr.forEach((element: any) => {
-            const index = checkIfKeyExists(element.key);
-            if (index >= 0) {
-                envArr[index][node] = element.value;
-            } else {
-                pushToArr(node, element);
-            }
-        });
-
-
+        if (EnvData[node]) {
+            const arr = [...EnvData[node]];
+            arr.forEach((element: any) => {
+                const index = checkIfKeyExists(element.key);
+                if (index >= 0) {
+                    envArr[index][node] = element.value;
+                } else {
+                    pushToArr(node, element);
+                }
+            });
+        }
     }
 
     useEffect(() => {
@@ -106,9 +102,7 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
         setFirstTime(true)
         setOpen(false);
     };
-    console.log("1", dataArr)
-    console.log("2", envArr)
-    const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleClickOpen = () => {
         setIsEdit(true)
         setOpen(true);
     }
@@ -118,10 +112,10 @@ const AppEnvVaribale = (props: AppEnvVaribaleProps) => {
         const updatedAppData = { ...Data, env_variables: envVariables }
         const appId = Data.id;
         editApp(updatedAppData, appId)
-            .then((response) => {
+            .then(() => {
                 setTimeout(() => {
                     setHideEdit(false);
-                }, 60)
+                }, 120000)
                 Toaster.successToast("Updating Environment Variables. Please wait!");
             })
             .catch((error) => {

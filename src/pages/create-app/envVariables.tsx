@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Grid, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Grid, IconButton, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -47,14 +47,10 @@ const EnvVariables = (props: EnvVariablesProps) => {
         control: EnvVariableControl,
         getValues: getEnvVariableValue,
         setValue: setEnvVariableValue,
-        setError: setEnvError,
         handleSubmit: handleEnvVariableSubmit,
-        clearErrors: clearEnvError,
         reset: resetEnvVariableForm,
         formState: {
             errors: EnvVariableErrors,
-            isDirty: EnvVariableChanged,
-            isValid: isEnvVeriableFormValid,
         },
     } = useForm({
         mode: "onBlur",
@@ -74,11 +70,13 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const [passwordVisibleprod, setPasswordVisibleprod] = useState<boolean[]>(Array(initialItems).fill(false));
     const [showPass, setShowPass] = useState<boolean>(false)
     const [duplicateKey, setDuplicateKey] = useState<boolean>(false);
-    const [duplicateKeyIndex, setDuplicateKeyIndex] = useState<number>(-1);
+    const [duplicateKeyIndex, setDuplicateKeyIndex] = useState<boolean[]>(Array(initialItems).fill(false));
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [envValuePresentArr, setEnvValuePresentArr] = useState<boolean[]>(Array(initialItems).fill(false));
     const [envValueNotPresentArr, setEnvValueNotPresentArr] = useState<boolean[]>(Array(initialItems).fill(false));
-    console.log("env1", envArr)
+    let arr: number[] = [];
+    //const [arr, setArr] = useState<number[]>([])
+
 
     const setting = JSON.parse(getItemFromLocalstorage("settings")!);
     const theme = setting?.mode;
@@ -89,7 +87,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
         handleEnvClose();
     };
 
-    const handleCheckboxChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,) => {
+    const handleCheckboxChange = (index: number) => {
         const checkboxValue = getEnvVariableValue('env_variables')[index].Checked as boolean;
 
         if (checkboxValue) {
@@ -146,19 +144,17 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     const handleSave = () => {
-        console.log(EnvVariableChanged, isEnvVeriableFormValid, EnvVariableErrors, isSubmitted);
         setIsSubmitted(true);
-        if (EnvVariableChanged && isEnvVeriableFormValid && !duplicateKey && !envValueNotPresentArr.includes(true)) {
+        if (!duplicateKey && !envValueNotPresentArr.includes(true) && !envValuePresentArr.includes(true)) {
 
             const env = convertData(getEnvVariableValue('env_variables'));
-            console.log("apisendingdata", env)
             const filterdata: any = getEnvVariableValue('env_variables').filter((item: any) => item.key.trim() !== '');
-            console.log("filterdata", filterdata)
             handleEnvDialogClose(env, filterdata.length, getEnvVariableValue("env_variables"));
+            setIsSubmitted(false);
         }
     }
 
-    const handleChange = (event: SelectChangeEvent<string>) => {
+    const handleChange = () => {
         setShowPass(!showPass);
     };
 
@@ -168,14 +164,12 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
 
     const handleUpdateForm = (data: FileData[], isTest: boolean, isStg: boolean, isProd: boolean,) => {
-        console.log("data", data)
         if (isTest) {
             data.forEach((ele: FileData) => {
                 const index = checkIfKeyExists(ele.key);
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.test`, ele.value.toString());
                 } else {
-                    console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: ele.value.toString(), prod: '', stg: '', Checked: false })
                 }
             });
@@ -186,7 +180,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.prod`, ele.value.toString());
                 } else {
-                    console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: '', prod: ele.value.toString(), stg: '', Checked: false })
                 }
             });
@@ -197,7 +190,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 if (index >= 0) {
                     setEnvVariableValue(`env_variables.${index}.stg`, ele.value.toString());
                 } else {
-                    console.log("ele-test", ele.key)
                     append({ key: ele.key, KeyType: 'env', test: '', prod: '', stg: ele.value.toString(), Checked: false })
                 }
             });
@@ -205,13 +197,14 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
-        console.log("envUseeffect", envArr)
         const currentDataList = getEnvVariableValue(`env_variables`);
         if (!currentDataList[0]?.key && envArr) {
-            remove(0);
+            if (envArr.length > 1) {
+                remove(0);
+            }
         }
         if (envArr) {
-            envArr.map((item, index) => {
+            envArr.map((item) => {
                 const ispresent = checkIfKeyExists(item.key);
                 if (ispresent < 0) {
                     append(item);
@@ -242,31 +235,44 @@ const EnvVariables = (props: EnvVariablesProps) => {
         return nData;
     };
 
+
     const checkIfKeyExists = (key: string) => {
         const existingValues = getEnvVariableValue().env_variables;
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
 
-    const checkDuplicateKey = (value: string, index: number) => {
+    const checkDuplicateKey = (value: string) => {
         const existingValues = getEnvVariableValue();
         const arrayofKeys = existingValues.env_variables.map((ele: any) => ele.key);
-        const filteredArray = arrayofKeys.filter((_, arrindex) => arrindex !== index);
-        const isPresent = filteredArray.includes(value);
-        console.log("isPresent", isPresent)
-
-        //const num = existingValues.map(e => e.key).indexOf(value);
+        const arrayOfDuplicateEle: number[] = [];
+        arrayofKeys.map((item, indexi) => {
+            if (item === value && value !== '') {
+                arrayOfDuplicateEle.push(indexi);
+            }
+        })
+        const isPresent: boolean = arrayOfDuplicateEle.length > 1;
         if (isPresent) {
+            arr = arrayOfDuplicateEle
             setDuplicateKey(true);
-            setEnvError(`env_variables.${index}.key`, { type: 'custom', message: 'Key is required' })
-            console.log(duplicateKey)
-            console.log("error", EnvVariableErrors)
-            console.log("customcase", EnvVariableErrors?.env_variables?.[index]?.key?.type === "custom" && duplicateKey)
-            setDuplicateKeyIndex(index);
+            arr.forEach((item) => {
+                setDuplicateKeyIndex((prevState) => {
+                    const updatedState = [...prevState];
+                    updatedState[item] = true;
+                    return updatedState
+                })
+            });
         }
-        else if (!isPresent && duplicateKeyIndex === index) {
-            setDuplicateKey(false);
-            clearEnvError(`env_variables.${index}.key`);
+        else if (!isPresent) {
+            setDuplicateKey(() => false);
+            arr.forEach((item) => {
+                setDuplicateKeyIndex((prevState) => {
+                    const updatedState = [...prevState];
+                    updatedState[item] = false;
+                    return updatedState
+                })
+
+            });
         }
 
     }
@@ -278,26 +284,88 @@ const EnvVariables = (props: EnvVariablesProps) => {
         setBorderColor(theme === 'light' ? 'rgba(47, 43, 61, 0.2)' : 'rgba(208, 212, 241, 0.2)');
     }
 
-
-
-    const envValueRequire = (index: number, value: string) => {
+    const KeyIsPresentButValueNot = (index: number, val?: boolean) => {
 
         const { key, prod, stg, test } = getEnvVariableValue().env_variables[index];
 
         if (key && (!prod && !stg && !test)) {
             setEnvValueNotPresentArr((prevState) => {
-                const updatedVisible = [...prevState]; // Create a copy of the array
-                updatedVisible[index] = true; // Toggle the visibility of the clicked item
-                return updatedVisible;
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = true; // Toggle the visibility of the clicked item
+                return updatedState;
             });
         }
         else if (key && (prod || stg || test)) {
             setEnvValueNotPresentArr((prevState) => {
-                const updatedVisible = [...prevState]; // Create a copy of the array
-                updatedVisible[index] = false; // Toggle the visibility of the clicked item
-                return updatedVisible;
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false; // Toggle the visibility of the clicked item
+                return updatedState;
             });
         }
+        if (val == false) {
+            setEnvValueNotPresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false; // Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+
+        if (!key && !prod && !test && !stg && (envValueNotPresentArr[index] || envValuePresentArr[index])) {
+
+            setEnvValueNotPresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false; // Toggle the visibility of the clicked item
+                return updatedState;
+            });
+            setEnvValuePresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false// Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+    }
+
+    const valueIsPresentButKeyNot = (index: number, val?: boolean) => {
+
+        const { key, test, stg, prod } = getEnvVariableValue().env_variables[index];
+        if (!key && (test || stg || prod)) {
+            setEnvValuePresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = true; // Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+        if (key) {
+            setEnvValuePresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false// Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+
+        if (val == false) {
+
+            setEnvValuePresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false// Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+
+        if (!key && !prod && !test && !stg && (envValueNotPresentArr[index] || envValuePresentArr[index])) {
+            setEnvValueNotPresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false; // Toggle the visibility of the clicked item
+                return updatedState;
+            });
+            setEnvValuePresentArr((prevState) => {
+                const updatedState = [...prevState]; // Create a copy of the array
+                updatedState[index] = false// Toggle the visibility of the clicked item
+                return updatedState;
+            });
+        }
+
+
     }
 
     return (
@@ -350,7 +418,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                 >
                                     <Grid item xs={2.75} sm={2.75}>
                                         {/* <Grid item xs={1.375} sm={1.375}> */}
-                                        <div style={{ border: `1px solid ${borderColor}`, borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }} onClick={handleClick} onBlur={handleOutSideClick}>
+                                        <div style={{ border: `1px solid ${borderColor}`, borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }} >
+                                            {/* onClick={handleClick} onBlur={handleOutSideClick} */}
                                             <Controller
                                                 name={`env_variables.${index}.key`}
                                                 control={EnvVariableControl}
@@ -362,28 +431,17 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         sx={{ maxWidth: '130px', border: "none" }}
                                                         style={{ padding: '0px', border: 'none', backgroundColor: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                                                         value={value}
-                                                        onBlur={(e) => {
-                                                            onBlur();
-                                                            if (value !== "") checkDuplicateKey(value, index);
-                                                        }
-                                                        }
+                                                        onBlur={onBlur}
                                                         onChange={(e) => {
+
                                                             onChange(e);
-                                                            if (e.target.value !== '') {
-                                                                envValueRequire(index, e.target.value);
-                                                                setEnvValuePresentArr((prevState) => {
-                                                                    const updatedVisible = [...prevState]; // Create a copy of the array
-                                                                    updatedVisible[index] = false; // Toggle the visibility of the clicked item
-                                                                    return updatedVisible;
-                                                                });
-                                                            }
-                                                            if (e.target.value !== '') {
-                                                                setEnvValuePresentArr((prevState) => {
-                                                                    const updatedVisible = [...prevState]; // Create a copy of the array
-                                                                    updatedVisible[index] = true; // Toggle the visibility of the clicked item
-                                                                    return updatedVisible;
-                                                                });
-                                                            }
+                                                            checkDuplicateKey(e.target.value)
+
+                                                            // if (duplicateKey && arr.includes(index)) {
+                                                            //     resetDuplicateKey()
+                                                            // }
+                                                            valueIsPresentButKeyNot(index)
+                                                            KeyIsPresentButValueNot(index);
                                                         }}
                                                         placeholder='Key'
                                                         variant="standard"
@@ -416,7 +474,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         }}
                                                         onChange={(e) => {
                                                             onChange(e);
-                                                            handleChange(e);
+                                                            handleChange();
 
                                                         }}
                                                         error={Boolean(EnvVariableErrors.env_variables)}
@@ -432,7 +490,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             />
                                         </div>
 
-                                        {(!getEnvVariableValue('env_variables')[index].key && isSubmitted && envValuePresentArr[index]) && (
+                                        {(isSubmitted && envValuePresentArr[index]) && (
                                             <FormHelperText
                                                 sx={{ color: "error.main", marginTop: '-10px' }}
                                                 id="key-field"
@@ -440,7 +498,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                 This field is required
                                             </FormHelperText>
                                         )}
-                                        {(index === duplicateKeyIndex && duplicateKey) && (
+                                        {(duplicateKeyIndex[index] && duplicateKey) && (
                                             <FormHelperText
                                                 sx={{ color: "error.main", marginTop: '-10px' }}
                                                 id="key-field"
@@ -466,15 +524,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
-                                                            envValueRequire(index, e.target.value);
-                                                            if (e.target.value !== '') {
-
-                                                                setEnvValuePresentArr((prevState) => {
-                                                                    const updatedVisible = [...prevState]; // Create a copy of the array
-                                                                    updatedVisible[index] = true; // Toggle the visibility of the clicked item
-                                                                    return updatedVisible;
-                                                                });
-                                                            }
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
 
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
@@ -496,6 +547,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
                                                         id='test-password'
@@ -545,14 +598,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
-                                                            envValueRequire(index, e.target.value);
-                                                            if (e.target.value !== '') {
-                                                                setEnvValuePresentArr((prevState) => {
-                                                                    const updatedVisible = [...prevState]; // Create a copy of the array
-                                                                    updatedVisible[index] = true; // Toggle the visibility of the clicked item
-                                                                    return updatedVisible;
-                                                                });
-                                                            }
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
 
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
@@ -573,6 +620,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
                                                         id='stg-password'
@@ -616,15 +665,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
-                                                            envValueRequire(index, e.target.value);
-                                                            if (e.target.value !== '') {
-                                                                setEnvValuePresentArr((prevState) => {
-                                                                    const updatedVisible = [...prevState]; // Create a copy of the array
-                                                                    updatedVisible[index] = true; // Toggle the visibility of the clicked item
-                                                                    return updatedVisible;
-                                                                });
-                                                            }
-
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
                                                         placeholder='PROD'
@@ -645,6 +687,8 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         onBlur={onBlur}
                                                         onChange={e => {
                                                             onChange(e);
+                                                            KeyIsPresentButValueNot(index);
+                                                            valueIsPresentButKeyNot(index)
                                                             if (getEnvVariableValue().env_variables[index].Checked) handleAllInputChange(e, index)
                                                         }}
                                                         id='prod-password'
@@ -685,7 +729,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                     checked={field.value}
                                                     onChange={(e) => {
                                                         field.onChange(e.target.checked),
-                                                            handleCheckboxChange(index, e)
+                                                            handleCheckboxChange(index)
 
                                                     }
                                                     }
@@ -707,7 +751,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                                         prod: "",
                                                         Checked: false
                                                     })
-                                                    // setIsSubmitted(false);
+
                                                 }
                                                 }
                                             >
@@ -718,7 +762,19 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                             <IconButton
                                                 aria-label="delete"
                                                 size="medium"
-                                                onClick={() => remove(index)}
+                                                onClick={() => {
+                                                    remove(index)
+                                                    KeyIsPresentButValueNot(index, false);
+                                                    valueIsPresentButKeyNot(index, false)
+                                                    setDuplicateKeyIndex((prevState) => {
+                                                        const updatedState = [...prevState];
+                                                        return updatedState;
+
+                                                    });
+                                                    setDuplicateKey(false)
+
+                                                }
+                                                }
                                             >
                                                 <DeleteIcon fontSize="inherit" />
                                             </IconButton>

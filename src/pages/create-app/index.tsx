@@ -194,7 +194,7 @@ const CreateApp = () => {
   const authContext = useContext(AuthContext);
   const { loading, startLoading, stopLoading } = useLoading();
   const [instanceSize, setInstanceSize] = useState(
-    !isDeveloperPlan() ? AI_SIZE[0] : AI_SIZE[3]
+    !isDeveloperPlan() ? AI_SIZE[2] : AI_SIZE[0]
   );
   const [isChecked, setIsChecked] = useState(false);
   const [minValue, setMinValue] = useState("1");
@@ -424,66 +424,64 @@ const CreateApp = () => {
   };
 
   const onConfigurationSubmit = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
-    }
-  };
-
-  const handleFinalSubmit = () => {
     if (Number(minValue) > 0 && Number(maxValue) > 0) {
       if (Number(minValue) > 0) {
         if (Number(maxValue) > 0) {
           setError("");
-          startLoading();
-
-          const data: any = {
-            ...getSoruceCodeValue(),
-            ...getConfigurationValue(),
-          };
-          data["git_user"] = gitUser;
-          data.env_variables = environmentVariables;
-          data.application_name = data.application_name?.trim();
-          if (
-            getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)
-          ) {
-            removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          if (activeStep === steps.length - 1) {
+            toast.success("Form Submitted");
           }
-          const obj = {
-            instance_type: instanceSize.type,
-            vertical_auto_scale: isChecked,
-            max: Number(maxValue),
-            min: Number(minValue),
-          };
-          data.instance_details = obj;
-
-          saveApp(data)
-            .then((response) => {
-              console.log(data);
-              toast.success("App Created Successfully");
-              router.push({
-                pathname: "/workspace/app-dashboard",
-                query: { appId: response.data.app_id },
-              });
-              setTimeout(() => {
-                authContext.fetchOrg();
-              }, 2000);
-            })
-            .catch((error) => {
-              toast.error(error);
-            })
-            .finally(() => {
-              stopLoading();
-            });
         } else {
-          setError("Max is Required");
+          setError("Max value is required");
         }
       } else {
-        setError("Min is Required");
+        setError("Min value is required");
       }
     } else {
       setError("Min and Max is Required");
     }
+  };
+
+  const handleFinalSubmit = () => {
+    startLoading();
+
+    const data: any = {
+      ...getSoruceCodeValue(),
+      ...getConfigurationValue(),
+    };
+    data["git_user"] = gitUser;
+    data.env_variables = environmentVariables;
+    data.application_name = data.application_name?.trim();
+    if (getItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName)) {
+      removeItemFromSessionStorage(SESSIONSTORAGE_CONSTANTS.creatAppName);
+    }
+    const obj = {
+      instance_type: instanceSize.type,
+      vertical_auto_scale: isChecked,
+      max: Number(maxValue),
+      min: Number(minValue),
+    };
+    data.instance_details = obj;
+
+    saveApp(data)
+      .then((response) => {
+        console.log(data);
+        toast.success("App Created Successfully");
+        router.push({
+          pathname: "/workspace/app-dashboard",
+          query: { appId: response.data.app_id },
+        });
+        setTimeout(() => {
+          authContext.fetchOrg();
+        }, 2000);
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+      .finally(() => {
+        stopLoading();
+      });
   };
 
   const ITEM_HEIGHT = 48;
@@ -500,14 +498,13 @@ const CreateApp = () => {
                   <Controller
                     name="application_name"
                     control={sourceCodeControl}
-                    rules={{ required: true }}
                     render={({ field: { onChange } }) => (
                       <TextField
                         value={getItemFromSessionStorage(
                           SESSIONSTORAGE_CONSTANTS.creatAppName
                         )}
                         label="Application Name"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           onChange(e);
                           setAppNameExist(false);
                           setItemToSessionStorage(
@@ -543,6 +540,7 @@ const CreateApp = () => {
                       This field is required
                     </FormHelperText>
                   )}
+
                   {appNameExist && (
                     <FormHelperText
                       sx={{ color: "error.main" }}
@@ -553,6 +551,7 @@ const CreateApp = () => {
                   )}
                 </FormControl>
               </Grid>
+
               <Grid item xs={6} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel

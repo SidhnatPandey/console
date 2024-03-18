@@ -142,12 +142,15 @@ const Register = () => {
       passwordError
     ) {
       setError("Please fill in all the fields.");
-      return; // Exit early if the form is not valid
+      return;
     }
     if (!formData.agreeToTerms) {
-      //errorToast("Please agree to the Terms and Conditions.");
       toast.error("Please agree to the Terms and Conditions.");
-      return; // Exit early if "agree to terms" checkbox is not checked
+      return;
+    }
+    if (!/^(?=.*[a-zA-Z])[a-zA-Z., ]{3,25}$/.test(formData.org)) {
+      setError("Please use Right Formate for organisation Name");
+      return;
     }
     const user = {
       type: "organisation",
@@ -179,18 +182,18 @@ const Register = () => {
                 encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
                 encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
               };
-                saveKeys(
-                  org_id,
-                  user_id,
-                  encryptedKeys
-                )
-                  .then((response: any) => {
-                    console.log(response);
-                  })
-                  .catch((error: any) => {
-                    console.error(error);
-                  });
-            }); 
+              saveKeys(
+                org_id,
+                user_id,
+                encryptedKeys
+              )
+                .then((response: any) => {
+                  console.log(response);
+                })
+                .catch((error: any) => {
+                  console.error(error);
+                });
+            });
           router.push("/login");
         } else if (response?.status === 400) {
           toast.error(response.message);
@@ -378,13 +381,13 @@ const Register = () => {
                 }
                 helperText={
                   (touched.email || submit) &&
-                  (formData.email.trim() === ""
-                    ? "Email cannot be empty."
-                    : !isValidEmail(formData.email))
+                    (formData.email.trim() === ""
+                      ? "Email cannot be empty."
+                      : !isValidEmail(formData.email))
                     ? "Please enter a valid email address."
                     : emailExist
-                    ? "Email Already exists"
-                    : ""
+                      ? "Email Already exists"
+                      : ""
                 }
               />
 
@@ -425,10 +428,10 @@ const Register = () => {
                       "Password cannot be empty.") ||
                     (!isValidPassword &&
                       "Password does not meet the requirements. Please ensure it contains:\n" +
-                        validationRules
-                          .filter((rule) => !rule.regex.test(formData.password))
-                          .map((rule) => rule.message)
-                          .join("\n")))
+                      validationRules
+                        .filter((rule) => !rule.regex.test(formData.password))
+                        .map((rule) => rule.message)
+                        .join("\n")))
                 }
               />
 
@@ -443,13 +446,24 @@ const Register = () => {
                   setFormData({ ...formData, org: e.target.value })
                 }
                 onBlur={() => setTouched({ ...touched, org: true })}
-                error={(touched.org || submit) && formData.org.trim() === ""}
+                error={
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3 ||
+                    formData.org.trim().length > 25 ||
+                    !/[a-zA-Z]/.test(formData.org))
+                }
                 helperText={
-                  (touched.org || submit) && formData.org.trim() === ""
-                    ? "Organization cannot be empty."
-                    : ""
+                  (touched.org || submit) &&
+                  (formData.org.trim().length < 3
+                    ? "Organization must be at least 3 characters."
+                    : formData.org.trim().length > 25
+                      ? "Organization must be at most 25 characters."
+                      : !/[a-zA-Z]/.test(formData.org)
+                        ? "Organization must contain at least one alphabet character also it can Contain hyphen(,) and dot(.)."
+                        : "")
                 }
               />
+
               <FormControl>
                 <FormControlLabel
                   control={

@@ -124,9 +124,16 @@ const ProcessDetails = (props: ProcessDetailsProps) => {
   const getValue = (value: string) => {
     const date = new Date(value);
     return date.toDateString() === "Invalid Date"
-      ? value
+      ? checkEpochFormat(value)
       : convertDateFormat(value);
   };
+
+  const checkEpochFormat = (value: string) => {
+    if (value) {
+      const date = new Date(Number(value) * 1000)
+      return date.toDateString() === "Invalid Date" ? value : date.toLocaleString()
+    } else return 'N/A';
+  }
 
   const getUrl = (value: string) => {
     return value.toLowerCase().includes("docker.io")

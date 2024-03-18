@@ -125,7 +125,6 @@ const AppCreationFlow = (props: AppCreationFlow) => {
 
     return () => clearInterval(intervalId);
   }, [timeDifference]);
-  console.log(timeDifference);
 
   useEffect(() => {
     calculateTimeDifference();
