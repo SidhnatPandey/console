@@ -30,8 +30,11 @@ import {
   getUserOrg,
   getWorkspaces,
 } from "src/services/userService";
-import { getkeys } from "src/services/secretservice";
-import { decryptPrivateKey } from "src/utils/secrets-util/encryption_decryption";
+import { getkeys, saveKeys } from "src/services/secretservice";
+import {
+  decryptPrivateKey,
+  generateEncryptedKeys,
+} from "src/utils/secrets-util/encryption_decryption";
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -315,25 +318,63 @@ const AuthProvider = ({ children }: Props) => {
 
   const fetchKeys = () => {
     getkeys().then((res) => {
-      const encryptediv = res?.data[0].encryptedPrivateIv;
-      const encrptedsalt = res?.data[0].encryptedPrivateSalt;
-      const encryptedPrivateKey = res?.data[0].encryptedPrivateKey;
-      const encryptedTag = res?.data[0].encryptedPrivateAuthTag;
-      const orgid = res?.data[0].org_id;
-
-      decryptPrivateKey(
-        orgid,
-        encrptedsalt,
-        encryptedPrivateKey,
-        encryptediv,
-        encryptedTag
-      ).then((result) => {
-        localStorage.setItem(LOCALSTORAGE_CONSTANTS.orgKey, result.orgKey);
-        localStorage.setItem(
-          LOCALSTORAGE_CONSTANTS.privateKey,
-          result.privateKey
-        );
-      });
+      if (res.status === 200 && res.data === null) {
+        const org_id = organisations[0]?.org_id;
+        const user_id = org?.created_by;
+        if (org_id && user_id) {
+          generateEncryptedKeys(org_id).then((encryptedKeysResponse) => {
+            const encryptedKeys = {
+              org_id: encryptedKeysResponse?.orgid,
+              publicKey: encryptedKeysResponse?.encryptedpublicKey,
+              encryptedPrivateKey: encryptedKeysResponse?.encryptedPrivateKey,
+              encryptedPrivateIv: encryptedKeysResponse?.encryptediv,
+              encryptedPrivateSalt: encryptedKeysResponse?.encrptedsalt,
+              encryptedPrivateAuthTag: encryptedKeysResponse?.encryptedTag,
+            };
+            saveKeys(org_id, user_id, encryptedKeys)
+              .then((response: any) => {
+                if (response.status === 200) {
+                  decryptPrivateKey(
+                    encryptedKeysResponse?.orgid,
+                    encryptedKeysResponse?.encrptedsalt,
+                    encryptedKeysResponse?.encryptedPrivateKey,
+                    encryptedKeysResponse?.encryptediv,
+                    encryptedKeysResponse?.encryptedTag
+                  ).then((result) => {
+                    localStorage.setItem(
+                      LOCALSTORAGE_CONSTANTS.orgKey,
+                      result.orgKey
+                    );
+                    localStorage.setItem(
+                      LOCALSTORAGE_CONSTANTS.privateKey,
+                      result.privateKey
+                    );
+                  });
+                }
+              })
+              .catch((error: any) => {});
+          });
+        }
+      } else {
+        const encryptediv = res.data[0]?.encryptedPrivateIv;
+        const encrptedsalt = res.data[0]?.encryptedPrivateSalt;
+        const encryptedPrivateKey = res.data[0]?.encryptedPrivateKey;
+        const encryptedTag = res.data[0]?.encryptedPrivateAuthTag;
+        const orgid = res.data[0]?.org_id;
+        decryptPrivateKey(
+          orgid,
+          encrptedsalt,
+          encryptedPrivateKey,
+          encryptediv,
+          encryptedTag
+        ).then((result) => {
+          localStorage.setItem(LOCALSTORAGE_CONSTANTS.orgKey, result.orgKey);
+          localStorage.setItem(
+            LOCALSTORAGE_CONSTANTS.privateKey,
+            result.privateKey
+          );
+        });
+      }
     });
   };
 
