@@ -53,19 +53,15 @@ const DropZone = (props: FileProp) => {
     return (
         <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 100 } : {}}>
             <input {...getInputProps()} />
-            {files.length ? (
-                <Typography>{files[0].name}</Typography>
-            ) : (
-                <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                    {showError ?
-                        <Typography sx={{ color: 'red' }}>!! Please upload a valid file.</Typography> :
-                        <>
-                            <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
-                            <Typography variant='h5' sx={{ mb: 2.5 }}>
-                                {dropText ?? 'Drop files here or click to upload.'}
-                            </Typography></>}
-                </Box>
-            )}
+            <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                {showError ?
+                    <Typography sx={{ color: 'red' }}>!! Please upload a valid file.</Typography> :
+                    <>
+                        <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} />
+                        <Typography variant='h5' sx={{ mb: 2.5 }}>
+                            {dropText ?? 'Drop files here or click to upload.'}
+                        </Typography></>}
+            </Box>
         </Box>
     )
 }
