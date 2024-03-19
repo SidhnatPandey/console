@@ -176,7 +176,7 @@ const CreateApp = () => {
       .string()
       .required("This field is required")
       .matches(
-        /^(?=.*[a-zA-Z0-9])[\w\s-]{3,25}$/,
+        /^(?=.*[a-zA-Z])[\w\s-]{3,25}$/,
         "Only alpha-numeric characters, hyphens, underscores, and spaces are allowed, it's length should be in between 3 to 25 there must be one alphanumeric character."
       ),
     workspace_id: yup.string().required(),
