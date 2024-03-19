@@ -278,10 +278,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
     // }
 
     const checkCondition = (): number[] => {
-
         const arrayofKeys = getEnvVariableValue().env_variables.map((ele: any) => ele.key);
-        console.log("array", arrayofKeys)
-
         for (let i = 0; i < arrayofKeys.length; i++) {
             for (let j = i + 1; j < arrayofKeys.length; j++) {
                 if (i == j || arrayofKeys[i] == "" || arrayofKeys[j] == "")
@@ -292,8 +289,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
                 }
             }
         }
-
-        console.log("duplicateArr", duplicateArr)
         return duplicateArr;
     }
 
@@ -307,7 +302,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
     const KeyIsPresentButValueNot = (index: number, val?: boolean) => {
 
         const { key, prod, stg, test } = getEnvVariableValue().env_variables[index];
-
         if (key && (!prod && !stg && !test)) {
             setEnvValueNotPresentArr((prevState) => {
                 const updatedState = [...prevState]; // Create a copy of the array
