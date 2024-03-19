@@ -28,11 +28,11 @@ const CreateWorkspace = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   useEffect(() => {
-    planHook.isDeveloperPlan() ? setOpenAlert(true) : "";
+    planHook.isDeveloperPlan() ? (authContext?.workspaces?.length > 0 ? setOpenAlert(true) : "") : "";
   }, []);
 
   const onSubmit = (data: FormData) => {
-    if (planHook.isDeveloperPlan()) {
+    if (planHook.isDeveloperPlan() && (authContext?.workspaces?.length > 0)) {
       setOpenAlert(true);
     } else if (!loading) {
       startLoading();
