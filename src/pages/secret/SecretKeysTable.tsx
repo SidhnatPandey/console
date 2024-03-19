@@ -94,16 +94,13 @@ const SecretKeysTable = () => {
         } else {
             const filteredResults = decryptedResults.filter((item) => {
                 return (
-                    item.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.value.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.environment.toLowerCase().includes(searchTerm.toLowerCase())
+                    item.key.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             });
             setFilteredData(filteredResults);
-            // Now, you can safely call organizeArrayByEnvironment with the updated filteredData
-            await organizeArrayByEnvironment(filteredData);
+            await organizeArrayByEnvironment(filteredResults);
         }
-    };
+    };    
 
     const fetchData = async () => {
         setLoading(true);
@@ -418,7 +415,7 @@ const SecretKeysTable = () => {
                     const value = element.value;
                     const environment = env.isTest ? 'test' : env.isStage ? 'stage' : 'prod';
                     const privateKey = localStorage.getItem(LOCALSTORAGE_CONSTANTS.privateKey) ?? '';
-                    const encryptedKeysResponse = await encryptKey(privateKey, key, value, environment);
+                    const encryptedKeysResponse = await encryptKey(privateKey, key, value.toString(), environment);
 
                     const request = {
                         "environment": environment,
