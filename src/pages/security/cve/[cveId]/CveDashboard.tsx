@@ -29,6 +29,7 @@ export interface AppsAffectedByCVEData {
   PackageAffected: {
     PackageName: string;
     Version: string;
+    FixedInVersion: string;
     [key: string]: string;
   }[];
   Severity: string;
