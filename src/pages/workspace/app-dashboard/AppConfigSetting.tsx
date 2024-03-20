@@ -256,7 +256,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                 Http port for the Application
               </Typography>
             </Grid>
-            {isEdit ? (
+            {isEdit && showEdit ? (
               <Grid item xs={3} sm={3}>
                 <TextField
                   required
@@ -294,7 +294,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
               </Typography>
             </Grid>
             <Grid item xs={3} sm={3}>
-              {isEdit ? (
+              {isEdit && showEdit ? (
                 <TextField
                   variant="outlined"
                   size="small"
@@ -361,7 +361,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     },
                   }}
                   inputProps={{ "aria-label": "Without label" }}
-                  disabled={!isEdit || isDeveloperPlan()}
+                  disabled={!isEdit || !showEdit || isDeveloperPlan()}
                 >
                   {AI_SIZE.map((instance, index) => (
                     <MenuItem key={index} value={instance.type}>
@@ -395,7 +395,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                     />
                   }
                   label="Enable Vertical Auto-Scaling"
-                  disabled={!isEdit || isDeveloperPlan()}
+                  disabled={!isEdit || !showEdit || isDeveloperPlan()}
                 />
                 <Tooltip
                   title={
@@ -440,7 +440,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                   <label htmlFor="min" style={{ fontWeight: "bold" }}>
                     Min:
                   </label>
-                  {isEdit ? (
+                  {isEdit && showEdit ? (
                     <TextField
                       variant="outlined"
                       size="small"
@@ -462,7 +462,7 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
                   <label htmlFor="max" style={{ fontWeight: "bold" }}>
                     Max:
                   </label>
-                  {isEdit ? (
+                  {isEdit && showEdit ? (
                     <TextField
                       variant="outlined"
                       size="small"
