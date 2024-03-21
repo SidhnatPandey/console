@@ -28,11 +28,11 @@ const CreateWorkspace = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   useEffect(() => {
-    planHook.isDeveloperPlan() ? setOpenAlert(true) : "";
+    planHook.isDeveloperPlan() ? (authContext?.workspaces?.length > 0 ? setOpenAlert(true) : "") : "";
   }, []);
 
   const onSubmit = (data: FormData) => {
-    if (planHook.isDeveloperPlan()) {
+    if (planHook.isDeveloperPlan() && (authContext?.workspaces?.length > 0)) {
       setOpenAlert(true);
     } else if (!loading) {
       startLoading();
@@ -75,7 +75,7 @@ const CreateWorkspace = () => {
     if (value.length < 3 || value.length > 25) {
       return "Workspace name must be between 3 and 25 characters";
     }
-    if (!/^[a-zA-Z0-9_-\s]+$/.test(value)) {
+    if (!/^(?=.*[a-zA-Z])[a-zA-Z0-9_-\s ]+$/.test(value)) {
       return "Workspace name can only contain alphanumeric characters, hyphens, underscores, and spaces";
     }
     return true;

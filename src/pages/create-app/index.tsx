@@ -176,7 +176,7 @@ const CreateApp = () => {
       .string()
       .required("This field is required")
       .matches(
-        /^(?=.*[a-zA-Z0-9])[\w\s-]{3,25}$/,
+        /^(?=.*[a-zA-Z])[\w\s-]{3,25}$/,
         "Only alpha-numeric characters, hyphens, underscores, and spaces are allowed, it's length should be in between 3 to 25 there must be one alphanumeric character."
       ),
     workspace_id: yup.string().required(),
@@ -222,6 +222,7 @@ const CreateApp = () => {
   const [repositories, setRepositories] = useState<string[]>(["No Repository"]);
   const [branches, setBranches] = useState<string[]>([]);
   const [repoError, setRepoError] = useState(false);
+  const [dataArr, setDataArr] = useState<any[]>([]);
 
   useEffect(() => {
     if (!gitUser) {
@@ -248,11 +249,9 @@ const CreateApp = () => {
   });
 
   const {
-    control: configurationControl,
     handleSubmit: handleConfigurationSubmit,
     register: configurationRegister,
     getValues: getConfigurationValue,
-    setValue: setConfigurationValue,
     formState: {
       errors: ConfigurationErrors,
       isValid: isConfigurationFormValid,
@@ -395,7 +394,7 @@ const CreateApp = () => {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
     setIsChecked(event.target.checked);
-    console.log("vertical Scalling : ", event.target.checked);
+
   };
 
   const handleWorkspaceChange = (event: SelectChangeEvent) => {
@@ -423,11 +422,18 @@ const CreateApp = () => {
     setOpen(true);
   };
 
-  const handleEnvDialogClose = (envVariables: any, count: number) => {
+  const handleEnvDialogClose = (envVariables: any, count: number, editData: any) => {
     setEnvironmentVariables(envVariables);
     setEnvCount(count);
+    setDataArr(editData);
     setOpen(false);
   };
+
+  const handleEnvClose = (dataOnClose: any) => {
+    setDataArr(dataOnClose);
+    setOpen(false);
+  }
+
 
   const onConfigurationSubmit = () => {
     if (Number(minValue) > 0 && Number(maxValue) > 0) {
@@ -472,7 +478,7 @@ const CreateApp = () => {
 
     saveApp(data)
       .then((response) => {
-        console.log(data);
+
         toast.success("App Created Successfully");
         router.push({
           pathname: "/workspace/app-dashboard",
@@ -522,8 +528,8 @@ const CreateApp = () => {
                             SESSIONSTORAGE_CONSTANTS.creatAppName
                           ) !== null
                             ? getItemFromSessionStorage(
-                                SESSIONSTORAGE_CONSTANTS.creatAppName
-                              )
+                              SESSIONSTORAGE_CONSTANTS.creatAppName
+                            )
                             : ""
                         }
                         label="Application Name"
@@ -548,7 +554,7 @@ const CreateApp = () => {
                           error
                             ? error.message
                             : appNameExist &&
-                              "This application name already exists"
+                            "This application name already exists"
                         }
                         aria-describedby="stepper-linear-account-username"
                       />
@@ -1033,7 +1039,9 @@ const CreateApp = () => {
                 <EnvVariables
                   open={open}
                   handleEnvDialogClose={handleEnvDialogClose}
-                  handleEnvClose={() => setOpen(false)}
+                  envArr={[...dataArr]}
+                  handleEnvClose={handleEnvClose}
+
                 />
               </Grid>
 

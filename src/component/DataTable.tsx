@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 
 export interface Column {
+
   id: string;
   label: string;
   sortable?: boolean;
@@ -26,6 +27,8 @@ export interface Column {
   strictFunction?: (value: any) => any;
   strictdata?: string;
   downloadableLink?: boolean;
+  normalLink?: boolean;
+
 }
 
 interface DataTableProps {
@@ -33,6 +36,8 @@ interface DataTableProps {
   data: Row[];
   heading?: string | null;
   loading?: boolean;
+  rowClickHandler?: (value: any) => any;
+
 }
 
 export interface Row {
@@ -44,6 +49,7 @@ const DataTable: React.FC<DataTableProps> = ({
   data,
   heading,
   loading,
+  rowClickHandler
 }) => {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<string>("");
@@ -65,6 +71,7 @@ const DataTable: React.FC<DataTableProps> = ({
     if (!data || data.length === 0) {
       return (
         <TableRow>
+
           <TableCell
             colSpan={columns.length}
             style={{
@@ -90,9 +97,12 @@ const DataTable: React.FC<DataTableProps> = ({
       })
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       .map((row, index) => (
-        <TableRow key={index + 1}>
+        <TableRow key={index + 1}
+          hover
+          style={{ cursor: "pointer", height: "100%" }}
+          onClick={() => { if (rowClickHandler) rowClickHandler(row) }} >
           {columns.map((column) => (
-            <TableCell key={column.id} align="left">
+            <TableCell key={column.id} align="left" >
               {typeof column.strictFunction === "function" &&
                 column.showChip ? (
                 <CustomChip
@@ -112,6 +122,8 @@ const DataTable: React.FC<DataTableProps> = ({
                 >
                   {column.strictdata ? column.strictdata : "Download"}
                 </a>
+              ) : column.normalLink ? (  // Check if it's a normal link
+                <a href={row[column.id]}>{column.strictdata || row[column.id]}</a>
               ) : (
                 column.strictdata || row[column.id]
               )}
@@ -151,6 +163,7 @@ const DataTable: React.FC<DataTableProps> = ({
               <TableHead>
                 <TableRow>
                   {columns.map((column) => (
+
                     <TableCell key={column.id}>
                       {column.sortable ? (
                         <TableSortLabel
@@ -172,7 +185,6 @@ const DataTable: React.FC<DataTableProps> = ({
             <TableBody>{renderRows}</TableBody>
           </Table>
         </TableContainer>
-
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -181,10 +193,15 @@ const DataTable: React.FC<DataTableProps> = ({
           page={page}
           onPageChange={(event: unknown, newPage: number) => setPage(newPage)}
           onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
+            const newRowsPerPage = parseInt(event.target.value, 10);
+            const newPage = Math.floor(page * rowsPerPage / newRowsPerPage);
+            setRowsPerPage(newRowsPerPage);
+            setPage(newPage); // Use newPage instead of page here
           }}
         />
+
+
+
       </Paper>
     </Box>
   );

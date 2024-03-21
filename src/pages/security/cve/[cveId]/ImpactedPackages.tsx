@@ -19,6 +19,7 @@ interface AppsAffectedByCVEDataProps {
     PackageAffected: {
       PackageName: string;
       Version: string;
+      FixedInVersion: string;
       [key: string]: string;
     }[];
   };
@@ -149,6 +150,19 @@ const ImpactedPackages = ({
                     </Box>
                   </Box>
                 </TableCell>
+                <TableCell onClick={() => sortData("FixedInVersion")}>
+                  <Box display="flex" alignItems="center">
+                    <span>FIXED-IN</span>
+                    <Box display="flex" flexDirection="column" ml={6}>
+                      <KeyboardArrowUpIcon
+                        sx={{ color: "gray", marginBottom: "-6px" }}
+                      />
+                      <KeyboardArrowDownIcon
+                        sx={{ color: "gray", marginTop: "-6px" }}
+                      />
+                    </Box>
+                  </Box>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -159,12 +173,19 @@ const ImpactedPackages = ({
                     <TableRow key={index}>
                       <TableCell>{row?.PackageName}</TableCell>
                       <TableCell>{row?.Version}</TableCell>
+                      <TableCell>
+                        {row?.FixedInVersion === null ||
+                        row?.FixedInVersion?.length === 0 ||
+                        row?.FixedInVersion === ""
+                          ? "Not available"
+                          : row?.FixedInVersion}
+                      </TableCell>
                     </TableRow>
                   ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={3}
                     style={{
                       textAlign: "center",
                       fontSize: "18px",
