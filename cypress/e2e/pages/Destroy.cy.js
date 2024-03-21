@@ -1,7 +1,9 @@
 it('After click create button , three landing screens are opened', () => {
-    cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('clouduser@initializ.io');
-    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
+  cy.visit('/login');
+  // eslint-disable-next-line cypress/unsafe-to-chain-command
+  cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+  // eslint-disable-next-line cypress/unsafe-to-chain-command
+  cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/app');
     cy.get(':nth-child(1) > [style="font-size: 14px; font-weight: bold; color: rgb(115, 83, 229);"]').click()

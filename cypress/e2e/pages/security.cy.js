@@ -19,6 +19,7 @@ it('To check the security screen whether search button functionality is workin '
   cy.get('.css-hqz9my').click()
   cy.get('.Mui-selected').click()
   cy.get('.MuiList-root > :nth-child(3) > .MuiButtonBase-root').click()
+  // eslint-disable-next-line cypress/unsafe-to-chain-command
   cy.get('.MuiBox-root > .MuiInputBase-root').click().type('DemoSec')
 })
  

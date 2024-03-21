@@ -1,6 +1,8 @@
 it('To add new user in setting page  ', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/workspace');
@@ -20,7 +22,9 @@ it('To add new user in setting page  ', () => {
 
 it('To create new user in settings page ', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/workspace');
@@ -39,7 +43,9 @@ it('To create new user in settings page ', () => {
 
 it('To Remove user in settings page ', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/workspace');
