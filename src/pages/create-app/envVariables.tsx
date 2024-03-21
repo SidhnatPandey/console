@@ -10,6 +10,7 @@ import Icon from 'src/@core/components/icon'
 import DragDropFile, { FileData } from "./dragdropfile";
 import { ENV_TYPE } from "src/@core/static/app.constant";
 import { getItemFromLocalstorage } from "src/services/locastorageService";
+
 const defaultEnvVariableValues = {
     env_variables: [{ key: "", KeyType: "", stg: "", test: "", prod: "", Checked: false }],
 };
@@ -36,7 +37,7 @@ export interface envArray {
 interface EnvVariablesProps {
     open: boolean,
     handleEnvDialogClose(env: any, count: number, editData?: any): void;
-    handleEnvClose(): void;
+    handleEnvClose(dataOnClose?: any): void;
     envArr?: any[],
     isEdit?: boolean
 }
@@ -80,8 +81,9 @@ const EnvVariables = (props: EnvVariablesProps) => {
 
     const [borderColor, setBorderColor] = useState<string>(theme === 'light' ? 'rgba(47, 43, 61, 0.2)' : 'rgba(208, 212, 241, 0.2)');
     const handleClose = () => {
+
         resetEnvVariableForm();
-        handleEnvClose();
+        handleEnvClose(envArr);
     };
 
     const handleCheckboxChange = (index: number) => {
@@ -194,6 +196,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
     }
 
     useEffect(() => {
+
         const currentDataList = getEnvVariableValue(`env_variables`);
         if (!currentDataList[0]?.key && envArr) {
             if (envArr.length > 1) {
@@ -238,44 +241,6 @@ const EnvVariables = (props: EnvVariablesProps) => {
         const index = existingValues.map(e => e.key).indexOf(key);
         return index;
     }
-
-    // const checkDuplicateKey = (value: string) => {
-    //     const existingValues = getEnvVariableValue();
-    //     const arrayofKeys = existingValues.env_variables.map((ele: any) => ele.key);
-    //     const arrayOfDuplicateEle: number[] = [];
-    //     arrayofKeys.map((item, indexi) => {
-    //         if (item === value && value !== '') {
-    //             arrayOfDuplicateEle.push(indexi);
-    //         }
-    //     })
-    //     const isPresent: boolean = arrayOfDuplicateEle.length > 1;
-    //     if (isPresent) {
-    //         arr = arrayOfDuplicateEle
-    //         console.log("arr", arr);
-    //         setDuplicateKey(true);
-    //         console.log("duplicateKey", duplicateKey);
-    //         arr.forEach((item) => {
-    //             setDuplicateKeyIndex((prevState) => {
-    //                 const updatedState = [...prevState];
-    //                 updatedState[item] = true;
-    //                 return updatedState
-    //             })
-    //         });
-    //         console.log(duplicateKeyIndex)
-    //     }
-    //     else if (!isPresent) {
-    //         setDuplicateKey(() => false);
-    //         arr.forEach((item) => {
-    //             setDuplicateKeyIndex((prevState) => {
-    //                 const updatedState = [...prevState];
-    //                 updatedState[item] = false;
-    //                 return updatedState
-    //             })
-
-    //         });
-    //     }
-
-    // }
 
     const checkCondition = (): number[] => {
         const arrayofKeys = getEnvVariableValue().env_variables.map((ele: any) => ele.key);
@@ -431,7 +396,7 @@ const EnvVariables = (props: EnvVariablesProps) => {
                                     key={field.id}
                                 >
                                     <Grid item xs={2.75} sm={2.75}>
-                                        {/* <Grid item xs={1.375} sm={1.375}> */}
+
                                         <div style={{ border: `1px solid ${borderColor}`, borderRadius: '6px', display: 'flex', marginBottom: '10px', paddingLeft: '5px' }} >
                                             {/* onClick={handleClick} onBlur={handleOutSideClick} */}
                                             <Controller
