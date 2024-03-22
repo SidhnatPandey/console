@@ -5,7 +5,9 @@ it('Loads the login page', () => {
 
 it('After click My Profile , My Profile page opens and we will edit the profile Imformation and save thaat changes', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jagpreet@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/app');
@@ -30,7 +32,9 @@ it('After click My Profile , My Profile page opens and we will edit the profile 
 
 it('After click My Profile , My Profile page opens and we will edit the profile Imformation and save thaat changes', () => {
     cy.visit('/login');
-    cy.get('input[id=user-email-input]').clear().type('jagpreet@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/app');

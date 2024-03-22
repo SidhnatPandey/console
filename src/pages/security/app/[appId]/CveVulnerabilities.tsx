@@ -364,7 +364,8 @@ const CveVulnerabilities = (props: Props) => {
                       <TableCell>{row?.Version}</TableCell>
                       <TableCell>
                         {row?.FixedInVersion === null ||
-                        row?.FixedInVersion.length === 0
+                        row?.FixedInVersion?.length === 0 ||
+                        row?.FixedInVersion === ""
                           ? "Not available"
                           : row?.FixedInVersion}
                       </TableCell>

@@ -5,8 +5,10 @@ it('Loads the login page', () => {
 
 it('To create new workspace ', () => {
   cy.visit('/login');
-  cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
-  cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
   cy.get('button[type="submit"]').click();
   cy.url().should('include', '/workspace');
   cy.get('.css-fnrg6y-MuiButtonBase-root-MuiIconButton-root').click()
@@ -22,8 +24,10 @@ it('To create new workspace ', () => {
 
 it('To add new usser in settings tab in current workspace ', () => {
   cy.visit('/login');
-  cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
-  cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
   cy.get('button[type="submit"]').click();
   cy.url().should('include', '/workspace');
   cy.get('.css-2eofjy-MuiButtonBase-root-MuiButton-root').click()
@@ -41,8 +45,10 @@ it('To add new usser in settings tab in current workspace ', () => {
 
 it('To remove user in settings tab in current workspace ', () => {
   cy.visit('/login');
-  cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
-  cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
   cy.get('button[type="submit"]').click();
   cy.url().should('include', '/workspace');
   cy.get('.css-2eofjy-MuiButtonBase-root-MuiButton-root').click()
@@ -51,8 +57,10 @@ it('To remove user in settings tab in current workspace ', () => {
 
 it('To destroy current workspace', () => {
   cy.visit('/login');
-  cy.get('input[id=user-email-input]').clear().type('jbhatia@initializ.io');
-  cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=user-email-input]').clear().type('lrawat@initializ.io');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get('input[id=auth-login-v2-password]').clear().type('Password@1');
   cy.get('button[type="submit"]').click();
   cy.url().should('include', '/workspace');
   cy.get('.css-2eofjy-MuiButtonBase-root-MuiButton-root').click()

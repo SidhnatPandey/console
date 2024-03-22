@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { appList } from "src/services/appService";
 import { convertDateFormat } from "src/utils/dateUtil";
-import DataTable, { Column, Row } from "src/component/DataTable";
+import DataTable, { Column } from "src/component/DataTable";
 import { Box } from "@mui/system";
+import { APP_API } from "src/@core/static/api.constant";
+import { setApiBaseUrl } from "src/@core/services/interceptor";
+import useSWR from "swr";
+import { getFetcher } from "src/services/fetcherService";
+
+
+
 
 
 interface AppListProps {
@@ -13,28 +19,13 @@ interface AppListProps {
 }
 
 const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
-  const [appListData, setAppListData] = useState<Row[]>([]);
+
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  useEffect(() => {
-    getAppList();
-  }, [workspace_id]);
 
-  const getAppList = () => {
-    setLoading(true);
-    if (workspace_id) {
-      appList(workspace_id)
-        .then((response: { data: Row[] }) => {
-          setLoading(false);
-          const data = response?.data;
-          setAppListData(data);
-        })
-        .catch((error: any) => {
-          setLoading(false);
-          console.log(error);
-        });
-    }
-  };
+  const key = APP_API.appList + '?workspace_id=' + workspace_id;
+  setApiBaseUrl();
+  const { data } = useSWR(key, getFetcher)
 
   const getStatusChipColor = (status: any) => {
     switch (status) {
@@ -96,7 +87,7 @@ const Apps: React.FC<AppListProps> = ({ workspace_id }) => {
     <Box>
       <DataTable
         columns={columns}
-        data={appListData}
+        data={data?.data}
         loading={loading}
         rowClickHandler={handleRowClick}
       />
