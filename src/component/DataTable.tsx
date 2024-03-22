@@ -185,7 +185,6 @@ const DataTable: React.FC<DataTableProps> = ({
             <TableBody>{renderRows}</TableBody>
           </Table>
         </TableContainer>
-
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -194,10 +193,15 @@ const DataTable: React.FC<DataTableProps> = ({
           page={page}
           onPageChange={(event: unknown, newPage: number) => setPage(newPage)}
           onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
+            const newRowsPerPage = parseInt(event.target.value, 10);
+            const newPage = Math.floor(page * rowsPerPage / newRowsPerPage);
+            setRowsPerPage(newRowsPerPage);
+            setPage(newPage); // Use newPage instead of page here
           }}
         />
+
+
+
       </Paper>
     </Box>
   );
