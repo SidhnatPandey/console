@@ -39,6 +39,7 @@ import SwitcherButton from "src/component/switcherButton";
 import useWorkspace from "src/hooks/useWorkspace";
 import AppConfigSetting from "./AppConfigSetting";
 import AppEnvVaribale from "./AppEnvVaribale";
+import AppDomain from "./AppDomain";
 
 const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   borderBottom: "0 !important",
@@ -260,7 +261,11 @@ const AppDashboard = () => {
   const isShowEdit = () => {
     const lstatus = supplyChainRunsData?.data?.status.toLowerCase();
     let show = false;
-    show = runType === "current" && lstatus !== "inprogress" && !hideEdit && !!supplyChainRunsData?.data;
+    show =
+      runType === "current" &&
+      lstatus !== "inprogress" &&
+      !hideEdit &&
+      !!supplyChainRunsData?.data;
     setShowSettingEdit(show);
   };
 
@@ -353,9 +358,9 @@ const AppDashboard = () => {
                             supplyChainRunsData?.data?.url.startsWith(
                               "http://"
                             ) ||
-                              supplyChainRunsData?.data?.url.startsWith(
-                                "https://"
-                              )
+                            supplyChainRunsData?.data?.url.startsWith(
+                              "https://"
+                            )
                               ? supplyChainRunsData?.data?.url
                               : `https://${supplyChainRunsData?.data?.url}`
                           }
@@ -474,13 +479,9 @@ const AppDashboard = () => {
             />
           </Typography>
 
-          {/*   <Typography sx={{ marginBottom: 10 }}>
-            <Card sx={{ margin: "-25px" }}>
-              <CardContent>
-                <AppDomain   url={appData.url}  />
-              </CardContent> 
-            </Card>
-          </Typography> */}
+          <Typography sx={{ marginBottom: 10 }}>
+            <AppDomain url={appData.url} />
+          </Typography>
 
           <Typography>
             {ability?.can("read", PERMISSION_CONSTANTS.deleteApp) && (
