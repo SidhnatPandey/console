@@ -135,8 +135,12 @@ const AppConfigSetting = (props: AppConfigSettingProps) => {
   const [http_path, setPath] = useState<string>(obj.http_path);
 
   const handleSave = (appId: any) => {
-    setHideEdit(true);
-    if (Number(minValue) > 0 && Number(maxValue) > 0) {
+    if (
+      Number(minValue) > 0 &&
+      Number(maxValue) > 0 &&
+      Number(minValue) <= Number(maxValue)
+    ) {
+      setHideEdit(true);
       startLoading();
       setEdit(false);
       data.port = Number(port);
